@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thermal version="0.01" product="lya">
+    <base>
+        <item tag="history_temp_count" value="10"/>
+        <item tag="temperature_query_enum" value="cpu,soc,battery,shell,charger,ambient,ap,pa"/>
+    </base>
+
+    <level>
+        <sensor_cluster name="base_safe" sensor="battery,charger,cpu,soc">
+            <item level="1" threshold="40000,38000,30000,40000" threshold_clr="38000,36000,28000,38000" temp_rise_rate="1.5,0,0,0"/>
+            <item level="2" threshold="43000,41000,32000,42000" threshold_clr="41000,39000,30000,40000" temp_rise_rate="1.5,0,0,0"/>
+            <item level="3" threshold="46000,44000,34000,44000" threshold_clr="44000,42000,32000,42000" temp_rise_rate="1.5,0,0,0"/>
+        </sensor_cluster>
+        <sensor_cluster name="warm_5G" sensor="pa" aux_sensor="ambient">
+            <item level="1" threshold="40000" threshold_clr="38000" aux_trigger_range="5000_35000"/>
+            <item level="2" threshold="43000" threshold_clr="41000" aux_trigger_range="5000_35000"/>
+        </sensor_cluster>
+        <sensor_cluster name="warm_5G" sensor="pa" aux_sensor="ambient">
+            <item level="1" threshold="41000" threshold_clr="39000" aux_trigger_range="35000_900000"/>
+            <item level="2" threshold="44000" threshold_clr="42000" aux_trigger_range="35000_900000"/>
+        </sensor_cluster>
+        <sensor_cluster name="warm_safe" sensor="ap,soc" aux_sensor="ambient,battery">
+            <item level="1" threshold="75000,30000" threshold_clr="71000,28000" aux_trigger_range="0_900000,47000_900000"/>
+        </sensor_cluster>
+        <sensor_cluster name="cold_safe" sensor="battery" desc="1">
+            <item level="1" threshold="-9000" threshold_clr="-6000"/>
+            <item level="2" threshold="-14000" threshold_clr="-11000"/>
+            <item level="3" threshold="-19000" threshold_clr="-16000"/>
+        </sensor_cluster>
+    </level>
+
+    <state>
+        <item name="scene" param="cam,call,game"/>
+        <item name="screen"/>
+        <item name="charge"/>
+    </state>
+
+    <action>
+        <item name="cpu" param="1.251,3.246"/>
+        <item name="gpu" param="1.251,3.246"/>
+        <item name="lcd" strict="1"/>
+        <item name="current"/>
+        <item name="process_ctrl" param="32,64,128,256"/>
+        <item name="shut_down"/>
+    </action>
+
+    <policy>
+        <config name="base_safe" level="1">
+            <lcd>188</lcd>
+            <cpu>99000</cpu>
+            <process_ctrl>3</process_ctrl>
+            <cpu scene="cam" charge="1">80000</cpu>
+            <cpu scene="cam" charge="0">90000</cpu>
+            <gpu screen="0">60000</gpu>
+            <gpu screen="1">50000</gpu>
+            <current>1800</current>
+            <current scene="cam">1200</current>
+        </config>
+        <config name="base_safe" level="2">
+            <lcd>155</lcd>
+            <cpu>90000</cpu>
+            <process_ctrl>2</process_ctrl>
+            <cpu scene="cam" charge="1">70000</cpu>
+            <cpu scene="cam" charge="0">80000</cpu>
+            <gpu screen="0">50000</gpu>
+            <gpu screen="1">40000</gpu>
+            <current>1500</current>
+            <current scene="cam">1000</current>
+        </config>
+        <config name="base_safe" level="3">
+            <lcd>120</lcd>
+            <cpu>80000</cpu>
+            <process_ctrl>1</process_ctrl>
+            <cpu scene="cam" charge="1">60000</cpu>
+            <cpu scene="cam" charge="0">70000</cpu>
+            <gpu screen="0">40000</gpu>
+            <gpu screen="1">30000</gpu>
+            <current>1300</current>
+            <current scene="cam">800</current>
+            <shut_down>1</shut_down>
+        </config>
+        <config name="warm_5G" level="1">
+            <lcd>130</lcd>
+            <process_ctrl>2</process_ctrl>
+        </config>
+        <config name="warm_5G" level="2">
+            <lcd>100</lcd>
+            <process_ctrl>3</process_ctrl>
+        </config>
+        <config name="warm_safe" level="1">
+            <process_ctrl screen="1">3</process_ctrl>
+            <shut_down screen="1">1</shut_down>
+        </config>
+        <config name="cold_safe" level="1">
+            <current>1850</current>
+        </config>
+        <config name="cold_safe" level="2">
+            <current>1550</current>
+        </config>
+        <config name="cold_safe" level="3">
+            <current>1150</current>
+        </config>
+    </policy>
+</thermal>
