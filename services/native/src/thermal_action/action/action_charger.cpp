@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "action_charger.h"
+
+#include "thermal_client.h"
+namespace OHOS {
+namespace PowerMgr {
+bool ActionCharger::InitParams(const std::string &params)
+{
+    params_ = params;
+    return true;
+}
+
+void ActionCharger::SetStrict(bool flag)
+{
+    flag_ = flag;
+}
+
+void ActionCharger::AddActionValue(std::string value)
+{
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s value=%{public}s", __func__, value.c_str());
+    if (value.empty()) return;
+    valueList_.push_back(atoi(value.c_str()));
+}
+
+void ActionCharger::Execute()
+{
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    int value = lastValue_;
+    if (valueList_.empty()) {
+        value = 0;
+    } else {
+        if (flag_) {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        }
+        valueList_.clear();
+    }
+
+    if (value != lastValue_) {
+        ChargerRequest(value);
+        lastValue_ = value;
+    }
+}
+
+uint32_t ActionCharger::ChargerRequest(uint32_t current)
+{
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    int32_t ret = ThermalClient::SetBatteryCurrent(current);
+    if (ret != ERR_OK) {
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set charger current to thermal hdf", __func__);
+        return ret;
+    }
+    return ERR_OK;
+}
+} // namespace PowerMgr
+} // namespace OHOS
