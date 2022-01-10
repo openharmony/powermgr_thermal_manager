@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "thermal_kernel_service.h"
+#include "thermal_common.h"
+#include "thermal_kernel_config_file.h"
+
+namespace OHOS {
+namespace PowerMgr {
+namespace {
+const std::string CONFIG_FILE_PATH = "/system/etc/thermal_config/thermal_kernel_config.xml";
+}
+void ThermalKernelService::OnStart()
+{
+    if (!Init()) {
+        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to init service", __func__);
+    }
+}
+
+bool ThermalKernelService::Init()
+{
+    if (provider_ == nullptr) {
+        provider_ = std::make_shared<ThermalSensorProvider>();
+    }
+
+    if (control_ == nullptr) {
+        control_ = std::make_shared<ThermalDeviceControl>();
+    }
+
+    if (policy_ == nullptr) {
+        policy_ = std::make_shared<ThermalKernelPolicy>();
+    }
+
+    ThermalKernelConfigFile::GetInsance().Init(CONFIG_FILE_PATH);
+
+    if (!policy_->Init()) {
+        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to init policy", __func__);
+        return false;
+    }
+
+    if (!control_->Init()) {
+        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to init device control", __func__);
+        return false;
+    }
+
+    return true;
+}
+} // namespace PowerMgr
+} // namespace OHOS

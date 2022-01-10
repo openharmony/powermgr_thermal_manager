@@ -1,0 +1,40 @@
+{
+  "subsystem": "powermgr",
+  "parts": {
+    "thermal_manager_native": {
+      "system_capabilities": [
+        "SystemCapability.PowerMgr.ThermalManager"
+      ],
+      "module_list": [
+        "//base/powermgr/thermal_manager/hdi:thermal_hdi_group",
+        "//base/powermgr/thermal_manager/services:thermalmgr_service",
+        "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",
+        "//base/powermgr/thermal_manager/interfaces/kits/js:thermal",
+        "//base/powermgr/thermal_manager/interfaces/kits/js:thermal_js",
+        "//base/powermgr/thermal_manager/sa_profile:thermalmgr_sa_profile",
+        "//base/powermgr/thermal_manager/application:thermal_application",
+        "//base/powermgr/thermal_manager/etc/init:thermal.rc"
+      ],
+      "inner_kits": [
+        {
+          "name": "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",
+          "header": {
+            "header_files": [
+              "ithermal_srv.h",
+              "thermal_mgr_client.h",
+              "ithermal_temp_callback.h",
+              "ithermal_level_callback.h",
+              "thermal_srv_sensor_info.h"
+            ],
+            "header_base": "//base/powermgr/thermal_manager/interfaces/innerkits/native/include"
+          }
+        }
+      ],
+      "test_list": [
+        "//base/powermgr/thermal_manager/services/native/test:thermalmgr_test",
+        "//base/powermgr/thermal_manager/test/systemtest:systemtest",
+        "//base/powermgr/thermal_manager/services/test/:thermal_module_test"
+      ]
+    }
+  }
+}

@@ -1,0 +1,56 @@
+/*
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "thermalsrv_event_handler.h"
+#include "thermal_common.h"
+#include "thermal_service.h"
+#include "ithermal_action.h"
+
+namespace OHOS {
+namespace PowerMgr {
+ThermalsrvEventHandler::ThermalsrvEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+    const wptr<ThermalService> &service) : AppExecFwk::EventHandler(runner), service_(service)
+{
+    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "ThermalsrvEventHandler::ThermalsrvEventHandler instance created.");
+}
+
+void ThermalsrvEventHandler::ProcessEvent([[maybe_unused]] const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto tmsptr = service_.promote();
+    if (tmsptr == nullptr) {
+        return;
+    }
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ProcessEvent::%{public}s, eventid = %{public}d", __func__,
+        event->GetInnerEventId());
+    tmsptr->HandleEvent(event->GetInnerEventId());
+    switch (event->GetInnerEventId()) {
+        case SEND_POPUP_MSG: {
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "when temp is too lower, popup waring");
+            auto actionMgr = tmsptr->GetActionManagerObj();
+            if (actionMgr == nullptr) {
+                return;
+            }
+            bool ret = actionMgr->GetActionPopup()->ShowDialogAction();
+            if (ret) {
+                THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "popup action success");
+            }
+            break;
+        }
+        default:
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ProcessEvent::no event id matched.");
+    }
+}
+} // namespace PowerMgr
+} // namespace OHOS
