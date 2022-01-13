@@ -14,9 +14,9 @@
 
 **热管理服务模块功能说明**：
 
-1. 温控管理中心（Thermal Manager）：提供对应用及其他子系统的温控查询及回调接口；
-2. 温控核心服务（Thermal Service）：提供温度检测、档位仲裁及动作下发等温控核心功能，附配置文件；
-3. 内核连接模块（Thermal HDI）：提供温度驱动信息上报及驱动指令下发等功能，附配置文件；
+1. 温控管理中心（Thermal Manager）：提供对应用及其他子系统的温控查询及回调接口。
+2. 温控核心服务（Thermal Service）：提供温度检测、档位仲裁及动作下发等温控核心功能，附配置文件。
+3. 内核连接模块（Thermal HDI）：提供温度驱动信息上报及驱动指令下发等功能，附配置文件。
 4. 非运行态温控模块（Thermal Protector）：提供非运行态时的简化温控服务，附配置文件。
 
 ## 目录<a name="section0056945902"></a>
@@ -101,7 +101,7 @@
 ```
 thermal                          # 根目录，version为版本号；product为产品名
 ├── base                         # base目录，配置基本参数
-│   └── item                     # item目录，tag为配置标签，value为配置值；
+│   └── item                     # item目录，tag为配置标签，value为配置值
 ├── level                        # level目录，配置温度档位信息
 │   └── sensor_cluster           # sensor_cluster目录，表示一个sensor集合，name为集合名，sensor为传感器名
 │       └── item                 # item目录，配置具体档位信息，level为等级，threshold为触发温度，xxx_clr为回退温度
@@ -137,7 +137,7 @@ thermal                          # 根目录，version为版本号；product为�
 ├── base                         # base目录，配置基本参数
 │   └── item                     # item目录，tag为配置标签，value为配置值；
 └── polling                      # polling目录，配置温度上报信息
-    └── group                    # group目录，配置上报组，name为组名，interval为轮训上报周期，单位ms
+    └── group                    # group目录，配置上报组，name为组名，interval为轮询上报周期，单位ms
         ├── thermal_zone         # thermal_zone目录，配置thermal zone上报，type对应该驱动的type，replace（可选）为替换的type名
         └── thermal_node         # thermal_node目录，配置驱动节点上报，path为节点路径
 ```
@@ -171,12 +171,24 @@ thermal                          # 根目录，version为版本号；product为�
 ├── base                         # base目录，配置基本参数
 │   └── item                     # item目录，tag为配置标签，value为配置值；
 └── control                      # control，配置温度档位及动作
-    └── thermal_zone             # thermal_zone目录，type为对应类型，interval为轮训上报周期，单位ms
+    └── thermal_zone             # thermal_zone目录，type为对应类型，interval为轮询上报周期，单位ms
         └── item                 # item目录，配置具体档位信息，level为等级，threshold为触发温度，xxx_clr为回退温度
             └── <action_name>    # 标签值对应动作的动作值
 ```
 
 ## 相关仓<a name="section0056945904"></a>
-- [powermgr_power_manager](https://gitee.com/openharmony/powermgr_power_manager)
-- [powermgr_display_manager](https://gitee.com/openharmony/powermgr_display_manager)
-- [powermgr_battery_manager](https://gitee.com/openharmony/powermgr_battery_manager)
+电源管理子系统
+
+[powermgr_power_manager](https://gitee.com/openharmony/powermgr_power_manager)
+
+[powermgr_display_manager](https://gitee.com/openharmony/powermgr_display_manager)
+
+[powermgr_battery_manager](https://gitee.com/openharmony/powermgr_battery_manager)
+
+[**powermgr_thermal_manager**](https://gitee.com/openharmony/powermgr_thermal_manager)
+
+[powermgr_battery_statistics](https://gitee.com/openharmony/powermgr_battery_statistics)
+
+[powermgr_battery_lite](https://gitee.com/openharmony/powermgr_battery_lite)
+
+[powermgr_powermgr_lite](https://gitee.com/openharmony/powermgr_powermgr_lite)
