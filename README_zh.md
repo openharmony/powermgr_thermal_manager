@@ -177,7 +177,7 @@ thermal                          # 根目录，version为版本号；product为�
 ```
 
 ## 相关仓<a name="section0056945904"></a>
-电源管理子系统
+[电源管理子系统](https://gitee.com/openharmony/docs/blob/master/zh-cn/readme/%E7%94%B5%E6%BA%90%E7%AE%A1%E7%90%86%E5%AD%90%E7%B3%BB%E7%BB%9F.md)
 
 [powermgr_power_manager](https://gitee.com/openharmony/powermgr_power_manager)
 
@@ -185,7 +185,7 @@ thermal                          # 根目录，version为版本号；product为�
 
 [powermgr_battery_manager](https://gitee.com/openharmony/powermgr_battery_manager)
 
-[**powermgr_thermal_manager**](https://gitee.com/openharmony/powermgr_thermal_manager)
+**powermgr_thermal_manager**
 
 [powermgr_battery_statistics](https://gitee.com/openharmony/powermgr_battery_statistics)
 
