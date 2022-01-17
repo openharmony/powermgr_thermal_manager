@@ -33,18 +33,8 @@ ThermalServiceSubscriber::ThermalServiceSubscriber() { }
 
 bool ThermalServiceSubscriber::Init()
 {
-    if (subscriber_ == nullptr) {
-        subscriber_ = new ThermalSubscriber();
-    } else {
-        return false;
-    }
     historyCount_ = g_service->GetBaseinfoObj()->GetHistoryTempCount();
     return true;
-}
-
-sptr<ThermalSubscriber> ThermalServiceSubscriber::GetThermalSubscriber() const
-{
-    return subscriber_;
 }
 
 void ThermalServiceSubscriber::OnTemperatureChanged(TypeTempMap typeTempMap)
@@ -120,14 +110,6 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
             sum, rate, sensorsRateMap_.size());
         sensorsRateMap_.insert(std::make_pair(history.first, rate));
     }
-}
-
-void ThermalServiceSubscriber::RegisterTempChanged()
-{
-    TypeTempMap typeTempMap;
-    std::function<void(std::map<std::string, int32_t>)> runCallback =
-        std::bind(&ThermalServiceSubscriber::OnTemperatureChanged, this, std::placeholders::_1);
-    subscriber_->RegisterTempChangedCallback(runCallback);
 }
 } // namespace PowerMgr
 } // namespace OHOS

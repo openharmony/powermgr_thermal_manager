@@ -13,31 +13,47 @@
  * limitations under the License.
  */
 
-#ifndef THERMAL_MGR_POLICY_TEST_H
-#define THERMAL_MGR_POLICY_TEST_H
+#ifndef THERMAL_MGR_POLICY_TEST
+#define THERMAL_MGR_POLICY_TEST
 
-#include <mutex>
-#include <string>
 #include <gtest/gtest.h>
+#include <string>
 
 namespace OHOS {
 namespace PowerMgr {
 const uint32_t MAX_PATH = 256;
-constexpr uint32_t WAIT_TIME = 10;
-std::string batteryPath = "/data/thermal/battery/temp";
-std::string paPath = "/data/thermal/pa/temp";
-std::string ambientPath = "/data/thermal/ambient/temp";
-std::string apPath = "/data/thermal/ap/temp";
-std::string chargerPath = "/data/thermal/charger/temp";
-std::string batteryCurrentPath = "/data/mitigation/charger/current";
-std::string cpuFreqPath = "/data/mitigation/cpu/freq";
+const uint32_t WAIT_TIME = 1;
+std::string batteryPath = "/data/sensor/battery/temp";
+std::string shellPath = "/data/sensor/shell/temp";
+std::string chargerPath = "/data/sensor/charger/temp";
+std::string socPath = "/data/sensor/soc/temp";
+std::string ambientPath = "/data/sensor/ambient/temp";
+std::string cpuPath = "/data/sensor/cpu/temp";
+std::string paPath = "/data/sensor/pa/temp";
+std::string apPath = "/data/sensor/ap/temp";
+std::string configLevelPath = "/data/thermal/config/configLevel";
+std::string lcdPath = "/data/thermal/config/lcd";
+std::string processPath = "/data/thermal/config/process_ctrl";
+std::string shutdownPath = "/data/thermal/config/shut_down";
+std::string stateScreenPath = "/data/thermal/state/screen";
+std::string stateScenePath = "/data/thermal/state/scene";
+std::string stateChargePath = "/data/thermal/state/charge";
+const std::string CPU_FREQ_PATH = "/data/cooling/cpu/freq";
+const std::string GPU_FREQ_PATH = "/data/cooling/gpu/freq";
+const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/cooling/charger/current";
+std::string xmlServicePath = "/system/etc/thermal_config/thermal_service_config.xml";
+std::string xmlKernelPath = "/system/etc/thermal_config/thermal_kernel_config.xml";
+std::string xmlHdiPath = "/system/etc/thermal_config/thermal_hdi_config.xml";
 class ThermalMgrPolicyTest : public testing::Test {
 public:
-    static void SetUpTestCase(void);
-    static void TearDownTestCase(void);
+    static void SetUpTestCase();
+    static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    static int32_t WriteFile(std::string path, std::string buf, size_t size);
+    static int32_t ReadFile(const char *path, char *buf, size_t size);
+    static int32_t ConvertInt(const std::string &value);
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // THERMAL_MGR_POLICY_TEST_H
+#endif // THERMAL_MGR_POLICY_TEST

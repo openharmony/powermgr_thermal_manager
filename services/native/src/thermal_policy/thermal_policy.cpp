@@ -16,10 +16,12 @@
 #include "thermal_policy.h"
 
 #include <algorithm>
+#include "constants.h"
+#include "file_operation.h"
 #include "thermal_common.h"
 #include "thermal_service.h"
+#include "securec.h"
 #include "string_operation.h"
-#include "constants.h"
 
 using namespace OHOS::AppExecFwk;
 namespace OHOS {
@@ -27,6 +29,8 @@ namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 TypeTempMap typeTempMap;
+const std::string levelPath = "/data/thermal/config/configLevel";
+const int MAX_PATH = 256;
 }
 
 ThermalPolicy::ThermalPolicy() {};
@@ -60,7 +64,7 @@ void ThermalPolicy::GetSensorInfomation(TypeTempMap info)
             __func__, it.first.c_str(), it.second);
     }
     LevelDecision();
-
+    WriteLevel();
     PolicyDecision(clusterLevelMap_);
 }
 
@@ -74,10 +78,28 @@ void ThermalPolicy::LevelDecision()
         clusterLevelMap_[cluster->first] = level;
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s cluster level %{public}d", __func__, level);
     }
+}
 
+void ThermalPolicy::WriteLevel()
+{
+    std::list<uint32_t> levelList;
+    int32_t ret = -1;
+    char levelBuf[MAX_PATH] = {0};
     for (auto iter = clusterLevelMap_.begin(); iter != clusterLevelMap_.end(); iter++) {
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s name = %{public}s, level = %{public}d",
             __func__, iter->first.c_str(), iter->second);
+        levelList.push_back(iter->second);
+    }
+    auto level = *max_element(levelList.begin(), levelList.end());
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, levelPath.c_str());
+    if (ret < ERR_OK) {
+        return;
+    }
+    std::string valueString = std::to_string(level) + "\n";
+    ret = FileOperation::WriteFile(levelBuf, valueString, valueString.length());
+    if (ret != ERR_OK) {
+        return;
     }
 }
 
@@ -156,7 +178,6 @@ bool ThermalPolicy::StateMachineDecision(std::map<std::string, std::string> &sta
     for (auto prop = stateMap.begin(); prop != stateMap.end(); prop++) {
         StateMachine::StateMachineMap stateMachineMap = g_service->GetStateMachineObj()->GetStateCollectionMap();
         auto stateIter = stateMachineMap.find(prop->first);
-        std::vector<std::string> stateList;
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
             " %{public}s statename = %{public}s stateItername = %{public}s",
             __func__, prop->first.c_str(), stateIter->first.c_str());
@@ -165,7 +186,6 @@ bool ThermalPolicy::StateMachineDecision(std::map<std::string, std::string> &sta
                 THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, " %{public}s: state instance is nullptr", __func__);
                 continue;
             }
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "state.size=%{public}d", stateList.size());
             if (stateIter->second->DecideState(prop->second)) {
                 continue;
             } else {

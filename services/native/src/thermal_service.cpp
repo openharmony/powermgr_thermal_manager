@@ -15,16 +15,20 @@
 
 #include "thermal_service.h"
 
-#include <unistd.h>
+#include <fcntl.h>
 #include <ipc_skeleton.h>
+#include <unistd.h>
 #include "file_ex.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
+#include "securec.h"
 #include "system_ability_definition.h"
 
 #include "constants.h"
 #include "thermal_srv_config_parser.h"
 #include "thermal_common.h"
+
+using namespace hdi::thermal::v1_0;
 
 namespace OHOS {
 namespace PowerMgr {
@@ -54,8 +58,8 @@ void ThermalService::OnStart()
         return;
     }
 
-    RemoveEvent(ThermalsrvEventHandler::SEND_LOAD_THERMALHDF_MSG);
-    SendEvent(ThermalsrvEventHandler::SEND_LOAD_THERMALHDF_MSG, 0, 0);
+    RemoveEvent(ThermalsrvEventHandler::SEND_GET_THERMALHDF_SERVICE_MSG);
+    SendEvent(ThermalsrvEventHandler::SEND_GET_THERMALHDF_SERVICE_MSG, 0, 0);
     if (!Publish(DelayedSpSingleton<ThermalService>::GetInstance())) {
         THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "OnStart register to system ability manager failed.");
         return;
@@ -125,6 +129,10 @@ bool ThermalService::Init()
         }
     }
 
+    if (thermalInterface_ == nullptr) {
+        thermalInterface_ = IThermalInterface::Get();
+    }
+
     if (!InitModules()) {
         return false;
     }
@@ -161,6 +169,7 @@ bool ThermalService::InitModules()
     }
     return true;
 }
+
 bool ThermalService::InitThermalObserver()
 {
     if (!InitBaseInfo()) {
@@ -222,23 +231,6 @@ bool ThermalService::InitThermalPolicy()
     return true;
 }
 
-bool ThermalService::InitThermalDriver()
-{
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Thermal Driver service Enter");
-    if (serviceSubscriber_ == nullptr) {
-        serviceSubscriber_ = std::make_shared<ThermalServiceSubscriber>();
-        if (!(serviceSubscriber_->Init())) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "thermal service suvscriber start fail");
-            return false;
-        }
-    }
-    serviceSubscriber_->RegisterTempChanged();
-    sptr<ThermalSubscriber> thermalClientSubscriber = serviceSubscriber_->GetThermalSubscriber();
-    ErrCode ret = ThermalClient::BindThermalDriverSubscriber(thermalClientSubscriber);
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "InitThermalDriver ret: %{public}d", ret);
-    return SUCCEEDED(ret);
-}
-
 void ThermalService::OnStop()
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "stop service");
@@ -248,13 +240,7 @@ void ThermalService::OnStop()
     eventRunner_.reset();
     handler_.reset();
     ready_ = false;
-    ThermalClient::UnbindThermalDriverSubscriber();
-}
-
-bool ThermalService::SetHdiFlag(bool flag)
-{
-    ErrCode ret = ThermalClient::SetHdiFlag(flag);
-    return SUCCEEDED(ret);
+    thermalInterface_->Unregister();
 }
 
 void ThermalService::SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
@@ -290,11 +276,6 @@ bool ThermalService::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvS
             return false;
     }
     return true;
-}
-
-void ThermalService::SetSensorTemp(const std::string &type, const int32_t &temp)
-{
-    observer_->SetSensorTemp(type, temp);
 }
 
 void ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
@@ -341,10 +322,22 @@ void ThermalService::HandleEvent(int event)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start", __func__);
     switch (event) {
-        case ThermalsrvEventHandler::SEND_LOAD_THERMALHDF_MSG: {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "InitThermalObserver: Init thermal hdf");
-            if (!(InitThermalDriver())) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "OnStart call initThermalDriver fail");
+        case ThermalsrvEventHandler::SEND_GET_THERMALHDF_SERVICE_MSG: {
+            int32_t ret = -1;
+            if (serviceSubscriber_ == nullptr) {
+                serviceSubscriber_ = std::make_shared<ThermalServiceSubscriber>();
+                if (!(serviceSubscriber_->Init())) {
+                    THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "thermal service suvscriber start fail");
+                    return;
+                }
+            }
+            sptr<IThermalCallback> g_callback = new ThermalCallbackService();
+            ThermalCallbackService::ThermalEventCallback eventCb =
+                std::bind(&ThermalService::HandleThermalCallbackEvent, this, std::placeholders::_1);
+            ThermalCallbackService::RegisterThermalEvent(eventCb);
+            ret = thermalInterface_->Register(g_callback);
+            if (ret != ERR_OK) {
+                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "set hdf callbck failed");
                 return;
             }
             break;
@@ -352,6 +345,20 @@ void ThermalService::HandleEvent(int event)
         default:
             break;
     }
+}
+
+int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event)
+{
+    TypeTempMap typeTempMap;
+    if (!event.info.empty()) {
+        for (auto iter = event.info.begin(); iter != event.info.end(); iter++) {
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: type: %{public}s", __func__, iter->type.c_str());
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: temp: %{public}d", __func__, iter->temp);
+            typeTempMap.insert(std::make_pair(iter->type, iter->temp));
+        }
+    }
+    serviceSubscriber_->OnTemperatureChanged(typeTempMap);
+    return ERR_OK;
 }
 } // namespace PowerMgr
 } // namespace OHOS

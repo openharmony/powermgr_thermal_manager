@@ -15,7 +15,6 @@
 #ifndef ACTION_POPUP_H
 #define ACTION_POPUP_H
 
-#include "ace_ability.h"
 #include "window_manager.h"
 #include "refbase.h"
 

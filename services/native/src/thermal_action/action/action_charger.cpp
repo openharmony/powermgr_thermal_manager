@@ -15,9 +15,13 @@
 
 #include "action_charger.h"
 
-#include "thermal_client.h"
+#include "thermal_service.h"
+
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+}
 bool ActionCharger::InitParams(const std::string &params)
 {
     params_ = params;
@@ -60,10 +64,14 @@ void ActionCharger::Execute()
 uint32_t ActionCharger::ChargerRequest(uint32_t current)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    int32_t ret = ThermalClient::SetBatteryCurrent(current);
-    if (ret != ERR_OK) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set charger current to thermal hdf", __func__);
-        return ret;
+    auto thermalInterface = g_service->GetThermalInterface();
+    if (thermalInterface != nullptr) {
+        int32_t ret = thermalInterface->SetBatteryCurrent(current);
+        if (ret != ERR_OK) {
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set charger current to thermal hdf",
+                __func__);
+            return ret;
+        }
     }
     return ERR_OK;
 }

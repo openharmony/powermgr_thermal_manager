@@ -36,11 +36,6 @@ public:
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     int32_t GetThermalSensorTemp(const SensorType type);
     ThermalLevel GetThermalLevel();
-
-public:
-    /* Test */
-    void SetSensorTemp(const std::string &type, const int32_t &temp);
-
 private:
     class ThermalMgrDeathRecipient : public IRemoteObject::DeathRecipient {
     public:

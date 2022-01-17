@@ -56,9 +56,6 @@ int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageP
         case static_cast<int>(IThermalSrv::GET_TEMP_LEVEL): {
             return GetThermalevelStub(reply);
         }
-        case static_cast<int>(IThermalSrv::SET_SENSOR_TEMP): {
-            return SetSensorTempStub(data);
-        }
         default: {
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
         }
@@ -139,18 +136,6 @@ int32_t ThermalSrvStub::GetThermalevelStub(MessageParcel& reply)
     ThermalLevel level;
     GetThermalLevel(level);
     THERMAL_WRITE_PARCEL_WITH_RET(reply, Uint32, static_cast<uint32_t>(level), ERR_OK);
-    return ERR_OK;
-}
-
-int32_t ThermalSrvStub::SetSensorTempStub(MessageParcel& data)
-{
-    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    std::string type;
-    int32_t temp = 0;
-
-    THERMAL_READ_PARCEL_WITH_RET(data, String, type, ERR_OK);
-    THERMAL_READ_PARCEL_WITH_RET(data, Int32, temp, ERR_OK);
-    SetSensorTemp(type, temp);
     return ERR_OK;
 }
 } // namespace PowerMgr

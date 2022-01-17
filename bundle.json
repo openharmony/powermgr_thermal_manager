@@ -1,7 +1,7 @@
 {
     "name": "@ohos/powermgr_thermal_manager",
     "version": "",
-    "description": "热管理服务，包括运行态热管理和非运行态热管理。",
+    "description": "提供设备温度管理控制能力，保障整机热安全及热体验",
     "homePage": "https://gitee.com/openharmony",
     "license": "Apache V2",
     "repository": "https://gitee.com/openharmony/powermgr_thermal_manager",
@@ -15,7 +15,7 @@
     ],
     "keywords": [
         "powermgr",
-        "thermal_manager",
+        "thermal",
         "manager"
     ],
     "envs": [],
@@ -36,7 +36,7 @@
         "destPath": "base/powermgr/thermal_manager"
     },
     "component": {
-        "name": "thermal_manager",
+        "name": "thermal_manger",
         "subsystem": "powermgr",
         "syscap": [
             "SystemCapability.PowerMgr.ThermalManager"

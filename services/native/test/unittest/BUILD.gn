@@ -1,0 +1,110 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import("//base/powermgr/thermal_manager/thermalmgr.gni")
+import("//base/startup/appspawn_standard/appspawn.gni")
+import("//build/test.gni")
+import("//foundation/appexecfwk/standard/appexecfwk.gni")
+
+module_output_path = "thermal_manager_native/thermal_native"
+
+###############################################################################
+config("module_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "include",
+    "mock",
+    "//utils/system/safwk/native/include",
+    "//foundation/graphic/standard/utils/include/",
+    "${thermal_manager_path}/services/zidl/include",
+    "//base/powermgr/display_manager/interfaces/innerkits/native/include/",
+    "//base/powermgr/display_manager/service/native/include/",
+    "//base/powermgr/display_manager/service/zidl/include/",
+    "//drivers/peripheral/display/interfaces/include/",
+    "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
+    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
+    "//foundation/appexecfwk/standard/services/appmgr/include/",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
+    "//base/startup/appspawn_standard/include/",
+    "//base/notification/ces_standard/interfaces/innerkits/native/include",
+    "//foundation/graphic/ui/interfaces/kits",
+    "//foundation/ace/ace_engine/adapter/ohos/entrance",
+    "//foundation/graphic/standard/interfaces/innerkits/wmclient/",
+  ]
+}
+
+deps_ex = [
+  "aafwk_standard:base",
+  "aafwk_standard:want",
+  "appexecfwk_standard:appexecfwk_base",
+  "appexecfwk_standard:libeventhandler",
+  "ipc:ipc_core",
+  "hiviewdfx_hilog_native:libhilog",
+  "safwk:system_ability_fwk",
+  "samgr_standard:samgr_proxy",
+  "ces_standard:cesfwk_innerkits",
+  "appspawn:appspawn_socket_client",
+]
+
+# thermal service test
+ohos_unittest("thermal_unittest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "src/thermal_level_event_test.cpp",
+    "src/thermal_mgr_policy_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  include_dirs = [
+    "//third_party/libxml2/include",
+    "${appexecfwk_path}/services/appmgr/include/",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/appmgr/",
+    "${appspawn_path}/include",
+    "//base/powermgr/power_manager/services/native/include",
+    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
+    "//base/powermgr/power_manager/utils/native/include",
+    "//base/powermgr/power_manager/services/native/src/actions/default",
+    "//drivers/peripheral/thermal/interfaces",
+    "//drivers/peripheral/thermal/interfaces/include/",
+  ]
+
+  deps = [
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
+    "${appexecfwk_path}/services/appmgr:libams",
+    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
+    "//base/powermgr/power_manager/services:powermgrservice",
+    "//drivers/peripheral/thermal/interfaces/hdi/thermal/v1_0:libthermal_proxy",
+    "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
+    "//foundation/graphic/standard:libwmclient",
+    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = deps_ex
+}
+
+group("unittest") {
+  testonly = true
+  deps = [ ":thermal_unittest" ]
+}

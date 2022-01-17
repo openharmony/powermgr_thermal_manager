@@ -15,11 +15,24 @@
 
 #ifndef THERMAL_LEVEL_EVENT_TEST
 #define THERMAL_LEVEL_EVENT_TEST
+
 #include <gtest/gtest.h>
 #include "thermal_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+const uint32_t MAX_PATH = 256;
+const uint32_t WAIT_TIME = 1;
+std::string batteryPath = "/data/sensor/battery/temp";
+std::string shellPath = "/data/sensor/shell/temp";
+std::string chargerPath = "/data/sensor/charger/temp";
+std::string socPath = "/data/sensor/soc/temp";
+std::string ambientPath = "/data/sensor/ambient/temp";
+std::string cpuPath = "/data/sensor/cpu/temp";
+std::string paPath = "/data/sensor/pa/temp";
+std::string apPath = "/data/sensor/ap/temp";
+}
 class ThermalLevelEventTest : public testing::Test {
 public:
     static void SetUpTestCase();

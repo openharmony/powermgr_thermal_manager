@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2020 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+
 #include "thermal_mgr_policy_test.h"
 
 #include <cstdio>
@@ -24,7 +25,7 @@
 
 #include "thermal_service.h"
 #include "thermal_mgr_client.h"
-#include "thermal_action.h"
+#include "constants.h"
 #include "thermal_common.h"
 
 using namespace testing::ext;
@@ -35,7 +36,7 @@ using namespace std;
 static sptr<ThermalService> service;
 static std::mutex g_mtx;
 
-static int32_t WriteFile(std::string path, std::string buf, size_t size)
+int32_t ThermalMgrPolicyTest::WriteFile(std::string path, std::string buf, size_t size)
 {
     std::lock_guard<std::mutex> lck(g_mtx);
     int32_t fd = open(path.c_str(), O_RDWR);
@@ -48,7 +49,7 @@ static int32_t WriteFile(std::string path, std::string buf, size_t size)
     return ERR_OK;
 }
 
-static int32_t ReadFile(const char *path, char *buf, size_t size)
+int32_t ThermalMgrPolicyTest::ReadFile(const char *path, char *buf, size_t size)
 {
     std::lock_guard<std::mutex> lck(g_mtx);
     int32_t ret;
@@ -71,21 +72,17 @@ static int32_t ReadFile(const char *path, char *buf, size_t size)
     return ERR_OK;
 }
 
-static int32_t ConvertInt(const std::string &value)
+int32_t ThermalMgrPolicyTest::ConvertInt(const std::string &value)
 {
     return std::stoi(value);
 }
 
 void ThermalMgrPolicyTest::SetUpTestCase(void)
 {
-    service = DelayedSpSingleton<ThermalService>::GetInstance();
-    service->OnStart();
 }
 
 void ThermalMgrPolicyTest::TearDownTestCase(void)
 {
-    service->OnStop();
-    DelayedSpSingleton<ThermalService>::DestroyInstance();
 }
 
 void ThermalMgrPolicyTest::SetUp(void)
@@ -99,2066 +96,2197 @@ void ThermalMgrPolicyTest::TearDown(void)
 namespace {
 /**
  * @tc.name: ThermalMgrPolicyTest001
- * @tc.desc: Verify to get battery current value by set battery temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest001, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest001, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest001: Failed to get ThermalService";
-    }
-    int32_t temp = 45000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest001: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest001: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest001: current is: " << value;
-    ASSERT_TRUE(value == 1500) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest001: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest001 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest001: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest002
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 2
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest002, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest002, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest002: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest002: Failed to get ThermalService";
-    }
-    int32_t temp = 45000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest002: Failed to write file ";
-    }
+    sleep(WAIT_TIME * 10);
 
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest002: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest002: freq is: " << value;
-    ASSERT_TRUE(value == 90000) << "failed to get freq value";
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest002 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest002: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest003
- * @tc.desc: Verify to get battery current value by set battery temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 3
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest003, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest003, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest003: Failed to get ThermalService";
-    }
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest003: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest003: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest003: current is: " << value;
-    ASSERT_TRUE(value == 1800) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest003: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest003 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest003: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest004
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 4
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest004, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest004, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest003: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 46100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest004: Failed to get ThermalService";
-    }
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest004: Failed to write file ";
-    }
+    sleep(WAIT_TIME * 10);
 
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest004: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest004: freq is: " << value;
-    ASSERT_TRUE(value == 99000) << "failed to get freq value";
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest005 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest004: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest005
- * @tc.desc: Verify to get battery current value by set battery temp and camare scene in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 1 ==> level 4
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest005, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest005, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest005: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(true);
-    int32_t temp = 45000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest005: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest005: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest005: current is: " << value;
-    ASSERT_TRUE(value == 1000) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest005: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest005 failed";
+ 
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    socTemp = 46100;
+    sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest005 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest005: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest006
- * @tc.desc: Verify to get brightness value by set battery temp in level 2 of warm 5G mode.
- * @tc.cond: aux temp - 5000_35000
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 2 ==> level 4
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest006, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest006, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char auxtempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest006: Failed to get ThermalService";
-    }
-    int32_t temp = 44000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, paPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest006: Failed to write file ";
-    }
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest006: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    int32_t amtemp = 32000;
-    std::string sAmbientTemp = to_string(amtemp) + "\n";
-    snprintf_s(auxtempBuf, PATH_MAX, sizeof(auxtempBuf) - 1, ambientPath.c_str());
-    ret = WriteFile(auxtempBuf, sAmbientTemp, sAmbientTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest006: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest006: Brightness " << value;
-    ASSERT_TRUE(value == 100) << "failed to get brightness value";
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest006 failed";
+ 
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    socTemp = 48100;
+    sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest006 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest006: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest007
- * @tc.desc: Verify to get brightness value by set battery temp in level 2 of warm 5G mode.
- * @tc.cond: aux temp - 35000_900000
- * @tc.type: FUNC
+ * @tc.desc: test level desc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 4 ===> level 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest007, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest007, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char auxtempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest007: Failed to get ThermalService";
-    }
-    int32_t temp = 46000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, paPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest007: Failed to write file ";
-    }
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest007: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 48200;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    int32_t amtemp = 40000;
-    std::string sAmbientTemp = to_string(amtemp) + "\n";
-    snprintf_s(auxtempBuf, PATH_MAX, sizeof(auxtempBuf) - 1, ambientPath.c_str());
-    ret = WriteFile(auxtempBuf, sAmbientTemp, sAmbientTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest007: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest007: Brightness " << value;
-    ASSERT_TRUE(value == 100) << "failed to get brightness value";
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest007 failed";
+ 
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    socTemp = 40900;
+    sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest007 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest007: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest008
- * @tc.desc: Verify to get brightness value by set battery temp in level 1 of warm 5G mode.
- * @tc.type: FUNC
+ * @tc.desc: test level desc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 3 ===> level 0
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest008, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest008, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char auxtempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest008: Failed to get ThermalService";
-    }
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, paPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest008: Failed to write file ";
-    }
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest008: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    int32_t amtemp = 32000;
-    std::string sAmbientTemp = to_string(amtemp) + "\n";
-    snprintf_s(auxtempBuf, PATH_MAX, sizeof(auxtempBuf) - 1, ambientPath.c_str());
-    ret = WriteFile(auxtempBuf, sAmbientTemp, sAmbientTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest008: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest008: Brightness " << value;
-    ASSERT_TRUE(value == 130) << "failed to get brightness value";
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest008 failed";
+ 
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    socTemp = 37000;
+    sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 0) << "ThermalMgrPolicyTest008 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest008: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest009
- * @tc.desc: Verify to get battery current value by set battery temp in level 1 of code safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest009, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest009, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0, level = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest009: Failed to get ThermalService";
-    }
-    int32_t temp = -13000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest009: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    level = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest009: level is: " << level;
-    ASSERT_TRUE(level == 0) << "failed to get level value";
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_BATTERY_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest009: current is: " << value;
-    ASSERT_TRUE(value == 1850) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest009: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -9000;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest009 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest009: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest010
- * @tc.desc: Verify to get battery current value by set battery temp in level 2 of code safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 2
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest010, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest010, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0, level = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest010: Failed to get ThermalService";
-    }
-    int32_t temp = -15000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest010: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    level = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    ASSERT_TRUE(level == 0) << "failed to get level value";
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_BATTERY_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest010: current is: " << value;
-    ASSERT_TRUE(value == 1550) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest010: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -14000;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest010 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest010: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest011
- * @tc.desc: Verify to get battery current value by set battery temp in level 3 of code safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 3
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest011, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest011, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0, level = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest011: Failed to get ThermalService";
-    }
-    int32_t temp = -20000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest011: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    level = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest012: level is: " << level;
-    ASSERT_TRUE(level == 0) << "failed to get level value";
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_BATTERY_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest012: current is: " << value;
-    ASSERT_TRUE(value == 1150) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest011: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -181000;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest011 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest011: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest012
- * @tc.desc: Verify to get battery current value by set battery temp in level 0 of code safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 4
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest012, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest012, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0, level = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest012: Failed to get ThermalService";
-    }
-    int32_t temp = -8000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest012: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    level = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest012: level is: " << level;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest012: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -20100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_BATTERY_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest012: current is: " << value;
-    ASSERT_TRUE(value > 0) << "failed to Get process action value";
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest012 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest012: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest013
- * @tc.desc: Verify delay shutdown and repeatedly kill process by set ap temp in level 1 of warm safe mode
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 1 ==> level 4
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest013, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest013, Function|MediumTest|Level2)
 {
-    char apBuf[MAX_PATH] = {0};
-    char ambientBuf[MAX_PATH] = {0};
-    char batteryBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest013: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -8100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    int32_t ret = -1, shutdownValue = 0, processValue = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest013: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetStateFlag(false);
-    tms->GetStateMachine()->SetState(1);
-    int32_t aptemp = 80000;
-    std::string sApTemp = to_string(aptemp) + "\n";
-    snprintf_s(apBuf, PATH_MAX, sizeof(apBuf) - 1, apPath.c_str());
-    ret = WriteFile(apBuf, sApTemp, sApTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest013: Failed to write file ";
-    }
+    sleep(WAIT_TIME * 10);
 
-    int32_t amTemp = 50000;
-    std::string sAmTemp = to_string(amTemp) + "\n";
-    snprintf_s(ambientBuf, PATH_MAX, sizeof(ambientBuf) - 1, ambientPath.c_str());
-    ret = WriteFile(ambientBuf, sAmTemp, sAmTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest013: Failed to write file ";
-    }
-    int32_t baTemp = 60000;
-    std::string sBaTemp = to_string(baTemp) + "\n";
-    snprintf_s(batteryBuf, PATH_MAX, sizeof(batteryBuf) - 1, batteryPath.c_str());
-    ret = WriteFile(batteryBuf, sBaTemp, sBaTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest013: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    shutdownValue = tms->GetThermalAction()->GetPolicyActionHubValue(ThermalAction::THERMAL_HUB_POWER_SHUTDOWN);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest013: shutdown value is: " << shutdownValue;
-    ASSERT_TRUE(shutdownValue == 1) << "failed to Get shutdown value";
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest013 failed";
 
-    processValue = tms->GetThermalAction()->GetPolicyActionHubValue(ThermalAction::THERMAL_HUB_CLEAR_ALL_PROCESS);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest013: process value is: " << processValue;
-    ASSERT_TRUE(processValue == 1) << "failed to Get process action value";
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    socTemp = -22000;
+    sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest013 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest013: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest014
- * @tc.desc: Verify to get gear value by set battery temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 2 ==> level 4
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest014, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest014, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest014: Failed to get ThermalService";
-    }
-    int32_t temp = 45000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest014: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest014: level is: " << value;
-    ASSERT_TRUE(value == 2) << "failed to Get level value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest014: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -13100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest014 failed";
+
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    socTemp = -22000;
+    sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest014 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest014: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest015
- * @tc.desc: Verify to get gear value by set battery temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level desc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 4 ===> level 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest015, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest015, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest015: Failed to get ThermalService";
-    }
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest015: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest015: level is: " << value;
-    ASSERT_TRUE(value == 1) << "failed to get level value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest015: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -22000;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest015 failed";
+ 
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    socTemp = -8100;
+    sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest015 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest015: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest016
- * @tc.desc: Verify to get gear value by set battery temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level desc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, High Temp
+ * @tc.result level 3 ===> level 0
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest016, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest016, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest016: Failed to get ThermalService";
-    }
-    int32_t temp = 48000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest016: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest016: level is: " << value;
-    ASSERT_TRUE(value == 3) << "failed to get level value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest016: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -19100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest016 failed";
+
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    socTemp = -5000;
+    sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 0) << "ThermalMgrPolicyTest016 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest016: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest017
- * @tc.desc: Verify delay shutdown and repeatedly kill process by set ap temp in level 1 of warm safe mode
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest017, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest017, Function|MediumTest|Level2)
 {
-    char apBuf[MAX_PATH] = {0};
-    char ambientBuf[MAX_PATH] = {0};
-    char batteryBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest017: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    int32_t ret = -1, shutdownValue = 0, processValue = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest017: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetStateFlag(false);
-    tms->GetStateMachine()->SetState(1);
-    int32_t aptemp = 90000;
-    std::string sApTemp = to_string(aptemp) + "\n";
-    snprintf_s(apBuf, PATH_MAX, sizeof(apBuf) - 1, apPath.c_str());
-    ret = WriteFile(apBuf, sApTemp, sApTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest017: Failed to write file ";
-    }
+    int32_t paTemp = 41000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    int32_t amTemp = 60000;
-    std::string sAmTemp = to_string(amTemp) + "\n";
-    snprintf_s(ambientBuf, PATH_MAX, sizeof(ambientBuf) - 1, ambientPath.c_str());
-    ret = WriteFile(ambientBuf, sAmTemp, sAmTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest017: Failed to write file ";
-    }
-    int32_t baTemp = 70000;
-    std::string sBaTemp = to_string(baTemp) + "\n";
-    snprintf_s(batteryBuf, PATH_MAX, sizeof(batteryBuf) - 1, batteryPath.c_str());
-    ret = WriteFile(batteryBuf, sBaTemp, sBaTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest017: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    shutdownValue = tms->GetThermalAction()->GetPolicyActionHubValue(ThermalAction::THERMAL_HUB_POWER_SHUTDOWN);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest017: shutdown value is: " << shutdownValue;
-    ASSERT_TRUE(shutdownValue == 1) << "failed to Get shutdown value";
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    processValue = tms->GetThermalAction()->GetPolicyActionHubValue(ThermalAction::THERMAL_HUB_CLEAR_ALL_PROCESS);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest017: process value is: " << processValue;
-    ASSERT_TRUE(processValue == 1) << "failed to Get process action value";
+    sleep(WAIT_TIME * 10);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest017 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest017: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest018
- * @tc.desc: Verify to get process_ctrl value by set battery temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest018, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest018, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest018: Failed to get ThermalService";
-    }
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest018: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::ThERMAL_FLAG_CLEAR_BG_CONTROL);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest018: process value is: " << value;
-    ASSERT_TRUE(value == 3) << "failed to Get process action value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest018: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 44000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest018 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest018: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest019
- * @tc.desc: Verify to get process_ctrl value by set battery temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 0
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest019, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest019, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest019: Failed to get ThermalService";
-    }
-    int32_t temp = 45000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest019: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::ThERMAL_FLAG_CLEAR_BG_CONTROL);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest019: process value  is: " << value;
-    ASSERT_TRUE(value == 2) << "failed to Get process action value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest019: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 44000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 1000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 0) << "ThermalMgrPolicyTest019 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest019: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest020
- * @tc.desc: Verify to get process_ctrl value by set battery temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set AP temp, High Temp With Aux sensor
+ * @tc.result level 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest020, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest020, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest020: Failed to get ThermalService";
-    }
-    int32_t temp = 49000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest020: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::ThERMAL_FLAG_CLEAR_BG_CONTROL);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest020: process value  is: " << value;
-    ASSERT_TRUE(value == 1) << "failed to Get process action value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest020: start.";
+    int32_t ret = -1;
+    char apTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    char shellTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t apTemp = 78000;
+    std::string sTemp = to_string(apTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(apTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 1000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t shellTemp = 50000;
+    sTemp = to_string(shellTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest020 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest020: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest021
- * @tc.desc: Verify to get battery current value by set battery temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set AP temp, High Temp With Aux sensor
+ * @tc.result level 0
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest021, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest021, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest021: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(false);
-    int32_t temp = 48000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest021: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest021: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest021: current is: " << value;
-    ASSERT_TRUE(value == 1300) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest021: start.";
+    int32_t ret = -1;
+    char apTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    char shellTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t apTemp = 78000;
+    std::string sTemp = to_string(apTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(apTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 1000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t shellTemp = 0;
+    sTemp = to_string(shellTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 0) << "ThermalMgrPolicyTest021 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest021: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest022
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state not satisfied
+ * @tc.result level 1, freq 99000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest022: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest022: Failed to get ThermalService";
-    }
-
-    int32_t temp = 50000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest022: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest022: Failed to read file ";
-    }
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest022: freq is: " << value;
-    ASSERT_TRUE(value == 80000) << "failed to get freq value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 99000) << "ThermalMgrPolicyTest022 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest022: end.";
 }
 
 /**
- * @tc.name: ThermalMgrPolicyTest005
- * @tc.desc: Verify to get battery current value by set battery temp and camare scene in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.name: ThermalMgrPolicyTest023
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state not satisfied
+ * @tc.result level 2, freq 90000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, TestSize.Level2)
+
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest023: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(true);
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest023: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest023: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest023: current is: " << value;
-    ASSERT_TRUE(value == 1200) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest023: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 90000) << "ThermalMgrPolicyTest023 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest023: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest024
- * @tc.desc: Verify to get battery current value by set battery temp and camare scene in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state not satisfied
+ * @tc.result level 3, freq 80000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest024: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(true);
-    int32_t temp = 48900;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest024: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest024: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest024: current is: " << value;
-    ASSERT_TRUE(value == 800) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest024: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest024 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest024: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest025
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 1 of base safe mode.
- * @tc.cond: scene-cam, state- enable charge
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state not satisfied
+ * @tc.result level 4, freq 80000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest025: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 48100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(1);
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest025: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest025: Failed to read file ";
-    }
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest025: freq is: " << value;
-    ASSERT_TRUE(value == 80000) << "failed to get freq value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest025 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest025: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest026
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 1 of base safe mode.
- * @tc.cond: scene-cam, state- disable charge
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 1, no scene
+ * @tc.result level 1, freq 99000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest026: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(0);
-    int32_t temp = 42200;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest026: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest026: Failed to read file ";
-    }
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest026: freq is: " << value;
-    ASSERT_TRUE(value == 90000) << "failed to get freq value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 99000) << "ThermalMgrPolicyTest026 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest026: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest027
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 2 of base safe mode.
- * @tc.cond: scene-cam, state- enable charge
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 1, scene = "cam"
+ * @tc.result level 1, freq 80000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest027: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(1);
-    int32_t temp = 45000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest027: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest027: Failed to read file ";
-    }
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest027: freq is: " << value;
-    ASSERT_TRUE(value == 70000) << "failed to get freq value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest027 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest027: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest028
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 2 of base safe mode.
- * @tc.cond: scene-cam, state- disable charge
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 0, scene = "cam"
+ * @tc.result level 1, freq 90000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest028: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "0";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest028: Failed to get ThermalService";
-    }
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(0);
-    int32_t temp = 45200;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest028: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest028: Failed to read file ";
-    }
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest028: freq is: " << value;
-    ASSERT_TRUE(value == 80000) << "failed to get freq value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 90000) << "ThermalMgrPolicyTest028 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest028: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest029
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 3 of base safe mode.
- * @tc.cond: scene-cam, state- enable charge
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 1, no scene
+ * @tc.result level 2, freq 90000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest029: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest029: Failed to get ThermalService";
-    }
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(1);
-    int32_t temp = 48000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest029: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest029: Failed to read file ";
-    }
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest029: freq is: " << value;
-    ASSERT_TRUE(value == 60000) << "failed to get freq value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 90000) << "ThermalMgrPolicyTest029 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest029: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest030
- * @tc.desc: Verify to get cpu freq value by set battery temp in level 3 of base safe mode.
- * @tc.cond: scene-cam, state- disable charge
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 1, scene = "cam"
+ * @tc.result level 2, freq 70000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest030: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest030: Failed to get ThermalService";
-    }
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(0);
-    int32_t temp = 48200;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest030: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest030: Failed to read file ";
-    }
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest030: freq is: " << value;
-    ASSERT_TRUE(value == 70000) << "failed to get freq value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 70000) << "ThermalMgrPolicyTest030 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest030: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest031
- * @tc.desc: Verify to get lcd brightness value by set battery temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 0, scene = "cam"
+ * @tc.result level 2, freq 80000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest031: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest031: Failed to get ThermalService";
-    }
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest031: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest031: brightness is: " << value;
-    ASSERT_TRUE(value == 188) << "failed to get brightness value";
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "0";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest031 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest031: end.";
 }
 
 /**
- * @tc.name: ThermalMgrPolicyTest031
- * @tc.desc: Verify to get lcd brightness value by set battery temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.name: ThermalMgrPolicyTest032
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 1, no scene
+ * @tc.result level 3, freq 80000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest032: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest032: Failed to get ThermalService";
-    }
-    int32_t temp = 45000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest032: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest032: brightness is: " << value;
-    ASSERT_TRUE(value == 155) << "failed to get brightness value";
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest032 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest032: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest033
- * @tc.desc: Verify to get lcd brightness value by set battery temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 1, scene = "cam"
+ * @tc.result level 3, freq 60000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest033: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest033: Failed to get ThermalService";
-    }
-    int32_t temp = 48000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest033: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest033: freq is: " << value;
-    ASSERT_TRUE(value == 120) << "failed to get brightness value";
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 70000) << "ThermalMgrPolicyTest033 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest033: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest034
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: charge = 0, scene = "cam"
+ * @tc.result level 3, freq 70000
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest034: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "0";
+    ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 70000) << "ThermalMgrPolicyTest034 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest034: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest035
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state not satisfied
+ * @tc.result level 1, current 1800
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest035, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest035: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1800) << "ThermalMgrPolicyTest035 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest035: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest036
- * @tc.desc: Verify to get process action value by set pa temp in level 2 of warm 5G mode.
- * @tc.type: FUNC
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: scene = "cam,call"
+ * @tc.result level 1, current 1200
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char auxtempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest036: Failed to get ThermalService";
-    }
-    int32_t temp = 48000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, paPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest036: Failed to write file ";
-    }
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest036: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    int32_t amtemp = 32000;
-    std::string sAmbientTemp = to_string(amtemp) + "\n";
-    snprintf_s(auxtempBuf, PATH_MAX, sizeof(auxtempBuf) - 1, ambientPath.c_str());
-    ret = WriteFile(auxtempBuf, sAmbientTemp, sAmbientTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest036: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::ThERMAL_FLAG_CLEAR_BG_CONTROL);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest036: process value is: " << value;
-    ASSERT_TRUE(value == 3) << "failed to Get process action value";
+    std::string sceneState = "cam,call";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1200) << "ThermalMgrPolicyTest036 failed";
+
+    sceneState = "null";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest036: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest037
- * @tc.desc: Verify to get gear action value by set pa temp in level 1 of warm 5G mode.
- * @tc.type: FUNC
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state not satisfied
+ * @tc.result level 2, current 1500
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest037, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest037, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char auxtempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest037: Failed to get ThermalService";
-    }
-    int32_t temp = 42000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, paPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest037: Failed to write file ";
-    }
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest035: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    int32_t amtemp = 32000;
-    std::string sAmbientTemp = to_string(amtemp) + "\n";
-    snprintf_s(auxtempBuf, PATH_MAX, sizeof(auxtempBuf) - 1, ambientPath.c_str());
-    ret = WriteFile(auxtempBuf, sAmbientTemp, sAmbientTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest037: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest037: level is: " << value;
-    ASSERT_TRUE(value == 4) << "failed to Get level value";
+    sleep(WAIT_TIME * 10);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1500) << "ThermalMgrPolicyTest037 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest037: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest038
- * @tc.desc: Verify to get gear value by set pa temp in level 2 of warm 5G mode.
- * @tc.type: FUNC
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: scene = "cam,call"
+ * @tc.result level 2, current 1000
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char auxtempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest038: Failed to get ThermalService";
-    }
-    int32_t temp = 48000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, paPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest038: Failed to write file ";
-    }
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest038: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    int32_t amtemp = 32000;
-    std::string sAmbientTemp = to_string(amtemp) + "\n";
-    snprintf_s(auxtempBuf, PATH_MAX, sizeof(auxtempBuf) - 1, ambientPath.c_str());
-    ret = WriteFile(auxtempBuf, sAmbientTemp, sAmbientTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest038: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest038: level is: " << value;
-    ASSERT_TRUE(value == 5) << "failed to Get level value";
+    std::string sceneState = "cam,call";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 20);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1000) << "ThermalMgrPolicyTest038 failed";
+
+    sceneState = "null";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest038: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest039
- * @tc.desc: Verify to get battery current value by set charger temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state not satisfied
+ * @tc.result level 3, current 1300
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest039, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest039, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest039: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest039: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(false);
-    int32_t temp = 43110;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest039: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest039: Failed to read file ";
-    }
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest039: current is: " << value;
-    ASSERT_TRUE(value == 1500) << "failed to get current value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1300) << "ThermalMgrPolicyTest039 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest039: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest040
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, state: scene = "cam,call"
+ * @tc.result level 3, current 800
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest040: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest040: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(false);
-    int32_t temp = 43000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest040: Failed to write file ";
-    }
+    std::string sceneState = "cam,call";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
 
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest040: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest040: freq is: " << value;
-    ASSERT_TRUE(value == 90000) << "failed to get freq value";
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 800) << "ThermalMgrPolicyTest040 failed";
+
+    sceneState = "null";
+    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest040: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest041
- * @tc.desc: Verify to get battery current value by set charger temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 1 current 1850
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest041, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest041, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest041: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -10000;
+    std::string sTemp = to_string(socTemp);
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentlBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest041: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(false);
-    int32_t temp = 40200;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest041: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest041: Failed to read file ";
-    }
+    ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest041: current is: " << value;
-    ASSERT_TRUE(value == 1800) << "failed to get current value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1850) << "ThermalMgrPolicyTest041 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest041: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest042
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 2 current 1550
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest042, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest042, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest042: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -14100;
+    std::string sTemp = to_string(socTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest042: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(false);
-    int32_t temp = 40300;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest042: Failed to write file ";
-    }
+    sleep(WAIT_TIME * 10);
 
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest042: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest042: freq is: " << value;
-    ASSERT_TRUE(value == 99000) << "failed to get freq value";
+    char currentlBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1550) << "ThermalMgrPolicyTest042 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest042: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest043
- * @tc.desc: Verify to get battery current value by set charger temp and camare scene in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 3 current 1150
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest043, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest043, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest043: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = -19100;
+    std::string sTemp = to_string(socTemp);
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentlBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest043: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(true);
-    int32_t temp = 43000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest043: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest043: Failed to read file ";
-    }
+    ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest043: current is: " << value;
-    ASSERT_TRUE(value == 1000) << "failed to get current value";
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1150) << "ThermalMgrPolicyTest043 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest043: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest044
- * @tc.desc: Verify to get gear value by set charger temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get brightness configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 1 brightness 188
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest044: Failed to get ThermalService";
-    }
-    int32_t temp = 43000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest044: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest044: level is: " << value;
-    ASSERT_TRUE(value == 2) << "failed to Get level value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest044: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp);
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH]= {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 188) << "ThermalMgrPolicyTest044 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest044: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest045
- * @tc.desc: Verify to get gear value by set charger temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get brightness configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 2 brightness 155
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest045: Failed to get ThermalService";
-    }
-    int32_t temp = 40500;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest045: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest045: level is: " << value;
-    ASSERT_TRUE(value == 1) << "failed to Get level value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest045: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 42100;
+    std::string sTemp = to_string(socTemp);
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 155) << "ThermalMgrPolicyTest045 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest045: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest046
- * @tc.desc: Verify to get gear value by set charger temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get brightness configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 3 brightness 120
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest046: Failed to get ThermalService";
-    }
-    int32_t temp = 48500;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest046: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LEVEL_NOTIFY);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest046: level is: " << value;
-    ASSERT_TRUE(value == 3) << "failed to get level value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest046: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp);
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 120) << "ThermalMgrPolicyTest046 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest046: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest047
- * @tc.desc: Verify to get process_ctrl value by set charger temp in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 1 brightness 130
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest047: Failed to get ThermalService";
-    }
-    int32_t temp = 40600;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest047: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::ThERMAL_FLAG_CLEAR_BG_CONTROL);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest047: current is: " << value;
-    ASSERT_TRUE(value == 3) << "failed to Get process action value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest047: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 41000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 130) << "ThermalMgrPolicyTest047 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest047: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest048
- * @tc.desc: Verify to get process_ctrl value by set charger temp in level 2 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 2 brightness 100
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest048: Failed to get ThermalService";
-    }
-    int32_t temp = 43000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest048: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::ThERMAL_FLAG_CLEAR_BG_CONTROL);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest048: current is: " << value;
-    ASSERT_TRUE(value == 2) << "failed to Get process action value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest047: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 44000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 100) << "ThermalMgrPolicyTest048 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest048: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest049
- * @tc.desc: Verify to get process_ctrl value by set charger temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: get process and shutdown value
+ * @tc.type: FEATURE
+ * @tc.cond: Set AP temp, High Temp With Aux sensor
+ * @tc.result level 1, process 3, shutdown 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest049: Failed to get ThermalService";
-    }
-    int32_t temp = 48400;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest049: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::ThERMAL_FLAG_CLEAR_BG_CONTROL);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest049: current is: " << value;
-    ASSERT_TRUE(value == 1) << "failed to Get process action value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest049: start.";
+    int32_t ret = -1;
+    char apTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    char shellTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t apTemp = 78000;
+    std::string sTemp = to_string(apTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(apTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 1000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t shellTemp = 3000;
+    sTemp = to_string(shellTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest049 failed";
+
+    char shutdownBuf[MAX_PATH] = {0};
+    char shutdownValue[MAX_PATH] = {0};
+    ret = snprintf_s(shutdownBuf, PATH_MAX, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(shutdownBuf, shutdownValue, sizeof(shutdownValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string shutdown = shutdownValue;
+    value = ThermalMgrPolicyTest::ConvertInt(shutdown);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest049 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest049: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest050
- * @tc.desc: Verify to get battery current value by set charger temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get process value by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 1 procss 3
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest050, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest050, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest050: Failed to get ThermalService";
-    }
-    int32_t temp = 48200;
-    tms->GetStateMachine()->SetSceneState(false);
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest050: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest050: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest050: current is: " << value;
-    ASSERT_TRUE(value == 1300) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest044: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 40100;
+    std::string sTemp = to_string(socTemp);
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest050 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest050: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest051
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get process value by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 2 procss 2
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest051, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest051, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest051: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 43100;
+    std::string sTemp = to_string(socTemp);
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest051: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(false);
-    int32_t temp = 48300;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest051: Failed to write file ";
-    }
+    sleep(WAIT_TIME * 10);
 
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest051: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest051: freq is: " << value;
-    ASSERT_TRUE(value == 80000) << "failed to get freq value";
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest051 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest051: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest052
- * @tc.desc: Verify to get battery current value by set charger temp and camare scene in level 1 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get process value by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set SOC temp, Lower Temp
+ * @tc.result level 3 procss 1
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest052, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest052, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest052: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(true);
-    int32_t temp = 40200;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest052: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest052: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest052: current is: " << value;
-    ASSERT_TRUE(value == 1200) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest052: start.";
+    int32_t ret = -1;
+    char socTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t socTemp = 44100;
+    std::string sTemp = to_string(socTemp);
+    ret = ThermalMgrPolicyTest::WriteFile(socTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest052 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest052: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest053
- * @tc.desc: Verify to get battery current value by set charger temp and camare scene in level 3 of base safe mode.
- * @tc.type: FUNC
+ * @tc.desc: test get process by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 1 process 2
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest053, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest053, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char currentBuf[MAX_PATH] = {0};
-    char currentValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest053: Failed to get ThermalService";
-    }
-    tms->GetStateMachine()->SetSceneState(true);
-    int32_t temp = 47000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(currentBuf, PATH_MAX, sizeof(tempBuf) - 1, batteryCurrentPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest053: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    ret = ReadFile(currentBuf, currentValue, sizeof(currentValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest053: Failed to read file ";
-    }
-    std::string current = currentValue;
-    value = ConvertInt(current);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest053: current is: " << value;
-    ASSERT_TRUE(value == 800) << "failed to get current value";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest053: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 41000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest053 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest053: end.";
 }
 
 /**
  * @tc.name: ThermalMgrPolicyTest054
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 1 of base safe mode.
- * @tc.cond: scene-cam, state- enable charge
- * @tc.type: FUNC
+ * @tc.desc: test get process by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 2 process 3
  */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest054, TestSize.Level2)
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest054, Function|MediumTest|Level2)
 {
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest054: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(1);
-    int32_t temp = 40000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest054: Failed to write file ";
-    }
+    int32_t paTemp = 44000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest054: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest054: freq is: " << value;
-    ASSERT_TRUE(value == 80000) << "failed to get freq value";
-}
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-/**
- * @tc.name: ThermalMgrPolicyTest055
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 1 of base safe mode.
- * @tc.cond: scene-cam, state- disable charge
- * @tc.type: FUNC
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest055, TestSize.Level2)
-{
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(0);
-    int32_t temp = 40500;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest055: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest055: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest055: freq is: " << value;
-    ASSERT_TRUE(value == 90000) << "failed to get freq value";
-}
-
-/**
- * @tc.name: ThermalMgrPolicyTest056
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 2 of base safe mode.
- * @tc.cond: scene-cam, state- enable charge
- * @tc.type: FUNC
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest056, TestSize.Level2)
-{
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(1);
-    int32_t temp = 43500;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest056: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest056: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest056: freq is: " << value;
-    ASSERT_TRUE(value == 70000) << "failed to get freq value";
-}
-
-/**
- * @tc.name: ThermalMgrPolicyTest057
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 2 of base safe mode.
- * @tc.cond: scene-cam, state- disable charge
- * @tc.type: FUNC
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest057, TestSize.Level2)
-{
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(0);
-    int32_t temp = 43000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest057: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest057: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest057: freq is: " << value;
-    ASSERT_TRUE(value == 80000) << "failed to get freq value";
-}
-
-/**
- * @tc.name: ThermalMgrPolicyTest058
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 3 of base safe mode.
- * @tc.cond: scene-cam, state- enable charge
- * @tc.type: FUNC
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest058, TestSize.Level2)
-{
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(1);
-    int32_t temp = 48000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest058: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest058: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest058: freq is: " << value;
-    ASSERT_TRUE(value == 60000) << "failed to get freq value";
-}
-
-/**
- * @tc.name: ThermalMgrPolicyTest059
- * @tc.desc: Verify to get cpu freq value by set charger temp in level 3 of base safe mode.
- * @tc.cond: scene-cam, state- disable charge
- * @tc.type: FUNC
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest059, TestSize.Level2)
-{
-    char tempBuf[MAX_PATH] = {0};
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-    sptr<ThermalService> service = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (service == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrMock002: Failed to get ThermalService";
-    }
-    service->GetStateMachine()->SetSceneState(true);
-    service->GetStateMachine()->SetStateFlag(false);
-    service->GetStateMachine()->SetState(0);
-    int32_t temp = 49000;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest059: Failed to write file ";
-    }
-
-    sleep(WAIT_TIME);
-    ret = ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest059: Failed to read file ";
-    }
-    std::string freq = freqValue;
-    value = ConvertInt(freq);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest059: freq is: " << value;
-    ASSERT_TRUE(value == 70000) << "failed to get freq value";
-}
-
-/**
- * @tc.name: ThermalMgrPolicyTest060
- * @tc.desc: Verify to get lcd brightness value by set charger temp in level 1 of base safe mode.
- * @tc.type: FUNC
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest060, TestSize.Level2)
-{
-    char tempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest060: Failed to get ThermalService";
-    }
-    int32_t temp = 40100;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest060: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest060: brightness is: " << value;
-    ASSERT_TRUE(value == 188) << "failed to get brightness value";
-}
-
-/**
- * @tc.name: ThermalMgrPolicyTest061
- * @tc.desc: Verify to get lcd brightness value by set charger temp in level 2 of base safe mode.
- * @tc.type: FUNC
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest061, TestSize.Level2)
-{
-    char tempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest061: Failed to get ThermalService";
-    }
-    int32_t temp = 43100;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest061: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest061: brightness is: " << value;
-    ASSERT_TRUE(value == 155) << "failed to get brightness value";
-}
-
-/**
- * @tc.name: ThermalMgrPolicyTest062
- * @tc.desc: Verify to get lcd brightness value by set charger temp in level 3 of base safe mode.
- * @tc.type: FUNC
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest062, TestSize.Level2)
-{
-    char tempBuf[MAX_PATH] = {0};
-    int32_t ret = -1, value = 0;
-
-    sptr<ThermalService> tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest062: Failed to get ThermalService";
-    }
-    int32_t temp = 48100;
-    std::string sTemp = to_string(temp) + "\n";
-    snprintf_s(tempBuf, PATH_MAX, sizeof(tempBuf) - 1, chargerPath.c_str());
-    ret = WriteFile(tempBuf, sTemp, sTemp.length());
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrPolicyTest062: Failed to write file ";
-    }
-    sleep(WAIT_TIME);
-    value = tms->GetThermalAction()->GetPolicyActionValue(ThermalAction::THERMAL_FLAG_LCD_BL_LIMIT);
-    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest062: brightness is: " << value;
-    ASSERT_TRUE(value == 120) << "failed to get brightness value";
+    sleep(WAIT_TIME * 10);
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrPolicyTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest054 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrPolicyTest054: end.";
 }
 }

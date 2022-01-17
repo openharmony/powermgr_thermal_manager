@@ -158,12 +158,5 @@ ThermalLevel ThermalMgrClient::GetThermalLevel()
     GetLevel(level);
     return level;
 }
-
-void ThermalMgrClient::SetSensorTemp(const std::string &type, const int32_t &temp)
-{
-    THERMAL_HILOGD(MODULE_THERMAL_INNERKIT, "%{public}s enter", __func__);
-    THERMAL_RETURN_IF(Connect() != ERR_OK);
-    thermalSrv_->SetSensorTemp(type, temp);
-}
 } // namespace PowerMgr
 } // namespace OHOS

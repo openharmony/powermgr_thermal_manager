@@ -16,13 +16,17 @@
 #include "action_display.h"
 
 #include "display_power_mgr_client.h"
+#include "file_operation.h"
 #include "thermal_service.h"
+#include "securec.h"
 
 using namespace OHOS::DisplayPowerMgr;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+const std::string lcdPath = "/data/thermal/config/lcd";
+const int MAX_PATH = 256;
 }
 bool ActionDisplay::InitParams(const std::string &params)
 {
@@ -82,6 +86,17 @@ uint32_t ActionDisplay::DisplayRequest(uint32_t brightness)
 uint32_t ActionDisplay::DisplayExecution(uint32_t brightness)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start to set brightness", __func__);
+    int32_t ret = -1;
+    char lcdBuf[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    if (ret < ERR_OK) {
+        return ret;
+    }
+    std::string valueString = std::to_string(brightness) + "\n";
+    ret = FileOperation::WriteFile(lcdBuf, valueString, valueString.length());
+    if (ret != ERR_OK) {
+        return ret;
+    }
     return ERR_OK;
 }
 } // namespace PowerMgr

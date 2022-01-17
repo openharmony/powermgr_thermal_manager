@@ -35,22 +35,6 @@ void ThermalsrvEventHandler::ProcessEvent([[maybe_unused]] const AppExecFwk::Inn
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ProcessEvent::%{public}s, eventid = %{public}d", __func__,
         event->GetInnerEventId());
     tmsptr->HandleEvent(event->GetInnerEventId());
-    switch (event->GetInnerEventId()) {
-        case SEND_POPUP_MSG: {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "when temp is too lower, popup waring");
-            auto actionMgr = tmsptr->GetActionManagerObj();
-            if (actionMgr == nullptr) {
-                return;
-            }
-            bool ret = actionMgr->GetActionPopup()->ShowDialogAction();
-            if (ret) {
-                THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "popup action success");
-            }
-            break;
-        }
-        default:
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ProcessEvent::no event id matched.");
-    }
 }
 } // namespace PowerMgr
 } // namespace OHOS

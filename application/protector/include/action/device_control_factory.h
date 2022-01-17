@@ -24,12 +24,7 @@ class DeviceControlFactory {
 public:
     DeviceControlFactory() = default;
     ~DeviceControlFactory() = default;
-    enum {
-        MODE_CPU = 0,
-        MODE_CURRENT = 1,
-        MODE_VOLTAGE = 2,
-    };
-    static std::shared_ptr<IThermalAction> Create(uint32_t mode);
+    static std::shared_ptr<IThermalAction> Create(const std::string &name);
 };
 } // namespace PowerMgr
 } // namespace OHOS
