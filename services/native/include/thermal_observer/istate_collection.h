@@ -29,7 +29,7 @@ public:
     virtual std::string GetState() = 0;
     virtual bool DecideState(const std::string &value);
     /* Test */
-    virtual void SetState(const std::string &state) = 0;
+    virtual void SetState() = 0;
 };
 }
 }

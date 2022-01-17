@@ -12,21 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef THERMAL_SERVICE_TEST_H
-#define THERMAL_SERVICE_TEST_H
 
-#include <gtest/gtest.h>
+#ifndef FILE_OPERATION_H
+#define FILE_OPERATION_H
+
+#include <string>
+#include <vector>
 
 namespace OHOS {
 namespace PowerMgr {
-const uint32_t WAIT_TIME = 10;
-class ThermalServiceTest : public testing::Test {
+class FileOperation {
 public:
-    static void SetUpTestCase(void);
-    static void TearDownTestCase(void);
-    void SetUp();
-    void TearDown();
+    static int32_t CreateNodeDir(std::string dir);
+    static int32_t CreateNodeFile(std::string filePath);
+    static int32_t WriteFile(std::string path, std::string buf, size_t size);
+    static int32_t ReadFile(const char *path, char *buf, size_t size);
+    static int32_t ConvertInt(const std::string &value);
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // THERMAL_SERVICE_TEST_H
+#endif // FILE_OPERATION_H

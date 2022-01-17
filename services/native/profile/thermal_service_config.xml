@@ -16,12 +16,8 @@
             <item level="1" threshold="40000" threshold_clr="38000" aux_trigger_range="5000_35000"/>
             <item level="2" threshold="43000" threshold_clr="41000" aux_trigger_range="5000_35000"/>
         </sensor_cluster>
-        <sensor_cluster name="warm_5G" sensor="pa" aux_sensor="ambient">
-            <item level="1" threshold="41000" threshold_clr="39000" aux_trigger_range="35000_900000"/>
-            <item level="2" threshold="44000" threshold_clr="42000" aux_trigger_range="35000_900000"/>
-        </sensor_cluster>
         <sensor_cluster name="warm_safe" sensor="ap,soc" aux_sensor="ambient,shell">
-            <item level="1" threshold="75000,30000" threshold_clr="71000,28000" aux_trigger_range="0_900000,47000_900000"/>
+            <item level="1" threshold="75000,30000" threshold_clr="71000,28000" aux_trigger_range="0_900000,0_40000"/>
         </sensor_cluster>
         <sensor_cluster name="high_safe" sensor="shell">
             <item level="1" threshold="40000" threshold_clr="38000" temp_rise_rate="1.5"/>
@@ -29,11 +25,11 @@
             <item level="3" threshold="46000" threshold_clr="44000" temp_rise_rate="1.5"/>
             <item level="4" threshold="48000" threshold_clr="47000" temp_rise_rate="1.5"/>
         </sensor_cluster>
-        <sensor_cluster name="cold_safe" sensor="battery" desc="1">
-            <item level="1" threshold="-9000" threshold_clr="-6000"/>
-            <item level="2" threshold="-14000" threshold_clr="-11000"/>
-            <item level="3" threshold="-19000" threshold_clr="-16000"/>
-            <item level="4" threshold="-21000" threshold_clr="-20000"/>
+        <sensor_cluster name="cold_safe" sensor="battery,soc" desc="1">
+            <item level="1" threshold="-9000,-8000" threshold_clr="-6000,-5000"/>
+            <item level="2" threshold="-14000,-13000" threshold_clr="-11000,-10000"/>
+            <item level="3" threshold="-19000,-18000" threshold_clr="-16000,-15000"/>
+            <item level="4" threshold="-21000,-20000" threshold_clr="-20000,-19000"/>
         </sensor_cluster>
     </level>
 
@@ -62,7 +58,7 @@
             <cpu scene="cam" charge="0">90000</cpu>
             <gpu screen="0">60000</gpu>
             <gpu screen="1">50000</gpu>
-            <thermallevel>4</thermallevel>
+            <thermallevel>1</thermallevel>
             <current>1800</current>
             <current scene="cam,call">1200</current>
         </config>
@@ -75,8 +71,8 @@
             <gpu screen="0">50000</gpu>
             <gpu screen="1">40000</gpu>
             <current>1500</current>
-            <thermallevel>5</thermallevel>
-            <current scene="cam">1000</current>
+            <thermallevel>2</thermallevel>
+            <current scene="cam,call">1000</current>
         </config>
         <config name="base_safe" level="3">
             <lcd>120</lcd>
@@ -87,24 +83,24 @@
             <gpu screen="0">40000</gpu>
             <gpu screen="1">30000</gpu>
             <current>1300</current>
-            <current scene="cam">800</current>
-            <thermallevel>6</thermallevel>
+            <current scene="cam,call">800</current>
+            <thermallevel>3</thermallevel>
             <shut_down>1</shut_down>
         </config>
         <config name="warm_5G" level="1">
             <lcd>130</lcd>
-            <thermallevel>2</thermallevel>
+            <thermallevel>4</thermallevel>
             <process_ctrl>2</process_ctrl>
         </config>
         <config name="warm_5G" level="2">
             <lcd>100</lcd>
             <process_ctrl>3</process_ctrl>
-            <thermallevel>3</thermallevel>
+            <thermallevel>5</thermallevel>
         </config>
         <config name="warm_safe" level="1">
             <process_ctrl screen="1">3</process_ctrl>
             <shut_down screen="1">1</shut_down>
-            <thermallevel>1</thermallevel>
+            <thermallevel>6</thermallevel>
         </config>
         <config name="cold_safe" level="1">
             <current>1850</current>

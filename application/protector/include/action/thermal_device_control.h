@@ -24,11 +24,6 @@
 
 namespace OHOS {
 namespace PowerMgr {
-namespace {
-const std::string CPU_ACTION = "cpu";
-const std::string CURRENT_ACTION = "current";
-const std::string VOLTAGE_ACTION = "voltage";
-}
 class ThermalDeviceControl {
 public:
     using ThermalActionMap = std::map<std::string, std::shared_ptr<IThermalAction>>;
@@ -42,7 +37,7 @@ public:
     }
 private:
     ThermalActionMap thermalActionMap_;
-    std::shared_ptr<IThermalAction> cpuAction_, currentAction_, voltageAction_;
+    std::shared_ptr<IThermalAction> thermalAction_;;
 };
 } // namespace PowerMgr
 } // namespace OHOs

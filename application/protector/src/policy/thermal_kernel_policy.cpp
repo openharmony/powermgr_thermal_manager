@@ -142,6 +142,11 @@ void ThermalKernelPolicy::SetLevelAction(std::vector<LevelAction> &levelAction)
     levelAction_ = levelAction;
 }
 
+std::vector<LevelAction> ThermalKernelPolicy::GetLevelAction()
+{
+    return levelAction_;
+}
+
 void ThermalKernelPolicy::Dump()
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);

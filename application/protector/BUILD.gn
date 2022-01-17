@@ -1,0 +1,86 @@
+# Copyright (C) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//base/powermgr/thermal_manager/thermalmgr.gni")
+import("//build/ohos.gni")
+
+config("thermal_protector_private_config") {
+  include_dirs = [
+    "//utils/native/base/include/",
+    "//drivers/framework/include/",
+    "//drivers/peripheral/thermal/interfaces/hdi_service/include",
+    "//drivers/peripheral/thermal/interfaces",
+    "//drivers/peripheral/thermal/interfaces/include/",
+  ]
+}
+
+config("thermal_protector_public_config") {
+  include_dirs = [
+    "include",
+    "include/policy",
+    "include/action",
+  ]
+}
+
+ohos_executable("thermal_protector") {
+  sources = [
+    "//drivers/peripheral/thermal/interfaces/hdi_service/src/thermal_device_mitigation.cpp",
+    "//drivers/peripheral/thermal/interfaces/hdi_service/src/thermal_simulation_node.cpp",
+    "//drivers/peripheral/thermal/interfaces/hdi_service/src/thermal_zone_manager.cpp",
+    "src/action/cpu_action.cpp",
+    "src/action/current_action.cpp",
+    "src/action/device_control_factory.cpp",
+    "src/action/thermal_device_control.cpp",
+    "src/action/voltage_action.cpp",
+    "src/main.cpp",
+    "src/policy/protector_thermal_zone_info.cpp",
+    "src/policy/thermal_kernel_config_file.cpp",
+    "src/policy/thermal_kernel_policy.cpp",
+    "src/thermal_kernel_service.cpp",
+    "src/thermal_sensor_provider.cpp",
+  ]
+
+  public_configs = [ ":thermal_protector_public_config" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":thermal_protector_private_config",
+  ]
+
+  include_dirs = [ "//third_party/libxml2/include" ]
+
+  deps = [
+    "//drivers/adapter/uhdf2/host:libhdf_host",
+    "//drivers/adapter/uhdf2/ipc:libhdf_ipc_adapter",
+    "//drivers/adapter/uhdf2/utils:libhdf_utils",
+    "//drivers/peripheral/thermal/interfaces/hdi_service:libthermal_interface_service",
+    "//third_party/libxml2:xml2",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+
+  install_enable = true
+  part_name = "thermal_manager_native"
+  subsystem_name = "powermgr"
+}
+
+group("thermal_protector_group") {
+  deps = [
+    ":thermal_protector",
+    "profile:thermal_kernel_config",
+  ]
+}

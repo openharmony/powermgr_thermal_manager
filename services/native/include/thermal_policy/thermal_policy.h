@@ -19,6 +19,7 @@
 #include <thread>
 #include <condition_variable>
 #include <mutex>
+#include <list>
 #include <vector>
 #include <map>
 #include <memory>
@@ -62,6 +63,7 @@ public:
     bool ActionFallbackDecision();
     bool ActionExecution();
     void SortLevel();
+    void WriteLevel();
 public:
     /* Test */
     std::map<std::string, uint32_t> GetClusterLevelMap();

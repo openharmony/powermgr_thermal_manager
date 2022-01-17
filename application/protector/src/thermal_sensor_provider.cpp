@@ -71,21 +71,21 @@ void ThermalSensorProvider::GetThermalSensorInfo()
             return;
         }
     }
-    info_ = GetlTzInfo();
+    tzInfoList_ = GetTzInfoList();
 
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s size = %{public}d", __func__, info_.size());
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s size = %{public}d", __func__, tzInfoList_.size());
 
     for (auto type : intervalMap_) {
         THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s configType = %{public}s", __func__, type.first.c_str());
     }
 
-    for (auto iter = info_.begin(); iter != info_.end(); iter++) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "type = %{public}s", iter->GetType().c_str());
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "temp = %{public}d", iter->GetTemp());
+    for (auto iter = tzInfoList_.begin(); iter != tzInfoList_.end(); iter++) {
+        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "type = %{public}s", iter->type.c_str());
+        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "temp = %{public}d", iter->temp);
         for (auto intervalIter = intervalMap_.begin(); intervalIter != intervalMap_.end(); intervalIter++) {
-            if (iter->GetType().find(intervalIter->first) != std::string::npos) {
+            if (iter->type.find(intervalIter->first) != std::string::npos) {
                 THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s success to find type", __func__);
-                typeTempMap_.emplace(std::pair(intervalIter->first, iter->GetTemp()));
+                typeTempMap_.insert(std::make_pair(intervalIter->first, iter->temp));
             }
         }
     }
