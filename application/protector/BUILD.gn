@@ -63,7 +63,7 @@ ohos_executable("thermal_protector") {
     "//drivers/adapter/uhdf2/host:libhdf_host",
     "//drivers/adapter/uhdf2/ipc:libhdf_ipc_adapter",
     "//drivers/adapter/uhdf2/utils:libhdf_utils",
-    "//drivers/peripheral/thermal/interfaces/hdi_service:libthermal_interface_service",
+    "//drivers/peripheral/thermal/interfaces/hdi_service:libthermal_interface_service_1.0",
     "//third_party/libxml2:xml2",
     "//utils/native/base:utils",
   ]
