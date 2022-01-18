@@ -54,7 +54,7 @@ public:
     void SetThermalZoneMap(ThermalZoneMap &tzInfoMap);
     void SetLevelAction(std::vector<LevelAction> &levelAction);
     void Dump();
-    
+    std::vector<LevelAction> GetLevelAction();
 private:
     struct classcomp {
         bool operator()(const std::shared_ptr<IThermalAction> &l, const std::shared_ptr<IThermalAction> &r) const

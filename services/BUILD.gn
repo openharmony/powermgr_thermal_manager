@@ -1,0 +1,137 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//base/powermgr/display_manager/displaymgr.gni")
+import("//base/powermgr/thermal_manager/thermalmgr.gni")
+import("//build/ohos.gni")
+import("//foundation/appexecfwk/standard/appexecfwk.gni")
+
+config("thermalsrv_private_config") {
+  include_dirs = [
+    "//utils/system/safwk/native/include",
+    "//third_party/libxml2/include",
+    "${appexecfwk_path}/services/appmgr/include/",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/appmgr/",
+    "//base/startup/appspawn_standard/include/",
+    "//foundation/aafwk/standard/services/abilitymgr/include/",
+    "//base/powermgr/power_manager/services/native/include",
+    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
+    "//base/powermgr/power_manager/utils/native/include",
+    "//base/powermgr/power_manager/services/native/src/actions/default",
+    "${displaymgr_native_innerkits_path}/native/src",
+    "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
+    "//base/miscservices/time/interfaces/innerkits/include",
+    "//drivers/peripheral/thermal/interfaces",
+    "//drivers/peripheral/thermal/interfaces/include/",
+  ]
+}
+
+config("thermalsrv_public_config") {
+  include_dirs = [
+    "native/include/",
+    "native/include/thermal_action",
+    "native/include/thermal_observer",
+    "native/include/thermal_policy",
+    "native/include/thermal_observer/state_machine",
+    "native/include/thermal_action/action",
+    "${thermal_manager_path}/services/zidl/include",
+    "//base/startup/syspara_lite/adapter/native/syspara/include",
+  ]
+}
+
+ohos_shared_library("thermalservice") {
+  sources = [
+    "${thermal_manager_path}/services/zidl/src/thermal_level_callback_stub.cpp",
+    "${thermal_manager_path}/services/zidl/src/thermal_srv_stub.cpp",
+    "${thermal_manager_path}/services/zidl/src/thermal_temp_callback_stub.cpp",
+    "native/src/thermal_action/action/action_application_process.cpp",
+    "native/src/thermal_action/action/action_charger.cpp",
+    "native/src/thermal_action/action/action_cpu.cpp",
+    "native/src/thermal_action/action/action_display.cpp",
+    "native/src/thermal_action/action/action_gpu.cpp",
+    "native/src/thermal_action/action/action_shutdown.cpp",
+    "native/src/thermal_action/action/action_thermal_level.cpp",
+
+    #"native/src/thermal_action/action_popup.cpp",
+    "native/src/thermal_action/thermal_action_factory.cpp",
+    "native/src/thermal_action/thermal_action_manager.cpp",
+    "native/src/thermal_action/thermal_timer.cpp",
+    "native/src/thermal_observer/state_machine/charger_state_collection.cpp",
+    "native/src/thermal_observer/state_machine/scene_state_collection.cpp",
+    "native/src/thermal_observer/state_machine/screen_state_collection.cpp",
+    "native/src/thermal_observer/state_machine/state_collection_factory.cpp",
+    "native/src/thermal_observer/state_machine/state_machine.cpp",
+    "native/src/thermal_observer/thermal_common_event_receiver.cpp",
+    "native/src/thermal_observer/thermal_observer.cpp",
+    "native/src/thermal_observer/thermal_sensor_info.cpp",
+    "native/src/thermal_observer/thermal_service_subscriber.cpp",
+    "native/src/thermal_policy/thermal_config_base_info.cpp",
+    "native/src/thermal_policy/thermal_config_sensor_cluster.cpp",
+    "native/src/thermal_policy/thermal_policy.cpp",
+    "native/src/thermal_policy/thermal_srv_config_parser.cpp",
+    "native/src/thermal_service.cpp",
+    "native/src/thermalsrv_event_handler.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":thermalsrv_private_config",
+  ]
+
+  public_configs = [ ":thermalsrv_public_config" ]
+
+  deps = [
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
+    "${appexecfwk_path}/services/appmgr:libams",
+    "${displaymgr_native_innerkits_path}:displaymgr",
+    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "${utils_path}:thermal_utils",
+    "//base/miscservices/time/services:time_service",
+    "//base/notification/ans_standard/frameworks/wantagent:wantagent_innerkits",
+    "//base/powermgr/battery_manager/interfaces/innerkits:batterysrv_client",
+    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
+    "//base/powermgr/power_manager/services:powermgrservice",
+    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
+    "//drivers/peripheral/display/hal:hdi_display_device",
+    "//drivers/peripheral/thermal/interfaces/hdi/thermal/v1_0:libthermal_proxy_1.0",
+    "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
+    "//foundation/graphic/standard:libwmclient",
+    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+    "//third_party/libxml2:xml2",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "aafwk_standard:base",
+    "aafwk_standard:want",
+    "appexecfwk_standard:appexecfwk_base",
+    "appexecfwk_standard:libeventhandler",
+    "appspawn:appspawn_socket_client",
+    "ces_standard:cesfwk_innerkits",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+  ]
+
+  part_name = "thermal_manager_native"
+}
+
+group("thermalmgr_service") {
+  deps = [
+    ":thermalservice",
+    "native/profile:thermal_service_config",
+  ]
+}

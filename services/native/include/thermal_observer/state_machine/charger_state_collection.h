@@ -58,7 +58,7 @@ public:
     void HandleChangerStatusCompleted(const EventFwk::CommonEventData &data);
     bool RegisterEvent();
 public:
-    virtual void SetState(const std::string &state) override;
+    virtual void SetState() override;
 private:
     std::string state_;
     std::string params_;

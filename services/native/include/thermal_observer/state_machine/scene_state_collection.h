@@ -34,7 +34,7 @@ public:
     std::string GetState() override;
     void SceneDecision(uint32_t mode);
     void SetRandomScene();
-    virtual void SetState(const std::string &state) override;
+    virtual void SetState() override;
     virtual bool DecideState(const std::string &value) override;
 public:
     SceneStateCollection() = default;

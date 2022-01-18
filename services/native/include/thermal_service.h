@@ -21,7 +21,6 @@
 #include "system_ability.h"
 #include "iremote_object.h"
 
-#include "thermal_client.h"
 #include "thermal_srv_stub.h"
 #include "ithermal_level_callback.h"
 #include "ithermal_temp_callback.h"
@@ -37,10 +36,14 @@
 #include "thermal_action_manager.h"
 #include "thermal_config_base_info.h"
 #include "thermal_config_sensor_cluster.h"
+#include "thermal_callback_service.h"
+#include "thermal_types.h"
+#include "thermal_interface_proxy.h"
 
 namespace OHOS {
 namespace PowerMgr {
 using TypeTempMap = std::map<std::string, int32_t>;
+using namespace hdi::thermal::v1_0;
 class ThermalService final : public SystemAbility, public ThermalSrvStub {
     DECLARE_SYSTEM_ABILITY(ThermalService);
     DECLARE_DELAYED_SP_SINGLETON(ThermalService);
@@ -55,12 +58,11 @@ public:
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback) override;
     bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) override;
     void GetThermalLevel(ThermalLevel& level) override;
-    void SetSensorTemp(const std::string &type, const int32_t &temp) override;
-    bool SetHdiFlag(bool flag);
 
     void HandleEvent(int event);
     void SendEvent(int32_t event, int64_t param, int64_t delayTime);
     void RemoveEvent(int32_t event);
+    int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
 
     void SetFlag(bool flag)
     {
@@ -117,6 +119,10 @@ public:
     {
         return cluster_;
     }
+    sptr<IThermalInterface> GetThermalInterface() const
+    {
+        return thermalInterface_;
+    }
 private:
     bool Init();
     bool InitThermalDriver();
@@ -139,9 +145,9 @@ private:
     std::shared_ptr<ThermalConfigBaseInfo> baseInfo_ {nullptr};
     std::shared_ptr<StateMachine> state_ {nullptr};
     std::shared_ptr<ThermalActionManager> actionMgr_ {nullptr};
-    std::shared_ptr<ActionPopup> popup_ {nullptr};
     std::shared_ptr<ThermalConfigSensorCluster> cluster_ {nullptr};
     bool flag_ {false};
+    sptr<IThermalInterface> thermalInterface_ {nullptr};
 };
 } // namespace PowerMgr
 } // namespace OHOS

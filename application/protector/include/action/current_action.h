@@ -16,12 +16,12 @@
 #define CURRENT_ACTION_H
 
 #include "ithermal_action.h"
-#include "device_request_mitigation.h"
+#include "thermal_device_mitigation.h"
 
 namespace OHOS {
 namespace PowerMgr {
-using namespace OHOS::HDI::THERMAL::V1_0;
-class CurrentAction : public IThermalAction, public DeviceRequestMitigation {
+using namespace hdi::thermal::v1_0;
+class CurrentAction : public IThermalAction, public ThermalDeviceMitigation {
 public:
     CurrentAction() = default;
     virtual ~CurrentAction() = default;

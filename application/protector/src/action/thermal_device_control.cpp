@@ -16,37 +16,34 @@
 #include "thermal_device_control.h"
 #include "thermal_common.h"
 #include "device_control_factory.h"
+#include "thermal_kernel_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+auto &service = ThermalKernelService::GetInsance();
+}
 bool ThermalDeviceControl::Init()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    if (CreateInstance()) {
-        thermalActionMap_.emplace(std::pair(CPU_ACTION, cpuAction_));
-        thermalActionMap_.emplace(std::pair(CURRENT_ACTION, currentAction_));
-        thermalActionMap_.emplace(std::pair(VOLTAGE_ACTION, voltageAction_));
+    std::string preName;
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    auto policy = service.GetPolicy();
+    if (policy == nullptr) {
+        return false;
     }
-    return true;
-}
 
-bool ThermalDeviceControl::CreateInstance()
-{
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    cpuAction_ = DeviceControlFactory::Create(DeviceControlFactory::MODE_CPU);
-    if (!cpuAction_) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to create");
+    auto actionList = policy->GetLevelAction();
+    if (actionList.empty()) {
         return false;
     }
-    currentAction_ = DeviceControlFactory::Create(DeviceControlFactory::MODE_CURRENT);
-    if (!currentAction_) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to create");
-        return false;
-    }
-    voltageAction_ = DeviceControlFactory::Create(DeviceControlFactory::MODE_VOLTAGE);
-    if (!voltageAction_) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to create");
-        return false;
+
+    for (auto level : actionList) {
+        for (auto action : level.vAction) {
+            if (preName != action.name) {
+                thermalActionMap_.insert(std::make_pair(action.name, DeviceControlFactory::Create(action.name)));
+                preName = action.name;
+            }
+        }
     }
     return true;
 }

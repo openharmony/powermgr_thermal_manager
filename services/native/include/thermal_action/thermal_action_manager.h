@@ -23,7 +23,6 @@
 
 #include "ithermal_action.h"
 #include "action_thermal_level.h"
-#include "action_popup.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -52,15 +51,12 @@ public:
     {
         return actionThermalLevel_;
     }
-    std::shared_ptr<ActionPopup> GetActionPopup()
-    {
-        return popup_;
-    }
+
+    int32_t CreateActionMockFile();
 private:
     ThermalActionMap actionMap_;
     std::vector<std::string> actionNameList_;
     std::shared_ptr<ActionThermalLevel> actionThermalLevel_;
-    std::shared_ptr<ActionPopup> popup_;
     std::vector<ActionItem> vActionItem_;
 };
 } // namespace PowerMgr

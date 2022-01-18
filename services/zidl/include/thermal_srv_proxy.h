@@ -36,7 +36,6 @@ public:
     virtual void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
     virtual bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) override;
     virtual void GetThermalLevel(ThermalLevel& level) override;
-    virtual void SetSensorTemp(const std::string &type, const int32_t &temp) override;
 private:
     static inline BrokerDelegator<ThermalSrvProxy> delegator_;
 };

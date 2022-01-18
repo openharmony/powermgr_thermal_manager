@@ -36,24 +36,64 @@ using namespace std;
 static sptr<ThermalService> service;
 static std::mutex g_mtx;
 
-void ThermalMgrSystemTest::SetUpTestCase(void)
+using namespace OHOS::HiviewDFX;
+
+static constexpr HiLogLabel LABEL = {LOG_CORE, 0, "ThermalMST"};
+
+
+static bool StartThermalProtector()
 {
-    service = DelayedSpSingleton<ThermalService>::GetInstance();
-    service->OnStart();
+    GTEST_LOG_(INFO) << "enter";
+    FILE *fp = nullptr;
+    fp = popen("/system/bin/thermal_protector&", "r");
+    if (fp == nullptr) {
+        HiLog::Error(LABEL, "popen function call failed.");
+        return false;
+    }
+
+    pclose(fp);
+
+    return true;
+    GTEST_LOG_(INFO) << "return";
 }
 
-void ThermalMgrSystemTest::TearDownTestCase(void)
+static bool StopThermalProtector()
 {
-    service->OnStop();
-    DelayedSpSingleton<ThermalService>::DestroyInstance();
+    GTEST_LOG_(INFO) << "enter";
+    FILE *fp = nullptr;
+    fp = popen("kill -9 $(pidof thermal_protector)", "r");
+    if (fp == nullptr) {
+        HiLog::Error(LABEL, " popen function call failed.");
+        return false;
+    }
+
+    pclose(fp);
+
+    return true;
+    GTEST_LOG_(INFO) << "return";
 }
 
-void ThermalMgrSystemTest::SetUp(void)
+static bool CheckThermalProtectorPID()
 {
-}
+    GTEST_LOG_(INFO) << "enter";
+    FILE *fp = nullptr;
+    fp = popen("pidof thermal_protector", "r");
+    if (fp == nullptr) {
+        HiLog::Error(LABEL, " popen function call failed.");
+        return false;
+    }
+    char pid[BUFFER_SIZE];
+    if (fgets(pid, sizeof(pid), fp) != nullptr) {
+        pclose(fp);
+        return true;
+    }
 
-void ThermalMgrSystemTest::TearDown(void)
-{
+    HiLog::Error(LABEL, "Getting Pid failed.");
+
+    pclose(fp);
+
+    return true;
+    GTEST_LOG_(INFO) << "return";
 }
 
 int32_t ThermalMgrSystemTest::WriteFile(std::string path, std::string buf, size_t size)
@@ -97,6 +137,23 @@ int32_t ThermalMgrSystemTest::ConvertInt(const std::string &value)
     return std::stoi(value);
 }
 
+void ThermalMgrSystemTest::SetUpTestCase(void)
+{
+}
+
+void ThermalMgrSystemTest::TearDownTestCase(void)
+{
+}
+
+void ThermalMgrSystemTest::SetUp(void)
+{
+}
+
+void ThermalMgrSystemTest::TearDown(void)
+{
+}
+
+namespace {
 /**
  * @tc.name: ThermalMgrSystemTest001
  * @tc.desc: test get current configured level by setting temp
@@ -107,21 +164,27 @@ int32_t ThermalMgrSystemTest::ConvertInt(const std::string &value)
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest001: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = 40100;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 1) << "ThermalMgrSystemTest001 failed";
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest001 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest001: end.";
 }
 
@@ -135,21 +198,27 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest002: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = 43100;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 2) << "ThermalMgrSystemTest002 failed";
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest002 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest002: end.";
 }
 
@@ -163,21 +232,27 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest003: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = 46100;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 3) << "ThermalMgrSystemTest003 failed";
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest003 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest003: end.";
 }
 
@@ -190,27 +265,32 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest004: start.";
-    int32_t batteryTemp = 48100 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest003: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 48100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 4) << "ThermalMgrSystemTest004 failed";
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest005 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest004: end.";
 }
 
 /**
- * @tc.name: ThermalMgrSystemTest004
+ * @tc.name: ThermalMgrSystemTest005
  * @tc.desc: test level asc logic by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, High Temp
@@ -219,35 +299,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest005: start.";
-    int32_t batteryTemp = 40100 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    tms->SetSensorTemp(BATTERY, batteryTemp);
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    auto level = *max_element(levelList.begin(), levelList.end());
-    levelList.clear();
-    sleep(WAIT_TIME * 5);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest005 failed";
+ 
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     batteryTemp = 48100;
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME * 10);
-    levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 4) << "ThermalMgrSystemTest005 failed";
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest005 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest005: end.";
 }
 
@@ -261,35 +349,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest006: start.";
-    int32_t batteryTemp = 43100 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    tms->SetSensorTemp(BATTERY, batteryTemp);
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    auto level = *max_element(levelList.begin(), levelList.end());
-    levelList.clear();
-    sleep(WAIT_TIME * 5);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest006 failed";
+ 
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     batteryTemp = 48100;
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME * 10);
-    levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 4) << "ThermalMgrSystemTest006 failed";
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest006 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest006: end.";
 }
 
@@ -303,35 +399,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest007: start.";
-    int32_t batteryTemp = 48200 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 48200;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    tms->SetSensorTemp(BATTERY, batteryTemp);
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    auto level = *max_element(levelList.begin(), levelList.end());
-    levelList.clear();
-    sleep(WAIT_TIME * 5);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest007 failed";
+ 
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     batteryTemp = 40900;
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME * 10);
-    levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 1) << "ThermalMgrSystemTest007 failed";
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest007 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest007: end.";
 }
 
@@ -345,35 +449,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest008: start.";
-    int32_t batteryTemp = 46100 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    tms->SetSensorTemp(BATTERY, batteryTemp);
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    auto level = *max_element(levelList.begin(), levelList.end());
-    levelList.clear();
-    sleep(WAIT_TIME * 5);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest008 failed";
+ 
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     batteryTemp = 37000;
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME * 10);
-    levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 0) << "ThermalMgrSystemTest008 failed";
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest008 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest008: end.";
 }
 
@@ -387,21 +499,26 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest009: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = -10000;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 1) << "ThermalMgrSystemTest009 failed";
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest009 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest009: end.";
 }
 
@@ -415,21 +532,26 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest010: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = -15000;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 2) << "ThermalMgrSystemTest010 failed";
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest010 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest010: end.";
 }
 
@@ -443,21 +565,26 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest011: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = -20100;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 3) << "ThermalMgrSystemTest011 failed";
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest011 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest011: end.";
 }
 
@@ -471,21 +598,26 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest012: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = -22000;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 4) << "ThermalMgrSystemTest012 failed";
+
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest012 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest012: end.";
 }
 
@@ -499,35 +631,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest013: start.";
-    int32_t batteryTemp = -10000 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = -10000;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    tms->SetSensorTemp(BATTERY, batteryTemp);
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    auto level = *max_element(levelList.begin(), levelList.end());
-    levelList.clear();
-    sleep(WAIT_TIME * 5);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest013 failed";
+
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     batteryTemp = -22000;
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME * 10);
-    levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 4) << "ThermalMgrSystemTest013 failed";
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest013 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest013: end.";
 }
 
@@ -541,35 +681,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest014: start.";
-    int32_t batteryTemp = -15000 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = -15000;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    tms->SetSensorTemp(BATTERY, batteryTemp);
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    auto level = *max_element(levelList.begin(), levelList.end());
-    levelList.clear();
-    sleep(WAIT_TIME * 5);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest014 failed";
+
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     batteryTemp = -22000;
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME * 10);
-    levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 4) << "ThermalMgrSystemTest014 failed";
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest014 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest014: end.";
 }
 
@@ -583,35 +731,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest015: start.";
-    int32_t batteryTemp = -22000 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = -22000;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    tms->SetSensorTemp(BATTERY, batteryTemp);
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    auto level = *max_element(levelList.begin(), levelList.end());
-    levelList.clear();
-    sleep(WAIT_TIME * 5);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest015 failed";
+ 
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     batteryTemp = -10000;
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME * 10);
-    levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 1) << "ThermalMgrSystemTest015 failed";
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest015 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest015: end.";
 }
 
@@ -625,36 +781,44 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest016: start.";
-    int32_t batteryTemp = -19100 ;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = -19100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
-    tms->SetSensorTemp(BATTERY, batteryTemp);
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    auto level = *max_element(levelList.begin(), levelList.end());
-    levelList.clear();
-    sleep(WAIT_TIME * 5);
-    batteryTemp = -4000;
-    tms->SetSensorTemp(BATTERY, batteryTemp);
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest016 failed";
+
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    batteryTemp = -10000;
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME * 10);
-    levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
 
-    level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 0) << "ThermalMgrSystemTest008 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest008: end.";
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    level = levelValue;
+    value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest016 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest016: end.";
 }
 
 /**
@@ -667,28 +831,37 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest017: start.";
-    int32_t paTemp = 41000 ;
-    int32_t ambientTemp = 10000;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    tms->SetSensorTemp(PA, paTemp);
-    tms->SetSensorTemp(AMBIENT, ambientTemp);
+    int32_t paTemp = 41000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 1) << "ThermalMgrSystemTest017 failed";
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest017 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest017: end.";
 }
-
 
 /**
  * @tc.name: ThermalMgrSystemTest018
@@ -700,25 +873,35 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest018: start.";
-    int32_t paTemp = 44000;
-    int32_t ambientTemp = 10000;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    tms->SetSensorTemp(PA, paTemp);
-    tms->SetSensorTemp(AMBIENT, ambientTemp);
+    int32_t paTemp = 44000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 2) << "ThermalMgrSystemTest018 failed";
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest018 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest018: end.";
 }
 
@@ -732,25 +915,35 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest019: start.";
-    int32_t paTemp = 44000;
-    int32_t ambientTemp = 1000;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    tms->SetSensorTemp(PA, paTemp);
-    tms->SetSensorTemp(AMBIENT, ambientTemp);
+    int32_t paTemp = 44000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 1000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 0) << "ThermalMgrSystemTest019 failed";
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest019 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest019: end.";
 }
 
@@ -764,27 +957,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest020, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest020: start.";
-    int32_t apTemp = 78000;
-    int32_t ambientTemp = 1000;
-    int32_t shellTemp = 50000;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char apTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    char shellTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    tms->SetSensorTemp(AP, apTemp);
-    tms->SetSensorTemp(AMBIENT, ambientTemp);
-    tms->SetSensorTemp(SHELL, shellTemp);
+    int32_t apTemp = 78000;
+    std::string sTemp = to_string(apTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(apTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 1000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t shellTemp = 50000;
+    sTemp = to_string(shellTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 1) << "ThermalMgrSystemTest020 failed";
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest020 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest020: end.";
 }
 
@@ -798,27 +1007,43 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest020, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest021, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest021: start.";
-    int32_t apTemp = 78000;
-    int32_t ambientTemp = 1000;
-    int32_t shellTemp = 0;
-    std::list<uint32_t> levelList;
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
+    int32_t ret = -1;
+    char apTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    char shellTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
 
-    tms->SetSensorTemp(AP, apTemp);
-    tms->SetSensorTemp(AMBIENT, ambientTemp);
-    tms->SetSensorTemp(SHELL, shellTemp);
+    int32_t apTemp = 78000;
+    std::string sTemp = to_string(apTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(apTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 1000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t shellTemp = 0;
+    sTemp = to_string(shellTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 
     sleep(WAIT_TIME * 10);
-    auto levelMap = tms->GetPolicy()->GetClusterLevelMap();
-    for (auto level : levelMap) {
-        GTEST_LOG_(INFO) << "level is:" << level.second;
-        levelList.push_back(level.second);
-    }
-    auto level = *max_element(levelList.begin(), levelList.end());
-    GTEST_LOG_(INFO) << "level is:" << level;
-    EXPECT_EQ(true, level == 0) << "ThermalMgrSystemTest021 failed";
+    char levelBuf[MAX_PATH] = {0};
+    char levelValue[MAX_PATH] = {0};
+    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string level = levelValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(level);
+    GTEST_LOG_(INFO) << "value is:" << value;
+    EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest021 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest021: end.";
 }
 
@@ -832,25 +1057,26 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest021, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest022: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    sleep(WAIT_TIME * 10);
-    int32_t ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrSystemTest022: Failed to read file ";
-    }
-
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "freq is:" << value;
+    GTEST_LOG_(INFO) << "value:" << value;
     EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest022 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest022: end.";
 }
@@ -866,25 +1092,26 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest023: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    sleep(WAIT_TIME * 10);
-    int32_t ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrSystemTest023: Failed to read file ";
-    }
-
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "freq is:" << value;
+    GTEST_LOG_(INFO) << "value:" << value;
     EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest023 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest023: end.";
 }
@@ -899,25 +1126,26 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest024: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    sleep(WAIT_TIME * 10);
-    int32_t ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrSystemTest024: Failed to read file ";
-    }
-
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "freq is:" << value;
+    GTEST_LOG_(INFO) << "value:" << value;
     EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest024 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest024: end.";
 }
@@ -932,25 +1160,26 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest025: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
     int32_t batteryTemp = 48100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    sleep(WAIT_TIME * 10);
-    int32_t ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrSystemTest025: Failed to read file ";
-    }
-
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "freq is:" << value;
+    GTEST_LOG_(INFO) << "value:" << value;
     EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest025 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest025: end.";
 }
@@ -965,31 +1194,32 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest026: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
     int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    std::string charge = "1";
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    auto stateMap = tms->GetStateMachineObj()->GetStateCollectionMap();
-    auto chargerIter = stateMap.find(STATE_CHARGER);
-    if (chargerIter != stateMap.end()) {
-        chargerIter->second->SetState(charge);
-    }
-
-    sleep(WAIT_TIME * 10);
-    int32_t ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrSystemTest026: Failed to read file ";
-    }
-
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "freq is:" << value;
+    GTEST_LOG_(INFO) << "value:" << value;
     EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest026 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest026: end.";
 }
@@ -998,38 +1228,45 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Lev
  * @tc.name: ThermalMgrSystemTest027
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
- * @tc.cond: Set BATTERY temp, state: cam = 1, no scene
- * @tc.result level 1, freq 90000
+ * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
+ * @tc.result level 1, freq 80000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest027: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
     int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    std::string charge = "0";
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    auto stateMap = tms->GetStateMachineObj()->GetStateCollectionMap();
-    auto iter = stateMap.find(STATE_CHARGER);
-    if (iter != stateMap.end()) {
-        iter->second->SetState(charge);
-    }
-
-    sleep(WAIT_TIME * 10);
-    int32_t ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrSystemTest027: Failed to read file ";
-    }
-
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "freq is:" << value;
-    EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest027 failed";
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest027 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest027: end.";
 }
 
@@ -1037,41 +1274,1098 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Lev
  * @tc.name: ThermalMgrSystemTest028
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
- * @tc.cond: Set BATTERY temp, state: cam = 1, scene = cam
- * @tc.result level 1, freq 80000
+ * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
+ * @tc.result level 1, freq 90000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Level2)
 {
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest028: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
     int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "0";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    std::string charge = "0";
-    snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, cpuFreqPath.c_str());
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
-    if (tms == nullptr)
-    GTEST_LOG_(INFO) << "tms is nullptr";
-
-    tms->SetSensorTemp(BATTERY, batteryTemp);
-    auto stateMap = tms->GetStateMachineObj()->GetStateCollectionMap();
-    auto iter = stateMap.find(STATE_CHARGER);
-    if (iter != stateMap.end()) {
-        iter->second->SetState(charge);
-    }
-    auto scene = stateMap.find(STATE_SCNEN);
-    if (scene != stateMap.end()) {
-        scene->second->SetState(SCENE_CAMERA);
-    }
-
-    sleep(WAIT_TIME * 10);
-    int32_t ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    if (ret != ERR_OK) {
-        GTEST_LOG_(INFO) << "ThermalMgrSystemTest028: Failed to read file ";
-    }
-
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "freq is:" << value;
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest028 failed";
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest028 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest028: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest029
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
+ * @tc.result level 2, freq 90000
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest029: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest029 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest029: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest030
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
+ * @tc.result level 2, freq 70000
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest030: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 70000) << "ThermalMgrSystemTest030 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest030: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest031
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
+ * @tc.result level 2, freq 80000
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest031: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "0";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest031 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest031: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest032
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
+ * @tc.result level 3, freq 80000
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest032: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest032 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest032: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest033
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
+ * @tc.result level 3, freq 60000
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest033: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "1";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 70000) << "ThermalMgrSystemTest033 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest033: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest034
+ * @tc.desc: test get cpu freq by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
+ * @tc.result level 3, freq 70000
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest034: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string chargeState = "0";
+    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "cam";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char cpuBuf[MAX_PATH] = {0};
+    char freqValue[MAX_PATH] = {0};
+    ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string freq = freqValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 70000) << "ThermalMgrSystemTest034 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest034: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest035
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state not satisfied
+ * @tc.result level 1, current 1800
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest035, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest035: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1800) << "ThermalMgrSystemTest035 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest035: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest036
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: scene = "cam,call"
+ * @tc.result level 1, current 1200
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest036, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest036: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    std::string sceneState = "cam,call";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1200) << "ThermalMgrSystemTest036 failed";
+
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest036: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest037
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state not satisfied
+ * @tc.result level 2, current 1500
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest037, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest035: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1500) << "ThermalMgrSystemTest037 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest037: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest038
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: scene = "cam,call"
+ * @tc.result level 2, current 1000
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest038, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest038: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    std::string sceneState = "cam,call";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 20);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1000) << "ThermalMgrSystemTest038 failed";
+
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest038: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest039
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state not satisfied
+ * @tc.result level 3, current 1300
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest039, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest039: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1300) << "ThermalMgrSystemTest039 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest039: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest040
+ * @tc.desc: test get charge currentby setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set BATTERY temp, state: scene = "cam,call"
+ * @tc.result level 3, current 800
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest040, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest040: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    std::string sceneState = "cam,call";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    sleep(WAIT_TIME * 10);
+
+    char currentBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 800) << "ThermalMgrSystemTest040 failed";
+
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest040: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest041
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1 current 1850
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest041, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest041: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = -10000;
+    std::string sTemp = to_string(batteryTemp);
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentlBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1850) << "ThermalMgrSystemTest041 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest041: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest042
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 2 current 1550
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest042, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest042: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = -14100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentlBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1550) << "ThermalMgrSystemTest042 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest042: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest043
+ * @tc.desc: test get current configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 3 current 1150
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest043, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest043: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = -19100;
+    std::string sTemp = to_string(batteryTemp);
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char currentlBuf[MAX_PATH] = {0};
+    char currentValue[MAX_PATH] = {0};
+    ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string current = currentValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(current);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1150) << "ThermalMgrSystemTest043 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest043: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest044
+ * @tc.desc: test get brightness configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1 brightness 188
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest044: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp);
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH]= {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 188) << "ThermalMgrSystemTest044 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest044: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest045
+ * @tc.desc: test get brightness configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 2 brightness 155
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest045, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest045: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp);
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 155) << "ThermalMgrSystemTest045 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest045: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest046
+ * @tc.desc: test get brightness configured level by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 3 brightness 120
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest046, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest046: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp);
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 120) << "ThermalMgrSystemTest046 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest046: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest047
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 1 brightness 130
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest047, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest047: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 41000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 130) << "ThermalMgrSystemTest047 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest047: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest048
+ * @tc.desc: test level asc logic by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 2 brightness 100
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest048, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest047: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 44000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char lcdBuf[MAX_PATH] = {0};
+    char lcdValue[MAX_PATH] = {0};
+    ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string lcd = lcdValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 100) << "ThermalMgrSystemTest048 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest048: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest049
+ * @tc.desc: get process and shutdown value
+ * @tc.type: FEATURE
+ * @tc.cond: Set AP temp, High Temp With Aux sensor
+ * @tc.result level 1, process 3, shutdown 1
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest049: start.";
+    int32_t ret = -1;
+    char apTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    char shellTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t apTemp = 78000;
+    std::string sTemp = to_string(apTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(apTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 1000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t shellTemp = 3000;
+    sTemp = to_string(shellTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest049 failed";
+
+    char shutdownBuf[MAX_PATH] = {0};
+    char shutdownValue[MAX_PATH] = {0};
+    ret = snprintf_s(shutdownBuf, PATH_MAX, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(shutdownBuf, shutdownValue, sizeof(shutdownValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string shutdown = shutdownValue;
+    value = ThermalMgrSystemTest::ConvertInt(shutdown);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest049 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest049: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest050
+ * @tc.desc: test get process value by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1 procss 3
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest044: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp);
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest050 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest050: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest051
+ * @tc.desc: test get process value by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 2 procss 2
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest051, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest051: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp);
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest051 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest051: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest052
+ * @tc.desc: test get process value by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 3 procss 1
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest052, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest052: start.";
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp);
+    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest052 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest052: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest053
+ * @tc.desc: test get process by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 1 process 2
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest053, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest053: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 41000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest053 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest053: end.";
+}
+
+/**
+ * @tc.name: ThermalMgrSystemTest054
+ * @tc.desc: test get process by setting temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set PA temp, High Temp With Aux sensor
+ * @tc.result level 2 process 3
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest054, Function|MediumTest|Level2)
+{
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest054: start.";
+    int32_t ret = -1;
+    char paTempBuf[MAX_PATH] = {0};
+    char amTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+
+    int32_t paTemp = 44000;
+    std::string sTemp = to_string(paTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(paTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    int32_t amTemp = 10000;
+    sTemp = to_string(amTemp) + "\n";
+    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 10);
+    char procsessBuf[MAX_PATH] = {0};
+    char procsesValue[MAX_PATH] = {0};
+    ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = ThermalMgrSystemTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string process = procsesValue;
+    int32_t value = ThermalMgrSystemTest::ConvertInt(process);
+    GTEST_LOG_(INFO) << "value:" << value;
+    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest054 failed";
+    GTEST_LOG_(INFO) << "ThermalMgrSystemTest054: end.";
+}
+
+/*
+ * Feature: Run thermal protect executable file.
+ * Function: StartThermalProtector
+ * CaseDescription:
+ *
+ */
+HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest055, TestSize.Level0)
+{
+    HiLog::Info(LABEL, "ThermalModuleServiceTest006 start");
+    if (!CheckThermalProtectorPID()) {
+        EXPECT_EQ(true, StartThermalProtector());
+    }
+    sleep(WAIT_TIME);
+    if (!CheckThermalProtectorPID()) {
+        EXPECT_EQ(true, StopThermalProtector());
+    }
+    HiLog::Info(LABEL, "ThermalModuleServiceTest006 end");
+}
 }

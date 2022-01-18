@@ -51,11 +51,15 @@ void ActionThermalLevel::AddActionValue(std::string value)
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s value=%{public}s", __func__, value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
+    for (auto iter : valueList_) {
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s thermallevel=%{public}d", __func__, iter);
+    }
 }
 
 void ActionThermalLevel::Execute()
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s valueList_.size=%{public}d", __func__, valueList_.size());
+
     int value = laststValue_;
     if (valueList_.empty()) {
         value = 0;
