@@ -20,9 +20,9 @@
 #include "event_handler.h"
 #include "event_queue.h"
 #include "power_mgr_client.h"
-
+#include "file_operation.h"
 #include "thermal_service.h"
-
+#include "securec.h"
 using namespace OHOS::PowerMgr;
 using namespace OHOS::AppExecFwk;
 namespace OHOS {
@@ -30,6 +30,8 @@ namespace PowerMgr {
 namespace {
 const std::string SHUTDOWN_REASON = "DeviceTempTooHigh";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+const std::string shutdownPath = "/data/thermal/config/shut_down";
+const int MAX_PATH = 256;
 }
 bool ActionShutdown::InitParams(const std::string &params)
 {
@@ -86,6 +88,17 @@ uint32_t ActionShutdown::ShutdownRequest(bool isShutdown)
 uint32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start to shutdown", __func__);
+    int32_t ret = -1;
+    char shutdownBuf[MAX_PATH] = {0};
+    ret = snprintf_s(shutdownBuf, PATH_MAX, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
+    if (ret < ERR_OK) {
+        return ret;
+    }
+    std::string valueString = std::to_string(isShutdown) + "\n";
+    ret = FileOperation::WriteFile(shutdownBuf, valueString, valueString.length());
+    if (ret != ERR_OK) {
+        return ret;
+    }
     return ERR_OK;
 }
 

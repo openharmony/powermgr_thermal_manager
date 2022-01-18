@@ -21,20 +21,20 @@
 #include <map>
 #include <list>
 
-#include "thermal_zone_parser.h"
-#include "thermal_zone_info.h"
+#include "thermal_zone_manager.h"
 #include "thermal_simulation_node.h"
+#include "thermal_types.h"
 
 namespace OHOS {
 namespace PowerMgr {
-using namespace OHOS::HDI::THERMAL::V1_0;
+using namespace hdi::thermal::v1_0;
 using SensorsMap = std::map<std::string, int32_t>;
 enum EventType {
     EVENT_UEVENT_FD,
     EVENT_TIMER_FD,
 };
 
-class ThermalSensorProvider : public ThermalZoneParser, public ThermalSimulationNode {
+class ThermalSensorProvider : public ThermalZoneManager, public ThermalSimulationNode {
 public:
     using Callback = std::function<void(ThermalSensorProvider*, void*)>;
     using IntervalMap = std::map<std::string, int32_t>;
@@ -60,7 +60,7 @@ private:
     void TimerProviderCallback(void *service);
     int32_t CreateProviderFd();
 
-    std::list<ThermalZoneInfo> info_;
+    std::vector<ThermalZoneInfo> tzInfoList_;
     SensorsMap typeTempMap_;
     IntervalMap intervalMap_;
     NotifyTask notify_;

@@ -22,6 +22,7 @@ namespace OHOS {
 namespace PowerMgr {
 void ThermalTempCallbackProxy::OnThermalTempChanged(TempCallbackMap &tempCbMap)
 {
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
     sptr<IRemoteObject> remote = Remote();
     THERMAL_RETURN_IF(remote == nullptr);
 
@@ -34,8 +35,11 @@ void ThermalTempCallbackProxy::OnThermalTempChanged(TempCallbackMap &tempCbMap)
             __func__);
         return;
     }
+
     THERMAL_WRITE_PARCEL_NO_RET(data, Uint32, tempCbMap.size());
     for (auto iter : tempCbMap) {
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s proxy type=%{public}s", __func__, iter.first.c_str());
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s proxy temp=%{public}d", __func__, iter.second);
         THERMAL_WRITE_PARCEL_NO_RET(data, String, iter.first);
         THERMAL_WRITE_PARCEL_NO_RET(data, Int32, iter.second);
     }

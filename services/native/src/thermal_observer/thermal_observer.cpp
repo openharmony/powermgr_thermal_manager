@@ -140,7 +140,7 @@ void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallback
         if (callbackIter != callbackTypeMap_.end()) {
             THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s find callback", __func__);
             for (auto type : callbackIter->second) {
-                if (preSensor[type] != tempCbMap[type] && tempCbMap[type] != INVAILD_TEMP) {
+                if (preSensor[type] != tempCbMap[type]) {
                     newTempCbMap.insert(std::make_pair(type, tempCbMap[type]));
                     preSensor[type] = tempCbMap[type];
                 }
@@ -153,30 +153,30 @@ void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallback
 void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap &info)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    pollinginfo_ = info;
+    callbackinfo_ = info;
 
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: pollinginfo_ size = %{public}d",
-        __func__, pollinginfo_.size());
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: callbackinfo_ size = %{public}d",
+        __func__, callbackinfo_.size());
 
     if (callback_ != nullptr) {
-        callback_(pollinginfo_);
+        callback_(callbackinfo_);
     }
 
-    NotifySensorTempChanged(pollinginfo_);
+    NotifySensorTempChanged(callbackinfo_);
 }
 
 bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter type=%{public}d",
         __func__, static_cast<uint32_t>(type));
+
     for (auto iter : typeMap_) {
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "configType=%{public}s", iter.second.c_str());
     }
-
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "typeMap_=%{public}s", typeMap_[type].c_str());
 
-    auto iter = pollinginfo_.find(typeMap_[type]);
-    if (iter != pollinginfo_.end()) {
+    auto iter = callbackinfo_.find(typeMap_[type]);
+    if (iter != callbackinfo_.end()) {
             THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "set temp for sensor");
             sensorInfo.SetType(typeMap_[type]);
             if (iter->second == INVALID_TEMP) {
@@ -199,14 +199,6 @@ int32_t ThermalObserver::GetTemp(const SensorType &type)
     ThermalSrvSensorInfo info;
     GetThermalSrvSensorInfo(type, info);
     return info.GetTemp();
-}
-
-void ThermalObserver::SetSensorTemp(const std::string &type, const int32_t &temp)
-{
-    ErrCode ret = ThermalClient::SetSensorTemp(type, temp);
-    if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s: failed to set temp", __func__);
-    }
 }
 
 void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)

@@ -16,9 +16,11 @@
 #include "screen_state_collection.h"
 
 #include "common_event_support.h"
+#include "file_operation.h"
+#include "securec.h"
 #include "string_ex.h"
-#include "thermal_service.h"
 #include "string_operation.h"
+#include "thermal_service.h"
 #include "thermal_common.h"
 
 using namespace OHOS::EventFwk;
@@ -27,6 +29,8 @@ namespace PowerMgr {
 namespace {
 const uint32_t SCREEN_ON = 1;
 const uint32_t SCREEN_OFF = 0;
+const int MAX_PATH = 256;
+std::string screenPath = "/data/thermal/state/screen";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 bool ScreenStateCollection::Init()
@@ -88,14 +92,29 @@ void ScreenStateCollection::HandleScreenOffCompleted(const CommonEventData &data
     state_ = ToString(SCREEN_OFF);
 }
 
-void ScreenStateCollection::SetState(const std::string &state)
+void ScreenStateCollection::SetState()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s set state = %{public}s", __func__, state.c_str());
-    mockState_ = state;
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    char screenBuf[MAX_PATH] = {0};
+    char screenValue[MAX_PATH] = {0};
+    int32_t ret = -1;
+
+    if (snprintf_s(screenBuf, PATH_MAX, sizeof(screenBuf) - 1, screenPath.c_str()) < ERR_OK) {
+        return;
+    }
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s read screen state", __func__);
+    ret = FileOperation::ReadFile(screenBuf, screenValue, sizeof(screenValue));
+    if (ret != ERR_OK) {
+        return;
+    }
+    mockState_ = screenValue;
 }
 
 bool ScreenStateCollection::DecideState(const std::string &value)
 {
+    SetState();
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s mockState_=%{public}s, value=%{public}s",
+        __func__, mockState_.c_str(), value.c_str());
     return StringOperation::Compare(value, mockState_);
 }
 } // namespace PowerMgr

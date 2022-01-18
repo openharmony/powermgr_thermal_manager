@@ -15,10 +15,13 @@
 
 #include "action_cpu.h"
 
-#include "thermal_client.h"
+#include "thermal_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+}
 bool ActionCpu::InitParams(const std::string &params)
 {
     params_ = params;
@@ -61,10 +64,13 @@ void ActionCpu::Execute()
 int32_t ActionCpu::CpuRuquest(uint32_t freq)
 {
     THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    int32_t ret = ThermalClient::SetCPUFreq(freq);
-    if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set cpu freq", __func__);
-        return ret;
+    auto thermalInterface = g_service->GetThermalInterface();
+    if (thermalInterface != nullptr) {
+        int32_t ret = thermalInterface->SetCpuFreq(freq);
+        if (ret != ERR_OK) {
+            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set cpu freq", __func__);
+            return ret;
+        }
     }
     return ERR_OK;
 }

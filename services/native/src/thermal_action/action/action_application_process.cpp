@@ -17,11 +17,14 @@
 
 #include <csignal>
 #include <sys/types.h>
+
+#include "file_operation.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
 #include "if_system_ability_manager.h"
 #include "iremote_object.h"
 #include "singleton.h"
+#include "securec.h"
 
 #include "thermal_service.h"
 
@@ -32,6 +35,8 @@ namespace PowerMgr {
 namespace {
 const int32_t SIGNAL_KILL = 9;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+const std::string processPath = "/data/thermal/config/process_ctrl";
+const int MAX_PATH = 256;
 }
 bool ActionApplicationProcess::Init()
 {
@@ -212,6 +217,17 @@ void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t &value)
 void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t &value)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "start to kill application");
+    int32_t ret = -1;
+    char processBuf[MAX_PATH] = {0};
+    ret = snprintf_s(processBuf, PATH_MAX, sizeof(processBuf) - 1, processPath.c_str());
+    if (ret < ERR_OK) {
+        return;
+    }
+    std::string valueString = std::to_string(value) + "\n";
+    ret = FileOperation::WriteFile(processBuf, valueString, valueString.length());
+    if (ret != ERR_OK) {
+        return;
+    }
 }
 } // namespace PowerMgr
 } // namespace OHOS

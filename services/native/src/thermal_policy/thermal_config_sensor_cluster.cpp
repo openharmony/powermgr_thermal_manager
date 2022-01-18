@@ -59,6 +59,8 @@ void ThermalConfigSensorCluster::UpdateThermalLevel(TypeTempMap &typeTempInfo)
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s every sensor level %{public}d", __func__, level);
     }
 
+    if (levelList.empty()) return;
+
     auto max = std::max_element(levelList.begin(), levelList.end());
     latestLevel_ = *max;
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s final latestLevel =  %{public}d", __func__, latestLevel_);
@@ -68,7 +70,12 @@ void ThermalConfigSensorCluster::UpdateThermalLevel(TypeTempMap &typeTempInfo)
 void ThermalConfigSensorCluster::CalculateSensorLevel(TypeTempMap &typeTempInfo,
     std::vector<uint32_t> &levelList, uint32_t &level)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s sensorInfolist_.size=%{public}d",
+        __func__, sensorInfolist_.size());
+    if (sensorInfolist_.empty()) {
+        return;
+    }
+
     for (auto sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
         auto iter = typeTempInfo.find(sensorInfo->first);
         if (iter != typeTempInfo.end()) {

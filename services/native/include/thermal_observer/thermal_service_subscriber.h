@@ -19,7 +19,6 @@
 #include <memory>
 #include <time.h>
 #include "thermal_sensor_info.h"
-#include "thermal_subscriber.h"
 #include "thermal_observer.h"
 #include "delayed_sp_singleton.h"
 
@@ -32,8 +31,6 @@ public:
     bool Init();
     void OnTemperatureChanged(TypeTempMap typeTempMap);
     void SetHistoryTypeTempMap(TypeTempMap typeTempMap);
-    sptr<ThermalSubscriber> GetThermalSubscriber() const;
-    void RegisterTempChanged();
     std::map<std::string, double> GetSensorsRate()
     {
         return sensorsRateMap_;
@@ -43,11 +40,8 @@ public:
         return typeTempMap_;
     }
 private:
-    friend class ThermalSubscriber;
-    sptr<ThermalSubscriber> subscriber_;
     TypeTempMap typeTempMap_;
     ThermalSensorInfo::TypeHistoryMap typeHistoryMap_;
-    double rate_;
     int historyCount_;
     time_t startTime_;
     time_t endTime_;

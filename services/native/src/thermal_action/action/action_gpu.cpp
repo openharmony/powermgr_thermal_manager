@@ -15,10 +15,13 @@
 
 #include "action_gpu.h"
 
-#include "thermal_client.h"
+#include "thermal_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+}
 bool ActionGpu::InitParams(const std::string &params)
 {
     return true;
@@ -59,10 +62,13 @@ void ActionGpu::Execute()
 int32_t ActionGpu::GpuRequest(uint32_t freq)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    int32_t ret = ThermalClient::SetGPUFreq(freq);
-    if (ret != ERR_OK) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set gpu freq to thermal hdf", __func__);
-        return ret;
+    auto thermalInterface = g_service->GetThermalInterface();
+    if (thermalInterface != nullptr) {
+        int32_t ret = thermalInterface->SetGpuFreq(freq);
+        if (ret != ERR_OK) {
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set gpu freq to thermal hdf", __func__);
+            return ret;
+        }
     }
     return ERR_OK;
 }

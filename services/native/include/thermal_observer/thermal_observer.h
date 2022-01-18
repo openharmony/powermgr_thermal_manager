@@ -51,10 +51,6 @@ public:
      * Get related function
      */
     int32_t GetTemp(const SensorType &type);
-    TypeTempMap GetInfo()
-    {
-        return pollinginfo_;
-    }
     std::map<SensorType, std::string> GetSensorType()
     {
         return typeMap_;
@@ -76,10 +72,10 @@ private:
 
     const wptr<ThermalService> tms_;
     std::mutex mutex_;
+    TypeTempMap callbackinfo_;
     sptr<IRemoteObject::DeathRecipient> sensorTempCBDeathRecipient_;
     std::set<const sptr<IThermalTempCallback>, classcomp> sensorTempListeners_;
     std::map<const sptr<IThermalTempCallback>, std::vector<std::string>> callbackTypeMap_;
-    TypeTempMap pollinginfo_;
     Callback callback_;
     std::map<SensorType, std::string> typeMap_;
 };

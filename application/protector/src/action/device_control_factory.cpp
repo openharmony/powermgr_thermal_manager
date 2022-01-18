@@ -21,20 +21,19 @@
 
 namespace OHOS {
 namespace PowerMgr {
-std::shared_ptr<IThermalAction> DeviceControlFactory::Create(uint32_t mode)
+namespace {
+const std::string CPU_ACTION = "cpu";
+const std::string CURRENT_ACTION = "current";
+const std::string VOLTAGE_ACTION = "voltage";
+}
+std::shared_ptr<IThermalAction> DeviceControlFactory::Create(const std::string &name)
 {
-    switch (mode) {
-        case MODE_CPU: {
-            return std::make_shared<CpuAction>();
-        }
-        case MODE_CURRENT: {
-            return std::make_shared<CurrentAction>();
-        }
-        case MODE_VOLTAGE: {
-            return std::make_shared<VoltageAction>();
-        }
-        default:
-            return nullptr;
+    if (name == CPU_ACTION) {
+        return std::make_shared<CpuAction>();
+    } else if (name == CURRENT_ACTION) {
+        return std::make_shared<CurrentAction>();
+    } else if (name == VOLTAGE_ACTION) {
+        return std::make_shared<VoltageAction>();
     }
     return nullptr;
 }

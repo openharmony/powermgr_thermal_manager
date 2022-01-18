@@ -6,7 +6,6 @@
         "SystemCapability.PowerMgr.ThermalManager"
       ],
       "module_list": [
-        "//base/powermgr/thermal_manager/hdi:thermal_hdi_group",
         "//base/powermgr/thermal_manager/services:thermalmgr_service",
         "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",
         "//base/powermgr/thermal_manager/interfaces/kits/js:thermal",
@@ -32,8 +31,7 @@
       ],
       "test_list": [
         "//base/powermgr/thermal_manager/services/native/test:thermalmgr_test",
-        "//base/powermgr/thermal_manager/test/systemtest:systemtest",
-        "//base/powermgr/thermal_manager/services/test/:thermal_module_test"
+        "//base/powermgr/thermal_manager/test/systemtest:systemtest"
       ]
     }
   }
