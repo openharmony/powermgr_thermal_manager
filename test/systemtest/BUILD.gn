@@ -19,8 +19,8 @@ import("//foundation/appexecfwk/standard/appexecfwk.gni")
 module_output_path = "thermal_manager_native/thermal_native"
 
 deps_ex = [
-  "aafwk_standard:base",
-  "aafwk_standard:want",
+  "ability_runtime:base",
+  "ability_runtime:want",
   "appexecfwk_standard:appexecfwk_base",
   "appexecfwk_standard:libeventhandler",
   "ipc:ipc_core",
@@ -48,8 +48,8 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "//drivers/peripheral/display/interfaces/include/",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//foundation/appexecfwk/standard/services/appmgr/include/",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/",
+    "//foundation/aafwk/standard/services/appmgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
     "//base/startup/appspawn_standard/include/",
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
@@ -59,13 +59,13 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
 
   deps = [
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
-    "${appexecfwk_path}/services/appmgr:libams",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
     "//drivers/peripheral/thermal/interfaces/hdi/thermal/v1_0:libthermal_proxy_1.0",
     "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
+    "//foundation/aafwk/standard/services/appmgr:libams",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -91,8 +91,8 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "//drivers/peripheral/display/interfaces/include/",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//foundation/appexecfwk/standard/services/appmgr/include/",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/",
+    "//foundation/aafwk/standard/services/appmgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
     "//base/startup/appspawn_standard/include/",
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
@@ -102,13 +102,13 @@ ohos_systemtest("ThermalMgrSystemTest") {
 
   deps = [
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
-    "${appexecfwk_path}/services/appmgr:libams",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
     "//drivers/peripheral/thermal/interfaces/hdi/thermal/v1_0:libthermal_proxy_1.0",
     "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
+    "//foundation/aafwk/standard/services/appmgr:libams",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
