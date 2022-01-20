@@ -16,10 +16,7 @@ import("//build/ohos.gni")
 import("//build/ohos/ace/ace.gni")
 
 config("thermal_private_config") {
-  include_dirs = [
-    "${thermal_manager_path}/services/zidl/include",
-    "//utils/system/safwk/native/include",
-  ]
+  include_dirs = [ "${thermal_manager_path}/services/zidl/include" ]
 }
 
 config("thermal_public_config") {
@@ -61,8 +58,9 @@ ohos_shared_library("thermal") {
   ]
 
   external_deps = [
-    "aafwk_standard:base",
-    "aafwk_standard:want",
+    "ability_runtime:app_manager",
+    "ability_runtime:base",
+    "ability_runtime:want",
     "appexecfwk_standard:appexecfwk_base",
     "appexecfwk_standard:libeventhandler",
     "ces_standard:cesfwk_innerkits",

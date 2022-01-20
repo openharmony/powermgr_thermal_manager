@@ -572,7 +572,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest014, TestSize.Level0)
     ThermalLevel level = thermalMgrClient.GetThermalLevel();
     int32_t levelValue = static_cast<int32_t>(level);
     GTEST_LOG_(INFO) << "levelValue: " << levelValue;
-    EXPECT_EQ(true, level == ThermalLevel::HOT) << "ThermalMgrInterfaceTest014 Failed";
+    EXPECT_EQ(true, level == ThermalLevel::COOL) << "ThermalMgrInterfaceTest014 Failed";
     GTEST_LOG_(INFO) << "ThermalMgrInterfaceTest014 end.";
     GTEST_LOG_(INFO) << "ThermalMgrInterfaceTest014 start.";
 }
@@ -767,7 +767,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest022, TestSize.Level0)
 
 /**
  * @tc.name: ThermalMgrInterfaceTest023
- * @tc.desc: test get invaild level
+ * @tc.desc: test get level
  * @tc.type: FUNC
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest023, TestSize.Level0)
@@ -777,7 +777,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest023, TestSize.Level0)
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
-    int32_t temp = INVAILD_TEMP;
+    int32_t temp = -1000;
     std::string sTemp = to_string(temp) + "\n";
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -787,7 +787,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest023, TestSize.Level0)
     ThermalLevel level = thermalMgrClient.GetThermalLevel();
     int32_t levelValue = static_cast<int32_t>(level);
     GTEST_LOG_(INFO) << "levelValue: " << levelValue;
-    EXPECT_EQ(true, level == ThermalLevel::INVALID_LEVEL) << "ThermalMgrInterfaceTest023 Failed";
+    EXPECT_EQ(true, level == ThermalLevel::OVERHEATED) << "ThermalMgrInterfaceTest023 Failed";
     GTEST_LOG_(INFO) << "ThermalMgrInterfaceTest023 end.";
 }
 

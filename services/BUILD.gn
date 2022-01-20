@@ -18,12 +18,11 @@ import("//foundation/appexecfwk/standard/appexecfwk.gni")
 
 config("thermalsrv_private_config") {
   include_dirs = [
-    "//utils/system/safwk/native/include",
     "//third_party/libxml2/include",
-    "${appexecfwk_path}/services/appmgr/include/",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/appmgr/",
     "//base/startup/appspawn_standard/include/",
     "//foundation/aafwk/standard/services/abilitymgr/include/",
+    "//foundation/aafwk/standard/services/appmgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//base/powermgr/power_manager/services/native/include",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
@@ -92,7 +91,6 @@ ohos_shared_library("thermalservice") {
 
   deps = [
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
-    "${appexecfwk_path}/services/appmgr:libams",
     "${displaymgr_native_innerkits_path}:displaymgr",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${utils_path}:thermal_utils",
@@ -105,6 +103,7 @@ ohos_shared_library("thermalservice") {
     "//drivers/peripheral/display/hal:hdi_display_device",
     "//drivers/peripheral/thermal/interfaces/hdi/thermal/v1_0:libthermal_proxy_1.0",
     "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
+    "//foundation/aafwk/standard/services/appmgr:libams",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwmclient",
@@ -114,8 +113,9 @@ ohos_shared_library("thermalservice") {
   ]
 
   external_deps = [
-    "aafwk_standard:base",
-    "aafwk_standard:want",
+    "ability_runtime:app_manager",
+    "ability_runtime:base",
+    "ability_runtime:want",
     "appexecfwk_standard:appexecfwk_base",
     "appexecfwk_standard:libeventhandler",
     "appspawn:appspawn_socket_client",
