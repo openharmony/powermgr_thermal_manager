@@ -55,7 +55,7 @@ namespace PowerMgr {
     const std::string CHARGER = "charger";
     const std::string AMBIENT = "ambient";
 
-    constexpr int APP_FIRST_UID = 10000;
+    constexpr int APP_FIRST_UID = 15000;
 
     // observer
     const int32_t INVALID_TEMP = -1000000;

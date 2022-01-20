@@ -23,7 +23,6 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "mock",
-    "//utils/system/safwk/native/include",
     "//foundation/graphic/standard/utils/include/",
     "${thermal_manager_path}/services/zidl/include",
     "//base/powermgr/display_manager/interfaces/innerkits/native/include/",
@@ -32,8 +31,8 @@ config("module_private_config") {
     "//drivers/peripheral/display/interfaces/include/",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//foundation/appexecfwk/standard/services/appmgr/include/",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/appmgr/",
+    "//foundation/aafwk/standard/services/appmgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
     "//base/startup/appspawn_standard/include/",
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
@@ -44,8 +43,9 @@ config("module_private_config") {
 }
 
 deps_ex = [
-  "aafwk_standard:base",
-  "aafwk_standard:want",
+  "ability_runtime:app_manager",
+  "ability_runtime:base",
+  "ability_runtime:want",
   "appexecfwk_standard:appexecfwk_base",
   "appexecfwk_standard:libeventhandler",
   "ipc:ipc_core",
@@ -72,8 +72,6 @@ ohos_unittest("thermal_unittest") {
 
   include_dirs = [
     "//third_party/libxml2/include",
-    "${appexecfwk_path}/services/appmgr/include/",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/appmgr/",
     "${appspawn_path}/include",
     "//base/powermgr/power_manager/services/native/include",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
@@ -81,17 +79,19 @@ ohos_unittest("thermal_unittest") {
     "//base/powermgr/power_manager/services/native/src/actions/default",
     "//drivers/peripheral/thermal/interfaces",
     "//drivers/peripheral/thermal/interfaces/include/",
+    "//foundation/aafwk/standard/services/appmgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
   ]
 
   deps = [
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
-    "${appexecfwk_path}/services/appmgr:libams",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
     "//drivers/peripheral/thermal/interfaces/hdi/thermal/v1_0:libthermal_proxy_1.0",
     "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
+    "//foundation/aafwk/standard/services/appmgr:libams",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwmclient",

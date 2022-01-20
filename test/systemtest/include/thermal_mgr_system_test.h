@@ -45,6 +45,7 @@ const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/cooling/charger/current"
 std::string xmlServicePath = "/system/etc/thermal_config/thermal_service_config.xml";
 std::string xmlKernelPath = "/system/etc/thermal_config/thermal_kernel_config.xml";
 std::string xmlHdiPath = "/system/etc/thermal_config/thermal_hdi_config.xml";
+const std::string SIMULATION_TEMP_DIR = "/data/sensor/%s/temp";
 class ThermalMgrSystemTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -54,6 +55,7 @@ public:
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
     static int32_t ReadFile(const char *path, char *buf, size_t size);
     static int32_t ConvertInt(const std::string &value);
+    static int32_t InitNode();
 };
 } // namespace PowerMgr
 } // namespace OHOS
