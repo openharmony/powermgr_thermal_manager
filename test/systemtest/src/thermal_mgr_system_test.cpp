@@ -132,6 +132,30 @@ int32_t ThermalMgrSystemTest::ReadFile(const char *path, char *buf, size_t size)
     return ERR_OK;
 }
 
+int32_t ThermalMgrSystemTest::InitNode()
+{
+    char bufTemp[MAX_PATH] = {0};
+    int32_t ret = -1;
+    std::map<std::string, int32_t> sensor;
+    sensor["battery"] = 0;
+    sensor["charger"] = 0;
+    sensor["pa"] = 0;
+    sensor["ap"] = 0;
+    sensor["ambient"] = 0;
+    sensor["cpu"] = 0;
+    sensor["soc"] = 0;
+    sensor["shell"] = 0;
+    for (auto iter : sensor) {
+        ret = snprintf_s(bufTemp, PATH_MAX, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR.c_str(), iter.first.c_str());
+        if (ret < ERR_OK) {
+            return ret;
+        }
+        std::string temp = std::to_string(iter.second) + "\n";
+        WriteFile(bufTemp, temp, temp.length());
+    }
+    return ERR_OK;
+}
+
 int32_t ThermalMgrSystemTest::ConvertInt(const std::string &value)
 {
     return std::stoi(value);
@@ -147,10 +171,24 @@ void ThermalMgrSystemTest::TearDownTestCase(void)
 
 void ThermalMgrSystemTest::SetUp(void)
 {
+    InitNode();
 }
 
 void ThermalMgrSystemTest::TearDown(void)
 {
+    int32_t ret = -1;
+    char stateChargeBuf[MAX_PATH] = {0};
+    char stateSceneBuf[MAX_PATH] = {0};
+    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    std::string chargeState = "0";
+    ret = WriteFile(stateChargeBuf, chargeState, chargeState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    std::string sceneState = "0";
+    ret = WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
 }
 
 namespace {
@@ -804,7 +842,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
 
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
-    batteryTemp = -10000;
+    batteryTemp = -1000;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -978,7 +1016,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest020, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    int32_t shellTemp = 50000;
+    int32_t shellTemp = 2000;
     sTemp = to_string(shellTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1028,7 +1066,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest021, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    int32_t shellTemp = 0;
+    int32_t shellTemp = -100;
     sTemp = to_string(shellTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1266,7 +1304,10 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest027 failed";
+    EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest027 failed";
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest027: end.";
 }
 
@@ -1312,7 +1353,10 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest028 failed";
+    EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest028 failed";
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest028: end.";
 }
 
@@ -1361,7 +1405,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
- * @tc.result level 2, freq 70000
+ * @tc.result level 2, freq 90000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Level2)
 {
@@ -1398,7 +1442,10 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 70000) << "ThermalMgrSystemTest030 failed";
+    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest030 failed";
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest030: end.";
 }
 
@@ -1407,7 +1454,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
- * @tc.result level 2, freq 80000
+ * @tc.result level 2, freq 90000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Level2)
 {
@@ -1444,7 +1491,10 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest031 failed";
+    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest031 failed";
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest031: end.";
 }
 
@@ -1493,7 +1543,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
- * @tc.result level 3, freq 60000
+ * @tc.result level 3, freq 80000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Level2)
 {
@@ -1530,7 +1580,10 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 70000) << "ThermalMgrSystemTest033 failed";
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest033 failed";
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest033: end.";
 }
 
@@ -1539,7 +1592,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
- * @tc.result level 3, freq 70000
+ * @tc.result level 3, freq 80000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Level2)
 {
@@ -1576,7 +1629,10 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 70000) << "ThermalMgrSystemTest034 failed";
+    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest034 failed";
+    sceneState = "null";
+    ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
+    EXPECT_EQ(true, ret == ERR_OK);
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest034: end.";
 }
 
@@ -1922,7 +1978,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest043, Function|MediumTest|Lev
  * @tc.desc: test get brightness configured level by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
- * @tc.result level 1 brightness 188
+ * @tc.result level 1 brightness 120
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Level2)
 {
@@ -1947,7 +2003,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Lev
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 188) << "ThermalMgrSystemTest044 failed";
+    EXPECT_EQ(true, value == 120) << "ThermalMgrSystemTest044 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest044: end.";
 }
 
@@ -1956,7 +2012,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Lev
  * @tc.desc: test get brightness configured level by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
- * @tc.result level 2 brightness 155
+ * @tc.result level 2 brightness 120
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest045, Function|MediumTest|Level2)
 {
@@ -1981,7 +2037,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest045, Function|MediumTest|Lev
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 155) << "ThermalMgrSystemTest045 failed";
+    EXPECT_EQ(true, value == 120) << "ThermalMgrSystemTest045 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest045: end.";
 }
 
@@ -2108,7 +2164,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest048, Function|MediumTest|Lev
  * @tc.desc: get process and shutdown value
  * @tc.type: FEATURE
  * @tc.cond: Set AP temp, High Temp With Aux sensor
- * @tc.result level 1, process 3, shutdown 1
+ * @tc.result level 1, process 0, shutdown 0
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Level2)
 {
@@ -2149,7 +2205,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Lev
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest049 failed";
+    EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest049 failed";
 
     char shutdownBuf[MAX_PATH] = {0};
     char shutdownValue[MAX_PATH] = {0};
@@ -2160,7 +2216,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Lev
     std::string shutdown = shutdownValue;
     value = ThermalMgrSystemTest::ConvertInt(shutdown);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest049 failed";
+    EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest049 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest049: end.";
 }
 
@@ -2169,7 +2225,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Lev
  * @tc.desc: test get process value by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
- * @tc.result level 1 procss 3
+ * @tc.result level 1 procss 1
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Level2)
 {
@@ -2194,7 +2250,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Lev
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest050 failed";
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest050 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest050: end.";
 }
 
@@ -2203,7 +2259,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Lev
  * @tc.desc: test get process value by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
- * @tc.result level 2 procss 2
+ * @tc.result level 2 procss 1
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest051, Function|MediumTest|Level2)
 {
@@ -2228,7 +2284,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest051, Function|MediumTest|Lev
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest051 failed";
+    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest051 failed";
     GTEST_LOG_(INFO) << "ThermalMgrSystemTest051: end.";
 }
 

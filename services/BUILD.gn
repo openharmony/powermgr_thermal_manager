@@ -18,7 +18,6 @@ import("//foundation/appexecfwk/standard/appexecfwk.gni")
 
 config("thermalsrv_private_config") {
   include_dirs = [
-    "//utils/system/safwk/native/include",
     "//third_party/libxml2/include",
     "//base/startup/appspawn_standard/include/",
     "//foundation/aafwk/standard/services/abilitymgr/include/",

@@ -23,7 +23,6 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "mock",
-    "//utils/system/safwk/native/include",
     "//foundation/graphic/standard/utils/include/",
     "${thermal_manager_path}/services/zidl/include",
     "//base/powermgr/display_manager/interfaces/innerkits/native/include/",
