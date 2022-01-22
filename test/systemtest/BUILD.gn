@@ -39,7 +39,6 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
 
   include_dirs = [
     "include",
-    "//utils/system/safwk/native/include",
     "//foundation/graphic/standard/utils/include/",
     "${thermal_manager_path}/services/zidl/include",
     "//base/powermgr/display_manager/interfaces/innerkits/native/include/",
@@ -82,7 +81,6 @@ ohos_systemtest("ThermalMgrSystemTest") {
 
   include_dirs = [
     "include",
-    "//utils/system/safwk/native/include",
     "//foundation/graphic/standard/utils/include/",
     "${thermal_manager_path}/services/zidl/include",
     "//base/powermgr/display_manager/interfaces/innerkits/native/include/",

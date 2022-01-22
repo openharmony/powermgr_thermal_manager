@@ -16,10 +16,7 @@ import("//build/ohos.gni")
 import("//build/ohos/ace/ace.gni")
 
 config("thermal_private_config") {
-  include_dirs = [
-    "${thermal_manager_path}/services/zidl/include",
-    "//utils/system/safwk/native/include",
-  ]
+  include_dirs = [ "${thermal_manager_path}/services/zidl/include" ]
 }
 
 config("thermal_public_config") {

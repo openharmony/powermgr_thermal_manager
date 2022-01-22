@@ -14,10 +14,7 @@
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 
 config("thermalsrv_private_config") {
-  include_dirs = [
-    "${thermal_manager_path}/services/zidl/include",
-    "//utils/system/safwk/native/include",
-  ]
+  include_dirs = [ "${thermal_manager_path}/services/zidl/include" ]
 }
 
 config("thermalsrv_public_config") {
