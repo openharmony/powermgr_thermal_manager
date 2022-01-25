@@ -21,7 +21,7 @@ module_output_path = "thermal_manager_native/thermal_native"
 deps_ex = [
   "ability_runtime:base",
   "ability_runtime:want",
-  "appexecfwk_standard:appexecfwk_base",
+  "bundle_framework:appexecfwk_base",
   "appexecfwk_standard:libeventhandler",
   "ipc:ipc_core",
   "hiviewdfx_hilog_native:libhilog",
