@@ -54,7 +54,7 @@ void ThermalObserver::InitSensorTypeMap()
     if (baseInfo == nullptr) return;
     auto typeList = baseInfo->GetSensorsType();
 
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s sensorType size = %{public}d", __func__, typeList.size());
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s sensorType size = %{public}zu", __func__, typeList.size());
     if (typeList.size() <= TYPE_MAX_SIZE) {
         typeList.resize(TYPE_MAX_SIZE);
     } else {
@@ -132,7 +132,7 @@ void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallback
     static std::map<std::string, int32_t> preSensor;
     IThermalTempCallback::TempCallbackMap newTempCbMap;
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-        "%{public}s listeners.size = %{public}d, callbackTypeMap.size = %{public}d",
+        "%{public}s listeners.size = %{public}d, callbackTypeMap.size = %{public}zu",
         __func__, static_cast<unsigned int>(sensorTempListeners_.size()), callbackTypeMap_.size());
     if (sensorTempListeners_.empty()) return;
     for (auto& listener : sensorTempListeners_) {
@@ -155,7 +155,7 @@ void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap &info)
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
     callbackinfo_ = info;
 
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: callbackinfo_ size = %{public}d",
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: callbackinfo_ size = %{public}zu",
         __func__, callbackinfo_.size());
 
     if (callback_ != nullptr) {
