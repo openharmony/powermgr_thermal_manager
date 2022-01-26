@@ -1,60 +1,70 @@
 {
-    "name": "@ohos/powermgr_thermal_manager",
-    "version": "",
-    "description": "热管理服务，包括运行态热管理和非运行态热管理。",
-    "homePage": "https://gitee.com/openharmony",
-    "license": "Apache V2",
-    "repository": "https://gitee.com/openharmony/powermgr_thermal_manager",
-    "domain": "os",
-    "language": "",
-    "publishAs": "code-segment",
-    "private": false,
-    "scripts": {},
-    "tags": [
-        "base"
-    ],
-    "keywords": [
-        "powermgr",
-        "thermal_manager",
-        "manager"
-    ],
-    "envs": [],
-    "dirs": [],
-    "author": {
-        "name": "",
-        "email": "",
-        "url": ""
+  "name": "@ohos/powermgr/thermal_manager",
+  "version": "3.1",
+  "description": "热管理服务，包括运行态热管理和非运行态热管理。",
+  "homePage": "https://gitee.com/openharmony",
+  "license": "Apache License 2.0",
+  "repository": "https://gitee.com/openharmony/powermgr_thermal_manager",
+  "domain": "os",
+  "publishAs": "code-segment",
+  "scripts": {},
+  "dirs": [],
+  "segment": {
+    "destPath": "base/powermgr/thermal_manager"
+  },
+  "component": {
+    "name": "thermal_manager_native",
+    "subsystem": "powermgr",
+    "syscap": ["SystemCapability.PowerMgr.ThermalManager"],
+    "features": [],
+    "adapted_system_type": [ "standard" ],
+    "rom": "1024KB",
+    "ram": "2048KB",
+    "deps": {
+      "components": [
+        "aafwk_standard",
+        "appexecfwk_standard",
+        "ces_standard",
+        "hiviewdfx_hilog_native",
+        "ipc",
+        "safwk",
+        "samgr_standard"
+      ],
+      "third_party": [
+        "libxml2",
+        "googletest",
+        "node"
+      ]
     },
-    "contributors": [
+    "build": {
+      "sub_component": [
+          "//base/powermgr/thermal_manager/services:thermalmgr_service",
+          "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",
+          "//base/powermgr/thermal_manager/interfaces/kits/js:thermal",
+          "//base/powermgr/thermal_manager/interfaces/kits/js:thermal_js",
+          "//base/powermgr/thermal_manager/sa_profile:thermalmgr_sa_profile",
+          "//base/powermgr/thermal_manager/application:thermal_application",
+          "//base/powermgr/thermal_manager/etc/init:thermal.rc"
+      ],
+      "inner_kits": [
         {
-            "name": "",
-            "email": "",
-            "url": ""
+          "name": "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",
+          "header": {
+            "header_files": [
+              "ithermal_srv.h",
+              "thermal_mgr_client.h",
+              "ithermal_temp_callback.h",
+              "ithermal_level_callback.h",
+              "thermal_srv_sensor_info.h"
+            ],
+            "header_base": "//base/powermgr/thermal_manager/interfaces/innerkits/native/include"
+          }
         }
-    ],
-    "segment": {
-        "destPath": "base/powermgr/thermal_manager"
-    },
-    "component": {
-        "name": "thermal_manager",
-        "subsystem": "powermgr",
-        "syscap": [
-            "SystemCapability.PowerMgr.ThermalManager"
-        ],
-        "features": [],
-        "adapted_system_type": [
-            "standard"
-        ],
-        "rom": "",
-        "ram": "",
-        "deps": {
-            "components": [],
-            "third_party": []
-        },
-        "build": {
-            "sub_component": [],
-            "inner_kits": [],
-            "test": []
-        }
+      ],
+      "test": [
+        "//base/powermgr/thermal_manager/services/native/test:thermalmgr_test",
+        "//base/powermgr/thermal_manager/test/systemtest:systemtest"
+      ]
     }
+  }
 }
