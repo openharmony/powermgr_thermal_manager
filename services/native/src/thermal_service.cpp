@@ -131,6 +131,10 @@ bool ThermalService::Init()
 
     if (thermalInterface_ == nullptr) {
         thermalInterface_ = IThermalInterface::Get();
+        if (thermalInterface_ == nullptr) {
+            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
+            return false;
+        }
     }
 
     if (!InitModules()) {

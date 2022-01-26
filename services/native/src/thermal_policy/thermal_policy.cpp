@@ -105,7 +105,7 @@ void ThermalPolicy::WriteLevel()
 
 void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevelMap)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s policySize = %{public}d, clusterSize = %{public}d",
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s policySize = %{public}zu, clusterSize = %{public}zu",
         __func__, clusterPolicyMap_.size(), clusterLevelMap.size());
     for (auto clusterPolicy = clusterPolicyMap_.begin(); clusterPolicy != clusterPolicyMap_.end(); clusterPolicy++) {
         if (clusterPolicy->first.empty() && clusterPolicy->second.empty()) {
@@ -140,7 +140,7 @@ void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevel
 
 void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s action.size=%{public}d", __func__, vAction.size());
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s action.size=%{public}zu", __func__, vAction.size());
 
     for (auto action = vAction.begin(); action != vAction.end(); action++) {
         ThermalActionManager::ThermalActionMap actionMap = g_service->GetActionManagerObj()->GetActionMap();
