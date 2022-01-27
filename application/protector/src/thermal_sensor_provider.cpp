@@ -73,7 +73,7 @@ void ThermalSensorProvider::GetThermalSensorInfo()
     }
     tzInfoList_ = GetTzInfoList();
 
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s size = %{public}d", __func__, tzInfoList_.size());
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s size = %{public}zu", __func__, tzInfoList_.size());
 
     for (auto type : intervalMap_) {
         THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s configType = %{public}s", __func__, type.first.c_str());
@@ -214,7 +214,8 @@ int32_t ThermalSensorProvider::LoopingThreadEntry(void *arg, int32_t epfd)
     int nevents = 0;
     size_t eventct = callbackHandler_.size();
     struct epoll_event events[eventct];
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: %{public}d, %{public}d", __func__, epfd, eventct);
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: %{public}d, %{public}zu", __func__,
+        epfd, eventct);
     while (true) {
         nevents = epoll_wait(epfd, events, eventct, -1);
         if (nevents == -1) {

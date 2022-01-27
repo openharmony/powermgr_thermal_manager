@@ -70,7 +70,7 @@ void ThermalConfigSensorCluster::UpdateThermalLevel(TypeTempMap &typeTempInfo)
 void ThermalConfigSensorCluster::CalculateSensorLevel(TypeTempMap &typeTempInfo,
     std::vector<uint32_t> &levelList, uint32_t &level)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s sensorInfolist_.size=%{public}d",
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s sensorInfolist_.size=%{public}zu",
         __func__, sensorInfolist_.size());
     if (sensorInfolist_.empty()) {
         return;
@@ -128,7 +128,7 @@ bool ThermalConfigSensorCluster::CmpValue(const std::pair<std::string, uint32_t>
 void ThermalConfigSensorCluster::AscJudgment(std::vector<LevelItem> &vlev, int32_t curTemp, uint32_t &level)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-        "%{public}s enter curTemp %{public}d, size = %{public}d, current level = %{public}d",
+        "%{public}s enter curTemp %{public}d, size = %{public}zu, current level = %{public}d",
         __func__, curTemp, vlev.size(), level);
 
     if (level > 0 && level < vlev.size()) {
@@ -189,7 +189,7 @@ void ThermalConfigSensorCluster::AscJudgment(std::vector<LevelItem> &vlev, int32
 
 void ThermalConfigSensorCluster::DescJudgment(std::vector<LevelItem> &vlev, int32_t curTemp, uint32_t &level)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter curTemp %{public}d, size = %{public}d",
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter curTemp %{public}d, size = %{public}zu",
         __func__, curTemp, vlev.size());
     level = latestLevel_;
     if (level != 0 && level < vlev.size()) {

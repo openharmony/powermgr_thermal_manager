@@ -58,7 +58,7 @@ void ActionThermalLevel::AddActionValue(std::string value)
 
 void ActionThermalLevel::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s valueList_.size=%{public}d", __func__, valueList_.size());
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s valueList_.size=%{public}zu", __func__, valueList_.size());
 
     int value = laststValue_;
     if (valueList_.empty()) {
