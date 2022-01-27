@@ -91,7 +91,7 @@ void ProtectorThermalZoneInfo::AscJudgment(int32_t curTemp, uint32_t &level)
 
 void ProtectorThermalZoneInfo::DescJudgment(int32_t curTemp, uint32_t &level)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter curTemp %{public}d, size = %{public}d",
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter curTemp %{public}d, size = %{public}zu",
         __func__, curTemp, vtzi_.size());
     level = latestLevel_;
     if (level != 0 && level < vtzi_.size()) {

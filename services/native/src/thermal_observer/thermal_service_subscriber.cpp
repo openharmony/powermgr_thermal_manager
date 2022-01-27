@@ -41,12 +41,12 @@ void ThermalServiceSubscriber::OnTemperatureChanged(TypeTempMap typeTempMap)
 {
     std::string type;
     if (typeTempMap.empty()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get sensor info: %{public}d", typeTempMap.size());
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get sensor info: %{public}zu", typeTempMap.size());
         return;
     }
 
     for (auto it : typeTempMap) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "size: %{public}d, type: %{public}s, temp:%{public}d",
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "size: %{public}zu, type: %{public}s, temp:%{public}d",
             typeTempMap.size(), it.first.c_str(), it.second);
     }
 
@@ -106,7 +106,7 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
         }
 
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-            "SetHistoryTypeTempMap: sum=%{public}f, rate=%{public}f, sensorsRateMap_.size=%{public}d",
+            "SetHistoryTypeTempMap: sum=%{public}f, rate=%{public}f, sensorsRateMap_.size=%{public}zu",
             sum, rate, sensorsRateMap_.size());
         sensorsRateMap_.insert(std::make_pair(history.first, rate));
     }
