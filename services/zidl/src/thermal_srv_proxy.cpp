@@ -194,5 +194,35 @@ void ThermalSrvProxy::GetThermalLevel(ThermalLevel& level)
     level = static_cast<ThermalLevel>(thermalLevel);
     return;
 }
+
+std::string ThermalSrvProxy::ShellDump(const std::vector<std::string>& args, uint32_t argc)
+{
+    sptr<IRemoteObject> remote = Remote();
+    std::string result = "remote error";
+    THERMAL_RETURN_IF_WITH_RET(remote == nullptr, result);
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
+        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::%{public}s write descriptor failed!", __func__);
+        return 0;
+    }
+
+    data.WriteUint32(argc);
+    for (uint32_t i = 0; i < argc; i++) {
+        data.WriteString(args[i]);
+    }
+    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::SHELL_DUMP),
+        data, reply, option);
+    if (ret != ERR_OK) {
+        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
+            "ThermalSrvProxy::%{public}s SendRequest is failed, error code: %{public}d", __func__, ret);
+        return result;
+    }
+    result = reply.ReadString();
+    return result;
+}
 } // namespace PowerMgr
 } // namespace OHOS
