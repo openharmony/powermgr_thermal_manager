@@ -18,6 +18,7 @@
 #include <common_event_data.h>
 #include <common_event_manager.h>
 #include <common_event_support.h>
+#include "constants.h"
 #include "thermal_service.h"
 #include "thermal_common.h"
 
@@ -28,6 +29,7 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 const std::string TASK_UNREG_THERMAL_LEVEL_CALLBACK = "ThermalLevel_UnRegThermalLevelpCB";
+auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::INVALID_LEVEL);
 std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> ActionThermalLevel::thermalLevelListeners_;

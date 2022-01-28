@@ -25,6 +25,7 @@
 #include "system_ability_definition.h"
 
 #include "constants.h"
+#include "thermal_mgr_dumper.h"
 #include "thermal_srv_config_parser.h"
 #include "thermal_common.h"
 
@@ -135,6 +136,10 @@ bool ThermalService::Init()
             THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
             return false;
         }
+    }
+
+    if (popup_ == nullptr) {
+        popup_ = std::make_shared<ActionPopup>();
     }
 
     if (!InitModules()) {
@@ -363,6 +368,17 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
     }
     serviceSubscriber_->OnTemperatureChanged(typeTempMap);
     return ERR_OK;
+}
+
+std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint32_t argc)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    pid_t pid = IPCSkeleton::GetCallingPid();
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "PID: %{public}d Call %{public}s !", pid, __func__);
+    std::string result;
+    bool ret = ThermalMgrDumper::Dump(args, result);
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalMgrDumper :%{public}d", ret);
+    return result;
 }
 } // namespace PowerMgr
 } // namespace OHOS
