@@ -29,7 +29,8 @@ namespace PowerMgr {
 int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
     THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE,
-        "ThermalSrvStub::OnRemoteRequest, cmd = %{public}d, flags = %{public}d", code, option.GetFlags());
+        "ThermalSrvStub::OnRemoteRequest, cmd = %{public}d, flags = %{public}d",
+        code, option.GetFlags());
     std::u16string descriptor = ThermalSrvStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
