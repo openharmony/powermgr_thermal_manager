@@ -142,6 +142,7 @@ private:
     bool InitActionManager();
     bool InitStateMachine();
     bool InitModules();
+    bool CreateConfigModule();
     bool ready_ {false};
     std::mutex mutex_;
     std::shared_ptr<AppExecFwk::EventRunner> eventRunner_ {nullptr};

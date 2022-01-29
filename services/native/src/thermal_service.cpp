@@ -89,8 +89,34 @@ bool ThermalService::Init()
             return false;
         }
     }
-    
-    if (!baseInfo_) {
+
+    if (!CreateConfigModule) {
+        return false;
+    }
+
+    if (thermalInterface_ == nullptr) {
+        thermalInterface_ = IThermalInterface::Get();
+        if (thermalInterface_ == nullptr) {
+            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
+            return false;
+        }
+    }
+
+    if (popup_ == nullptr) {
+        popup_ = std::make_shared<ActionPopup>();
+    }
+
+    if (!InitModules()) {
+        return false;
+    }
+
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Init success");
+    return true;
+}
+
+bool ThermalService::CreateConfigModule()
+{
+        if (!baseInfo_) {
         baseInfo_ = std::make_shared<ThermalConfigBaseInfo>();
         if (baseInfo_ == nullptr) {
             THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to create base info");
@@ -129,24 +155,6 @@ bool ThermalService::Init()
             return false;
         }
     }
-
-    if (thermalInterface_ == nullptr) {
-        thermalInterface_ = IThermalInterface::Get();
-        if (thermalInterface_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
-            return false;
-        }
-    }
-
-    if (popup_ == nullptr) {
-        popup_ = std::make_shared<ActionPopup>();
-    }
-
-    if (!InitModules()) {
-        return false;
-    }
-
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Init success");
     return true;
 }
 
