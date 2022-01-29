@@ -39,6 +39,9 @@ config("module_private_config") {
     "//foundation/graphic/ui/interfaces/kits",
     "//foundation/ace/ace_engine/adapter/ohos/entrance",
     "//foundation/graphic/standard/interfaces/innerkits/wmclient/",
+    "//foundation/windowmanager/interfaces/innerkits/wm/",
+    "//third_party/flutter/skia/",
+    "//foundation/windowmanager/utils/include",
   ]
 }
 
@@ -92,6 +95,7 @@ ohos_unittest("thermal_unittest") {
     "//drivers/peripheral/thermal/interfaces/hdi/thermal/v1_0:libthermal_proxy_1.0",
     "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
     "//foundation/aafwk/standard/services/appmgr:libams",
+    "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwmclient",

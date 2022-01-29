@@ -44,7 +44,8 @@
           "//base/powermgr/thermal_manager/interfaces/kits/js:thermal_js",
           "//base/powermgr/thermal_manager/sa_profile:thermalmgr_sa_profile",
           "//base/powermgr/thermal_manager/application:thermal_application",
-          "//base/powermgr/thermal_manager/etc/init:thermal.rc"
+          "//base/powermgr/thermal_manager/etc/init:thermal.rc",
+          "//base/powermgr/thermal_manager/utils:thermal-shell"
       ],
       "inner_kits": [
         {

@@ -28,8 +28,9 @@ namespace OHOS {
 namespace PowerMgr {
 int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "ThermalSrvStub::OnRemoteRequest, cmd = %{public}d, \
-        flags = %{public}d", code, option.GetFlags());
+    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE,
+        "ThermalSrvStub::OnRemoteRequest, cmd = %{public}d, flags = %{public}d",
+        code, option.GetFlags());
     std::u16string descriptor = ThermalSrvStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
@@ -55,6 +56,9 @@ int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageP
         }
         case static_cast<int>(IThermalSrv::GET_TEMP_LEVEL): {
             return GetThermalevelStub(reply);
+        }
+        case static_cast<int>(IThermalSrv::SHELL_DUMP): {
+            return ShellDumpStub(data, reply);
         }
         default: {
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
@@ -136,6 +140,33 @@ int32_t ThermalSrvStub::GetThermalevelStub(MessageParcel& reply)
     ThermalLevel level;
     GetThermalLevel(level);
     THERMAL_WRITE_PARCEL_WITH_RET(reply, Uint32, static_cast<uint32_t>(level), ERR_OK);
+    return ERR_OK;
+}
+
+int32_t ThermalSrvStub::ShellDumpStub(MessageParcel& data, MessageParcel& reply)
+{
+    uint32_t argc;
+    std::vector<std::string> args;
+
+    if (!data.ReadUint32(argc)) {
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "Readback fail!");
+        return E_READ_PARCEL_ERROR_THERMAL;
+    }
+
+    for (uint32_t i = 0; i < argc; i++) {
+        std::string arg = data.ReadString();
+        if (!arg.empty()) {
+            args.push_back(arg);
+        } else {
+            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "read value fail: %{public}d", i);
+        }
+    }
+
+    std::string ret = ShellDump(args, argc);
+    if (!reply.WriteString(ret)) {
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "PowerMgrStub:: Dump Writeback Fail!");
+        return E_READ_PARCEL_ERROR_THERMAL;
+    }
     return ERR_OK;
 }
 } // namespace PowerMgr

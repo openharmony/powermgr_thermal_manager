@@ -12,21 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef ACTION_POPUP_H
-#define ACTION_POPUP_H
 
-#include "window_manager.h"
-#include "refbase.h"
+#ifndef POWERMGR_THERMAL_MGR_DUMPER_H
+#define POWERMGR_THERMAL_MGR_DUMPER_H
+
+#include <string>
+#include <vector>
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionPopup {
+class ThermalMgrDumper {
 public:
-    bool ShowDialogAction();
-    void WarningLowTemp(std::string event, std::string param);
-    sptr<OHOS::Window> CreateWindow(OHOS::WindowType, sptr<OHOS::Surface> csurface = nullptr);
+    ThermalMgrDumper() = delete;
+    ~ThermalMgrDumper() = delete;
+
+    static bool Dump(const std::vector<std::string>& args, std::string& result);
+
 private:
+    static void DumpRunningLockInfo(std::string& result);
+    static void ShowUsage(std::string& result);
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // ACTION_POPUP_H
+#endif // POWERMGR_POWER_MGR_DUMPER_H

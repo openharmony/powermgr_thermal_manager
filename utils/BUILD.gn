@@ -36,3 +36,44 @@ ohos_source_set("thermal_utils") {
 
   part_name = "thermal_manager_native"
 }
+
+ohos_executable("thermal-shell") {
+  include_dirs = [
+    "shell/include",
+    "//foundation/aafwk/standard/services/common/include",
+    "//foundation/aafwk/standard/tools/aa/include",
+    "//utils/native/base/include",
+  ]
+
+  sources = [
+    "shell/src/main.cpp",
+    "shell/src/thermal_shell_command.cpp",
+  ]
+
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  deps = [
+    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "//foundation/aafwk/standard/tools/aa:tools_aa_source_set",
+    "//utils/native/base:utils",
+  ]
+
+  configs = [
+    "//foundation/aafwk/standard/tools/aa:ability_command_config",
+    "//foundation/aafwk/standard/services/common:common_config",
+  ]
+
+  external_deps = [
+    "ability_runtime:base",
+    "ability_runtime:want",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "samgr_standard:samgr_proxy",
+  ]
+
+  install_enable = true
+  part_name = "thermal_manager_native"
+}

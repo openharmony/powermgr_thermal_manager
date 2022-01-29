@@ -21,11 +21,11 @@
 #include "system_ability.h"
 #include "iremote_object.h"
 
+#include "action_popup.h"
 #include "thermal_srv_stub.h"
 #include "ithermal_level_callback.h"
 #include "ithermal_temp_callback.h"
 #include "thermal_srv_sensor_info.h"
-
 #include "thermalsrv_event_handler.h"
 
 #include "thermal_observer.h"
@@ -39,6 +39,7 @@
 #include "thermal_callback_service.h"
 #include "thermal_types.h"
 #include "thermal_interface_proxy.h"
+
 
 namespace OHOS {
 namespace PowerMgr {
@@ -58,6 +59,7 @@ public:
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback) override;
     bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) override;
     void GetThermalLevel(ThermalLevel& level) override;
+    virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
     void HandleEvent(int event);
     void SendEvent(int32_t event, int64_t param, int64_t delayTime);
@@ -119,6 +121,12 @@ public:
     {
         return cluster_;
     }
+
+    std::shared_ptr<ActionPopup> GetActionPopup() const
+    {
+        return popup_;
+    }
+
     sptr<IThermalInterface> GetThermalInterface() const
     {
         return thermalInterface_;
@@ -134,6 +142,7 @@ private:
     bool InitActionManager();
     bool InitStateMachine();
     bool InitModules();
+    bool CreateConfigModule();
     bool ready_ {false};
     std::mutex mutex_;
     std::shared_ptr<AppExecFwk::EventRunner> eventRunner_ {nullptr};
@@ -148,6 +157,7 @@ private:
     std::shared_ptr<ThermalConfigSensorCluster> cluster_ {nullptr};
     bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};
+    std::shared_ptr<ActionPopup> popup_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
