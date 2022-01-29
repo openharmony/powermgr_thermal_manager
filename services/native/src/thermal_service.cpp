@@ -90,7 +90,7 @@ bool ThermalService::Init()
         }
     }
 
-    if (!CreateConfigModule) {
+    if (!CreateConfigModule()) {
         return false;
     }
 
