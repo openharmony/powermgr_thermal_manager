@@ -28,7 +28,7 @@ namespace PowerMgr {
     const std::string SHUTDOWN_ACTION_NAME = "shut_down";
     const std::string PROCESS_ACTION_NAME = "process_ctrl";
     const std::string THERMAL_LEVEL_NAME = "thermallevel";
-
+    const std::string POPUP_ACTION_NAME = "popup";
     // state name
     const std::string STATE_CHARGER = "charge";
     const std::string STATE_SCREEN = "screen";
@@ -73,6 +73,9 @@ namespace PowerMgr {
     const uint32_t ARG_7 = 7;
     const uint32_t ARG_8 = 8;
     const uint32_t ARG_9 = 9;
+    // dialog
+    const std::string THERMAL_LOWER_TEMP_PARAMS = "\"cancelButton\":\"LowerTemp Cancel\"}";
+    const std::string THERMAL_HIGH_TEMP_PARAMS = "{\"cancelButton\":\"HighTemp Cancel\"}";
 } // namespace PowerMgr
 } // namespace OHOS
 #endif // OHOS_THERMAL_CONSTANTS_H

@@ -22,6 +22,7 @@
 #include "action_display.h"
 #include "action_shutdown.h"
 #include "action_thermal_level.h"
+#include "action_popup.h"
 #include "string_operation.h"
 #include "constants.h"
 #include "thermal_common.h"
@@ -45,6 +46,8 @@ std::shared_ptr<IThermalAction> ThermalActionFactory::Create(std::string &action
         return std::make_shared<ActionApplicationProcess>();
     } else if (StringOperation::Compare(actionName, THERMAL_LEVEL_NAME)) {
         return std::make_shared<ActionThermalLevel>();
+    }  else if (StringOperation::Compare(actionName, POPUP_ACTION_NAME)) {
+        return std::make_shared<ActionPopup>();
     } else {
         return nullptr;
     }

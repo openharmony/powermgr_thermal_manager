@@ -33,6 +33,7 @@ public:
         UNREG_THERMAL_LEVEL_CALLBACK,
         GET_SENSOR_INFO,
         GET_TEMP_LEVEL,
+        SHELL_DUMP
     };
 
     virtual void SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
@@ -42,6 +43,7 @@ public:
     virtual void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
     virtual bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) = 0;
     virtual void GetThermalLevel(ThermalLevel& level) = 0;
+    virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) = 0;
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalSrv");
 };
 } // namespace PowerMgr

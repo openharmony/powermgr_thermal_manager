@@ -25,6 +25,7 @@
 #include "system_ability_definition.h"
 
 #include "constants.h"
+#include "thermal_mgr_dumper.h"
 #include "thermal_srv_config_parser.h"
 #include "thermal_common.h"
 
@@ -88,8 +89,34 @@ bool ThermalService::Init()
             return false;
         }
     }
-    
-    if (!baseInfo_) {
+
+    if (!CreateConfigModule()) {
+        return false;
+    }
+
+    if (thermalInterface_ == nullptr) {
+        thermalInterface_ = IThermalInterface::Get();
+        if (thermalInterface_ == nullptr) {
+            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
+            return false;
+        }
+    }
+
+    if (popup_ == nullptr) {
+        popup_ = std::make_shared<ActionPopup>();
+    }
+
+    if (!InitModules()) {
+        return false;
+    }
+
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Init success");
+    return true;
+}
+
+bool ThermalService::CreateConfigModule()
+{
+        if (!baseInfo_) {
         baseInfo_ = std::make_shared<ThermalConfigBaseInfo>();
         if (baseInfo_ == nullptr) {
             THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to create base info");
@@ -128,20 +155,6 @@ bool ThermalService::Init()
             return false;
         }
     }
-
-    if (thermalInterface_ == nullptr) {
-        thermalInterface_ = IThermalInterface::Get();
-        if (thermalInterface_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
-            return false;
-        }
-    }
-
-    if (!InitModules()) {
-        return false;
-    }
-
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Init success");
     return true;
 }
 
@@ -363,6 +376,17 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
     }
     serviceSubscriber_->OnTemperatureChanged(typeTempMap);
     return ERR_OK;
+}
+
+std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint32_t argc)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    pid_t pid = IPCSkeleton::GetCallingPid();
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "PID: %{public}d Call %{public}s !", pid, __func__);
+    std::string result;
+    bool ret = ThermalMgrDumper::Dump(args, result);
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalMgrDumper :%{public}d", ret);
+    return result;
 }
 } // namespace PowerMgr
 } // namespace OHOS
