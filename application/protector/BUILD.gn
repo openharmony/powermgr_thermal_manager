@@ -74,7 +74,7 @@ ohos_executable("thermal_protector") {
   ]
 
   install_enable = true
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
   subsystem_name = "powermgr"
 }
 

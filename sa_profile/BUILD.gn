@@ -15,5 +15,5 @@ import("//build/ohos/sa_profile/sa_profile.gni")
 
 ohos_sa_profile("thermalmgr_sa_profile") {
   sources = [ "3303.xml" ]
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
 }
