@@ -19,13 +19,13 @@ import { AsyncCallback, Callback } from './basic';
  * Provides interfaces to obtain thermal information.
  *
  * @SysCap SystemCapability.PowerMgr.ThermalManager
- * @since 7
+ * @since 8
  */
 declare namespace thermal {
     /**
      * Enumerates the {@link ThermalLevel} types.
      *
-     * @since 7
+     * @since 8
      */
     export enum ThermalLevel {
         /**
@@ -63,7 +63,7 @@ declare namespace thermal {
      *
      * @param callback Specified callback method.
      * @return Return thermal level.
-     * @since 7
+     * @since 8
      */
     function subscribeThermalLevel(callback: AsyncCallback<ThermalLevel>): void;
 
@@ -72,7 +72,7 @@ declare namespace thermal {
      *
      * @param callback Specified callback method.
      * @return Null.
-     * @since 7
+     * @since 8
      */
     function unsubscribeThermalLevel(callback?: AsyncCallback<void>): void;
 
@@ -80,7 +80,7 @@ declare namespace thermal {
      * Get the current thermal level information.
      *
      * @return Return the thermal level value.
-     * @since 7
+     * @since 8
      */
     function getThermalLevel(): number;
 }
