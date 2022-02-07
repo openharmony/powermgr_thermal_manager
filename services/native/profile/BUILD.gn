@@ -18,6 +18,6 @@ import("//build/ohos.gni")
 ohos_prebuilt_etc("thermal_service_config") {
   source = "thermal_service_config.xml"
   relative_install_dir = "thermal_config"
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
   subsystem_name = "powermgr"
 }
