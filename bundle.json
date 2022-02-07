@@ -1,5 +1,5 @@
 {
-  "name": "@ohos/powermgr_thermal_manager",
+  "name": "@ohos/thermal_manager",
   "version": "3.1",
   "description": "热管理服务，包括运行态热管理和非运行态热管理。",
   "homePage": "https://gitee.com/openharmony",
