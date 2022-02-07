@@ -15,75 +15,73 @@
 
 import { AsyncCallback, Callback } from './basic';
 
+/**
+ * Provides interfaces to obtain thermal information.
+ *
+ * @SysCap SystemCapability.PowerMgr.ThermalManager
+ * @since 7
+ */
 declare namespace thermal {
     /**
-     * thermal level definitions
+     * Enumerates the {@link ThermalLevel} types.
+     *
+     * @since 7
      */
     export enum ThermalLevel {
         /**
-        * Thermal Level: COOL
-        */
+         * Indicates the device is cool.
+         */
         COOL = 0,
         /**
-         * Thermal Level: WARM
+         * Indicates the device is in normal working condition, but not cool.
          */
         NORMAL = 1,
         /**
-         * Thermal Level: WARM
+         * Indicates the device is in a warm state.
          */
-
         WARM = 2,
         /**
-         * Thermal Level: HOT
+         * Indicates the device is in a hot state.
          */
         HOT = 3,
         /**
-         * Thermal Level: OVERHEATED
+         * Indicates the device is in a state of severe heating.
          */
         OVERHEATED = 4,
         /**
-         * Thermal Level: WARNING
+         * Indicates the device is about to enter a state of emergency.
          */
         WARNING = 5,
         /**
-         * Thermal Level: EMERGENCY
+         * Indicates the device is in a state of emergency
+         * and must stop working immediately.
          */
         EMERGENCY = 6,
     }
     /**
-     * subscribe to the change notify of thermal level
+     * Subscribe to thermal level change notification.
      *
-     * @devices phone
-     * @since 6
-     * @SysCap ces
      * @param callback Specified callback method.
-     * @return -
-     * @testapi
+     * @return Return thermal level.
+     * @since 7
      */
     function subscribeThermalLevel(callback: AsyncCallback<ThermalLevel>): void;
 
     /**
-    * unsubscribe to the change notify of thermal level
-    *
-    * @devices phone
-    * @since 6
-    * @SysCap ces
-    * @param callback Specified callback method.
-    * @return -
-    * @testapi
-    */
+     * Cancel thermal level change subscription.
+     *
+     * @param callback Specified callback method.
+     * @return Null.
+     * @since 7
+     */
     function unsubscribeThermalLevel(callback?: AsyncCallback<void>): void;
 
     /**
-    * directly obtain the temperature level
-    *
-    * @devices phone
-    * @since 6
-    * @SysCap ces
-    * @param
-    * @return - the thermal level value
-    * @testapi
-    */
+     * Get the current thermal level information.
+     *
+     * @return Return the thermal level value.
+     * @since 7
+     */
     function getThermalLevel(): number;
 }
 export default thermal;
