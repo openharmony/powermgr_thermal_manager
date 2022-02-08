@@ -34,7 +34,7 @@ ohos_source_set("thermal_utils") {
     "startup_l2:syspara",
   ]
 
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
 }
 
 ohos_executable("thermal-shell") {
@@ -75,5 +75,5 @@ ohos_executable("thermal-shell") {
   ]
 
   install_enable = true
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
 }

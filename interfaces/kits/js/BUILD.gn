@@ -24,7 +24,7 @@ config("thermal_public_config") {
 }
 
 js_declaration("thermal_js") {
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
   sources = [ "./@ohos.thermal.d.ts" ]
 }
 
@@ -71,6 +71,6 @@ ohos_shared_library("thermal") {
   ]
 
   relative_install_dir = "module"
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
   subsystem_name = "powermgr"
 }
