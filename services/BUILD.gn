@@ -131,7 +131,7 @@ ohos_shared_library("thermalservice") {
     "samgr_standard:samgr_proxy",
   ]
 
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
 }
 
 group("thermalmgr_service") {

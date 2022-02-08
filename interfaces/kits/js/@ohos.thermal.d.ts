@@ -15,75 +15,74 @@
 
 import { AsyncCallback, Callback } from './basic';
 
+/**
+ * 提供系统热档位相关的回调及查询接口，可用于温控动作的输入指导。
+ * {@link subscribeThermalLevel} 可用于订阅热档位回调，档位变化时能及时通知
+ * {@link getThermalLevel} 可用于实时查询当前系统的热档位信息
+ *
+ * @SysCap SystemCapability.PowerMgr.ThermalManager
+ * @since 8
+ */
 declare namespace thermal {
     /**
-     * thermal level definitions
+     * Enumerates the {@link ThermalLevel} types.
+     *
+     * @since 8
      */
     export enum ThermalLevel {
         /**
-        * Thermal Level: COOL
-        */
+         * 表明设备处于凉爽的状态，业务执行不受限制。
+         */
         COOL = 0,
         /**
-         * Thermal Level: WARM
+         * 表明设备处于普通工作状态，但并不凉爽，需要注意临近发热状态。
          */
         NORMAL = 1,
         /**
-         * Thermal Level: WARM
+         * 表明设备已经进入温热状态，部分无感知业务需要考虑停止或延迟执行。
          */
-
         WARM = 2,
         /**
-         * Thermal Level: HOT
+         * 表明设备已经明显发热，无感知业务应全面停止，其他业务应考虑降规格及负载。
          */
         HOT = 3,
         /**
-         * Thermal Level: OVERHEATED
+         * 表明设备已经发热严重，无感知业务应全面停止，主要业务需降低规格及负载。
          */
         OVERHEATED = 4,
         /**
-         * Thermal Level: WARNING
+         * 表明设备已经发热严重并且即将进入紧急状态，无感知业务应全面停止，主要业务应降低至最低规格。
          */
         WARNING = 5,
         /**
-         * Thermal Level: EMERGENCY
+         * 表明设备已经进入紧急状态，所有业务应当全面停止工作，可保留部分紧急求助功能。
          */
         EMERGENCY = 6,
     }
     /**
-     * subscribe to the change notify of thermal level
+     * 订阅热档位变化时的回调提醒。
      *
-     * @devices phone
-     * @since 6
-     * @SysCap ces
      * @param callback Specified callback method.
-     * @return -
-     * @testapi
+     * @return Return thermal level.
+     * @since 8
      */
     function subscribeThermalLevel(callback: AsyncCallback<ThermalLevel>): void;
 
     /**
-    * unsubscribe to the change notify of thermal level
-    *
-    * @devices phone
-    * @since 6
-    * @SysCap ces
-    * @param callback Specified callback method.
-    * @return -
-    * @testapi
-    */
+     * 取消热档位变化的订阅。
+     *
+     * @param callback Specified callback method.
+     * @return Null.
+     * @since 8
+     */
     function unsubscribeThermalLevel(callback?: AsyncCallback<void>): void;
 
     /**
-    * directly obtain the temperature level
-    *
-    * @devices phone
-    * @since 6
-    * @SysCap ces
-    * @param
-    * @return - the thermal level value
-    * @testapi
-    */
+     * 获取当前的热档位信息。
+     *
+     * @return Return the thermal level value.
+     * @since 8
+     */
     function getThermalLevel(): number;
 }
 export default thermal;

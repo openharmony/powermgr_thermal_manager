@@ -23,6 +23,6 @@ gen_sa_dialog_js("dialog_js_files_etc") {
   ]
   common_files = []
   dialog_name = "thermal_dialog"
-  part_name = "thermal_manager_native"
+  part_name = "thermal_manager"
   subsystem_name = "powermgr"
 }

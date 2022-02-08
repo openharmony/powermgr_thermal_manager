@@ -16,7 +16,7 @@ import("//base/startup/appspawn_standard/appspawn.gni")
 import("//build/test.gni")
 import("//foundation/appexecfwk/standard/appexecfwk.gni")
 
-module_output_path = "thermal_manager_native/thermal_native"
+module_output_path = "thermal_manager/thermal_native"
 
 deps_ex = [
   "ability_runtime:base",
