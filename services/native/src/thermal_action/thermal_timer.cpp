@@ -58,7 +58,7 @@ void ThermalTimerInfo::SetInterval(const uint64_t &_interval)
     interval = _interval;
 }
 
-void ThermalTimerInfo::SetWantAgent(std::shared_ptr<OHOS::Notification::WantAgent::WantAgent> _wantAgent)
+void ThermalTimerInfo::SetWantAgent(std::shared_ptr<OHOS::AbilityRuntime::WantAgent::WantAgent> _wantAgent)
 {
     wantAgent = _wantAgent;
 }
