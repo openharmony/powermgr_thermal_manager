@@ -78,33 +78,32 @@ bool ChargerStateCollection::RegisterEvent()
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData &data __attribute__((__unused__)))
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    int code = data.GetCode();
-    std::string chargerStatus = data.GetData();
-    if (code == BatteryInfo::COMMON_EVENT_CODE_CHARGE_STATE) {
-        switch (atoi(chargerStatus.c_str())) {
-            case static_cast<int>(BatteryChargeState::CHARGE_STATE_DISABLE): {
-                state_ = ToString(DISABLE);
-                break;
-            }
-            case static_cast<int>(BatteryChargeState::CHARGE_STATE_ENABLE): {
-                state_ = ToString(ENABLE);
-                break;
-            }
-            case static_cast<int>(BatteryChargeState::CHARGE_STATE_FULL): {
-                state_ = ToString(FULL);
-                break;
-            }
-            case static_cast<int>(BatteryChargeState::CHARGE_STATE_NONE): {
-                state_ = ToString(NONE);
-                break;
-            }
-            case static_cast<int>(BatteryChargeState::CHARGE_STATE_BUTT): {
-                state_ = ToString(BUTT);
-                break;
-            }
-            default:
-                break;
+    int defaultChargeStatus = -1;
+    int chargerStatus = data.GetWant().GetIntParam(
+        ToString(BatteryInfo::COMMON_EVENT_CODE_CHARGE_STATE), defaultChargeStatus);
+    switch (chargerStatus) {
+        case static_cast<int>(BatteryChargeState::CHARGE_STATE_DISABLE): {
+            state_ = ToString(DISABLE);
+            break;
         }
+        case static_cast<int>(BatteryChargeState::CHARGE_STATE_ENABLE): {
+            state_ = ToString(ENABLE);
+            break;
+        }
+        case static_cast<int>(BatteryChargeState::CHARGE_STATE_FULL): {
+            state_ = ToString(FULL);
+            break;
+        }
+        case static_cast<int>(BatteryChargeState::CHARGE_STATE_NONE): {
+            state_ = ToString(NONE);
+            break;
+        }
+        case static_cast<int>(BatteryChargeState::CHARGE_STATE_BUTT): {
+            state_ = ToString(BUTT);
+            break;
+        }
+        default:
+            break;
     }
 }
 
