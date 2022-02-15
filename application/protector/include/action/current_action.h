@@ -20,7 +20,7 @@
 
 namespace OHOS {
 namespace PowerMgr {
-using namespace hdi::thermal::v1_0;
+using namespace OHOS::HDI::Thermal::V1_0;
 class CurrentAction : public IThermalAction, public ThermalDeviceMitigation {
 public:
     CurrentAction() = default;
