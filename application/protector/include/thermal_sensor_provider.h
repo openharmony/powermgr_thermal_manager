@@ -27,7 +27,7 @@
 
 namespace OHOS {
 namespace PowerMgr {
-using namespace hdi::thermal::v1_0;
+using namespace OHOS::HDI::Thermal::V1_0;
 using SensorsMap = std::map<std::string, int32_t>;
 enum EventType {
     EVENT_UEVENT_FD,
