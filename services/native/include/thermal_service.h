@@ -36,7 +36,7 @@
 #include "thermal_action_manager.h"
 #include "thermal_config_base_info.h"
 #include "thermal_config_sensor_cluster.h"
-#include "thermal_callback_service.h"
+#include "thermal_callback_impl.h"
 #include "thermal_types.h"
 #include "thermal_interface_proxy.h"
 
@@ -44,7 +44,7 @@
 namespace OHOS {
 namespace PowerMgr {
 using TypeTempMap = std::map<std::string, int32_t>;
-using namespace hdi::thermal::v1_0;
+using namespace OHOS::HDI::Thermal::V1_0;
 class ThermalService final : public SystemAbility, public ThermalSrvStub {
     DECLARE_SYSTEM_ABILITY(ThermalService);
     DECLARE_DELAYED_SP_SINGLETON(ThermalService);

@@ -29,7 +29,7 @@
 #include "thermal_srv_config_parser.h"
 #include "thermal_common.h"
 
-using namespace hdi::thermal::v1_0;
+using namespace OHOS::HDI::Thermal::V1_0;
 
 namespace OHOS {
 namespace PowerMgr {
@@ -348,10 +348,10 @@ void ThermalService::HandleEvent(int event)
                     return;
                 }
             }
-            sptr<IThermalCallback> g_callback = new ThermalCallbackService();
-            ThermalCallbackService::ThermalEventCallback eventCb =
+            sptr<IThermalCallback> g_callback = new ThermalCallbackImpl();
+            ThermalCallbackImpl::ThermalEventCallback eventCb =
                 std::bind(&ThermalService::HandleThermalCallbackEvent, this, std::placeholders::_1);
-            ThermalCallbackService::RegisterThermalEvent(eventCb);
+            ThermalCallbackImpl::RegisterThermalEvent(eventCb);
             ret = thermalInterface_->Register(g_callback);
             if (ret != ERR_OK) {
                 THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "set hdf callbck failed");
