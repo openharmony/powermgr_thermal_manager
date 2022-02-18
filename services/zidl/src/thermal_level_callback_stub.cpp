@@ -16,7 +16,6 @@
 #include "thermal_level_callback_stub.h"
 #include <message_parcel.h>
 #include "thermal_common.h"
-#include "thermal_level_callback_proxy.h"
 
 namespace OHOS {
 namespace PowerMgr {

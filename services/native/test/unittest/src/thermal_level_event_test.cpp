@@ -87,18 +87,45 @@ shared_ptr<CommonEventThermalLevelTest> CommonEventThermalLevelTest::RegisterEve
     return subscriberPtr;
 }
 
+int32_t ThermalLevelEventTest::InitNode()
+{
+    char bufTemp[MAX_PATH] = {0};
+    int32_t ret = -1;
+    std::map<std::string, int32_t> sensor;
+    sensor["battery"] = 0;
+    sensor["charger"] = 0;
+    sensor["pa"] = 0;
+    sensor["ap"] = 0;
+    sensor["ambient"] = 0;
+    sensor["cpu"] = 0;
+    sensor["soc"] = 0;
+    sensor["shell"] = 0;
+    for (auto iter : sensor) {
+        ret = snprintf_s(bufTemp, PATH_MAX, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR.c_str(), iter.first.c_str());
+        if (ret < ERR_OK) {
+            return ret;
+        }
+        std::string temp = std::to_string(iter.second);
+        FileOperation::WriteFile(bufTemp, temp, temp.length());
+    }
+    return ERR_OK;
+}
+
 void ThermalLevelEventTest::SetUpTestCase()
 {
 }
 
 void ThermalLevelEventTest::TearDownTestCase()
-{}
+{
+}
 
 void ThermalLevelEventTest::SetUp()
-{}
+{
+}
 
 void ThermalLevelEventTest::TearDown()
 {
+    InitNode();
 }
 
 namespace {
@@ -282,6 +309,36 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest007, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK);
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     sleep(WAIT_TIME * 10);
+    CommonEventManager::UnSubscribeCommonEvent(subscriber);
+}
+
+/*
+ * @tc.number: ThermalLevelEventTest008
+ * @tc.name: ThermalLevelEventTest
+ * @tc.desc: Verify the receive the level common event
+ */
+HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest008, TestSize.Level0)
+{
+    GTEST_LOG_(INFO) << "ThermalLevelEventTest008:: Test Start!!";
+    int32_t ret = -1;
+    bool result = false;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp);
+    ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
+    sleep(WAIT_TIME * 10);
+
+    CommonEventData stickyData;
+    CommonEventManager::GetStickyCommonEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, stickyData);
+    if (stickyData.GetWant().GetAction() != CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED) {
+        result = false;
+    } else {
+        result = true;
+    }
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
 }

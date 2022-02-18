@@ -36,6 +36,7 @@ public:
 
     bool ShowDialog(const std::string &params);
     void HandlePopupEvent(const int32_t value);
+    void GetDisplayPosition(int32_t& offsetX, int32_t& offsetY, int32_t& width, int32_t& height, bool& wideScreen);
 private:
     std::vector<uint32_t> valueList_;
     std::string params_;

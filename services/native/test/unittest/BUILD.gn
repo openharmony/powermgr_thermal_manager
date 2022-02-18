@@ -42,6 +42,7 @@ config("module_private_config") {
     "//foundation/windowmanager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
     "//foundation/windowmanager/utils/include",
+    "//drivers/peripheral/thermal/interfaces/include/",
   ]
 }
 
@@ -56,6 +57,8 @@ deps_ex = [
   "samgr_standard:samgr_proxy",
   "ces_standard:cesfwk_innerkits",
   "appspawn:appspawn_socket_client",
+  "thermal_device_driver:libthermal_callback",
+  "thermal_device_driver:libthermal_proxy_1.0",
 ]
 
 # thermal service test
@@ -91,8 +94,6 @@ ohos_unittest("thermal_unittest") {
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
-    "//drivers/interface/thermal/v1_0:libthermal_proxy_1.0",
-    "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
     "//foundation/aafwk/standard/services/appmgr:libams",
     "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",

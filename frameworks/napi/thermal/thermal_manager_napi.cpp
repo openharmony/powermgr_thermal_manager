@@ -214,7 +214,10 @@ void ThermalManagerNapi::RegisterCallback(const std::string &eventType)
 {
     THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
     if (eventType == THERMAL_NAPI_LEVEL_CHANGED) {
-        callback_ = new ThermalLevelCallback();
+        if (callback_ == nullptr) {
+            callback_ = new ThermalLevelCallback();
+        }
+
         if (callback_ != nullptr) {
             g_thermalMgrClient.SubscribeThermalLevelCallback(callback_);
         }

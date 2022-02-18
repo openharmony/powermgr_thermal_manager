@@ -15,6 +15,7 @@
 
 #include "action_popup.h"
 
+#include "display_manager.h"
 #include "ui_service_mgr_client.h"
 #include "wm_common.h"
 #include "constants.h"
@@ -22,6 +23,15 @@
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+constexpr int UI_DIALOG_POWER_WIDTH_NARROW = 400;
+constexpr int UI_DIALOG_POWER_HEIGHT_NARROW = 240;
+constexpr int UI_DEFAULT_WIDTH = 2560;
+constexpr int UI_DEFAULT_HEIGHT = 1600;
+constexpr int UI_DEFAULT_BUTTOM_CLIP = 50 * 2; // 48vp
+constexpr int UI_WIDTH_780DP = 780 * 2; // 780vp
+constexpr int UI_HALF = 2;
+}
 bool ActionPopup::InitParams(const std::string &params)
 {
     params_ = params;
@@ -88,10 +98,14 @@ bool ActionPopup::ShowDialog(const std::string &params)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Handle thermal level is too higher or too lower");
     // show dialog
-    const int POSTION_X = 150;
-    const int POSTION_Y = 150;
-    const int WIDTH = 150;
-    const int HEIGHT = 150;
+    int pos_x;
+    int pos_y;
+    int width;
+    int height;
+    bool wideScreen;
+
+    GetDisplayPosition(pos_x, pos_y, width, height, wideScreen);
+
     if (params.empty()) {
         return false;
     }
@@ -100,10 +114,10 @@ bool ActionPopup::ShowDialog(const std::string &params)
         "thermal_dialog",
         params,
         OHOS::Rosen::WindowType::WINDOW_TYPE_SYSTEM_ALARM_WINDOW,
-        POSTION_X,
-        POSTION_Y,
-        WIDTH,
-        HEIGHT,
+        pos_x,
+        pos_y,
+        width,
+        height,
         [this](int32_t id, const std::string& event, const std::string& params) {
             THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Dialog callback: %{public}s, %{public}s",
                 event.c_str(), params.c_str());
@@ -112,6 +126,32 @@ bool ActionPopup::ShowDialog(const std::string &params)
             }
         });
     return true;
+}
+
+void ActionPopup::GetDisplayPosition(
+    int32_t& offsetX, int32_t& offsetY, int32_t& width, int32_t& height, bool& wideScreen)
+{
+    wideScreen = true;
+    auto display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
+    if (display == nullptr) {
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "dialog GetDefaultDisplay fail, try again.");
+        display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
+    }
+
+    if (display != nullptr) {
+        if (display->GetWidth() < UI_WIDTH_780DP) {
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "share dialog narrow.");
+            wideScreen = false;
+            width = UI_DIALOG_POWER_WIDTH_NARROW;
+            height = UI_DIALOG_POWER_HEIGHT_NARROW;
+        }
+        offsetX = (display->GetWidth() - width) / UI_HALF;
+        offsetY = display->GetHeight() - height - UI_DEFAULT_BUTTOM_CLIP;
+    } else {
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "dialog get display fail, use default wide.");
+        offsetX = (UI_DEFAULT_WIDTH - width) / UI_HALF;
+        offsetY = UI_DEFAULT_HEIGHT - height - UI_DEFAULT_BUTTOM_CLIP;
+    }
 }
 } // namespace PowerMgr
 } // namespace OHOS
