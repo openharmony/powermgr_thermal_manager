@@ -98,14 +98,22 @@ static bool CheckThermalProtectorPID()
 
 int32_t ThermalMgrSystemTest::WriteFile(std::string path, std::string buf, size_t size)
 {
-    FILE *stream;
-    stream = fopen(path.c_str(), "w+");
-    if (nullptr == stream) {
+    FILE *stream = fopen(path.c_str(), "w+");
+    if (stream == nullptr) {
         return ERR_INVALID_VALUE;
     }
-    fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
-    fseek(stream, 0, SEEK_SET);
-    fclose(stream);
+    int ret = fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
+    if (ret == ERR_OK) {
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "ret=%{public}d", ret);
+    }
+    ret = fseek(stream, 0, SEEK_SET);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    ret = fclose(stream);
+    if (ret != ERR_OK) {
+        return ret;
+    }
     return ERR_OK;
 }
 
