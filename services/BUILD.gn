@@ -30,11 +30,12 @@ config("thermalsrv_private_config") {
     "${displaymgr_native_innerkits_path}/native/src",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/miscservices/time/interfaces/innerkits/include",
-    "//drivers/peripheral/thermal/interfaces",
-    "//drivers/peripheral/thermal/interfaces/include/",
     "//foundation/windowmanager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
     "//foundation/windowmanager/utils/include",
+    "//base/startup/syspara_lite/adapter/native/syspara/include",
+    "//foundation/windowmanager/interfaces/innerkits/dm",
+    "//drivers/peripheral/thermal/interfaces/include/",
   ]
 }
 
@@ -46,16 +47,13 @@ config("thermalsrv_public_config") {
     "native/include/thermal_policy",
     "native/include/thermal_observer/state_machine",
     "native/include/thermal_action/action",
-    "${thermal_manager_path}/services/zidl/include",
-    "//base/startup/syspara_lite/adapter/native/syspara/include",
+    "//base/powermgr/thermal_manager/services/zidl/include",
+    "//base/powermgr/thermal_manager/interfaces/innerkits/native/include",
   ]
 }
 
 ohos_shared_library("thermalservice") {
   sources = [
-    "${thermal_manager_path}/services/zidl/src/thermal_level_callback_stub.cpp",
-    "${thermal_manager_path}/services/zidl/src/thermal_srv_stub.cpp",
-    "${thermal_manager_path}/services/zidl/src/thermal_temp_callback_stub.cpp",
     "native/src/thermal_action/action/action_application_process.cpp",
     "native/src/thermal_action/action/action_charger.cpp",
     "native/src/thermal_action/action/action_cpu.cpp",
@@ -95,23 +93,22 @@ ohos_shared_library("thermalservice") {
   deps = [
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
     "${displaymgr_native_innerkits_path}:displaymgr",
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${utils_path}:thermal_utils",
     "//base/miscservices/time/services:time_service",
     "//base/powermgr/battery_manager/interfaces/innerkits:batterysrv_client",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
     "//base/powermgr/thermal_manager/frameworks/dialog/dialog_ui/js:dialog_js_files_etc",
+    "//base/powermgr/thermal_manager/services/zidl:thermalmgr_stub",
     "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
-    "//drivers/interface/thermal/v1_0:libthermal_proxy_1.0",
     "//drivers/peripheral/display/hal:hdi_display_device",
-    "//drivers/peripheral/thermal/interfaces/hdi_callback:libthermal_callback",
     "//foundation/aafwk/standard/services/appmgr:libams",
     "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
     "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwmclient",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+    "//foundation/windowmanager/utils:libwmutil",
     "//third_party/libxml2:xml2",
     "//utils/native/base:utils",
   ]
@@ -127,10 +124,15 @@ ohos_shared_library("thermalservice") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "multimedia_image_standard:image_native",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "thermal_device_driver:libthermal_callback",
+    "thermal_device_driver:libthermal_proxy_1.0",
+    "window_manager:libdm",
   ]
 
+  subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }
 

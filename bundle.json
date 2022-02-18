@@ -15,7 +15,7 @@
   "component": {
     "name": "thermal_manager",
     "subsystem": "powermgr",
-    "syscap": ["SystemCapability.PowerManager.ThermalManager"],
+    "syscap": ["SystemCapability.PowerMgr.ThermalManager"],
     "features": [],
     "adapted_system_type": [ "standard" ],
     "rom": "1024KB",
@@ -29,7 +29,9 @@
         "hiviewdfx_hilog_native",
         "ipc",
         "safwk",
-        "samgr_standard"
+        "samgr_standard",
+        "ability_base",
+        "napi"
       ],
       "third_party": [
         "libxml2",
@@ -39,14 +41,14 @@
     },
     "build": {
       "sub_component": [
-          "//base/powermgr/thermal_manager/services:thermalmgr_service",
-          "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",
-          "//base/powermgr/thermal_manager/interfaces/kits/js:thermal",
-          "//base/powermgr/thermal_manager/interfaces/kits/js:thermal_js",
-          "//base/powermgr/thermal_manager/sa_profile:thermalmgr_sa_profile",
-          "//base/powermgr/thermal_manager/application:thermal_application",
-          "//base/powermgr/thermal_manager/etc/init:thermal.rc",
-          "//base/powermgr/thermal_manager/utils:thermal-shell"
+        "//base/powermgr/thermal_manager/services:thermalmgr_service",
+        "//base/powermgr/thermal_manager/services/zidl:thermalmgr_ipc",
+        "//base/powermgr/thermal_manager/interfaces/innerkits:thermalmgr_innerkits_native",
+        "//base/powermgr/thermal_manager/interfaces/kits/js:thermal",
+        "//base/powermgr/thermal_manager/sa_profile:thermalmgr_sa_profile",
+        "//base/powermgr/thermal_manager/application:thermal_application",
+        "//base/powermgr/thermal_manager/etc/init:thermal.rc",
+        "//base/powermgr/thermal_manager/utils:thermal-shell"
       ],
       "inner_kits": [
         {
@@ -61,11 +63,19 @@
             ],
             "header_base": "//base/powermgr/thermal_manager/interfaces/innerkits/native/include"
           }
+        },
+        {
+            "name": "//base/powermgr/thermal_manager/interfaces/innerkits:thermalmgr_listener",
+            "header": {
+              "header_files": [
+                "thermal_mgr_listener.h"
+              ],
+              "header_base": "//base/powermgr/thermal_manager/interfaces/innerkits/native/include"
+            }
         }
       ],
       "test": [
-        "//base/powermgr/thermal_manager/services/native/test:thermalmgr_test",
-        "//base/powermgr/thermal_manager/test/systemtest:systemtest"
+        "//base/powermgr/thermal_manager/services/native/test:thermalmgr_test"
       ]
     }
   }

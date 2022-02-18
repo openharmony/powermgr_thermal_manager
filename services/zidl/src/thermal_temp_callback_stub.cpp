@@ -17,7 +17,6 @@
 #include <message_parcel.h>
 
 #include "constants.h"
-#include "thermal_temp_callback_proxy.h"
 #include "thermal_common.h"
 
 namespace OHOS {

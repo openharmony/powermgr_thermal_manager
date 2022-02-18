@@ -23,18 +23,6 @@ config("thermal_public_config") {
   include_dirs = [ "${thermal_manager_path}/frameworks/include" ]
 }
 
-js_declaration("thermal_js") {
-  part_name = "thermal_manager"
-  sources = [ "./@ohos.thermal.d.ts" ]
-}
-
-ohos_copy("power_declaration") {
-  sources = [ "./@ohos.thermal.d.ts" ]
-  outputs = [ target_out_dir + "/$target_name/" ]
-  module_source_dir = target_out_dir + "/$target_name"
-  module_install_name = ""
-}
-
 ohos_shared_library("thermal") {
   configs = [
     "${utils_path}:utils_config",
@@ -51,8 +39,7 @@ ohos_shared_library("thermal") {
 
   deps = [
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
-    "${thermal_manager_path}/services:thermalservice",
-    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
+    "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
     "//foundation/ace/napi:ace_napi",
     "//utils/native/base:utils",
   ]
@@ -67,6 +54,7 @@ ohos_shared_library("thermal") {
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "thermal_manager:thermalmgr_listener",
   ]
 
   relative_install_dir = "module"

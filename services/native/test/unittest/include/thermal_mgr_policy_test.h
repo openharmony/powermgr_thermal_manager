@@ -40,19 +40,20 @@ std::string stateScenePath = "/data/thermal/state/scene";
 std::string stateChargePath = "/data/thermal/state/charge";
 const std::string CPU_FREQ_PATH = "/data/cooling/cpu/freq";
 const std::string GPU_FREQ_PATH = "/data/cooling/gpu/freq";
-const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/cooling/charger/current";
-std::string xmlServicePath = "/system/etc/thermal_config/thermal_service_config.xml";
-std::string xmlKernelPath = "/system/etc/thermal_config/thermal_kernel_config.xml";
-std::string xmlHdiPath = "/system/etc/thermal_config/thermal_hdi_config.xml";
+const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/cooling/battery/current";
+const std::string SIMULATION_TEMP_DIR = "/data/sensor/%s/temp";
 class ThermalMgrPolicyTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    static void Trim(char* str);
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
-    static int32_t ReadFile(const char *path, char *buf, size_t size);
     static int32_t ConvertInt(const std::string &value);
+    static int32_t ReadFile(const char* path, char* buf, size_t size);
+    static int32_t ReadSysfsFile(const char* path, char* buf, size_t size);
+    static int32_t InitNode();
 };
 } // namespace PowerMgr
 } // namespace OHOS

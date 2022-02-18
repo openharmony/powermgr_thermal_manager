@@ -213,6 +213,7 @@ bool ActionThermalLevel::PublishEvent(const std::string &eventAction, const int 
     commonData.SetData(data);
     CommonEventPublishInfo publishInfo;
     publishInfo.SetOrdered(false);
+    publishInfo.SetSticky(true);
     if (!CommonEventManager::PublishCommonEvent(commonData, publishInfo)) {
         THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE,
             "failed to publish thermal level change event: %{public}s, code:%{public}d",
