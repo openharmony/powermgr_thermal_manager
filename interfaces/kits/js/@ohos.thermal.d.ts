@@ -83,6 +83,6 @@ declare namespace thermal {
      * @return Return the thermal level value.
      * @since 8
      */
-    function getThermalLevel(): number;
+    function getThermalLevel(): ThermalLevel;
 }
 export default thermal;

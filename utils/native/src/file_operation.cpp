@@ -66,13 +66,22 @@ int32_t FileOperation::CreateNodeFile(std::string filePath)
 
 int32_t FileOperation::WriteFile(std::string path, std::string buf, size_t size)
 {
-    std::lock_guard<std::mutex> lck(g_mutex);
-    int32_t fd = open(path.c_str(), O_RDWR);
-    if (fd < ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s: open failed to file.", __func__);
+    FILE *stream = fopen(path.c_str(), "w+");
+    if (stream == nullptr) {
+        return ERR_INVALID_VALUE;
     }
-    write(fd, buf.c_str(), size);
-    close(fd);
+    int ret = fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
+    if (ret == ERR_OK) {
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "ret=%{public}d", ret);
+    }
+    ret = fseek(stream, 0, SEEK_SET);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    ret = fclose(stream);
+    if (ret != ERR_OK) {
+        return ret;
+    }
     return ERR_OK;
 }
 

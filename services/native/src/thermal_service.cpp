@@ -265,11 +265,8 @@ void ThermalService::SubscribeThermalTempCallback(const std::vector<std::string>
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::SubscribeThermalTempCallback Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    if (uid > APP_FIRST_UID) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s Request failed, %{public}d permission check fail",
-            __func__, uid);
-        return;
-    }
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s uid %{public}d ",
+        __func__, uid);
     observer_->SubscribeThermalTempCallback(typeList, callback);
 }
 
@@ -277,11 +274,8 @@ void ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallb
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::UnSubscribeThermalTempCallback Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    if (uid > APP_FIRST_UID) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s Request failed, %{public}d permission check fail",
-            __func__, uid);
-        return;
-    }
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s uid %{public}d ",
+        __func__, uid);
     observer_->UnSubscribeThermalTempCallback(callback);
 }
 
@@ -299,11 +293,8 @@ void ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallb
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::SubscribeThermalLevelCallback Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    if (uid > APP_FIRST_UID) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s Request failed, %{public}d permission check fail",
-            __func__, uid);
-        return;
-    }
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s uid %{public}d ",
+        __func__, uid);
     actionMgr_->SubscribeThermalLevelCallback(callback);
 }
 
@@ -311,11 +302,8 @@ void ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCal
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::UnSubscribeThermalLevelCallback Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    if (uid > APP_FIRST_UID) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s Request failed, %{public}d permission check fail",
-            __func__, uid);
-        return;
-    }
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s uid %{public}d ",
+        __func__, uid);
     actionMgr_->UnSubscribeThermalLevelCallback(callback);
 }
 

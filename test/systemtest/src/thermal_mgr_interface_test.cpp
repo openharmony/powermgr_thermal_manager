@@ -33,6 +33,7 @@
 #include "thermal_mgr_client.h"
 #include "thermal_srv_sensor_info.h"
 #include "constants.h"
+#include "thermal_common.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -44,20 +45,27 @@ std::vector<std::string> typelist;
 
 int32_t ThermalMgrInterfaceTest::WriteFile(std::string path, std::string buf, size_t size)
 {
-    std::lock_guard<std::mutex> lck(g_mtx);
-    int32_t fd = open(path.c_str(), O_RDWR);
-    if (fd < ERR_OK) {
-        GTEST_LOG_(INFO) << "WriteFile: failed to open file";
+    FILE *stream = fopen(path.c_str(), "w+");
+    if (stream == nullptr) {
         return ERR_INVALID_VALUE;
     }
-    write(fd, buf.c_str(), size);
-    close(fd);
+    int ret = fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
+    if (ret == ERR_OK) {
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "ret=%{public}d", ret);
+    }
+    ret = fseek(stream, 0, SEEK_SET);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    ret = fclose(stream);
+    if (ret != ERR_OK) {
+        return ret;
+    }
     return ERR_OK;
 }
 
 int32_t ThermalMgrInterfaceTest::ReadFile(const char *path, char *buf, size_t size)
 {
-    std::lock_guard<std::mutex> lck(g_mtx);
     int32_t ret;
 
     int32_t fd = open(path, O_RDONLY);
