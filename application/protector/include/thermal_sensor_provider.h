@@ -34,7 +34,7 @@ enum EventType {
     EVENT_TIMER_FD,
 };
 
-class ThermalSensorProvider : public ThermalZoneManager, public ThermalSimulationNode {
+class ThermalSensorProvider : public ThermalZoneManager {
 public:
     using Callback = std::function<void(ThermalSensorProvider*, void*)>;
     using IntervalMap = std::map<std::string, int32_t>;

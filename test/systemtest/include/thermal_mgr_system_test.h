@@ -41,10 +41,7 @@ std::string stateScenePath = "/data/thermal/state/scene";
 std::string stateChargePath = "/data/thermal/state/charge";
 const std::string CPU_FREQ_PATH = "/data/cooling/cpu/freq";
 const std::string GPU_FREQ_PATH = "/data/cooling/gpu/freq";
-const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/cooling/charger/current";
-std::string xmlServicePath = "/system/etc/thermal_config/thermal_service_config.xml";
-std::string xmlKernelPath = "/system/etc/thermal_config/thermal_kernel_config.xml";
-std::string xmlHdiPath = "/system/etc/thermal_config/thermal_hdi_config.xml";
+const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/cooling/battery/current";
 const std::string SIMULATION_TEMP_DIR = "/data/sensor/%s/temp";
 class ThermalMgrSystemTest : public testing::Test {
 public:

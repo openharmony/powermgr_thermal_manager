@@ -18,7 +18,6 @@
 #include "message_parcel.h"
 #include "string_ex.h"
 
-#include "thermal_srv_proxy.h"
 #include "ithermal_temp_callback.h"
 #include "ithermal_level_callback.h"
 #include "thermal_srv_sensor_info.h"

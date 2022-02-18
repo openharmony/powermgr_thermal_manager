@@ -36,19 +36,13 @@ const int32_t MS_PER_SECOND = 1000;
 bool ThermalSensorProvider::InitProvider()
 {
     int32_t ret = -1;
-    if (!GetFlag()) {
-        ret = NodeInit();
-        if (ret != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to create file", __func__);
-            return false;
-        }
-    } else {
-        ret = InitThermalZoneSysfs();
-        if (ret != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to get path info.", __func__);
-            return false;
-        }
+
+    ret = InitThermalZoneSysfs();
+    if (ret != ERR_OK) {
+        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to get path info.", __func__);
+        return false;
     }
+
     StartThread(this);
     return true;
 }
@@ -58,20 +52,12 @@ void ThermalSensorProvider::GetThermalSensorInfo()
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
     int32_t ret = -1;
 
-    if (!GetFlag()) {
-        ret = ParserSimulationNode();
-        if (ret != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s failed to simulation node ", __func__);
-            return;
-        }
-    } else {
-        ret = ParseThermalZoneInfo();
-        if (ret != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s failed to thermal zone info", __func__);
-            return;
-        }
+    ret = ParseThermalZoneInfo();
+    if (ret != ERR_OK) {
+        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s failed to thermal zone info", __func__);
+        return;
     }
-    tzInfoList_ = GetTzInfoList();
+    tzInfoList_ = tzInfoAcaualEvent_.info;
 
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s size = %{public}zu", __func__, tzInfoList_.size());
 

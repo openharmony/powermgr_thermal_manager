@@ -32,6 +32,7 @@ std::string ambientPath = "/data/sensor/ambient/temp";
 std::string cpuPath = "/data/sensor/cpu/temp";
 std::string paPath = "/data/sensor/pa/temp";
 std::string apPath = "/data/sensor/ap/temp";
+const std::string SIMULATION_TEMP_DIR = "/data/sensor/%s/temp";
 }
 class ThermalLevelEventTest : public testing::Test {
 public:
@@ -39,6 +40,7 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    int32_t InitNode();
 };
 } // namespace PowerMgr
 } // namespace OHOS
