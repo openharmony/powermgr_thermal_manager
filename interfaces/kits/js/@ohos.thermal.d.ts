@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,11 +16,12 @@
 import { AsyncCallback, Callback } from './basic';
 
 /**
- * 提供系统热档位相关的回调及查询接口，可用于温控动作的输入指导。
- * {@link subscribeThermalLevel} 可用于订阅热档位回调，档位变化时能及时通知
- * {@link getThermalLevel} 可用于实时查询当前系统的热档位信息
+ * Provides thermal level-related callback and query APIs to obtain the information required for 
+ * temperature control. The APIs are as follows:
+ * {@link subscribeThermalLevel}: subscribes to callbacks of thermal level changes.
+ * {@link getThermalLevel}: obtains the thermal level of the system in real time.
  *
- * @SysCap SystemCapability.PowerMgr.ThermalManager
+ * @SysCap SystemCapability.PowerManager.ThermalManager
  * @since 8
  */
 declare namespace thermal {
@@ -31,56 +32,60 @@ declare namespace thermal {
      */
     export enum ThermalLevel {
         /**
-         * 表明设备处于凉爽的状态，业务执行不受限制。
+         * The device is cool, and services are not restricted.
          */
         COOL = 0,
         /**
-         * 表明设备处于普通工作状态，但并不凉爽，需要注意临近发热状态。
+         * The device is operational but is not cool. You need to pay attention to its heating.
          */
         NORMAL = 1,
         /**
-         * 表明设备已经进入温热状态，部分无感知业务需要考虑停止或延迟执行。
+         * The device is warm. You need to stop or delay some imperceptible services.
          */
         WARM = 2,
         /**
-         * 表明设备已经明显发热，无感知业务应全面停止，其他业务应考虑降规格及负载。
+         * The device is heating up. You need to stop all imperceptible services and downgrade 
+         * or reduce the load of other services.
          */
         HOT = 3,
         /**
-         * 表明设备已经发热严重，无感知业务应全面停止，主要业务需降低规格及负载。
+         * The device is overheated. You need to stop all imperceptible services and downgrade 
+         * or reduce the load of major services.
          */
         OVERHEATED = 4,
         /**
-         * 表明设备已经发热严重并且即将进入紧急状态，无感知业务应全面停止，主要业务应降低至最低规格。
+         * The device is overheated and is about to enter the emergency state. You need to stop 
+         * all imperceptible services and downgrade major services to the maximum extent.
          */
         WARNING = 5,
         /**
-         * 表明设备已经进入紧急状态，所有业务应当全面停止工作，可保留部分紧急求助功能。
+         * The device has entered the emergency state. You need to stop all services except those 
+         * for the emergency help purposes.
          */
         EMERGENCY = 6,
     }
     /**
-     * 订阅热档位变化时的回调提醒。
+     * Subscribes to callbacks of thermal level changes.
      *
-     * @param callback Specified callback method.
-     * @return Return thermal level.
+     * @param callback Callback of thermal level changes.
+     * @return Returns the thermal level.
      * @since 8
      */
     function subscribeThermalLevel(callback: AsyncCallback<ThermalLevel>): void;
 
     /**
-     * 取消热档位变化的订阅。
+     * Unsubscribes from the callbacks of thermal level changes.
      *
-     * @param callback Specified callback method.
-     * @return Null.
+     * @param callback Callback of thermal level changes.
+      
      * @since 8
      */
     function unsubscribeThermalLevel(callback?: AsyncCallback<void>): void;
 
     /**
-     * 获取当前的热档位信息。
+     * Obtains the current thermal level.
      *
-     * @return Return the thermal level value.
+     * @return Returns the thermal level.
      * @since 8
      */
     function getThermalLevel(): ThermalLevel;
