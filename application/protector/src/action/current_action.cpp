@@ -36,7 +36,7 @@ void CurrentAction::Execute()
 int32_t CurrentAction::BatteryCurrentActionRequest(uint32_t current)
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d", current);
-    uint32_t ret = -1;
+    int32_t ret = -1;
     ret = this->BatteryCurrentRequest(current);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set current");

@@ -33,7 +33,7 @@ struct LevelItem {
 struct AuxLevelItem {
     int32_t lowerTemp;
     int32_t upperTemp;
-    uint32_t level;
+    int32_t level;
 };
 
 using TypeTempMap = std::map<std::string, int32_t>;
