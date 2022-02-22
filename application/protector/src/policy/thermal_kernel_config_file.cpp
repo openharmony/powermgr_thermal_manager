@@ -84,7 +84,7 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
         LevelAction levelAction;
         std::shared_ptr<ProtectorThermalZoneInfo> tzinfo = std::make_shared<ProtectorThermalZoneInfo>();
         std::string type = (char *)xmlGetProp(cur, BAD_CAST"type");
-        uint32_t interval = atoi((char *)xmlGetProp(cur, BAD_CAST"interval"));
+        int32_t interval = atoi((char *)xmlGetProp(cur, BAD_CAST"interval"));
         auto desc = xmlGetProp(cur, BAD_CAST"desc");
         if (desc != nullptr) {
             std::string value = (char *)desc;
