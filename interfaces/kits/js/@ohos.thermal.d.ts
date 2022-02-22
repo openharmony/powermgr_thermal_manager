@@ -21,7 +21,7 @@ import { AsyncCallback, Callback } from './basic';
  * {@link subscribeThermalLevel}: subscribes to callbacks of thermal level changes.
  * {@link getThermalLevel}: obtains the thermal level of the system in real time.
  *
- * @SysCap SystemCapability.PowerManager.ThermalManager
+ * @syscap SystemCapability.PowerManager.ThermalManager
  * @since 8
  */
 declare namespace thermal {
