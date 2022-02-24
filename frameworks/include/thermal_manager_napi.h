@@ -52,7 +52,7 @@ public:
 
     static void RegisterCallback(const std::string &eventType);
     static napi_value EnumThermalLevelConstructor(napi_env env, napi_callback_info info);
-    void OnThermalLevelSucceed(uint32_t level);
+    void OnThermalLevelSucceed(const ThermalLevel &level);
     static ThermalManagerNapi *GetThermalManagerNapi();
     static sptr<IThermalLevelCallback> callback_;
     static napi_ref thermalLevelConstructor_;

@@ -18,6 +18,14 @@
 
 namespace OHOS {
 namespace PowerMgr {
+const std::string THERMAL_LEVEL_COOL = "thermal.level.COOL";
+const std::string THERMAL_LEVEL_NORMAL = "thermal.level.NORMAL";
+const std::string THERMAL_LEVEL_WARM = "thermal.level.WARM";
+const std::string THERMAL_LEVEL_HOT = "thermal.level.HOT";
+const std::string THERMAL_LEVEL_OVERHEATED = "thermal.level.OVERHEATED";
+const std::string THERMAL_LEVEL_WARNING = "thermal.level.WARNING";
+const std::string THERMAL_LEVEL_EMERGENCY = "thermal.level.EMERGENCY";
+
 enum class ThermalLevel : int32_t {
     /**
      * @brief Invaild level
@@ -59,15 +67,6 @@ enum class ThermalLevel : int32_t {
      *
      */
         EMERGENCY,
-};
-
-enum ThermalLevelCode {
-    THERMAL_LEVEL_CODE_COOL = 0,
-    THERMAL_LEVEL_CODE_WARM = 1,
-    THERMAL_LEVEL_CODE_HOT = 2,
-    THERMAL_LEVEL_CODE_OVERHEATED = 3,
-    THERMAL_LEVEL_CODE_WARNING = 4,
-    THERMAL_LEVEL_CODE_EMERGENCY = 5,
 };
 } // PowerMgr
 } // OHOS
