@@ -127,11 +127,13 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
     if (retIt.second) {
         object->AddDeathRecipient(thermalLevelCBDeathRecipient_);
     }
+    for (auto& listener : thermalLevelListeners_) {
+        listener->GetThermalLevel(static_cast<ThermalLevel>(level_));
+    }
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
         "%{public}s, object=%{public}p, callback=%{public}p, listeners.size=%{public}d, insertOk=%{public}d",
         __func__, object.GetRefPtr(), callback.GetRefPtr(),
         static_cast<unsigned int>(thermalLevelListeners_.size()), retIt.second);
-    NotifyThermalLevelChanged(level_);
 }
 
 void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
@@ -203,17 +205,15 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
  */
 bool ActionThermalLevel::PublishEvent(const std::string &eventAction, const int &code, const std::string &data)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s publish event: %{public}s, code: %{public}d",
-        __func__, eventAction.c_str(), code);
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s publish event: %{public}s, code: %{public}d, data:%{public}s",
+        __func__, eventAction.c_str(), code, data.c_str());
     Want want;
+    want.SetParam(data, code);
     want.SetAction(eventAction);
     CommonEventData commonData;
     commonData.SetWant(want);
-    commonData.SetCode(code);
-    commonData.SetData(data);
     CommonEventPublishInfo publishInfo;
     publishInfo.SetOrdered(false);
-    publishInfo.SetSticky(true);
     if (!CommonEventManager::PublishCommonEvent(commonData, publishInfo)) {
         THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE,
             "failed to publish thermal level change event: %{public}s, code:%{public}d",
@@ -237,36 +237,36 @@ bool ActionThermalLevel::PushlishLevelChangedEvents(const int &code, const std::
 void ActionThermalLevel::SendThermalLevelEvents(int32_t level)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    switch (level) {
-        case static_cast<int32_t>(ThermalLevel::COOL): {
-            PushlishLevelChangedEvents(level, std::to_string(level));
+    switch (static_cast<ThermalLevel>(level)) {
+        case ThermalLevel::COOL: {
+            PushlishLevelChangedEvents(level, THERMAL_LEVEL_COOL);
             break;
         }
-        case static_cast<int32_t>(ThermalLevel::NORMAL): {
-            PushlishLevelChangedEvents(level, std::to_string(level));
+        case ThermalLevel::NORMAL: {
+            PushlishLevelChangedEvents(level, THERMAL_LEVEL_NORMAL);
             break;
         }
-        case static_cast<int32_t>(ThermalLevel::WARM): {
-            PushlishLevelChangedEvents(level, std::to_string(level));
+        case ThermalLevel::WARM: {
+            PushlishLevelChangedEvents(level, THERMAL_LEVEL_WARM);
             break;
         }
-        case static_cast<int32_t>(ThermalLevel::HOT): {
-            PushlishLevelChangedEvents(level, std::to_string(level));
+        case ThermalLevel::HOT: {
+            PushlishLevelChangedEvents(level, THERMAL_LEVEL_HOT);
             break;
         }
-        case static_cast<int32_t>(ThermalLevel::OVERHEATED): {
-            PushlishLevelChangedEvents(level, std::to_string(level));
+        case ThermalLevel::OVERHEATED: {
+            PushlishLevelChangedEvents(level, THERMAL_LEVEL_OVERHEATED);
             break;
         }
-        case static_cast<int32_t>(ThermalLevel::WARNING): {
-            PushlishLevelChangedEvents(level, std::to_string(level));
+        case ThermalLevel::WARNING: {
+            PushlishLevelChangedEvents(level, THERMAL_LEVEL_WARNING);
             break;
         }
-        case static_cast<int32_t>(ThermalLevel::EMERGENCY): {
-            PushlishLevelChangedEvents(level, std::to_string(level));
+        case ThermalLevel::EMERGENCY: {
+            PushlishLevelChangedEvents(level, THERMAL_LEVEL_EMERGENCY);
             break;
         }
-        case static_cast<int32_t>(ThermalLevel::INVALID_LEVEL): {
+        case ThermalLevel::INVALID_LEVEL: {
             break;
         }
         default: {

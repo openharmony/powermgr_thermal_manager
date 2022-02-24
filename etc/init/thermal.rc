@@ -10,7 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-service thermal_sa /system/bin/sa_main /system/profile/thermal.xml
+service thermal /system/bin/sa_main /system/profile/thermal.xml
     class thermal
     user thermal
     group system shell
@@ -18,4 +18,4 @@ service thermal_sa /system/bin/sa_main /system/profile/thermal.xml
 
 on boot
     exec /system/bin/sleep 4
-    start thermal_sa
+    start thermal
