@@ -27,7 +27,7 @@ namespace OHOS {
 namespace PowerMgr {
 class ThermalLevelCallback : public ThermalLevelCallbackStub {
 public:
-    explicit ThermalLevelCallback() {};
+    explicit ThermalLevelCallback() : level_(ThermalLevel::INVALID_LEVEL) {};
     virtual ~ThermalLevelCallback() {};
     void GetThermalLevel(ThermalLevel level) override;
     uint32_t GetLevel()

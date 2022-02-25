@@ -34,7 +34,7 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::INVALID_LEVEL);
 std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> ActionThermalLevel::thermalLevelListeners_;
 
-ActionThermalLevel::ActionThermalLevel(const wptr<ThermalService>& tms) : tms_(tms) {}
+ActionThermalLevel::ActionThermalLevel(const wptr<ThermalService>& tms) : tms_(tms), laststValue_(0) {}
 ActionThermalLevel::~ActionThermalLevel() {}
 
 bool ActionThermalLevel::InitParams(const std::string &params)

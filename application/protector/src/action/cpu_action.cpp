@@ -35,7 +35,7 @@ void CpuAction::Execute()
 int32_t CpuAction::CpuActionRequest(uint32_t freq)
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d", freq);
-    uint32_t ret = -1;
+    int32_t ret = -1;
     ret = this->CpuRequest(freq);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set freq");
