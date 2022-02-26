@@ -102,7 +102,10 @@ int32_t ThermalMgrPolicyTest::ReadFile(const char* path, char* buf, size_t size)
 
 int32_t ThermalMgrPolicyTest::ConvertInt(const std::string &value)
 {
-    return std::stoi(value);
+    if (IsNumericStr(value)) {
+        return std::stoi(value);
+    }
+    return -1;
 }
 
 int32_t ThermalMgrPolicyTest::InitNode()
