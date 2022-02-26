@@ -150,7 +150,5 @@ ohos_unittest("ThermalLevelEventTest") {
 }
 group("unittest") {
   testonly = true
-  deps = [
-    ":ThermalLevelEventTest"
-  ]
+  deps = [ ":ThermalLevelEventTest" ]
 }
