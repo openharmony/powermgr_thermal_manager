@@ -65,10 +65,7 @@ deps_ex = [
 ohos_unittest("thermal_unittest") {
   module_out_path = module_output_path
 
-  sources = [
-    "src/thermal_level_event_test.cpp",
-    "src/thermal_mgr_policy_test.cpp",
-  ]
+  sources = [ "src/thermal_level_event_test.cpp" ]
 
   configs = [
     "${utils_path}:utils_config",
