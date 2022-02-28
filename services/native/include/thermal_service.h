@@ -38,7 +38,7 @@
 #include "thermal_config_sensor_cluster.h"
 #include "thermal_callback_impl.h"
 #include "thermal_types.h"
-#include "thermal_interface_proxy.h"
+#include "v1_0/thermal_interface_proxy.h"
 
 
 namespace OHOS {
