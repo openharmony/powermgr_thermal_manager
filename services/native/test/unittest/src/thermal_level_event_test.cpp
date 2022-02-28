@@ -32,6 +32,7 @@
 #include "securec.h"
 #include "thermal_common.h"
 #include "thermal_service.h"
+#include "thermal_level_info.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -56,15 +57,30 @@ CommonEventThermalLevelTest::CommonEventThermalLevelTest
 void CommonEventThermalLevelTest::OnReceiveEvent(const CommonEventData &data)
 {
     GTEST_LOG_(INFO) << " CommonEventThermalLevelTest: OnReceiveEvent Enter \n";
+
+    int cool = -1;
+    int normal = -1;
+    int warm = -1;
+    int hot = -1;
+    int overheated = -1;
+    int warning = -1;
+    int emergency = -1;
     std::string action = data.GetWant().GetAction();
-    int min = 0;
-    int max = 6;
     if (action == CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED) {
-        GTEST_LOG_(INFO) << "OnReceiveEvent: data=" << data.GetData();
-        GTEST_LOG_(INFO) << "OnReceiveEvent: code=" << data.GetCode();
-        EXPECT_EQ(true, (data.GetCode() >= min) && (data.GetCode() <= max));
-    } else {
-        GTEST_LOG_(INFO) << "failed to receive level changed event";
+        data.GetWant().GetIntParam(THERMAL_LEVEL_COOL, cool);
+        GTEST_LOG_(INFO) << "cool: " << cool;
+        data.GetWant().GetIntParam(THERMAL_LEVEL_NORMAL, normal);
+        GTEST_LOG_(INFO) << "normal: " << normal;
+        data.GetWant().GetIntParam(THERMAL_LEVEL_WARM, warm);
+        GTEST_LOG_(INFO) << "warm: " << warm;
+        data.GetWant().GetIntParam(THERMAL_LEVEL_HOT, hot);
+        GTEST_LOG_(INFO) << "hot: " << hot;
+        data.GetWant().GetIntParam(THERMAL_LEVEL_OVERHEATED, overheated);
+        GTEST_LOG_(INFO) << "overheated: " << overheated;
+        data.GetWant().GetIntParam(THERMAL_LEVEL_WARNING, warning);
+        GTEST_LOG_(INFO) << "warning: " << warning;
+        data.GetWant().GetIntParam(THERMAL_LEVEL_EMERGENCY, emergency);
+        GTEST_LOG_(INFO) << "emergency: " << emergency;
     }
 }
 
@@ -137,6 +153,7 @@ namespace {
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "CommonEventThermalLevelTest:: Test Start!!";
+    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t temp = 41000;
     int32_t ret = -1;
@@ -145,7 +162,6 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
     EXPECT_EQ(true, ret >= ERR_OK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     sleep(WAIT_TIME * 10);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
@@ -158,6 +174,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "ThermalLevelEventTest002:: Test Start!!";
+    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t temp = 43100;
     int32_t ret = -1;
@@ -166,7 +183,6 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
     EXPECT_EQ(true, ret >= ERR_OK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     sleep(WAIT_TIME * 10);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
@@ -179,6 +195,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "CommonEventThermalLevelTest:: Test Start!!";
+    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t temp = 46100;
     int32_t ret = -1;
@@ -187,7 +204,6 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
     EXPECT_EQ(true, ret >= ERR_OK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     sleep(WAIT_TIME * 10);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
@@ -200,6 +216,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "CommonEventThermalLevelTest:: Test Start!!";
+    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -217,7 +234,6 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
     sTemp = to_string(amTemp) + "\n";
     ret = FileOperation::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     sleep(WAIT_TIME * 10);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
@@ -230,6 +246,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest005, TestSize.Level0)
 {
     auto test = std::make_shared<CommonEventThermalLevelTest>();
+    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     GTEST_LOG_(INFO) << "CommonEventThermalLevelTest:: Test Start!!";
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
@@ -248,7 +265,6 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest005, TestSize.Level0)
     sTemp = to_string(amTemp) + "\n";
     ret = FileOperation::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     sleep(WAIT_TIME * 10);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
@@ -261,6 +277,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest005, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest006, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "CommonEventThermalLevelTest:: Test Start!!";
+    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     int32_t ret = -1;
     char apTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -286,7 +303,6 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest006, TestSize.Level0)
     sTemp = to_string(shellTemp) + "\n";
     ret = FileOperation::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     sleep(WAIT_TIME * 10);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
@@ -299,6 +315,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest006, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest007, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "CommonEventThermalLevelTest:: Test Start!!";
+    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     int32_t ret = -1;
     char socTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
@@ -307,7 +324,6 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest007, TestSize.Level0)
     std::string sTemp = to_string(socTemp);
     ret = FileOperation::WriteFile(socTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     sleep(WAIT_TIME * 10);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
@@ -337,6 +353,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest008, TestSize.Level0)
     if (stickyData.GetWant().GetAction() != CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED) {
         result = false;
     } else {
+        GTEST_LOG_(INFO) << "ThermalLevelEventTest008:: sticky event successfully!!";
         result = true;
     }
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
