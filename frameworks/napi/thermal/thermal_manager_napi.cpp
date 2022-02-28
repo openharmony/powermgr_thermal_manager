@@ -34,14 +34,14 @@ napi_ref ThermalManagerNapi::thermalLevelConstructor_ = nullptr;
 
 void ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: callback enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: callback enter", __func__);
     ThermalManagerNapi *thermalManagerNapi = ThermalManagerNapi::GetThermalManagerNapi();
     if (thermalManagerNapi == nullptr) {
         return;
     }
 
-    thermalManagerNapi->OnThermalLevelSucceed(static_cast<uint32_t>(level));
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: callback return", __func__);
+    thermalManagerNapi->OnThermalLevelSucceed(level);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: callback return", __func__);
 }
 
 
@@ -63,18 +63,18 @@ ThermalManagerNapi::~ThermalManagerNapi()
     }
 }
 
-void ThermalManagerNapi::OnThermalLevelSucceed(uint32_t level)
+void ThermalManagerNapi::OnThermalLevelSucceed(const ThermalLevel &level)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: enter %{public}d", __func__, level);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: enter %{public}d", __func__, static_cast<int32_t>(level));
     napi_value levelValue;
-    NAPI_CALL_RETURN_VOID(env_, napi_create_uint32(env_, level, &levelValue));
+    NAPI_CALL_RETURN_VOID(env_, napi_create_int32(env_, static_cast<int32_t>(level), &levelValue));
     OnEvent(THERMAL_NAPI_LEVEL_CHANGED, ARG_1, &levelValue);
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
 }
 
 napi_value ThermalManagerNapi::Init(napi_env env, napi_value exports)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_STATIC_FUNCTION("subscribeThermalLevel", SubscribeThermalLevel),
         DECLARE_NAPI_STATIC_FUNCTION("unsubscribeThermalLevel", UnSubscribeThermalLevel),
@@ -83,13 +83,13 @@ napi_value ThermalManagerNapi::Init(napi_env env, napi_value exports)
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
     InitThermalLevel(env, exports);
 
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
     return exports;
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
 }
 
 napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
     napi_value cool;
     napi_value warm;
     napi_value hot;
@@ -119,13 +119,13 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
         nullptr, sizeof(desc) / sizeof(*desc), desc, &result);
     napi_create_reference(env, result, refCount, &thermalLevelConstructor_);
     napi_set_named_property(env, exports, "ThermalLevel", result);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
     return exports;
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
 }
 
 napi_value ThermalManagerNapi::EnumThermalLevelConstructor(napi_env env, napi_callback_info info)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "EnumThermalLevelConstructor enter");
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "EnumThermalLevelConstructor enter");
     size_t argc = 0;
     napi_value args[ARG_1] = { 0 };
     napi_value jsthis = nullptr;
@@ -133,30 +133,30 @@ napi_value ThermalManagerNapi::EnumThermalLevelConstructor(napi_env env, napi_ca
 
     napi_status status = napi_get_cb_info(env, info, &argc, args, &jsthis, &data);
 
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "EnumThermalLevelConstructor %{public}d", status);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "EnumThermalLevelConstructor %{public}d", status);
     if (status != napi_ok) {
         return nullptr;
     }
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "End");
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "End");
     return jsthis;
 }
 
 napi_value ThermalManagerNapi::GetThermalLevel(napi_env env, napi_callback_info info)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
     napi_value napiValue = nullptr;
     ThermalLevel level = g_thermalMgrClient.GetThermalLevel();
     int32_t levelValue = static_cast<int32_t>(level);
     NAPI_CALL(env, napi_create_int32(env, levelValue, &napiValue));
 
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: level is %{public}d", __func__, levelValue);
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: level is %{public}d", __func__, levelValue);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
     return napiValue;
 }
 
 napi_value ThermalManagerNapi::SubscribeThermalLevel(napi_env env, napi_callback_info info)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
     size_t argc = ARG_1;
     napi_value args[ARG_1] = {0};
     napi_value jsthis;
@@ -184,13 +184,13 @@ napi_value ThermalManagerNapi::SubscribeThermalLevel(napi_env env, napi_callback
 
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
     return result;
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
 }
 
 napi_value ThermalManagerNapi::UnSubscribeThermalLevel(napi_env env, napi_callback_info info)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
     size_t argc = ARG_1;
     napi_value args[ARG_1] = { 0 };
     napi_value jsthis;
@@ -199,20 +199,41 @@ napi_value ThermalManagerNapi::UnSubscribeThermalLevel(napi_env env, napi_callba
     napi_status status = napi_get_cb_info(env, info, &argc, args, &jsthis, &data);
     NAPI_ASSERT(env, (status == napi_ok) && (argc >= 0), "Bad parameters");
 
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, args[ARG_0], &valueType);
+    NAPI_ASSERT(env, valueType == napi_function, "type mismatch for parameter 1");
+
     if (callback_ != nullptr) {
         g_thermalMgrClient.UnSubscribeThermalLevelCallback(callback_);
     }
     g_obj->Off(THERMAL_NAPI_LEVEL_CHANGED);
 
+    napi_value handler = nullptr;
+    napi_ref handlerRef = nullptr;
+    napi_create_reference(env, args[ARG_0], 1, &handlerRef);
+    napi_get_reference_value(env, handlerRef, &handler);
+    napi_delete_reference(env, handlerRef);
+
     napi_value result = nullptr;
+    napi_value result_final;
+    if (handler == nullptr) {
+        THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "Handler should not be NULL");
+        return result;
+    }
+
     napi_get_undefined(env, &result);
+    status = napi_call_function(env, nullptr, handler, 1, &result_final, &result);
+    if (status != napi_ok) {
+        THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "status=%{public}d", status);
+        return result;
+    }
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
     return result;
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
 }
 
 void ThermalManagerNapi::RegisterCallback(const std::string &eventType)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
     if (eventType == THERMAL_NAPI_LEVEL_CHANGED) {
         if (callback_ == nullptr) {
             callback_ = new ThermalLevelCallback();
@@ -222,7 +243,7 @@ void ThermalManagerNapi::RegisterCallback(const std::string &eventType)
             g_thermalMgrClient.SubscribeThermalLevelCallback(callback_);
         }
     }
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
 }
 
 EXTERN_C_START
@@ -231,11 +252,11 @@ EXTERN_C_START
  */
 static napi_value ThermalInit(napi_env env, napi_value exports)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "enter");
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "enter");
 
     napi_value ret = ThermalManagerNapi::Init(env, exports);
 
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "return");
+    THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "return");
 
     return ret;
 }
