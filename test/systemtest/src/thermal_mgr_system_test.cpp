@@ -102,17 +102,18 @@ int32_t ThermalMgrSystemTest::WriteFile(std::string path, std::string buf, size_
     if (stream == nullptr) {
         return ERR_INVALID_VALUE;
     }
-    int ret = fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
+    size_t ret = fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
     if (ret == ERR_OK) {
         THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "ret=%{public}d", ret);
     }
-    ret = fseek(stream, 0, SEEK_SET);
-    if (ret != ERR_OK) {
-        return ret;
+    int32_t state = fseek(stream, 0, SEEK_SET);
+    if (state != ERR_OK) {
+        fclose(stream);
+        return state;
     }
-    ret = fclose(stream);
-    if (ret != ERR_OK) {
-        return ret;
+    state = fclose(stream);
+    if (state != ERR_OK) {
+        return state;
     }
     return ERR_OK;
 }

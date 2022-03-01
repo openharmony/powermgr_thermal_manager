@@ -40,7 +40,7 @@ void ThermalConfigBaseInfo::SetHistoryTempCount()
 {
     auto countIter = baseItems_.find(HISTORY_TEMP_COUNT_TAG);
     if (countIter != baseItems_.end()) {
-        historyTempCount_ = atoi(countIter->second.c_str());
+        historyTempCount_ = static_cast<uint32_t>(atoi(countIter->second.c_str()));
     }
 }
 
