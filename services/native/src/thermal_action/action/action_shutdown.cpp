@@ -53,7 +53,7 @@ void ActionShutdown::AddActionValue(std::string value)
 void ActionShutdown::Execute()
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
-    int value = lastValue_;
+    int32_t value = lastValue_;
     if (valuesList_.empty()) {
         value = 0;
     } else {

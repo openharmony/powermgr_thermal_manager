@@ -41,7 +41,7 @@ void ActionGpu::AddActionValue(std::string value)
 void ActionGpu::Execute()
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
-    int value = lastValue_;
+    uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
     } else {
