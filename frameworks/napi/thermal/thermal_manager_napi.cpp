@@ -22,8 +22,8 @@ using namespace OHOS::PowerMgr;
 using namespace OHOS;
 
 namespace {
-auto &g_thermalMgrClient = ThermalMgrClient::GetInstance();
-ThermalManagerNapi *g_obj = nullptr;
+thread_local auto &g_thermalMgrClient = ThermalMgrClient::GetInstance();
+thread_local ThermalManagerNapi *g_obj = nullptr;
 const uint8_t ARG_0 = 0;
 const uint8_t ARG_1 = 1;
 const std::string THERMAL_NAPI_LEVEL_CHANGED = "LevelChanged";
