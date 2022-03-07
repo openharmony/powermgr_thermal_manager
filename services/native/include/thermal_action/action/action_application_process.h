@@ -63,7 +63,7 @@ private:
     std::vector<AppExecFwk::RunningProcessInfo> bgAppProcessInfos_;
     std::vector<AppExecFwk::RunningProcessInfo> fgAppProcessInfos_;
     std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos_;
-    int32_t lastValue_;
+    uint32_t lastValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

@@ -102,12 +102,12 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
                 ThermalZoneInfoItem tziItem;
                 tziItem.threshold= atoi((char*)xmlGetProp(subNode, BAD_CAST"threshold"));
                 tziItem.thresholdClr = atoi((char*)xmlGetProp(subNode, BAD_CAST"threshold_clr"));
-                tziItem.level = atoi((char*)xmlGetProp(subNode, BAD_CAST"level"));
+                tziItem.level = static_cast<uint32_t>(atoi((char*)xmlGetProp(subNode, BAD_CAST"level")));
                 levelAction.level = tziItem.level;
                 for (auto subActionNode = subNode->children; subActionNode; subActionNode = subActionNode->next) {
                     ActionItem action;
                     action.name = (char *)subActionNode->name;
-                    action.value = atoi((char *)xmlNodeGetContent(subActionNode));
+                    action.value = static_cast<uint32_t>(atoi((char *)xmlNodeGetContent(subActionNode)));
                     levelAction.vAction.push_back(action);
                 }
                 vtzi.push_back(tziItem);
