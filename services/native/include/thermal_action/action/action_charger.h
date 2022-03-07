@@ -34,7 +34,7 @@ private:
     std::vector<uint32_t> valueList_;
     std::string params_;
     bool flag_;
-    int32_t lastValue_;
+    uint32_t lastValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

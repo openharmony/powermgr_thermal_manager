@@ -75,7 +75,7 @@ private:
     bool flag_;
     static std::set<const sptr<IThermalLevelCallback>, classcomp> thermalLevelListeners_;
     static int32_t level_;
-    int32_t laststValue_;
+    uint32_t laststValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

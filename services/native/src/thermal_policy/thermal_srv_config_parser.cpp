@@ -156,7 +156,7 @@ void ThermalSrvConfigParser::ParseSensorInfo(const xmlNode *cur, std::shared_ptr
                 THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "The sensor does not match the threshold range");
                 break;
             }
-            levelItem.level = atoi(((char *)xmlGetProp(subNode, BAD_CAST("level"))));
+            levelItem.level = static_cast<uint32_t>(atoi(((char *)xmlGetProp(subNode, BAD_CAST("level")))));
             levelItem.threshold = atoi(thresholds.at(i).c_str());
             levelItem.thresholdClr = atoi(thresholdClrs.at(i).c_str());
             auto tempRiseRates = xmlGetProp(subNode, BAD_CAST("temp_rise_rate"));
@@ -257,7 +257,7 @@ void ThermalSrvConfigParser::ParsePolicyNode(xmlNodePtr node)
     while (cur != nullptr) {
         PolicyConfig policyConfig;
         clusterName = (char *)xmlGetProp(cur, BAD_CAST"name");
-        uint32_t level = atoi((char *)xmlGetProp(cur, BAD_CAST"level"));
+        uint32_t level = static_cast<uint32_t>(atoi((char *)xmlGetProp(cur, BAD_CAST"level")));
 
         policyConfig.level = level;
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "policyConfig.name: %{public}s, policyConfig.level:%{public}d",
