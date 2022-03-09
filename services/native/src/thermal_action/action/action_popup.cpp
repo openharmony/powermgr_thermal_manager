@@ -28,8 +28,7 @@ constexpr int UI_DIALOG_POWER_WIDTH_NARROW = 400;
 constexpr int UI_DIALOG_POWER_HEIGHT_NARROW = 240;
 constexpr int UI_DEFAULT_WIDTH = 2560;
 constexpr int UI_DEFAULT_HEIGHT = 1600;
-constexpr int UI_DEFAULT_BUTTOM_CLIP = 50 * 2; // 48vp
-constexpr int UI_WIDTH_780DP = 780 * 2; // 780vp
+constexpr int UI_DEFAULT_BUTTOM_CLIP = 50 * 2;
 constexpr int UI_HALF = 2;
 }
 bool ActionPopup::InitParams(const std::string &params)
@@ -134,24 +133,42 @@ void ActionPopup::GetDisplayPosition(
     wideScreen = true;
     auto display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
     if (display == nullptr) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "dialog GetDefaultDisplay fail, try again.");
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "dialog GetDefaultDisplay fail, try again.");
         display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
     }
 
     if (display != nullptr) {
-        if (display->GetWidth() < UI_WIDTH_780DP) {
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "display size: %{public}d x %{public}d",
+            display->GetWidth(), display->GetHeight());
+        if (display->GetWidth() < display->GetHeight()) {
             THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "share dialog narrow.");
+            const int NARROW_WIDTH_N = 3;
+            const int NARROW_WIDTH_D = 4;
+            const int NARROW_HEIGHT_RATE = 8;
             wideScreen = false;
-            width = UI_DIALOG_POWER_WIDTH_NARROW;
-            height = UI_DIALOG_POWER_HEIGHT_NARROW;
+            width = display->GetWidth() * NARROW_WIDTH_N / NARROW_WIDTH_D;
+            height = display->GetHeight() / NARROW_HEIGHT_RATE;
+        } else {
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "share dialog wide.");
+            const int NARROW_WIDTH_N = 1;
+            const int NARROW_WIDTH_D = 3;
+            const int NARROW_HEIGHT_RATE = 6;
+            wideScreen = true;
+            width = display->GetWidth() * NARROW_WIDTH_N / NARROW_WIDTH_D;
+            height = display->GetHeight() / NARROW_HEIGHT_RATE;
         }
         offsetX = (display->GetWidth() - width) / UI_HALF;
         offsetY = display->GetHeight() - height - UI_DEFAULT_BUTTOM_CLIP;
     } else {
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "dialog get display fail, use default wide.");
+        wideScreen = false;
+        width = UI_DIALOG_POWER_WIDTH_NARROW;
+        height = UI_DIALOG_POWER_HEIGHT_NARROW;
         offsetX = (UI_DEFAULT_WIDTH - width) / UI_HALF;
         offsetY = UI_DEFAULT_HEIGHT - height - UI_DEFAULT_BUTTOM_CLIP;
     }
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "GetDisplayPosition: %{public}d, %{public}d (%{public}d x %{public}d)",
+        offsetX, offsetY, width, height);
 }
 } // namespace PowerMgr
 } // namespace OHOS
