@@ -59,6 +59,8 @@ deps_ex = [
   "appspawn:appspawn_socket_client",
   "thermal_device_driver:libthermal_callback",
   "thermal_device_driver:libthermal_proxy_1.0",
+  "device_driver_framework:libhdi",
+  "device_driver_framework:libhdf_utils",
 ]
 
 # thermal service test
