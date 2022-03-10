@@ -38,6 +38,7 @@
 #include "thermal_config_sensor_cluster.h"
 #include "thermal_callback_impl.h"
 #include "thermal_types.h"
+#include "hdf_service_status_listener.h"
 #include "v1_0/thermal_interface_proxy.h"
 
 
@@ -45,6 +46,7 @@ namespace OHOS {
 namespace PowerMgr {
 using TypeTempMap = std::map<std::string, int32_t>;
 using namespace OHOS::HDI::Thermal::V1_0;
+using namespace OHOS::HDI::ServiceManager::V1_0;
 class ThermalService final : public SystemAbility, public ThermalSrvStub {
     DECLARE_SYSTEM_ABILITY(ThermalService);
     DECLARE_DELAYED_SP_SINGLETON(ThermalService);
@@ -143,6 +145,7 @@ private:
     bool InitStateMachine();
     bool InitModules();
     bool CreateConfigModule();
+    bool RigisterHdfStatusListener();
     bool ready_ {false};
     std::mutex mutex_;
     std::shared_ptr<AppExecFwk::EventRunner> eventRunner_ {nullptr};
@@ -157,6 +160,8 @@ private:
     std::shared_ptr<ThermalConfigSensorCluster> cluster_ {nullptr};
     bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};
+    sptr<IServiceManager> servmgr_ {nullptr};
+    sptr<HdfServiceStatusListener::IServStatListener> hdfListener_ {nullptr};
     std::shared_ptr<ActionPopup> popup_;
 };
 } // namespace PowerMgr
