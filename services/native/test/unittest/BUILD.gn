@@ -148,9 +148,54 @@ ohos_unittest("ThermalLevelEventTest") {
 
   external_deps = deps_ex
 }
+
+# thermal client api test
+ohos_unittest("ThermalClientApiTest") {
+  module_out_path = module_output_path
+
+  sources = [ "src/thermal_client_api_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  include_dirs = [
+    "//third_party/libxml2/include",
+    "${appspawn_path}/include",
+    "//base/powermgr/power_manager/services/native/include",
+    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
+    "//base/powermgr/power_manager/utils/native/include",
+    "//base/powermgr/power_manager/services/native/src/actions/default",
+    "//drivers/peripheral/thermal/interfaces",
+    "//drivers/peripheral/thermal/interfaces/include/",
+    "//foundation/aafwk/standard/services/appmgr/include",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+  ]
+
+  deps = [
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
+    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
+    "//base/powermgr/power_manager/services:powermgrservice",
+    "//foundation/aafwk/standard/services/appmgr:libams",
+    "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
+    "//foundation/graphic/standard:libwmclient",
+    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = deps_ex
+}
 group("unittest") {
   testonly = true
   deps = [
+    ":ThermalClientApiTest",
     ":ThermalLevelEventTest",
     ":ThermalPolicyTest",
   ]

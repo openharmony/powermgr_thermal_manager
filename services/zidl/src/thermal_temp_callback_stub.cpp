@@ -18,6 +18,7 @@
 
 #include "constants.h"
 #include "thermal_common.h"
+#include "xcollie.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -34,14 +35,20 @@ int ThermalTempCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data,
             descriptor is not matched!");
         return E_GET_THERMAL_SERVICE_FAILED;
     }
-
+    const int DFX_DELAY_MS = 10000;
+    int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalLevelCallbackStub", DFX_DELAY_MS, nullptr, nullptr,
+        HiviewDFX::XCOLLIE_FLAG_NOOP);
+    int ret = ERR_OK;
     switch (code) {
         case static_cast<int>(IThermalTempCallback::THERMAL_TEMPERATURE_CHANGD): {
-            return OnThermalTempChangedStub(data);
+            ret = OnThermalTempChangedStub(data);
+            break;
         }
         default:
-            return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+            ret = IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+            break;
     }
+    HiviewDFX::XCollie::GetInstance().CancelTimer(id);
     return ERR_OK;
 }
 

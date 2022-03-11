@@ -20,8 +20,24 @@ config("thermalmgr_ipc_private_config") {
 }
 
 config("thermalmgr_ipc_public_config") {
-  include_dirs = [ "include" ]
+  include_dirs = [
+    "include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
+  ]
 }
+
+deps_ex = [
+  "ability_base:base",
+  "ability_base:want",
+  "bundle_framework:appexecfwk_base",
+  "ces_standard:cesfwk_innerkits",
+  "eventhandler:libeventhandler",
+  "hiviewdfx_hilog_native:libhilog",
+  "hicollie_native:libhicollie",
+  "ipc:ipc_core",
+  "safwk:system_ability_fwk",
+  "samgr_standard:samgr_proxy",
+]
 
 ohos_shared_library("thermalmgr_proxy") {
   sources = [
@@ -40,17 +56,7 @@ ohos_shared_library("thermalmgr_proxy") {
 
   deps = [ "//utils/native/base:utils" ]
 
-  external_deps = [
-    "ability_base:base",
-    "ability_base:want",
-    "bundle_framework:appexecfwk_base",
-    "ces_standard:cesfwk_innerkits",
-    "eventhandler:libeventhandler",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
-  ]
+  external_deps = deps_ex
 
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
@@ -73,17 +79,7 @@ ohos_shared_library("thermalmgr_stub") {
 
   deps = [ "//utils/native/base:utils" ]
 
-  external_deps = [
-    "ability_base:base",
-    "ability_base:want",
-    "bundle_framework:appexecfwk_base",
-    "ces_standard:cesfwk_innerkits",
-    "eventhandler:libeventhandler",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
-  ]
+  external_deps = deps_ex
 
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
