@@ -22,9 +22,13 @@
 #include "ithermal_level_callback.h"
 #include "thermal_srv_sensor_info.h"
 #include "thermal_common.h"
+#include "xcollie.h"
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+constexpr int PARAM_MAX_NUM = 10;
+}
 int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
     THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE,
@@ -36,7 +40,17 @@ int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageP
         THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "ThermalSrvStub::OnRemoteRequest failed, descriptor is not matched!");
         return E_GET_THERMAL_SERVICE_FAILED;
     }
+    const int DFX_DELAY_MS = 10000;
+    int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalSrvStub", DFX_DELAY_MS, nullptr, nullptr,
+        HiviewDFX::XCOLLIE_FLAG_NOOP);
+    int32_t ret = CheckRequestCode(code, data, reply, option);
+    HiviewDFX::XCollie::GetInstance().CancelTimer(id);
+    return ret;
+}
 
+int32_t ThermalSrvStub::CheckRequestCode(const uint32_t code, MessageParcel& data, MessageParcel& reply,
+    MessageOption& option)
+{
     switch (code) {
         case static_cast<int>(IThermalSrv::REG_THERMAL_TEMP_CALLBACK): {
             return SubscribeThermalTempCallbackStub(data);
@@ -63,7 +77,6 @@ int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageP
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
         }
     }
-    return ERR_OK;
 }
 
 int32_t ThermalSrvStub::SubscribeThermalTempCallbackStub(MessageParcel& data)
@@ -152,13 +165,18 @@ int32_t ThermalSrvStub::ShellDumpStub(MessageParcel& data, MessageParcel& reply)
         return E_READ_PARCEL_ERROR_THERMAL;
     }
 
+    if (argc >= PARAM_MAX_NUM) {
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "params exceed limit");
+        return E_EXCEED_PARAM_LIMIT;
+    }
+
     for (uint32_t i = 0; i < argc; i++) {
         std::string arg = data.ReadString();
-        if (!arg.empty()) {
-            args.push_back(arg);
-        } else {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "read value fail: %{public}d", i);
+        if (arg.empty()) {
+            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "read value fail:%{public}d", i);
+            return E_READ_PARCEL_ERROR_THERMAL;
         }
+        args.push_back(arg);
     }
 
     std::string ret = ShellDump(args, argc);
