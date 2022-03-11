@@ -104,8 +104,6 @@ ohos_shared_library("thermalservice") {
     "//drivers/peripheral/display/hal:hdi_display_device",
     "//foundation/aafwk/standard/services/appmgr:libams",
     "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
     "//foundation/graphic/standard:libwmclient",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//foundation/windowmanager/utils:libwmutil",
