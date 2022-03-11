@@ -368,6 +368,12 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
 
 std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint32_t argc)
 {
+    auto uid = IPCSkeleton::GetCallingUid();
+    if (uid >= APP_FIRST_UID) {
+        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
+            "%{public}s Request failed, %{public}d permission check failed", __func__, uid);
+        return nullptr;
+    }
     std::lock_guard<std::mutex> lock(mutex_);
     pid_t pid = IPCSkeleton::GetCallingPid();
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "PID: %{public}d Call %{public}s !", pid, __func__);
