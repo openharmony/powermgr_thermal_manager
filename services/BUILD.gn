@@ -121,6 +121,8 @@ ohos_shared_library("thermalservice") {
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_base",
     "ces_standard:cesfwk_innerkits",
+    "device_driver_framework:libhdf_utils",
+    "device_driver_framework:libhdi",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
