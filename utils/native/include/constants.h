@@ -74,7 +74,7 @@ namespace PowerMgr {
     const uint32_t ARG_8 = 8;
     const uint32_t ARG_9 = 9;
     // dialog
-    const std::string THERMAL_LOWER_TEMP_PARAMS = "\"cancelButton\":\"LowerTemp Cancel\"}";
+    const std::string THERMAL_LOWER_TEMP_PARAMS = "{\"cancelButton\":\"LowerTemp Cancel\"}";
     const std::string THERMAL_HIGH_TEMP_PARAMS = "{\"cancelButton\":\"HighTemp Cancel\"}";
 } // namespace PowerMgr
 } // namespace OHOS
