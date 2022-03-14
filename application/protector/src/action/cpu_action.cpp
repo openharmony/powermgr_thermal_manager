@@ -13,35 +13,45 @@
  * limitations under the License.
  */
 #include "cpu_action.h"
-
+#include <climits>
+#include "securec.h"
 #include "thermal_common.h"
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+const std::string ACTUAL_CPU_FREQ_PATH = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq";
+const std::string SIM_CPU_FREQ_PATH = "/data/cooling/cpu/freq";
+constexpr int32_t MAX_PATH = 256;
+}
 bool CpuAction::AddActionValue(uint32_t value)
 {
-    value_ = value;
+    latestvalue_ = value;
     return true;
 }
 
 void CpuAction::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    if (CpuActionRequest(value_) != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set cpu freq");
+    static int32_t value;
+    if (value != latestvalue_) {
+        if (CpuActionRequest(latestvalue_) != ERR_OK) {
+            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set cpu freq");
+        }
+        value = latestvalue_;
+    } else {
+        latestvalue_ = 0;
     }
 }
 
 int32_t CpuAction::CpuActionRequest(uint32_t freq)
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d", freq);
-    int32_t ret = -1;
-    ret = this->CpuRequest(freq);
-    if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set freq");
-        return ret;
+    char cpuBuf[MAX_PATH] = {0};
+    if (snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, SIM_CPU_FREQ_PATH.c_str()) < ERR_OK) {
+        return ERR_INVALID_VALUE;
     }
-    return ERR_OK;
+    std::string freqStr = std::to_string(freq);
+    return ThermalProtectorUtil::WriteFile(cpuBuf, freqStr, freqStr.length());
 }
 } // namespace PowerMgr
 } // namespace OHOS

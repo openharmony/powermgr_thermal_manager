@@ -18,8 +18,9 @@
 
 #include <memory>
 #include "thermal_kernel_policy.h"
-#include "thermal_sensor_provider.h"
+#include "thermal_sensor_provision.h"
 #include "thermal_device_control.h"
+#include "thermal_protector_timer.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -29,7 +30,7 @@ public:
     ~ThermalKernelService() = default;
     ThermalKernelService(const ThermalKernelService&) = delete;
     ThermalKernelService& operator=(const ThermalKernelService&) = delete;
-    static ThermalKernelService &GetInsance()
+    static ThermalKernelService &GetInstance()
     {
         static ThermalKernelService instance;
         return instance;
@@ -43,9 +44,9 @@ public:
         return policy_;
     }
 
-    std::shared_ptr<ThermalSensorProvider> GetProvider() const
+    std::shared_ptr<ThermalSensorProvision> GetProvision() const
     {
-        return provider_;
+        return provision_;
     }
 
     std::shared_ptr<ThermalDeviceControl> GetControl() const
@@ -53,11 +54,16 @@ public:
         return control_;
     }
 
+    std::shared_ptr<ThermalProtectorTimer> GetTimer() const
+    {
+        return timer_;
+    }
 private:
     bool Init();
     std::shared_ptr<ThermalKernelPolicy> policy_ {nullptr};
-    std::shared_ptr<ThermalSensorProvider> provider_ {nullptr};
+    std::shared_ptr<ThermalSensorProvision> provision_ {nullptr};
     std::shared_ptr<ThermalDeviceControl> control_ {nullptr};
+    std::shared_ptr<ThermalProtectorTimer> timer_ {nullptr};
 };
 } // namespace PowerMgr
 } // namespace OHOS
