@@ -13,35 +13,45 @@
  * limitations under the License.
  */
 #include "current_action.h"
-
+#include <climits>
+#include "securec.h"
 #include "thermal_common.h"
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+const std::string SIM_BATTERY_CURRENT_PATH = "/data/cooling/battery/current";
+constexpr int32_t MAX_PATH = 256;
+}
 bool CurrentAction::AddActionValue(uint32_t value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    value_ = value;
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    latestvalue_ = value;
     return true;
 }
 
 void CurrentAction::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    if (BatteryCurrentActionRequest(value_) != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set current");
+    static int32_t value;
+    if (value != latestvalue_) {
+        if (BatteryCurrentActionRequest(latestvalue_) != ERR_OK) {
+            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set battery current");
+        }
+        value = latestvalue_;
+    } else {
+        latestvalue_ = 0;
     }
 }
 
 int32_t CurrentAction::BatteryCurrentActionRequest(uint32_t current)
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d", current);
-    int32_t ret = -1;
-    ret = this->BatteryCurrentRequest(current);
-    if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set current");
-        return ret;
+    char currentBuf[MAX_PATH] = {0};
+    if (snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, SIM_BATTERY_CURRENT_PATH.c_str()) < ERR_OK) {
+        return ERR_INVALID_VALUE;
     }
+    std::string currentStr = std::to_string(current);
+    return ThermalProtectorUtil::WriteFile(currentBuf, currentStr, currentStr.length());
     return ERR_OK;
 }
 } // namespace PowerMgr

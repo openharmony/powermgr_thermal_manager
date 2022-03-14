@@ -16,12 +16,10 @@
 #define CPU_ACTION_H
 
 #include "ithermal_action.h"
-#include "thermal_device_mitigation.h"
 
 namespace OHOS {
 namespace PowerMgr {
-using namespace OHOS::HDI::Thermal::V1_0;
-class CpuAction : public IThermalAction, public ThermalDeviceMitigation {
+class CpuAction : public IThermalAction {
 public:
     CpuAction() = default;
     virtual ~CpuAction() = default;
@@ -29,7 +27,7 @@ public:
     void Execute() override;
     int32_t CpuActionRequest(uint32_t freq);
 private:
-    uint32_t value_;
+    uint32_t latestvalue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

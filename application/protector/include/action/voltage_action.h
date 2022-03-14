@@ -16,12 +16,10 @@
 #define VOLTAGE_ACTION_H
 
 #include "ithermal_action.h"
-#include "thermal_device_mitigation.h"
 
 namespace OHOS {
 namespace PowerMgr {
-using namespace OHOS::HDI::Thermal::V1_0;
-class VoltageAction : public IThermalAction, public ThermalDeviceMitigation {
+class VoltageAction : public IThermalAction {
 public:
     VoltageAction() = default;
     virtual ~VoltageAction() = default;
@@ -29,7 +27,7 @@ public:
     void Execute() override;
     int32_t BatteryVoltageActionRequest(uint32_t voltage);
 private:
-    uint32_t value_;
+    uint32_t latestvalue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
