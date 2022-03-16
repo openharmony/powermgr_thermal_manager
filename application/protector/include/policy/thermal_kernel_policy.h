@@ -17,7 +17,6 @@
 #define THERMAL_KERNEL_POLICY_H
 
 #include <map>
-#include <set>
 #include "thermal_kernel_config_file.h"
 #include "protector_thermal_zone_info.h"
 #include "ithermal_action.h"
@@ -44,32 +43,33 @@ public:
     ~ThermalKernelPolicy() {};
 
     bool Init();
+    void SetThermalZoneMap(ThermalZoneMap &tzInfoMap);
+    ThermalZoneMap GetThermalZoneMap();
+    void SetLevelAction(std::vector<LevelAction> &levelAction);
+    std::vector<LevelAction> GetLevelAction();
+    int32_t GetMaxCd();
+private:
     void LevelDecision();
     void PolicyDecision();
     void ActionDecision(std::vector<ActionItem> &vAction);
     void ActionExecution();
-    bool ActionFallbackDecision();
+    void ActionFallbackDecision();
     void SetCallback();
     void OnReceivedSensorsInfo(SensorsMap typeTempMap);
-    void SetThermalZoneMap(ThermalZoneMap &tzInfoMap);
-    void SetLevelAction(std::vector<LevelAction> &levelAction);
     void Dump();
-    std::vector<LevelAction> GetLevelAction();
-private:
-    struct classcomp {
-        bool operator()(const std::shared_ptr<IThermalAction> &l, const std::shared_ptr<IThermalAction> &r) const
-        {
-            return l < r;
-        }
-    };
+    /* Gets the maximum common divisor of the time interval */
+    int32_t GetMaxCommonDivisor(int32_t a, int32_t b);
+    int32_t GetIntervalCommonDivisor(std::vector<int32_t> intervalList);
+    void SetMultiples();
+    void CalculateMaxCd();
     TypeLevelsMap typeLevelsMap_;
     SensorsMap typeTempMap_;
     ThermalZoneMap tzInfoMap_;
     LevelMap levelMap_;
     std::vector<LevelAction> levelAction_;
-    std::set<const std::shared_ptr<IThermalAction>, classcomp> actionFallbackSet_, preExecuteList_;
     std::vector<std::string> executeActionList_;
+    int32_t maxCd_;
 };
-} // nameapce PowerMgr
+} // namespace PowerMgr
 } // namespace OHOS
 #endif
