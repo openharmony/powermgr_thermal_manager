@@ -17,6 +17,7 @@
 #include "thermal_common.h"
 #include "thermal_kernel_config_file.h"
 
+
 namespace OHOS {
 namespace PowerMgr {
 namespace {
@@ -31,8 +32,8 @@ void ThermalKernelService::OnStart()
 
 bool ThermalKernelService::Init()
 {
-    if (provider_ == nullptr) {
-        provider_ = std::make_shared<ThermalSensorProvider>();
+    if (provision_ == nullptr) {
+        provision_ = std::make_shared<ThermalSensorProvision>();
     }
 
     if (control_ == nullptr) {
@@ -43,7 +44,11 @@ bool ThermalKernelService::Init()
         policy_ = std::make_shared<ThermalKernelPolicy>();
     }
 
-    ThermalKernelConfigFile::GetInsance().Init(CONFIG_FILE_PATH);
+    if (timer_ == nullptr) {
+        timer_ = std::make_shared<ThermalProtectorTimer>(provision_);
+    }
+
+    ThermalKernelConfigFile::GetInstance().Init(CONFIG_FILE_PATH);
 
     if (!policy_->Init()) {
         THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to init policy", __func__);
@@ -55,6 +60,9 @@ bool ThermalKernelService::Init()
         return false;
     }
 
+    provision_->InitProvision();
+
+    timer_->Init();
     return true;
 }
 } // namespace PowerMgr

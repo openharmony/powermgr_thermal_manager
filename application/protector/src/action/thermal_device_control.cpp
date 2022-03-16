@@ -14,6 +14,7 @@
  */
 
 #include "thermal_device_control.h"
+#include <set>
 #include "thermal_common.h"
 #include "device_control_factory.h"
 #include "thermal_kernel_service.h"
@@ -21,11 +22,10 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto &service = ThermalKernelService::GetInsance();
+auto &service = ThermalKernelService::GetInstance();
 }
 bool ThermalDeviceControl::Init()
 {
-    std::string preName;
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
     auto policy = service.GetPolicy();
     if (policy == nullptr) {
@@ -37,13 +37,15 @@ bool ThermalDeviceControl::Init()
         return false;
     }
 
-    for (auto level : actionList) {
-        for (auto action : level.vAction) {
-            if (preName != action.name) {
-                thermalActionMap_.insert(std::make_pair(action.name, DeviceControlFactory::Create(action.name)));
-                preName = action.name;
-            }
+    std::set<std::string> actionNameSet;
+    for (auto &level : actionList) {
+        for (auto &action : level.vAction) {
+            actionNameSet.insert(action.name);
         }
+    }
+
+    for (auto &iter : actionNameSet) {
+        thermalActionMap_.insert(std::make_pair(iter, DeviceControlFactory::Create(iter)));
     }
     return true;
 }

@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto &service = ThermalKernelService::GetInsance();
+auto &service = ThermalKernelService::GetInstance();
 }
 bool ThermalKernelConfigFile::Init(const std::string &path)
 {
@@ -46,7 +46,7 @@ void ThermalKernelConfigFile::ParseThermalKernelXML(const std::string &path)
 
     auto rootNode = xmlDocGetRootElement(docPtr.get());
     if (rootNode == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s: Get root node failed.", __func__);
+        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: Get root node failed.", __func__);
         return;
     }
 
@@ -78,13 +78,13 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
 {
     auto cur = node->xmlChildrenNode;
     ThermalKernelPolicy::ThermalZoneMap tzInfoMap;
-    ThermalSensorProvider::IntervalMap intervalMap;
-    std::vector<LevelAction> vlevelAction;
+    std::vector<LevelAction> levelActionList;
     while (cur != nullptr) {
         LevelAction levelAction;
         std::shared_ptr<ProtectorThermalZoneInfo> tzinfo = std::make_shared<ProtectorThermalZoneInfo>();
         std::string type = (char *)xmlGetProp(cur, BAD_CAST"type");
         int32_t interval = atoi((char *)xmlGetProp(cur, BAD_CAST"interval"));
+        tzinfo->SetInterval(interval);
         auto desc = xmlGetProp(cur, BAD_CAST"desc");
         if (desc != nullptr) {
             std::string value = (char *)desc;
@@ -92,7 +92,7 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
                 tzinfo->SetDesc(true);
             }
         }
-        std::vector<ThermalZoneInfoItem> vtzi;
+        std::vector<ThermalZoneInfoItem> tzItemList;
         levelAction.name = type;
         for (auto subNode = cur->children; subNode; subNode = subNode->next) {
             if (subNode == nullptr) {
@@ -110,18 +110,16 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
                     action.value = static_cast<uint32_t>(atoi((char *)xmlNodeGetContent(subActionNode)));
                     levelAction.vAction.push_back(action);
                 }
-                vtzi.push_back(tziItem);
+                tzItemList.push_back(tziItem);
+                levelActionList.push_back(levelAction);
             }
         }
-        tzinfo->SetThermalZoneItem(vtzi);
+        tzinfo->SetThermalZoneItem(tzItemList);
         tzInfoMap.emplace(std::pair(type, tzinfo));
-        intervalMap.emplace(std::pair(type, interval));
-        vlevelAction.push_back(levelAction);
         cur = cur->next;
     }
-    service.GetProvider()->SetIntervalMap(intervalMap);
     service.GetPolicy()->SetThermalZoneMap(tzInfoMap);
-    service.GetPolicy()->SetLevelAction(vlevelAction);
+    service.GetPolicy()->SetLevelAction(levelActionList);
 }
 } // namespace PowerMgr
 } // namespace OHOS

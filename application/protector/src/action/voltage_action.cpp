@@ -13,35 +13,44 @@
  * limitations under the License.
  */
 #include "voltage_action.h"
-
+#include <climits>
+#include "securec.h"
 #include "thermal_common.h"
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+const std::string BATTERY_VOLTAGE_PATH = "/data/cooling/battery/voltage";
+constexpr int32_t MAX_PATH = 256;
+}
 bool VoltageAction::AddActionValue(uint32_t value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    value_ = value;
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    latestvalue_ = value;
     return true;
 }
 
 void VoltageAction::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
-    if (BatteryVoltageActionRequest(value_) != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set voltage");
+    static int32_t value;
+    if (value != latestvalue_) {
+        if (BatteryVoltageActionRequest(latestvalue_) != ERR_OK) {
+            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set battery volatage");
+        }
+        value = latestvalue_;
+    } else {
+        latestvalue_ = 0;
     }
 }
 
 int32_t VoltageAction::BatteryVoltageActionRequest(uint32_t voltage)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d", voltage);
-    uint32_t ret = -1;
-    ret = this->BatteryVoltageRequest(voltage);
-    if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set voltage");
-        return ret;
+    char voltageBuf[MAX_PATH] = {0};
+    if (snprintf_s(voltageBuf, PATH_MAX, sizeof(voltageBuf) - 1, BATTERY_VOLTAGE_PATH.c_str()) < ERR_OK) {
+        return ERR_INVALID_VALUE;
     }
+    std::string voltageStr = std::to_string(voltage);
+    return ThermalProtectorUtil::WriteFile(voltageBuf, voltageStr, voltageStr.length());
     return ERR_OK;
 }
 } // namespace PowerMgr

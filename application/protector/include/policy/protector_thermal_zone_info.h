@@ -18,7 +18,7 @@
 
 #include <string>
 #include <vector>
-#include "thermal_sensor_provider.h"
+#include "thermal_sensor_provision.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -32,22 +32,37 @@ class ProtectorThermalZoneInfo {
 public:
     ProtectorThermalZoneInfo() = default;
     ~ProtectorThermalZoneInfo() = default;
-    bool Init();
     void Dump();
     void UpdateThermalLevel(int32_t temp);
-    void AscJudgment(int32_t curTemp, uint32_t &level);
-    void DescJudgment(int32_t curTemp, uint32_t &level);
-
-    uint32_t GetThermlLevel()
+    uint32_t GetThermalLevel()
     {
         return latestLevel_;
     }
-    void SetThermalZoneItem(std::vector<ThermalZoneInfoItem> &vtzi);
+    void SetThermalZoneItem(std::vector<ThermalZoneInfoItem> &tzItemList);
     void SetDesc(bool desc);
+    void SetInterval(int32_t interval);
+    int32_t GetInterval() const;
+    void SetMultiple(int32_t multiple);
+    int32_t GetMultiple() const;
+    std::string GetPath() const;
+    void SetPath(const std::string &path);
 private:
+    void AscJudgment(int32_t curTemp, uint32_t &level);
+    void DescJudgment(int32_t curTemp, uint32_t &level);
+    void HandleDescNextUpTemp(uint32_t &level, int32_t curTemp);
+    void HandleDescCurDownTemp(uint32_t &level, int32_t curTemp);
+    void HandleDescMaxSizeTemp(uint32_t &level, int32_t curTemp);
+    void HandleDescMinSizeTemp(uint32_t &level, int32_t curTemp);
+    void HandleAscNextUpTemp(uint32_t &level, int32_t curTemp);
+    void HandleAscCurDownTemp(uint32_t &level, int32_t curTemp);
+    void HandleAscMaxSizeTemp(uint32_t &level, int32_t curTemp);
+    void HandleAscMinSizeTemp(uint32_t &level, int32_t curTemp);
     bool desc_ {false};
+    std::string path_;
     uint32_t latestLevel_ {0};
-    std::vector<ThermalZoneInfoItem> vtzi_;
+    int32_t interval_;
+    int32_t multiple_;
+    std::vector<ThermalZoneInfoItem> tzItemList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
