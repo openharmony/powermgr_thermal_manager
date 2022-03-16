@@ -30,7 +30,7 @@ public:
     ~ThermalKernelConfigFile() = default;
     ThermalKernelConfigFile(const ThermalKernelConfigFile&) = delete;
     ThermalKernelConfigFile& operator=(const ThermalKernelConfigFile&) = delete;
-    static ThermalKernelConfigFile &GetInsance()
+    static ThermalKernelConfigFile &GetInstance()
     {
         static ThermalKernelConfigFile instance;
         return instance;

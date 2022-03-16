@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,21 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef ITHERMAL_ACTION_H
-#define ITHERMAL_ACTION_H
 
-#include <stdint.h>
-#include "thermal_protector_util.h"
+#ifndef THERMAL_PROTECTOR_UTIL_H
+#define THERMAL_PROTECTOR_UTIL_H
+
+#include <string>
+#include <vector>
 
 namespace OHOS {
 namespace PowerMgr {
-class IThermalAction {
+class ThermalProtectorUtil {
 public:
-    IThermalAction() = default;
-    virtual ~IThermalAction() = default;
-    virtual bool AddActionValue(uint32_t value) = 0;
-    virtual void Execute() = 0;
+    static int32_t WriteFile(std::string path, std::string buf, size_t size);
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif
+#endif // FILE_OPERATION_H
