@@ -36,7 +36,7 @@ void VoltageAction::Execute()
 int32_t VoltageAction::BatteryVoltageActionRequest(uint32_t voltage)
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d", voltage);
-    uint32_t ret = -1;
+    int32_t ret = -1;
     ret = this->BatteryVoltageRequest(voltage);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set voltage");
