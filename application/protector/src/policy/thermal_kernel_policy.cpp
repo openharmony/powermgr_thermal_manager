@@ -23,12 +23,13 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto &g_service = ThermalKernelService::GetInsance();
-const uint32_t FALLBACK_ACTION_VALUE = 0;
+auto &g_service = ThermalKernelService::GetInstance();
+constexpr int32_t NUM_ZERO = 0;
 }
 bool ThermalKernelPolicy::Init()
 {
     SetCallback();
+    SetMultiples();
     Dump();
     return true;
 }
@@ -41,7 +42,7 @@ void ThermalKernelPolicy::LevelDecision()
         if (typeIter != typeTempMap_.end()) {
             THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s start update thermal level", __func__);
             tzIter->second->UpdateThermalLevel(typeIter->second);
-            uint32_t level = tzIter->second->GetThermlLevel();
+            uint32_t level = tzIter->second->GetThermalLevel();
             levelMap_.emplace(std::pair(typeIter->first, level));
             THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s final level = %{public}d", __func__, level);
         }
@@ -66,9 +67,12 @@ void ThermalKernelPolicy::ActionDecision(std::vector<ActionItem> &vAction)
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
     for (auto actionIter = vAction.begin(); actionIter != vAction.end(); actionIter++) {
-        ThermalDeviceControl::ThermalActionMap vActionMap = g_service.GetControl()->GetThermalAction();
-        auto nameIter = vActionMap.find(actionIter->name);
-        if (nameIter != vActionMap.end()) {
+        ThermalDeviceControl::ThermalActionMap actionMap = g_service.GetControl()->GetThermalAction();
+        auto nameIter = actionMap.find(actionIter->name);
+        if (nameIter != actionMap.end()) {
+            if (nameIter->second == nullptr) {
+                continue;
+            }
             nameIter->second->AddActionValue(actionIter->value);
             executeActionList_.push_back(actionIter->name);
         }
@@ -78,50 +82,30 @@ void ThermalKernelPolicy::ActionDecision(std::vector<ActionItem> &vAction)
 void ThermalKernelPolicy::ActionExecution()
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
-    if (!actionFallbackSet_.empty()) {
-        std::for_each(actionFallbackSet_.cbegin(), actionFallbackSet_.cend(),
-            [this](const std::shared_ptr<IThermalAction> action) {
-            preExecuteList_.insert(action);
-        });
-        actionFallbackSet_.clear();
-    } else {
-        for (auto name : executeActionList_) {
-            ThermalDeviceControl::ThermalActionMap vActionMap = g_service.GetControl()->GetThermalAction();
-            auto executeIter = vActionMap.find(name);
-            if (executeIter != vActionMap.end()) {
-                THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s action start execution", __func__);
-                executeIter->second->Execute();
-                actionFallbackSet_.insert(executeIter->second);
+
+    if (executeActionList_.empty()) {
+        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s executeActionList_ is empty", __func__);
+        return;
+    }
+
+    ThermalDeviceControl::ThermalActionMap actionMap = g_service.GetControl()->GetThermalAction();
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "size: %{public}zu", actionMap.size());
+    for (auto name : executeActionList_) {
+        auto executeIter = actionMap.find(name);
+        if (executeIter != actionMap.end()) {
+            if (executeIter->second == nullptr) {
+                continue;
             }
-            if (ActionFallbackDecision()) {
-                THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "action fallback");
-            }
+            executeIter->second->Execute();
         }
     }
 }
 
-bool ThermalKernelPolicy::ActionFallbackDecision()
-{
-    if (preExecuteList_.empty()) return false;
-    std::for_each(preExecuteList_.cbegin(), preExecuteList_.cend(),
-        [this](const std::shared_ptr<IThermalAction> action) {
-        auto executeIter = actionFallbackSet_.find(action);
-        if (executeIter != actionFallbackSet_.end()) {
-            return false;
-        } else {
-            action->AddActionValue(FALLBACK_ACTION_VALUE);
-            preExecuteList_.erase(action);
-            return true;
-        }
-    });
-    return false;
-}
-
 void ThermalKernelPolicy::SetCallback()
 {
-    ThermalSensorProvider::NotifyTask task = std::bind(&ThermalKernelPolicy::OnReceivedSensorsInfo,
+    ThermalProtectorTimer::NotifyTask task = std::bind(&ThermalKernelPolicy::OnReceivedSensorsInfo,
         this, std::placeholders::_1);
-    g_service.GetProvider()->RegisterTask(task);
+    g_service.GetTimer()->RegisterTask(task);
 }
 
 void ThermalKernelPolicy::OnReceivedSensorsInfo(SensorsMap typeTempMap)
@@ -130,6 +114,59 @@ void ThermalKernelPolicy::OnReceivedSensorsInfo(SensorsMap typeTempMap)
     typeTempMap_ = typeTempMap;
     LevelDecision();
     PolicyDecision();
+}
+
+int32_t ThermalKernelPolicy::GetMaxCommonDivisor(int32_t a, int32_t b)
+{
+    if (b == 0) {
+        return NUM_ZERO;
+    }
+
+    if (a % b == 0) {
+        return b;
+    } else {
+        return GetMaxCommonDivisor(b, a % b);
+    }
+}
+
+void ThermalKernelPolicy::SetMultiples()
+{
+    CalculateMaxCd();
+    if (maxCd_ == NUM_ZERO) {
+        return;
+    }
+    for (auto &tzIter : tzInfoMap_) {
+        int32_t multiple = tzIter.second->GetInterval() / maxCd_;
+        tzIter.second->SetMultiple(multiple);
+    }
+}
+
+int32_t ThermalKernelPolicy::GetIntervalCommonDivisor(std::vector<int32_t> intervalList)
+{
+    if (intervalList.empty()) {
+        return NUM_ZERO;
+    }
+
+    int32_t count = intervalList.size();
+    int32_t commonDivisor = intervalList[0];
+    for (int32_t i = 1; i < count; i++) {
+        commonDivisor = GetMaxCommonDivisor(commonDivisor, intervalList[i]);
+    }
+    return commonDivisor;
+}
+
+void ThermalKernelPolicy::CalculateMaxCd()
+{
+    std::vector<int32_t> intervalList;
+    if (tzInfoMap_.empty()) {
+        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: info list is null", __func__);
+    }
+    for (auto &tzIter : tzInfoMap_) {
+        int32_t interval = tzIter.second->GetInterval();
+        intervalList.push_back(interval);
+    }
+    maxCd_ = GetIntervalCommonDivisor(intervalList);
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: maxCd_ %{public}d", __func__, maxCd_);
 }
 
 void ThermalKernelPolicy::SetThermalZoneMap(ThermalZoneMap &tzInfoMap)
@@ -142,17 +179,35 @@ void ThermalKernelPolicy::SetLevelAction(std::vector<LevelAction> &levelAction)
     levelAction_ = levelAction;
 }
 
+ThermalKernelPolicy::ThermalZoneMap ThermalKernelPolicy::GetThermalZoneMap()
+{
+    return tzInfoMap_;
+}
+
 std::vector<LevelAction> ThermalKernelPolicy::GetLevelAction()
 {
     return levelAction_;
 }
 
+int32_t ThermalKernelPolicy::GetMaxCd()
+{
+    return maxCd_;
+}
+
 void ThermalKernelPolicy::Dump()
 {
     THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
-    for (auto tzIter : tzInfoMap_) {
+    for (auto &tzIter : tzInfoMap_) {
         THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s type = %{public}s", __func__, tzIter.first.c_str());
         tzIter.second->Dump();
+    }
+    for (auto &actionIter : levelAction_) {
+        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "name:%{public}s, level:%{public}d",
+            actionIter.name.c_str(), actionIter.level);
+        for (auto &item : actionIter.vAction) {
+            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "actionName:%{public}s, actionValue:%{public}d",
+                item.name.c_str(), item.value);
+        }
     }
 }
 } // namespace PowerMgr
