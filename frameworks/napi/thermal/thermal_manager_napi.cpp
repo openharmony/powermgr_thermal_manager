@@ -215,14 +215,13 @@ napi_value ThermalManagerNapi::UnSubscribeThermalLevel(napi_env env, napi_callba
     napi_delete_reference(env, handlerRef);
 
     napi_value result = nullptr;
-    napi_value result_final;
     if (handler == nullptr) {
         THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "Handler should not be NULL");
         return result;
     }
 
     napi_get_undefined(env, &result);
-    status = napi_call_function(env, nullptr, handler, 1, &result_final, &result);
+    status = napi_call_function(env, nullptr, handler, ARG_0, nullptr, &result);
     if (status != napi_ok) {
         THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "status=%{public}d", status);
         return result;
