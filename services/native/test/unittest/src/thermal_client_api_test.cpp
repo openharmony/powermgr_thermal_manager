@@ -65,4 +65,20 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_002, TestSize.Level0)
     EXPECT_EQ(true, result.empty());
     GTEST_LOG_(INFO) << "ThermalClientApiTest_002:: Test End!!";
 }
+
+/*
+ * @tc.number: ThermalClientApiTest_003
+ * @tc.name: ThermalClientApiTest_003
+ * @tc.desc: Test get thermal level
+ */
+HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_003, TestSize.Level0)
+{
+    GTEST_LOG_(INFO) << "ThermalClientApiTest_003:: Test Start!!";
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    ThermalLevel level = thermalMgrClient.GetThermalLevel();
+
+    EXPECT_EQ(true, level == ThermalLevel::INVALID_LEVEL);
+    GTEST_LOG_(INFO) << "ThermalClientApiTest_003:: Test End!!";
+}
 }
