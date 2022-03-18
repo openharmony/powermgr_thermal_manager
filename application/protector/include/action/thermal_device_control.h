@@ -30,14 +30,14 @@ public:
     ThermalDeviceControl() {};
     ~ThermalDeviceControl() {};
     bool Init();
-    bool CreateInstance();
     ThermalActionMap GetThermalAction()
     {
         return thermalActionMap_;
     }
 private:
     ThermalActionMap thermalActionMap_;
-    std::shared_ptr<IThermalAction> thermalAction_;;
+    std::shared_ptr<IThermalAction> thermalAction_;
+    std::string preName_;
 };
 } // namespace PowerMgr
 } // namespace OHOs

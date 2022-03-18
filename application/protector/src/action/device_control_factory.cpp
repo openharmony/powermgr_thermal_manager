@@ -21,11 +21,6 @@
 
 namespace OHOS {
 namespace PowerMgr {
-namespace {
-const std::string CPU_ACTION = "cpu";
-const std::string CURRENT_ACTION = "current";
-const std::string VOLTAGE_ACTION = "voltage";
-}
 std::shared_ptr<IThermalAction> DeviceControlFactory::Create(const std::string &name)
 {
     if (name == CPU_ACTION) {
