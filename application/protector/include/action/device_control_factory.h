@@ -16,10 +16,15 @@
 #define DEVICE_CONTROL_FACTORY_H
 
 #include <memory>
+#include <string>
 #include "ithermal_action.h"
 
 namespace OHOS {
 namespace PowerMgr {
+const std::string CPU_ACTION = "cpu";
+const std::string CURRENT_ACTION = "current";
+const std::string VOLTAGE_ACTION = "voltage";
+
 class DeviceControlFactory {
 public:
     DeviceControlFactory() = default;

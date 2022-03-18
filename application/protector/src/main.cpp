@@ -21,12 +21,11 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto &service = ThermalKernelService::GetInsance();
+auto &service = ThermalKernelService::GetInstance();
 }
 int ThermalProtectorEntry(int argc, char* argv[])
 {
     service.OnStart();
-    service.GetProvider()->InitProvider();
     return ERR_OK;
 }
 } // namespace PowerMgr
