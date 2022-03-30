@@ -32,7 +32,7 @@ bool CpuAction::AddActionValue(uint32_t value)
 
 void CpuAction::Execute()
 {
-    static int32_t value;
+    static uint32_t value;
     if (value != latestvalue_) {
         if (CpuActionRequest(latestvalue_) != ERR_OK) {
             THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set cpu freq");
