@@ -18,12 +18,14 @@
 #include <common_event_data.h>
 #include <common_event_manager.h>
 #include <common_event_support.h>
+#include <hisysevent.h>
 #include "constants.h"
 #include "thermal_service.h"
 #include "thermal_common.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::EventFwk;
+using namespace OHOS::HiviewDFX;
 
 namespace OHOS {
 namespace PowerMgr {
@@ -194,6 +196,10 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
     for (auto& listener : thermalLevelListeners_) {
         listener->GetThermalLevel(static_cast<ThermalLevel>(level_));
     }
+
+    // Notify thermal level change event to battery statistics
+    HiSysEvent::Write(HiSysEvent::Domain::POWERMGR, "THERMAL_LEVEL_CHANGED", HiSysEvent::EventType::STATISTIC, "level",
+        level);
 }
 
 /**
