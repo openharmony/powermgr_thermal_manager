@@ -122,6 +122,7 @@ ohos_shared_library("thermalservice") {
     "device_driver_framework:libhdf_utils",
     "device_driver_framework:libhdi",
     "eventhandler:libeventhandler",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "multimedia_image_standard:image_native",
