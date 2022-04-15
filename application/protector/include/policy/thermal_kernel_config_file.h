@@ -22,6 +22,7 @@
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include "protector_base_info.h"
+#include "protector_thermal_zone_info.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -41,6 +42,7 @@ public:
     void ParserBaseNode(xmlNodePtr node);
     void ParseControlNode(xmlNodePtr node);
 private:
+    void ParseSubNode(xmlNodePtr cur, std::vector<ThermalZoneInfoItem>& tzItemList, std::string& type);
     std::unique_ptr<ProtectorBaseInfo> baseInfo_;
     ThermalKernelConfigFile() {};
 };
