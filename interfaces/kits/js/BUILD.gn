@@ -40,7 +40,7 @@ ohos_shared_library("thermal") {
   deps = [
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
-    "//foundation/ace/napi:ace_napi",
+    "//foundation/arkui/napi:ace_napi",
     "//utils/native/base:utils",
   ]
 
