@@ -13,7 +13,6 @@
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 import("//base/startup/appspawn_standard/appspawn.gni")
 import("//build/test.gni")
-import("//foundation/appexecfwk/standard/appexecfwk.gni")
 
 module_output_path = "thermal_manager/thermal_native"
 
@@ -33,7 +32,6 @@ config("module_private_config") {
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//foundation/aafwk/standard/services/appmgr/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
     "//base/startup/appspawn_standard/include/",
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
     "//foundation/graphic/ui/interfaces/kits",
@@ -49,7 +47,6 @@ config("module_private_config") {
 deps_ex = [
   "ability_base:base",
   "ability_base:want",
-  "bundle_framework:appexecfwk_base",
   "eventhandler:libeventhandler",
   "ipc:ipc_core",
   "hiviewdfx_hilog_native:libhilog",
@@ -88,7 +85,6 @@ ohos_unittest("ThermalPolicyTest") {
   ]
 
   deps = [
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
@@ -130,7 +126,6 @@ ohos_unittest("ThermalLevelEventTest") {
   ]
 
   deps = [
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
@@ -172,7 +167,6 @@ ohos_unittest("ThermalClientApiTest") {
   ]
 
   deps = [
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",

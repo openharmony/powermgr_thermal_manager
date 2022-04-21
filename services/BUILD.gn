@@ -14,7 +14,6 @@
 import("//base/powermgr/display_manager/displaymgr.gni")
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 import("//build/ohos.gni")
-import("//foundation/appexecfwk/standard/appexecfwk.gni")
 
 config("thermalsrv_private_config") {
   include_dirs = [
@@ -91,7 +90,6 @@ ohos_shared_library("thermalservice") {
   public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/",
     "${displaymgr_native_innerkits_path}:displaymgr",
     "${utils_path}:thermal_utils",
     "//base/miscservices/time/services:time_service",
@@ -117,7 +115,7 @@ ohos_shared_library("thermalservice") {
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "appspawn:appspawn_socket_client",
-    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
     "device_driver_framework:libhdf_utils",
     "device_driver_framework:libhdi",
