@@ -50,11 +50,6 @@ ohos_executable("thermal-shell") {
     "shell/src/thermal_shell_command.cpp",
   ]
 
-  cflags = []
-  if (target_cpu == "arm") {
-    cflags += [ "-DBINDER_IPC_32BIT" ]
-  }
-
   deps = [
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "//foundation/aafwk/standard/tools/aa:tools_aa_source_set",
