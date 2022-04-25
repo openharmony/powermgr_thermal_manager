@@ -428,5 +428,26 @@ std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalMgrDumper :%{public}d", ret);
     return result;
 }
+
+int32_t ThermalService::Dump(int fd, const std::vector<std::u16string> &args)
+{
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Dump thermal info");
+    std::vector<std::string> argsInStr;
+    std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
+        [](const std::u16string &arg) {
+        std::string ret = Str16ToStr8(arg);
+        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "arg: %{public}s", ret.c_str());
+        return ret;
+    });
+    std::string result;
+    ThermalMgrDumper::Dump(argsInStr, result);
+    if (!SaveStringToFd(fd, result)) {
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "ThermalService::Dump failed, save to fd failed.");
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "Dump Info:\n");
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s", result.c_str());
+        return ERR_OK;
+    }
+    return ERR_OK;
+}
 } // namespace PowerMgr
 } // namespace OHOS
