@@ -11,8 +11,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/ohos.gni")
+import("//base/powermgr/thermal_manager/thermalmgr.gni")
+import("//build/test.gni")
 
-thermalmgr_native_part_name = "thermal_manager"
-thermal_manager_path = "//base/powermgr/thermal_manager"
-utils_path = "${thermal_manager_path}/utils"
+group("fuzztest") {
+  testonly = true
+  deps = [ "fuzztest/thermal_fuzzer:fuzztest" ]
+}
