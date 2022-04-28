@@ -24,11 +24,11 @@
 
 namespace OHOS {
 namespace PowerMgr {
-class HdfServiceStatusListener : public OHOS::HDI::ServiceManager::V1_0::ServStatListenerStub {
+class HdiServiceStatusListener : public OHOS::HDI::ServiceManager::V1_0::ServStatListenerStub {
 public:
     using StatusCallback = std::function<void(const OHOS::HDI::ServiceManager::V1_0::ServiceStatus &)>;
-    explicit HdfServiceStatusListener(StatusCallback callback) : callback_(std::move(callback)) {}
-    ~HdfServiceStatusListener() = default;
+    explicit HdiServiceStatusListener(StatusCallback callback) : callback_(std::move(callback)) {}
+    ~HdiServiceStatusListener() = default;
     void OnReceive(const OHOS::HDI::ServiceManager::V1_0::ServiceStatus &status) override
     {
         callback_(status);

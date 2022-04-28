@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,10 +33,10 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 std::string path = "/system/etc/thermal_config/thermal_service_config.xml";
-constexpr const char *HDF_SERVICE_NAME = "thermal_interface_service";
 const std::string THMERMAL_SERVICE_NAME = "ThermalService";
+const std::string HDI_SERVICE_NAME = "thermal_interface_service";
+constexpr uint32_t RETRY_TIME = 1000;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-constexpr int32_t STATUS_OK = 0;
 const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.GetRefPtr());
 }
 ThermalService::ThermalService() : SystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, true) {}
@@ -92,19 +92,7 @@ bool ThermalService::Init()
         return false;
     }
 
-    if (thermalInterface_ == nullptr) {
-        thermalInterface_ = IThermalInterface::Get();
-        if (thermalInterface_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
-            return false;
-        }
-    }
-
-    if (!RigisterHdfStatusListener()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "hdf status register fail");
-        return false;
-    }
-
+    RegisterHdiStatusListener();
     if (!InitModules()) {
         return false;
     }
@@ -259,8 +247,14 @@ void ThermalService::OnStop()
     eventRunner_.reset();
     handler_.reset();
     ready_ = false;
-    thermalInterface_->Unregister();
-    servmgr_->UnregisterServiceStatusListener(hdfListener_);
+    if (thermalInterface_) {
+        thermalInterface_->Unregister();
+        thermalInterface_ = nullptr;
+    }
+    if (hdiServiceMgr_) {
+        hdiServiceMgr_->UnregisterServiceStatusListener(hdiServStatListener_);
+        hdiServiceMgr_ = nullptr;
+    }
 }
 
 void ThermalService::SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
@@ -316,38 +310,23 @@ void ThermalService::GetThermalLevel(ThermalLevel& level)
     level = static_cast<ThermalLevel>(levelValue);
 }
 
-void ThermalService::SendEvent(int32_t event, int64_t param, int64_t delayTime)
+void ThermalService::SendEvent(int32_t event, int64_t delayTime)
 {
-    handler_->SendEvent(event, param, delayTime);
-}
-
-void ThermalService::RemoveEvent(int32_t event)
-{
+    THERMAL_RETURN_IF_WITH_LOG(handler_ == nullptr, "handler is nullptr");
     handler_->RemoveEvent(event);
+    handler_->SendEvent(event, 0, delayTime);
 }
 
 void ThermalService::HandleEvent(int event)
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start", __func__);
     switch (event) {
-        case ThermalsrvEventHandler::SEND_GET_THERMAL_HDF_SERVICE_MSG: {
-            int32_t ret = -1;
-            if (serviceSubscriber_ == nullptr) {
-                serviceSubscriber_ = std::make_shared<ThermalServiceSubscriber>();
-                if (!(serviceSubscriber_->Init())) {
-                    THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "thermal service suvscriber start fail");
-                    return;
-                }
-            }
-            sptr<IThermalCallback> g_callback = new ThermalCallbackImpl();
-            ThermalCallbackImpl::ThermalEventCallback eventCb =
-                std::bind(&ThermalService::HandleThermalCallbackEvent, this, std::placeholders::_1);
-            ThermalCallbackImpl::RegisterThermalEvent(eventCb);
-            ret = thermalInterface_->Register(g_callback);
-            if (ret != ERR_OK) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "set hdf callback failed");
-                return;
-            }
+        case ThermalsrvEventHandler::SEND_REGISTER_THERMAL_HDI_CALLBACK: {
+            RegisterThermalHdiCallback();
+            break;
+        }
+        case ThermalsrvEventHandler::SEND_RETRY_REGISTER_HDI_STATUS_LISTENER: {
+            RegisterHdiStatusListener();
             break;
         }
         default:
@@ -355,46 +334,60 @@ void ThermalService::HandleEvent(int event)
     }
 }
 
-bool ThermalService::RigisterHdfStatusListener()
+void ThermalService::RegisterHdiStatusListener()
 {
-    servmgr_  = IServiceManager::Get();
-    if (servmgr_ == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "hdf service manager is nullptr");
-        return false;
+    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "thermal rigister Hdi status listener");
+    hdiServiceMgr_ = IServiceManager::Get();
+    if (hdiServiceMgr_ == nullptr) {
+        SendEvent(ThermalsrvEventHandler::SEND_RETRY_REGISTER_HDI_STATUS_LISTENER, RETRY_TIME);
+        THERMAL_HILOGW(MODULE_THERMALMGR_SERVICE, "hdi service manager is nullptr, \
+            Try again after %{public}u second", RETRY_TIME);
+        return;
     }
 
-    hdfListener_ = new HdfServiceStatusListener(HdfServiceStatusListener::StatusCallback(
+    hdiServStatListener_ = new HdiServiceStatusListener(HdiServiceStatusListener::StatusCallback(
         [&](const OHOS::HDI::ServiceManager::V1_0::ServiceStatus &status) {
-            if (status.serviceName != std::string(HDF_SERVICE_NAME)) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "service name mismatch");
-                return;
-            }
-
-            if (status.deviceClass != DEVICE_CLASS_DEFAULT) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "deviceClass mismatch");
-                return;
-            }
+            THERMAL_RETURN_IF(status.serviceName != HDI_SERVICE_NAME || status.deviceClass != DEVICE_CLASS_DEFAULT)
 
             if (status.status == SERVIE_STATUS_START) {
-                thermalInterface_ = IThermalInterface::Get();
-                if (thermalInterface_ == nullptr) {
-                    THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
-                    return;
-                }
-                RemoveEvent(ThermalsrvEventHandler::SEND_GET_THERMAL_HDF_SERVICE_MSG);
-                SendEvent(ThermalsrvEventHandler::SEND_GET_THERMAL_HDF_SERVICE_MSG, 0, 0);
-            } else if (status.status == SERVIE_STATUS_STOP) {
+                SendEvent(ThermalsrvEventHandler::SEND_REGISTER_THERMAL_HDI_CALLBACK, 0);
+                THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "thermal interface service start");
+            } else if (status.status == SERVIE_STATUS_STOP && thermalInterface_) {
                 thermalInterface_->Unregister();
-                return;
+                thermalInterface_ = nullptr;
+                THERMAL_HILOGW(MODULE_THERMALMGR_SERVICE, "thermal interface service, unregister interface");
             }
-        }));
+        }
+    ));
 
-    int status = servmgr_->RegisterServiceStatusListener(hdfListener_, DEVICE_CLASS_DEFAULT);
-    if (status != STATUS_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "register failed");
-        return false;
+    int32_t status = hdiServiceMgr_->RegisterServiceStatusListener(hdiServStatListener_, DEVICE_CLASS_DEFAULT);
+    if (status != ERR_OK) {
+        THERMAL_HILOGW(MODULE_THERMALMGR_SERVICE, "Register hdi failed, \
+            Try again after %{public}u second", RETRY_TIME);
+        SendEvent(ThermalsrvEventHandler::SEND_RETRY_REGISTER_HDI_STATUS_LISTENER, RETRY_TIME);
     }
-    return true;
+}
+
+void ThermalService::RegisterThermalHdiCallback()
+{
+    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "init thermal service subscriber");
+    if (serviceSubscriber_ == nullptr) {
+        serviceSubscriber_ = std::make_shared<ThermalServiceSubscriber>();
+        THERMAL_RETURN_IF_WITH_LOG(!(serviceSubscriber_->Init()), "thermal service suvscriber start fail");
+    }
+
+    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "register thermal hdi callback");
+    if (thermalInterface_ == nullptr) {
+        thermalInterface_ = IThermalInterface::Get();
+        THERMAL_RETURN_IF_WITH_LOG(thermalInterface_ == nullptr, "failed to get thermal hdi interface");
+    }
+
+    sptr<IThermalCallback> callback = new ThermalCallbackImpl();
+    ThermalCallbackImpl::ThermalEventCallback eventCb =
+        std::bind(&ThermalService::HandleThermalCallbackEvent, this, std::placeholders::_1);
+    ThermalCallbackImpl::RegisterThermalEvent(eventCb);
+    int32_t ret = thermalInterface_->Register(callback);
+    THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "register thermal hdi callback end, ret: %{public}d", ret);
 }
 
 int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event)
