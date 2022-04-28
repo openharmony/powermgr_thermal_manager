@@ -30,7 +30,8 @@ public:
         SEND_THERMAL_LEVEL_MSG,
         SEND_EXECUTION_ACTION_MSG,
         SEND_POPUP_MSG,
-        SEND_GET_THERMAL_HDF_SERVICE_MSG,
+        SEND_REGISTER_THERMAL_HDI_CALLBACK,
+        SEND_RETRY_REGISTER_HDI_STATUS_LISTENER,
     };
 
     ThermalsrvEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,7 @@
 #include "thermal_config_sensor_cluster.h"
 #include "thermal_callback_impl.h"
 #include "thermal_types.h"
-#include "hdf_service_status_listener.h"
+#include "hdi_service_status_listener.h"
 #include "v1_0/thermal_interface_proxy.h"
 
 
@@ -64,8 +64,6 @@ public:
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
     void HandleEvent(int event);
-    void SendEvent(int32_t event, int64_t param, int64_t delayTime);
-    void RemoveEvent(int32_t event);
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
 
     void SetFlag(bool flag)
@@ -145,7 +143,9 @@ private:
     bool InitStateMachine();
     bool InitModules();
     bool CreateConfigModule();
-    bool RigisterHdfStatusListener();
+    void RegisterHdiStatusListener();
+    void RegisterThermalHdiCallback();
+    void SendEvent(int32_t event, int64_t delayTime);
     bool ready_ {false};
     std::mutex mutex_;
     std::shared_ptr<AppExecFwk::EventRunner> eventRunner_ {nullptr};
@@ -160,8 +160,8 @@ private:
     std::shared_ptr<ThermalConfigSensorCluster> cluster_ {nullptr};
     bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};
-    sptr<IServiceManager> servmgr_ {nullptr};
-    sptr<HdfServiceStatusListener::IServStatListener> hdfListener_ {nullptr};
+    sptr<IServiceManager> hdiServiceMgr_ {nullptr};
+    sptr<HdiServiceStatusListener::IServStatListener> hdiServStatListener_ {nullptr};
     std::shared_ptr<ActionPopup> popup_;
 };
 } // namespace PowerMgr
