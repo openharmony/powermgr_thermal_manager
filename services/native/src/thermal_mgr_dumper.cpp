@@ -24,11 +24,12 @@ namespace PowerMgr {
 namespace {
 const std::string ARGS_HELP = "-h";
 const std::string ARGS_DIALOG = "-d";
+const std::string ARGS_THERMALINFO = "-t";
 }
 
 bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& result)
 {
-    THERMAL_HILOGI(MODULE_THERMALHDI_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
     result.clear();
     auto argc = args.size();
     if ((argc == 0) || (args[0] == ARGS_HELP)) {
@@ -38,14 +39,40 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
 
     auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (tms == nullptr) {
-        return true;
+        return false;
     }
 
     if (args[0] == ARGS_DIALOG) {
         tms->GetActionPopup()->ShowDialog(THERMAL_HIGH_TEMP_PARAMS);
         return true;
     }
+
+    for (auto it = args.begin(); it != args.end(); it++) {
+        if (*it == ARGS_THERMALINFO) {
+            ShowThermalZoneInfo(result);
+        } else {
+            break;
+        }
+    }
     return true;
+}
+
+void ThermalMgrDumper::ShowThermalZoneInfo(std::string& result)
+{
+    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
+    if (tms == nullptr) {
+        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+        return;
+    }
+    auto tzMap = tms->GetSubscriber()->GetSubscriberInfo();
+    for (auto& iter : tzMap) {
+        result.append("Type: ")
+            .append(iter.first)
+            .append("\n")
+            .append("Temperature: ")
+            .append(ToString(iter.second))
+            .append("\n");
+    }
 }
 
 void ThermalMgrDumper::ShowUsage(std::string& result)
@@ -54,7 +81,8 @@ void ThermalMgrDumper::ShowUsage(std::string& result)
         .append("  [-h] \n")
         .append("  description of the cmd option:\n")
         .append("    -h: show this help.\n")
-        .append("    -d: show thermal level dialog.\n");
+        .append("    -d: show thermal level dialog.\n")
+        .append("    -t: show thermal zone data.\n");
 }
 } // namespace PowerMgr
 } // namespace OHOS
