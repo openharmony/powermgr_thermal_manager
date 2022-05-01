@@ -31,6 +31,7 @@ public:
 private:
     static void DumpRunningLockInfo(std::string& result);
     static void ShowUsage(std::string& result);
+    static void ShowThermalZoneInfo(std::string& result);
 };
 } // namespace PowerMgr
 } // namespace OHOS
