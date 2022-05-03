@@ -100,7 +100,7 @@ ohos_shared_library("thermalservice") {
     "//base/powermgr/thermal_manager/services/zidl:thermalmgr_stub",
     "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//drivers/peripheral/display/hal:hdi_display_device",
-    "//foundation/aafwk/standard/services/appmgr:libams",
+    "//foundation/aafwk/standard/services/appmgr:libappms",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//foundation/graphic/standard:libwmclient",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
