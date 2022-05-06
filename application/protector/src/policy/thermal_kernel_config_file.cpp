@@ -21,6 +21,7 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto &service = ThermalKernelService::GetInstance();
+std::vector<LevelAction> g_levelActionList;
 }
 bool ThermalKernelConfigFile::Init(const std::string &path)
 {
@@ -66,8 +67,16 @@ void ThermalKernelConfigFile::ParserBaseNode(xmlNodePtr node)
     std::vector<BaseItem> vBase;
     while (cur != nullptr) {
         BaseItem baseItem;
-        baseItem.tag = (char *)xmlGetProp(cur, BAD_CAST"tag");
-        baseItem.value = (char *)xmlGetProp(cur, BAD_CAST"value");
+        xmlChar* xmlTag = xmlGetProp(cur, BAD_CAST"tag");
+        xmlChar* xmlValue = xmlGetProp(cur, BAD_CAST"value");
+        if (xmlTag != nullptr) {
+            baseItem.tag = (char *)xmlTag;
+            xmlFree(xmlTag);
+        }
+        if (xmlValue != nullptr) {
+            baseItem.value = (char *)xmlValue;
+            xmlFree(xmlValue);
+        }
         vBase.push_back(baseItem);
         cur = cur->next;
     }
@@ -78,48 +87,87 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
 {
     auto cur = node->xmlChildrenNode;
     ThermalKernelPolicy::ThermalZoneMap tzInfoMap;
-    std::vector<LevelAction> levelActionList;
     while (cur != nullptr) {
         LevelAction levelAction;
+        std::string type;
         std::shared_ptr<ProtectorThermalZoneInfo> tzinfo = std::make_shared<ProtectorThermalZoneInfo>();
-        std::string type = (char *)xmlGetProp(cur, BAD_CAST"type");
-        int32_t interval = atoi((char *)xmlGetProp(cur, BAD_CAST"interval"));
-        tzinfo->SetInterval(interval);
-        auto desc = xmlGetProp(cur, BAD_CAST"desc");
+        xmlChar* xmlType = xmlGetProp(cur, BAD_CAST"type");
+        if (xmlType != nullptr) {
+            type = (char *)xmlType;
+            xmlFree(xmlType);
+        }
+        xmlChar* xmlInterval = xmlGetProp(cur, BAD_CAST"interval");
+        if (xmlInterval != nullptr) {
+            int32_t interval = atoi((char *)xmlInterval);
+            tzinfo->SetInterval(interval);
+            xmlFree(xmlInterval);
+        }
+
+        xmlChar* desc = xmlGetProp(cur, BAD_CAST"desc");
         if (desc != nullptr) {
             std::string value = (char *)desc;
             if (atoi(value.c_str()) == 1) {
                 tzinfo->SetDesc(true);
             }
+            xmlFree(desc);
         }
+
         std::vector<ThermalZoneInfoItem> tzItemList;
-        levelAction.name = type;
-        for (auto subNode = cur->children; subNode; subNode = subNode->next) {
-            if (subNode == nullptr) {
-                continue;
-            }
-            if (!xmlStrcmp(subNode->name, BAD_CAST"item")) {
-                ThermalZoneInfoItem tziItem;
-                tziItem.threshold= atoi((char*)xmlGetProp(subNode, BAD_CAST"threshold"));
-                tziItem.thresholdClr = atoi((char*)xmlGetProp(subNode, BAD_CAST"threshold_clr"));
-                tziItem.level = static_cast<uint32_t>(atoi((char*)xmlGetProp(subNode, BAD_CAST"level")));
-                levelAction.level = tziItem.level;
-                for (auto subActionNode = subNode->children; subActionNode; subActionNode = subActionNode->next) {
-                    ActionItem action;
-                    action.name = (char *)subActionNode->name;
-                    action.value = static_cast<uint32_t>(atoi((char *)xmlNodeGetContent(subActionNode)));
-                    levelAction.vAction.push_back(action);
-                }
-                tzItemList.push_back(tziItem);
-                levelActionList.push_back(levelAction);
-            }
-        }
+        ParseSubNode(cur, tzItemList, type);
+
         tzinfo->SetThermalZoneItem(tzItemList);
         tzInfoMap.emplace(std::pair(type, tzinfo));
         cur = cur->next;
     }
     service.GetPolicy()->SetThermalZoneMap(tzInfoMap);
-    service.GetPolicy()->SetLevelAction(levelActionList);
+    service.GetPolicy()->SetLevelAction(g_levelActionList);
+}
+
+void ThermalKernelConfigFile::ParseSubNode(xmlNodePtr cur, std::vector<ThermalZoneInfoItem>& tzItemList,
+    std::string& type)
+{
+    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: Enter", __func__);
+    LevelAction levelAction;
+    levelAction.name = type;
+
+    for (auto subNode = cur->children; subNode; subNode = subNode->next) {
+        if (subNode == nullptr) {
+            continue;
+        }
+        if (xmlStrcmp(subNode->name, BAD_CAST"item") != 0) {
+            continue;
+        }
+
+        ThermalZoneInfoItem tziItem;
+        xmlChar* xmlThreshold = xmlGetProp(subNode, BAD_CAST"threshold");
+        if (xmlThreshold != nullptr) {
+            tziItem.threshold= atoi((char*)xmlThreshold);
+            xmlFree(xmlThreshold);
+        }
+        xmlChar* xmlThresholdClr = xmlGetProp(subNode, BAD_CAST"threshold_clr");
+        if (xmlThresholdClr != nullptr) {
+            tziItem.thresholdClr = atoi((char*)xmlThresholdClr);
+            xmlFree(xmlThresholdClr);
+        }
+        xmlChar* xmlLevel = xmlGetProp(subNode, BAD_CAST"level");
+        if (xmlLevel != nullptr) {
+            tziItem.level = static_cast<uint32_t>(atoi((char*)xmlLevel));
+            levelAction.level = tziItem.level;
+            xmlFree(xmlLevel);
+        }
+        for (auto subActionNode = subNode->children; subActionNode; subActionNode = subActionNode->next) {
+            ActionItem action;
+            action.name = (char *)subActionNode->name;
+            xmlChar* xmlValue = xmlNodeGetContent(subActionNode);
+            if (xmlValue != nullptr) {
+                action.value = static_cast<uint32_t>(atoi((char *)xmlValue));
+                xmlFree(xmlValue);
+            }
+            levelAction.vAction.push_back(action);
+        }
+        tzItemList.push_back(tziItem);
+        g_levelActionList.push_back(levelAction);
+    }
 }
 } // namespace PowerMgr
 } // namespace OHOS
