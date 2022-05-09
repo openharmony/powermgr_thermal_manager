@@ -39,7 +39,7 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
 
   include_dirs = [
     "include",
-    "//foundation/graphic/standard/utils/include/",
+    "//foundation/graphic/graphic/utils/include/",
     "${thermal_manager_path}/services/native/include",
     "${thermal_manager_path}/services/native/include/thermal_action",
     "${thermal_manager_path}/services/native/include/thermal_observer",
@@ -93,7 +93,7 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "${thermal_manager_path}/services/native/include/thermal_policy",
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
-    "//foundation/graphic/standard/utils/include/",
+    "//foundation/graphic/graphic/utils/include/",
     "//base/powermgr/display_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/display_manager/service/native/include/",
     "//base/powermgr/display_manager/service/zidl/include/",
