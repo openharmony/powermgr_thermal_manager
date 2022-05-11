@@ -55,7 +55,7 @@ deps_ex = [
   "common_event_service:cesfwk_innerkits",
   "appspawn:appspawn_socket_client",
   "thermal_device_driver:libthermal_callback",
-  "thermal_device_driver:libthermal_proxy_1.0",
+  "thermal_device_driver_interface:libthermal_proxy_1.0",
   "device_driver_framework:libhdi",
   "device_driver_framework:libhdf_utils",
 ]

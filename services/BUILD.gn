@@ -128,7 +128,7 @@ ohos_shared_library("thermalservice") {
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "thermal_device_driver:libthermal_callback",
-    "thermal_device_driver:libthermal_proxy_1.0",
+    "thermal_device_driver_interface:libthermal_proxy_1.0",
     "window_manager:libdm",
   ]
 
