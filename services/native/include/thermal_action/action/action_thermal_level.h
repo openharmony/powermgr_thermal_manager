@@ -21,7 +21,7 @@
 #include <set>
 #include <mutex>
 #include <common_event_publish_info.h>
-#include <ohos/aafwk/content/want.h>
+#include <want.h>
 
 #include "ithermal_level_callback.h"
 #include "thermal_level_info.h"
