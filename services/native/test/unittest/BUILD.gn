@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -10,6 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 import("//base/startup/appspawn_standard/appspawn.gni")
 import("//build/test.gni")
@@ -39,7 +40,6 @@ config("module_private_config") {
     "//foundation/windowmanager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
     "//foundation/windowmanager/utils/include",
-    "//drivers/peripheral/thermal/interfaces/include/",
   ]
 }
 
@@ -54,7 +54,6 @@ deps_ex = [
   "samgr_standard:samgr_proxy",
   "common_event_service:cesfwk_innerkits",
   "appspawn:appspawn_socket_client",
-  "thermal_device_driver:libthermal_callback",
   "thermal_device_driver_interface:libthermal_proxy_1.0",
   "device_driver_framework:libhdi",
   "device_driver_framework:libhdf_utils",
@@ -78,8 +77,6 @@ ohos_unittest("ThermalPolicyTest") {
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
     "//base/powermgr/power_manager/services/native/src/actions/default",
-    "//drivers/peripheral/thermal/interfaces",
-    "//drivers/peripheral/thermal/interfaces/include/",
     "${aafwk_services_path}/appmgr/include",
     "${aafwk_inner_api_path}/app_manager/include/appmgr",
   ]
@@ -119,8 +116,6 @@ ohos_unittest("ThermalLevelEventTest") {
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
     "//base/powermgr/power_manager/services/native/src/actions/default",
-    "//drivers/peripheral/thermal/interfaces",
-    "//drivers/peripheral/thermal/interfaces/include/",
     "${aafwk_services_path}/appmgr/include",
     "${aafwk_inner_api_path}/app_manager/include/appmgr",
   ]
@@ -160,8 +155,6 @@ ohos_unittest("ThermalClientApiTest") {
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
     "//base/powermgr/power_manager/services/native/src/actions/default",
-    "//drivers/peripheral/thermal/interfaces",
-    "//drivers/peripheral/thermal/interfaces/include/",
     "${aafwk_services_path}/appmgr/include",
     "${aafwk_inner_api_path}/app_manager/include/appmgr",
   ]

@@ -382,10 +382,10 @@ void ThermalService::RegisterThermalHdiCallback()
         THERMAL_RETURN_IF_WITH_LOG(thermalInterface_ == nullptr, "failed to get thermal hdi interface");
     }
 
-    sptr<IThermalCallback> callback = new ThermalCallbackImpl();
-    ThermalCallbackImpl::ThermalEventCallback eventCb =
+    sptr<IThermalCallback> callback = new ThermalCallback();
+    ThermalCallback::ThermalEventCallback eventCb =
         std::bind(&ThermalService::HandleThermalCallbackEvent, this, std::placeholders::_1);
-    ThermalCallbackImpl::RegisterThermalEvent(eventCb);
+    ThermalCallback::RegisterThermalEvent(eventCb);
     int32_t ret = thermalInterface_->Register(callback);
     THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "register thermal hdi callback end, ret: %{public}d", ret);
 }
