@@ -2136,7 +2136,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Lev
  * @tc.desc: get process and shutdown value
  * @tc.type: FEATURE
  * @tc.cond: Set AP temp, High Temp With Aux sensor
- * @tc.result level 1, process 0, shutdown 0
+ * @tc.result level 1, process 3, shutdown 1
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Level2)
 {
@@ -2145,11 +2145,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
     char apTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
     char shellTempBuf[MAX_PATH] = {0};
+    char stateScreenBuf[MAX_PATH] = {0};
     ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
     ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
     ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateScreenBuf, PATH_MAX, sizeof(stateScreenBuf) - 1, stateScreenPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
 
     int32_t apTemp = 78000;
@@ -2167,7 +2170,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
     ret = ThermalMgrPolicyTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    int32_t stateScreen = 1;
+    sTemp = to_string(stateScreen);
+    ret = ThermalMgrPolicyTest::WriteFile(stateScreenBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    sleep(WAIT_TIME * 3);
     char procsessBuf[MAX_PATH] = {0};
     char procsesValue[MAX_PATH] = {0};
     ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
@@ -2177,7 +2185,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
     std::string process = procsesValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(process);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 0) << "ThermalMgrPolicyTest049 failed";
+    EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest049 failed";
 
     char shutdownBuf[MAX_PATH] = {0};
     char shutdownValue[MAX_PATH] = {0};
@@ -2188,7 +2196,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
     std::string shutdown = shutdownValue;
     value = ThermalMgrPolicyTest::ConvertInt(shutdown);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 0) << "ThermalMgrPolicyTest049 failed";
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest049 failed";
     GTEST_LOG_(INFO) << "ThermalMgrPolicyTest049: end.";
 }
 
@@ -2335,7 +2343,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest053, Function|MediumTest|Lev
     EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest053 failed";
     GTEST_LOG_(INFO) << "ThermalMgrPolicyTest053: end.";
 }
-
 /**
  * @tc.name: ThermalMgrPolicyTest054
  * @tc.desc: test get process by setting temp
