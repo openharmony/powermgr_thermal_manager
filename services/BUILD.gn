@@ -19,9 +19,9 @@ config("thermalsrv_private_config") {
   include_dirs = [
     "//third_party/libxml2/include",
     "//base/startup/appspawn_standard/include/",
-    "//foundation/aafwk/standard/services/abilitymgr/include/",
-    "//foundation/aafwk/standard/services/appmgr/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_services_path}/abilitymgr/include/",
+    "${aafwk_services_path}/appmgr/include",
+    "${aafwk_inner_api_path}/app_manager/include/appmgr",
     "//base/powermgr/power_manager/services/native/include",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
@@ -90,6 +90,7 @@ ohos_shared_library("thermalservice") {
   public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
+    "${aafwk_services_path}/appmgr:libappms",
     "${displaymgr_native_innerkits_path}:displaymgr",
     "${utils_path}:thermal_utils",
     "//base/miscservices/time/services:time_service",
@@ -100,7 +101,6 @@ ohos_shared_library("thermalservice") {
     "//base/powermgr/thermal_manager/services/zidl:thermalmgr_stub",
     "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//drivers/peripheral/display/hal:hdi_display_device",
-    "//foundation/aafwk/standard/services/appmgr:libappms",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//foundation/graphic/graphic:libwmclient",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
