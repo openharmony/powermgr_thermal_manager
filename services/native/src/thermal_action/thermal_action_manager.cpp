@@ -27,11 +27,10 @@ const int ARG_1 = 1;
 }
 bool ThermalActionManager::Init()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s ThermalActionManager enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
 
     for (auto item = vActionItem_.begin(); item != vActionItem_.end(); ++item) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s ThermalActionManager name = %{public}s",
-            __func__, item->name.c_str());
+        THERMAL_HILOGI(COMP_SVC, "ThermalActionManager name = %{public}s", item->name.c_str());
         std::shared_ptr<IThermalAction> thermalAction = ThermalActionFactory::Create(item->name);
         thermalAction->InitParams(item->params);
         thermalAction->SetStrict(item->strict);
@@ -41,7 +40,7 @@ bool ThermalActionManager::Init()
     if (actionThermalLevel_ == nullptr) {
         actionThermalLevel_ = std::make_shared<ActionThermalLevel>();
         if (!actionThermalLevel_->Init()) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s failed to create level action", __func__);
+            THERMAL_HILOGE(COMP_SVC, "failed to create level action");
         }
     }
     CreateActionMockFile();
@@ -50,7 +49,7 @@ bool ThermalActionManager::Init()
 
 void ThermalActionManager::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (actionThermalLevel_ != nullptr) {
         actionThermalLevel_->SubscribeThermalLevelCallback(callback);
     }
@@ -58,7 +57,7 @@ void ThermalActionManager::SubscribeThermalLevelCallback(const sptr<IThermalLeve
 
 void ThermalActionManager::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (actionThermalLevel_ != nullptr) {
         actionThermalLevel_->UnSubscribeThermalLevelCallback(callback);
     }
@@ -66,13 +65,13 @@ void ThermalActionManager::UnSubscribeThermalLevelCallback(const sptr<IThermalLe
 
 uint32_t ThermalActionManager::GetThermalLevel()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     return actionThermalLevel_->GetThermalLevel();
 }
 
 int32_t ThermalActionManager::CreateActionMockFile()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::string configDir = "/data/thermal/config/%s";
     std::string stateDir = "/data/thermal/state/%s";
     char fileBuf[MAX_PATH] = {0};
@@ -83,7 +82,7 @@ int32_t ThermalActionManager::CreateActionMockFile()
     std::vector<std::string> stateValueList = {"scene", "screen", "charge"};
     int32_t ret = -1;
     for (auto iter : actionValueList) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start create file", __func__);
+        THERMAL_HILOGD(COMP_SVC, "start create file");
         ret = snprintf_s(fileBuf, PATH_MAX, sizeof(fileBuf) - ARG_1, configDir.c_str(), iter.c_str());
         if (ret < ERR_OK) {
             return ret;
@@ -92,7 +91,7 @@ int32_t ThermalActionManager::CreateActionMockFile()
     }
 
     for (auto iter : stateValueList) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start create file", __func__);
+        THERMAL_HILOGD(COMP_SVC, "start create file");
         ret = snprintf_s(stateFileBuf, PATH_MAX, sizeof(stateFileBuf) - ARG_1, stateDir.c_str(), iter.c_str());
         if (ret < ERR_OK) {
             return ret;

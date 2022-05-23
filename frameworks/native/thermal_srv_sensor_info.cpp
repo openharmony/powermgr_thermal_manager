@@ -45,7 +45,7 @@ ThermalSrvSensorInfo *ThermalSrvSensorInfo::Unmarshalling(Parcel &parcel)
 {
     ThermalSrvSensorInfo *thermalSrvSensorInfo = new (std::nothrow) ThermalSrvSensorInfo();
     if (thermalSrvSensorInfo && !thermalSrvSensorInfo->ReadFromParcel(parcel)) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvSensorInfo::Unmarshalling ReadFromParcel failed");
+        THERMAL_HILOGE(COMP_FWK, "ThermalSrvSensorInfo::Unmarshalling ReadFromParcel failed");
         delete thermalSrvSensorInfo;
         thermalSrvSensorInfo = nullptr;
     }

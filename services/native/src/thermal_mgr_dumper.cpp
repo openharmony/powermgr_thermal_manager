@@ -28,7 +28,7 @@ const std::string ARGS_DIALOG = "-d";
 
 bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& result)
 {
-    THERMAL_HILOGI(MODULE_THERMALHDI_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     result.clear();
     auto argc = args.size();
     if ((argc == 0) || (args[0] == ARGS_HELP)) {

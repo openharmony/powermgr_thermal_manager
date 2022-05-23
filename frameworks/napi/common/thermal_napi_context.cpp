@@ -33,7 +33,7 @@ ThermalNapiContext::ThermalNapiContext(napi_env env, napi_value* args, uint32_t 
                                               asyncWork_(nullptr),
                                               status_(AsyncStatus::PENDING)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_INNERKIT, "%{public}s: Called", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     if (callbackArg >= 0 && callbackArg < static_cast<int32_t>(argc)) {
         napi_valuetype valueType = napi_undefined;
         napi_typeof(env, args[callbackArg], &valueType);
@@ -86,7 +86,7 @@ bool ThermalNapiContext::StartAsyncWork(const char* workName, ExecuteFunc exeFun
         (void *)this,
         &asyncWork_);
     if (status != napi_ok) {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI, "CreateAsyncWork failed: %d", status);
+        THERMAL_HILOGE(COMP_FWK, "CreateAsyncWork failed: %d", status);
         return false;
     }
     napi_queue_async_work(this->env_, asyncWork_);
@@ -99,14 +99,14 @@ void ThermalNapiContext::ExecuteAsyncWork(napi_env env, void *data)
     ThermalNapiContext* context = (ThermalNapiContext*)data;
     if (context->exeFunc_) {
         bool ret = context->exeFunc_();
-        THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "execute work: %d", ret);
+        THERMAL_HILOGD(COMP_FWK, "execute work: %d", ret);
         if (ret) {
             context->status_ = AsyncStatus::RESOLVED;
         } else {
             context->status_ = AsyncStatus::REJECTED;
         }
     } else {
-        THERMAL_HILOGW(MODULE_THERMAL_JS_NAPI, "execute work: no exeFunc");
+        THERMAL_HILOGW(COMP_FWK, "execute work: no exeFunc");
         context->status_ = AsyncStatus::REJECTED;
     }
 }
@@ -117,15 +117,15 @@ void ThermalNapiContext::CompleteAsyncWork(napi_env env, napi_status status, voi
 
     if (context->deferred_) {
         if (context->status_ == AsyncStatus::RESOLVED) {
-            THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "work complete: resolved");
+            THERMAL_HILOGD(COMP_FWK, "work complete: resolved");
             napi_resolve_deferred(env, context->deferred_, context->GetValue());
         } else {
-            THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "work complete: rejected");
+            THERMAL_HILOGD(COMP_FWK, "work complete: rejected");
             napi_reject_deferred(env, context->deferred_, context->GetError());
         }
         context->deferred_ = nullptr;
     } else if (context->callbackRef_) {
-        THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "work complete: callback");
+        THERMAL_HILOGD(COMP_FWK, "work complete: callback");
         napi_value result = 0;
         napi_value callback = nullptr;
         napi_get_reference_value(env, context->callbackRef_, &callback);
@@ -138,7 +138,7 @@ void ThermalNapiContext::CompleteAsyncWork(napi_env env, napi_status status, voi
         napi_delete_reference(env, context->callbackRef_);
         context->callbackRef_ = nullptr;
     } else {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI, "work complete: nothing");
+        THERMAL_HILOGE(COMP_FWK, "work complete: nothing");
     }
     napi_delete_async_work(env, context->asyncWork_);
     context->asyncWork_ = nullptr;

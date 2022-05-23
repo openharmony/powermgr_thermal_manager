@@ -35,7 +35,7 @@ void CpuAction::Execute()
     static int32_t value;
     if (value != latestvalue_) {
         if (CpuActionRequest(latestvalue_) != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set cpu freq");
+            THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to set cpu freq");
         }
         value = latestvalue_;
     } else {
@@ -45,7 +45,7 @@ void CpuAction::Execute()
 
 int32_t CpuAction::CpuActionRequest(uint32_t freq)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d", freq);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "%{public}d", freq);
     char cpuBuf[MAX_PATH] = {0};
     if (snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, SIM_CPU_FREQ_PATH.c_str()) < ERR_OK) {
         return ERR_INVALID_VALUE;

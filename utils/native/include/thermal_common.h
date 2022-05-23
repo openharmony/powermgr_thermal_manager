@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "hilog_wrapper.h"
+#include "thermal_log.h"
 #include "thermal_mgr_errors.h"
 
 namespace OHOS {
@@ -30,8 +30,7 @@ namespace PowerMgr {
 #define THERMAL_RETURN_IF_WITH_LOG(cond, loginfo)                                                   \
     do {                                                                                \
         if (cond) {                                                                     \
-            THERMAL_HILOGE(MODULE_THERMAL_COMMON, "%{public}s "#loginfo" \
-                ", __func__);                                     \
+            THERMAL_HILOGE(COMP_FWK, #loginfo);                                         \
             return;                                                                     \
         }                                                                               \
     } while (0)                                                                         \
@@ -39,7 +38,7 @@ namespace PowerMgr {
 #define THERMAL_READ_PARCEL_NO_RET(parcel, type, out)                                           \
     do {                                                                                \
         if (!(parcel).Read##type(out)) {                                                \
-            THERMAL_HILOGE(MODULE_THERMAL_COMMON, "%{public}s read "#out" failed", __func__);                          \
+            THERMAL_HILOGE(COMP_FWK, "read "#out" failed");                          \
             return;                                                                     \
         }                                                                               \
     } while (0)                                                                         \
@@ -47,7 +46,7 @@ namespace PowerMgr {
 #define THERMAL_WRITE_PARCEL_NO_RET(parcel, type, data)                                         \
     do {                                                                                \
         if (!(parcel).Write##type(data)) {                                              \
-            THERMAL_HILOGE(MODULE_THERMAL_COMMON, "%{public}s write "#data" failed", __func__);                        \
+            THERMAL_HILOGE(COMP_FWK, "write "#data" failed");                        \
             return;                                                                     \
         }                                                                               \
     } while (0)                                                                         \
@@ -55,7 +54,7 @@ namespace PowerMgr {
 #define THERMAL_READ_PARCEL_WITH_RET(parcel, type, out, retval)                                \
     do {                                                                               \
         if (!(parcel).Read##type(out)) {                                               \
-            THERMAL_HILOGE(MODULE_THERMAL_COMMON, "%{public}s read "#out" failed", __func__);                         \
+            THERMAL_HILOGE(COMP_FWK, "read "#out" failed");                         \
             return (retval);                                                           \
         }                                                                              \
     } while (0)                                                                        \
@@ -63,7 +62,7 @@ namespace PowerMgr {
 #define THERMAL_WRITE_PARCEL_WITH_RET(parcel, type, data, retval)                              \
     do {                                                                               \
         if (!(parcel).Write##type(data)) {                                             \
-            THERMAL_HILOGE(MODULE_THERMAL_COMMON, "%{public}s write "#data" failed", __func__);                       \
+            THERMAL_HILOGE(COMP_FWK, "write "#data" failed");                       \
             return (retval);                                                           \
         }                                                                              \
     } while (0)

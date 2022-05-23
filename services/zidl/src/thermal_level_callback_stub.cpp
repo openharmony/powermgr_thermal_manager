@@ -23,13 +23,13 @@ namespace PowerMgr {
 int ThermalLevelCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
-    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE,
+    THERMAL_HILOGD(COMP_SVC,
         "ThermalLevelCallbackStub::OnRemoteRequest, cmd = %{public}d, flags= %{public}d",
         code, option.GetFlags());
     std::u16string descripter = ThermalLevelCallbackStub::GetDescriptor();
     std::u16string remoteDescripter = data.ReadInterfaceToken();
     if (descripter != remoteDescripter) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE,
+        THERMAL_HILOGE(COMP_SVC,
             "ThermalLevelCallbackStub::OnRemoteRequest failed, descriptor is not matched!");
         return E_GET_THERMAL_SERVICE_FAILED;
     }

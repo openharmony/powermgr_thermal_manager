@@ -28,19 +28,19 @@ void ThermalMgrListener::ThermalLevelCallback::GetThermalLevel(ThermalLevel leve
 void ThermalMgrListener::RegisterServiceEvent()
 {
     callback_ = new ThermalLevelCallback(shared_from_this());
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s start register", __func__);
+    THERMAL_HILOGI(COMP_FWK, "start register");
     ThermalMgrClient::GetInstance().SubscribeThermalLevelCallback(callback_);
 }
 
 void ThermalMgrListener::UnRegisterServiceEvent()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     ThermalMgrClient::GetInstance().UnSubscribeThermalLevelCallback(callback_);
 }
 
 int32_t ThermalMgrListener::SubscribeLevelEvent(const std::shared_ptr<ThermalLevelEvent>& levelEvent)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     RegisterServiceEvent();
     if (levelEvent_ == nullptr) {
         return ERR_INVALID_VALUE;
