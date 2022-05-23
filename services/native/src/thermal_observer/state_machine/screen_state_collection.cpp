@@ -107,7 +107,7 @@ void ScreenStateCollection::SetState()
     if (ret != ERR_OK) {
         return;
     }
-    mockState_ = screenValue;
+    mockState_ = TrimStr(screenValue, '\n');
 }
 
 bool ScreenStateCollection::DecideState(const std::string &value)
