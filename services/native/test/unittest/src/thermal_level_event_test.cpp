@@ -97,7 +97,7 @@ shared_ptr<CommonEventThermalLevelTest> CommonEventThermalLevelTest::RegisterEve
         succeed = CommonEventManager::SubscribeCommonEvent(subscriberPtr);
     }
     if (!succeed) {
-        THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "Failed to register subscriber");
+        THERMAL_HILOGD(COMP_SVC, "Failed to register subscriber");
         return nullptr;
     }
     return subscriberPtr;

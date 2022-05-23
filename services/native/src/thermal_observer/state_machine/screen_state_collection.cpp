@@ -42,14 +42,14 @@ bool ScreenStateCollection::Init()
 }
 bool ScreenStateCollection::InitParam(std::string &params)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     params_ = params;
     return true;
 }
 
 std::string ScreenStateCollection::GetState()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s screen state = %{public}s", __func__, mockState_.c_str());
+    THERMAL_HILOGD(COMP_SVC, "screen state = %{public}s", mockState_.c_str());
     if (!g_service->GetFlag()) {
         return mockState_;
     } else {
@@ -59,22 +59,22 @@ std::string ScreenStateCollection::GetState()
 
 bool ScreenStateCollection::RegisterEvent()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (g_service == nullptr) return false;
     auto receiver = g_service->GetStateMachineObj()->GetCommonEventReceiver();
     if (receiver == nullptr) return false;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s register screen on event", __func__);
+    THERMAL_HILOGI(COMP_SVC, "register screen on event");
     EventHandle handlerOn = std::bind(&ScreenStateCollection::HandleScreenOnCompleted, this, std::placeholders::_1);
     bool on = receiver->Start(CommonEventSupport::COMMON_EVENT_SCREEN_ON, handlerOn);
     if (!on) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s fail to COMMON_EVENT_SCREEN_ON", __func__);
+        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_SCREEN_ON");
         return false;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s register screen off event", __func__);
+    THERMAL_HILOGI(COMP_SVC, "register screen off event");
     EventHandle handlerOff = std::bind(&ScreenStateCollection::HandleScreenOffCompleted, this, std::placeholders::_1);
     bool off = receiver->Start(CommonEventSupport::COMMON_EVENT_SCREEN_OFF, handlerOff);
     if (!off) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s fail to COMMON_EVENT_SCREEN_OFF", __func__);
+        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_SCREEN_OFF");
         return false;
     }
     return true;
@@ -82,19 +82,19 @@ bool ScreenStateCollection::RegisterEvent()
 
 void ScreenStateCollection::HandleScreenOnCompleted(const CommonEventData &data __attribute__((__unused__)))
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     state_ = ToString(SCREEN_ON);
 }
 
 void ScreenStateCollection::HandleScreenOffCompleted(const CommonEventData &data __attribute__((__unused__)))
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     state_ = ToString(SCREEN_OFF);
 }
 
 void ScreenStateCollection::SetState()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     char screenBuf[MAX_PATH] = {0};
     char screenValue[MAX_PATH] = {0};
     int32_t ret = -1;
@@ -102,7 +102,7 @@ void ScreenStateCollection::SetState()
     if (snprintf_s(screenBuf, PATH_MAX, sizeof(screenBuf) - 1, screenPath.c_str()) < ERR_OK) {
         return;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s read screen state", __func__);
+    THERMAL_HILOGI(COMP_SVC, "read screen state");
     ret = FileOperation::ReadFile(screenBuf, screenValue, sizeof(screenValue));
     if (ret != ERR_OK) {
         return;
@@ -113,8 +113,8 @@ void ScreenStateCollection::SetState()
 bool ScreenStateCollection::DecideState(const std::string &value)
 {
     SetState();
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s mockState_=%{public}s, value=%{public}s",
-        __func__, mockState_.c_str(), value.c_str());
+    THERMAL_HILOGI(COMP_SVC, "mockState_=%{public}s, value=%{public}s",
+        mockState_.c_str(), value.c_str());
     return StringOperation::Compare(value, mockState_);
 }
 } // namespace PowerMgr

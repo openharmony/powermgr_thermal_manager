@@ -25,7 +25,7 @@ constexpr int32_t MAX_PATH = 256;
 }
 bool CurrentAction::AddActionValue(uint32_t value)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     latestvalue_ = value;
     return true;
 }
@@ -35,7 +35,7 @@ void CurrentAction::Execute()
     static uint32_t value;
     if (value != latestvalue_) {
         if (BatteryCurrentActionRequest(latestvalue_) != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set battery current");
+            THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to set battery current");
         }
         value = latestvalue_;
     } else {
@@ -45,7 +45,7 @@ void CurrentAction::Execute()
 
 int32_t CurrentAction::BatteryCurrentActionRequest(uint32_t current)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d", current);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "%{public}d", current);
     char currentBuf[MAX_PATH] = {0};
     if (snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, SIM_BATTERY_CURRENT_PATH.c_str()) < ERR_OK) {
         return ERR_INVALID_VALUE;

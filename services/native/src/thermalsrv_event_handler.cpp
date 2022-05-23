@@ -23,7 +23,7 @@ namespace PowerMgr {
 ThermalsrvEventHandler::ThermalsrvEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
     const wptr<ThermalService> &service) : AppExecFwk::EventHandler(runner), service_(service)
 {
-    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "ThermalsrvEventHandler::ThermalsrvEventHandler instance created.");
+    THERMAL_HILOGD(COMP_SVC, "ThermalsrvEventHandler::ThermalsrvEventHandler instance created.");
 }
 
 void ThermalsrvEventHandler::ProcessEvent([[maybe_unused]] const AppExecFwk::InnerEvent::Pointer &event)
@@ -32,8 +32,7 @@ void ThermalsrvEventHandler::ProcessEvent([[maybe_unused]] const AppExecFwk::Inn
     if (tmsptr == nullptr) {
         return;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ProcessEvent::%{public}s, eventid = %{public}d", __func__,
-        event->GetInnerEventId());
+    THERMAL_HILOGI(COMP_SVC, "eventid = %{public}d", event->GetInnerEventId());
     tmsptr->HandleEvent(event->GetInnerEventId());
 }
 } // namespace PowerMgr

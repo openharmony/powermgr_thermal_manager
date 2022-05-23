@@ -29,7 +29,7 @@ const std::string ARGS_THERMALINFO = "-t";
 
 bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& result)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     result.clear();
     auto argc = args.size();
     if ((argc == 0) || (args[0] == ARGS_HELP)) {
@@ -61,7 +61,7 @@ void ThermalMgrDumper::ShowThermalZoneInfo(std::string& result)
 {
     auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (tms == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+        THERMAL_HILOGE(COMP_SVC, "thermal service is nullptr");
         return;
     }
     auto tzMap = tms->GetSubscriber()->GetSubscriberInfo();
