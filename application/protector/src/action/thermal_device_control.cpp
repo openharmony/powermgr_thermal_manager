@@ -26,7 +26,7 @@ auto &service = ThermalKernelService::GetInstance();
 }
 bool ThermalDeviceControl::Init()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     auto policy = service.GetPolicy();
     if (policy == nullptr) {
         return false;

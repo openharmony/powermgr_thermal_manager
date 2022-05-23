@@ -35,14 +35,14 @@ void ActionCharger::SetStrict(bool flag)
 
 void ActionCharger::AddActionValue(std::string value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s value=%{public}s", __func__, value.c_str());
+    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionCharger::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
@@ -63,13 +63,12 @@ void ActionCharger::Execute()
 
 uint32_t ActionCharger::ChargerRequest(uint32_t current)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto thermalInterface = g_service->GetThermalInterface();
     if (thermalInterface != nullptr) {
         int32_t ret = thermalInterface->SetBatteryCurrent(current);
         if (ret != ERR_OK) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set charger current to thermal hdf",
-                __func__);
+            THERMAL_HILOGI(COMP_SVC, "failed to set charger current to thermal hdf");
             return ret;
         }
     }

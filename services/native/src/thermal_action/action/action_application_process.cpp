@@ -40,7 +40,7 @@ const int MAX_PATH = 256;
 }
 bool ActionApplicationProcess::Init()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "KillApplicationAction: Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppMgrClient>();
     }
@@ -60,14 +60,14 @@ void ActionApplicationProcess::SetStrict(bool flag)
 
 void ActionApplicationProcess::AddActionValue(std::string value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s value=%{public}s", __func__, value.c_str());
+    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionApplicationProcess::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
@@ -95,37 +95,37 @@ ErrCode ActionApplicationProcess::KillApplicationAction(const std::string &bundl
     int result = ERR_OK;
     result = appMgrClient_->KillApplication(bundleName);
     if (result == ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "kill application:%{public}s successfully.", bundleName.c_str());
+        THERMAL_HILOGE(COMP_SVC, "kill application:%{public}s successfully.", bundleName.c_str());
     } else {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to kill application:%{public}s.", bundleName.c_str());
+        THERMAL_HILOGE(COMP_SVC, "failed to kill application:%{public}s.", bundleName.c_str());
     }
     return result;
 }
 
 ErrCode ActionApplicationProcess::GetRunningProcessInfo(std::vector<RunningProcessInfo> &info)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "GetRunningProcessInfo: Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     ErrCode result = ERR_OK;
     result = appMgrClient_->GetAllRunningProcesses(info);
     if (result == ERR_OK) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "get running process info successfully.");
+        THERMAL_HILOGI(COMP_SVC, "get running process info successfully.");
     } else {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get running process info.");
+        THERMAL_HILOGE(COMP_SVC, "failed to get running process info.");
     }
     return result;
 }
 
 ErrCode ActionApplicationProcess::KillProcess(const pid_t pid)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "KillProcess: Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     if (pid > 0) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "KillProcess: kill pid %{public}d", pid);
+        THERMAL_HILOGI(COMP_SVC, "KillProcess: kill pid %{public}d", pid);
         ret = kill(pid, SIGNAL_KILL);
         if (ret == ERR_OK) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "KillProcess: success kill");
+            THERMAL_HILOGI(COMP_SVC, "KillProcess: success kill");
         } else {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "KillProcess: failed to kill");
+            THERMAL_HILOGE(COMP_SVC, "KillProcess: failed to kill");
         }
     }
     return ret;
@@ -163,7 +163,7 @@ void ActionApplicationProcess::KillBgAppProcess()
 {
     for (auto bg : bgAppProcessInfos_) {
         if (KillProcess(bg.pid_) != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "KillBgAppProcess: failed to kill bg process");
+            THERMAL_HILOGE(COMP_SVC, "failed to kill bg process");
         }
     }
 }
@@ -172,7 +172,7 @@ void ActionApplicationProcess::KillFgAppProcess()
 {
     for (auto fg : fgAppProcessInfos_) {
         if (KillProcess(fg.pid_) != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "KillFgAppProcess: failed to kill fg process");
+            THERMAL_HILOGE(COMP_SVC, "failed to kill fg process");
         }
     }
 }
@@ -181,7 +181,7 @@ void ActionApplicationProcess::KillAllAppProcess()
 {
     for (auto all : allAppProcessInfos_) {
         if (KillProcess(all.pid_) != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "KillFgAppProcess: failed to kill all process");
+            THERMAL_HILOGE(COMP_SVC, "failed to kill all process");
         }
     }
 }
@@ -193,7 +193,7 @@ void ActionApplicationProcess::KillService(const std::string &serviceName)
 
 void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t &value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ProcessAppActionRequest: action %{public}d", value);
+    THERMAL_HILOGD(COMP_SVC, "value: %{public}d", value);
     GetAllRunnningAppProcess();
     switch (value) {
         case KILL_FG_PROCESS_APP: {
@@ -216,7 +216,7 @@ void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t &value)
 
 void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t &value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "start to kill application");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char processBuf[MAX_PATH] = {0};
     ret = snprintf_s(processBuf, PATH_MAX, sizeof(processBuf) - 1, processPath.c_str());

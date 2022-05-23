@@ -39,7 +39,7 @@ bool ThermalSensorProvider::InitProvider()
 
     ret = InitThermalZoneSysfs();
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to get path info.", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to get path info.");
         return false;
     }
 
@@ -49,28 +49,28 @@ bool ThermalSensorProvider::InitProvider()
 
 void ThermalSensorProvider::GetThermalSensorInfo()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     int32_t ret = -1;
 
     ret = ParseThermalZoneInfo();
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s failed to thermal zone info", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to thermal zone info");
         return;
     }
     tzInfoList_ = tzInfoAcaualEvent_.info;
 
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s size = %{public}zu", __func__, tzInfoList_.size());
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "size = %{public}zu", tzInfoList_.size());
 
     for (auto type : intervalMap_) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s configType = %{public}s", __func__, type.first.c_str());
+        THERMAL_HILOGI(FEATURE_PROTECTOR, "configType = %{public}s", type.first.c_str());
     }
 
     for (auto iter = tzInfoList_.begin(); iter != tzInfoList_.end(); iter++) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "type = %{public}s", iter->type.c_str());
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "temp = %{public}d", iter->temp);
+        THERMAL_HILOGD(FEATURE_PROTECTOR, "type = %{public}s", iter->type.c_str());
+        THERMAL_HILOGD(FEATURE_PROTECTOR, "temp = %{public}d", iter->temp);
         for (auto intervalIter = intervalMap_.begin(); intervalIter != intervalMap_.end(); intervalIter++) {
             if (iter->type.find(intervalIter->first) != std::string::npos) {
-                THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s success to find type", __func__);
+                THERMAL_HILOGI(FEATURE_PROTECTOR, "success to find type");
                 typeTempMap_.insert(std::make_pair(intervalIter->first, iter->temp));
             }
         }
@@ -89,24 +89,24 @@ void ThermalSensorProvider::RegisterTask(NotifyTask task)
 
 void ThermalSensorProvider::NotifyPolicy()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     GetThermalSensorInfo();
     for (auto info : typeTempMap_) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s type = %{public}s, temp = %{public}d",
-            __func__, info.first.c_str(), info.second);
+        THERMAL_HILOGD(FEATURE_PROTECTOR, "type = %{public}s, temp = %{public}d",
+            info.first.c_str(), info.second);
     }
     notify_(typeTempMap_);
 }
 
 int32_t ThermalSensorProvider::InitProviderTimer()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s:  Enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     int32_t ret = -1;
     epFd_ = epoll_create1(EPOLL_CLOEXEC);
 
     ret = CreateProviderFd();
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s failed to create polling fd", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to create polling fd");
         return ret;
     }
     return ERR_OK;
@@ -123,28 +123,28 @@ int32_t ThermalSensorProvider::CreateProviderFd()
 {
     timerFd_ = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
     if (timerFd_ == ERR_INVALID_FD) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s epoll create failed, epFd_ is invalid", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "epoll create failed, epFd_ is invalid");
         return ERR_INVALID_FD;
     }
     GetTypeInterval();
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: %{public}d", __func__, interval_);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "interval_ is %{public}d", interval_);
     SetTimerInterval(interval_, timerFd_);
     fcntl(timerFd_, F_SETFL, O_NONBLOCK);
     callbackHandler_.insert(std::make_pair(timerFd_, &ThermalSensorProvider::TimerProviderCallback));
     if (RegisterCallback(timerFd_, EVENT_TIMER_FD, epFd_)) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s register Timer event failed", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "register Timer event failed");
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "return");
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Exit");
     return ERR_OK;
 }
 
 void ThermalSensorProvider::TimerProviderCallback(void *service)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     unsigned long long timers;
 
     if (read(timerFd_, &timers, sizeof(timers)) == -1) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s read timerFd_ failed", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "read timerFd_ failed");
         return;
     }
     NotifyPolicy();
@@ -153,7 +153,7 @@ void ThermalSensorProvider::TimerProviderCallback(void *service)
 
 void ThermalSensorProvider::SetTimerInterval(int interval, int32_t timerfd)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter, start SetTimerInterval: %{public}d", __func__, timerfd);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "start SetTimerInterval: %{public}d", timerfd);
     struct itimerspec itval;
 
     if (timerfd == ERR_INVALID_FD) {
@@ -169,29 +169,28 @@ void ThermalSensorProvider::SetTimerInterval(int interval, int32_t timerfd)
     itval.it_value.tv_sec = interval / MS_PER_SECOND;
     itval.it_value.tv_nsec = 0;
     if (timerfd_settime(timerfd, 0, &itval, nullptr) == -1) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: timer failed\n", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "timer failed.");
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "return");
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Exit");
 }
 
 int32_t ThermalSensorProvider::RegisterCallback(const int fd, const EventType et, int32_t epfd)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "Enter");
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     struct epoll_event ev;
 
     ev.events = EPOLLIN;
     if (et == EVENT_TIMER_FD) {
         ev.events |= EPOLLWAKEUP;
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d, %{public}d", epfd, fd);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "epfd: %{public}d, fd: %{public}d", epfd, fd);
     ev.data.ptr = reinterpret_cast<void*>(this);
     ev.data.fd = fd;
     if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: epoll_ctl failed, error num =%{public}d",
-            __func__, errno);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "epoll_ctl failed, error num =%{public}d", errno);
         return -1;
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "return");
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Exit");
     return ERR_OK;
 }
 
@@ -200,8 +199,7 @@ int32_t ThermalSensorProvider::LoopingThreadEntry(void *arg, int32_t epfd)
     int nevents = 0;
     size_t eventct = callbackHandler_.size();
     struct epoll_event events[eventct];
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: %{public}d, %{public}zu", __func__,
-        epfd, eventct);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "epfd: %{public}d, eventct: %{public}zu", epfd, eventct);
     while (true) {
         nevents = epoll_wait(epfd, events, eventct, -1);
         if (nevents == -1) {
@@ -223,18 +221,18 @@ void ThermalSensorProvider::Run(void *service, int32_t epfd)
 
 void ThermalSensorProvider::StartThread(void *service)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s:  Enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     int ret = -1;
     ret = InitProviderTimer();
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s init Timer failed, ret: %{public}d", __func__, ret);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "init Timer failed, ret: %{public}d", ret);
         return;
     }
     Run(service, epFd_);
     while (true) {
         pause();
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "return");
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Exit");
 }
 } // namespace PowerMgr
 } // namespace OHOS

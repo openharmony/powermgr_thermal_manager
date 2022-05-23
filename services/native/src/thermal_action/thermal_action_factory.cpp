@@ -31,7 +31,7 @@ namespace OHOS {
 namespace PowerMgr {
 std::shared_ptr<IThermalAction> ThermalActionFactory::Create(std::string &actionName)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (StringOperation::Compare(actionName, CPU_ACTION_NAME)) {
         return std::make_shared<ActionCpu>();
     } else if (StringOperation::Compare(actionName, GPU_ACTION_NAME)) {
@@ -51,7 +51,7 @@ std::shared_ptr<IThermalAction> ThermalActionFactory::Create(std::string &action
     } else {
         return nullptr;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s end", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Exit");
 }
 } // namespace PowerMgr
 } // namespace OHOS

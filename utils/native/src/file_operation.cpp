@@ -33,18 +33,17 @@ namespace PowerMgr {
 static std::mutex g_mutex;
 int32_t FileOperation::CreateNodeDir(std::string dir)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: Enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (access(dir.c_str(), 0) != ERR_OK) {
         int flag = mkdir(dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH| S_IXOTH);
         if (flag == ERR_OK) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: Create directory successfully.", __func__);
+            THERMAL_HILOGI(COMP_SVC, "Create directory successfully.");
         } else {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s: Fail to create directory, flag: %{public}d",
-                __func__, flag);
+            THERMAL_HILOGE(COMP_SVC, "Fail to create directory, flag: %{public}d", flag);
             return flag;
         }
     } else {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s: This directory already exists.", __func__);
+        THERMAL_HILOGE(COMP_SVC, "This directory already exists.");
     }
     return ERR_OK;
 }
@@ -55,11 +54,11 @@ int32_t FileOperation::CreateNodeFile(std::string filePath)
     if (access(filePath.c_str(), 0) != 0) {
         fd = open(filePath.c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP| S_IROTH);
         if (fd < ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s: open failed to file.", __func__);
+            THERMAL_HILOGE(COMP_SVC, "open failed to file.");
             return fd;
         }
     } else {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: the file already exists.", __func__);
+        THERMAL_HILOGI(COMP_SVC, "the file already exists.");
     }
     return ERR_OK;
 }
@@ -72,7 +71,7 @@ int32_t FileOperation::WriteFile(std::string path, std::string buf, size_t size)
     }
     size_t ret = fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
     if (ret == ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "ret=%{public}zu", ret);
+        THERMAL_HILOGE(COMP_SVC, "ret=%{public}zu", ret);
     }
     int32_t state = fseek(stream, 0, SEEK_SET);
     if (state != ERR_OK) {
@@ -93,13 +92,13 @@ int32_t FileOperation::ReadFile(const char *path, char *buf, size_t size)
 
     int32_t fd = open(path, O_RDONLY);
     if (fd < ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s: open failed to file.", __func__);
+        THERMAL_HILOGE(COMP_SVC, "open failed to file.");
         return fd;
     }
 
     ret = read(fd, buf, size);
     if (ret < ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s: failed to read file.", __func__);
+        THERMAL_HILOGE(COMP_SVC, "failed to read file.");
         close(fd);
         return ret;
     }
