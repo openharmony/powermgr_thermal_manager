@@ -23,9 +23,6 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-AuxSensorInfoMap g_auxSensorLevelInfo;
-std::vector<PolicyConfig> g_policyList;
-ThermalPolicy::PolicyConfigMap g_clusterPolicyMap;
 }
 
 ThermalSrvConfigParser::ThermalSrvConfigParser() {};
@@ -107,6 +104,7 @@ void ThermalSrvConfigParser::ParseAuxSensorInfo(const xmlNode *cur, std::shared_
     xmlChar* auxSensor = xmlGetProp(cur, BAD_CAST"aux_sensor");
     if (auxSensor != nullptr) {
         std::vector<std::string> auxsensors;
+        AuxSensorInfoMap auxSensorLevelInfo;
         std::string auxsensor = (char *)auxSensor;
         sc->SetAuxFlag(true);
         StringOperation::SplitString(auxsensor, auxsensors, ",");
@@ -115,22 +113,23 @@ void ThermalSrvConfigParser::ParseAuxSensorInfo(const xmlNode *cur, std::shared_
             if (auxsensors[i].empty()) {
                 continue;
             }
-            ParseAuxSensorSubnodeInfo(cur, auxsensors, sensorType, i);
+            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "aux_sensor item: %{public}s", sensorType.c_str());
+            auxSensorLevelInfo.emplace(sensorType, ParseAuxSensorSubnodeInfo(cur, auxsensors, i));
         }
-        sc->SetAuxSensorLevelInfo(g_auxSensorLevelInfo);
+        sc->SetAuxSensorLevelInfo(auxSensorLevelInfo);
         xmlFree(auxSensor);
     }
 }
 
-void ThermalSrvConfigParser::ParseAuxSensorSubnodeInfo(const xmlNode *cur, std::vector<std::string>& auxsensors,
-    std::string& sensorType, const uint32_t i)
+std::vector<AuxLevelItem> ThermalSrvConfigParser::ParseAuxSensorSubnodeInfo(const xmlNode *cur,
+    std::vector<std::string>& auxsensors, const uint32_t i)
 {
-    std::string tempRanges;
     std::vector<AuxLevelItem> auxItems;
     for (auto subNode = cur->children; subNode != nullptr; subNode = subNode->next) {
         if (subNode == nullptr) {
             continue;
         }
+        std::string tempRanges;
         AuxLevelItem auxlevelItem;
         if (ParseAuxSensorSubnodeInfoTrigerRange(subNode, auxsensors, tempRanges, i) == false) {
             break;
@@ -145,13 +144,13 @@ void ThermalSrvConfigParser::ParseAuxSensorSubnodeInfo(const xmlNode *cur, std::
             auxlevelItem.level = atoi((char *)xmlLevel);
             xmlFree(xmlLevel);
         }
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "sensorType: %{public}s, tempRanges: %{public}s",
-            sensorType.c_str(), tempRanges.c_str());
+        THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "aux_trigger_range: %{public}s",
+            tempRanges.c_str());
         THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "lowerTemp: %{public}d, upperTemp: %{public}d",
             auxlevelItem.lowerTemp, auxlevelItem.upperTemp);
         auxItems.push_back(auxlevelItem);
-        g_auxSensorLevelInfo.emplace(std::pair(sensorType, auxItems));
     }
+    return auxItems;
 }
 
 bool ThermalSrvConfigParser::ParseAuxSensorSubnodeInfoTrigerRange(const xmlNode *subNode,
@@ -331,10 +330,10 @@ void ThermalSrvConfigParser::ParseActionNode(xmlNodePtr node)
 void ThermalSrvConfigParser::ParsePolicyNode(xmlNodePtr node)
 {
     auto cur = node->xmlChildrenNode;
-    std::string clusterName;
-    std::string diffName;
+    ThermalPolicy::PolicyConfigMap clusterPolicyMap;
     while (cur != nullptr) {
         PolicyConfig policyConfig;
+        std::string clusterName;
         xmlChar* xmlName = xmlGetProp(cur, BAD_CAST"name");
         if (xmlName != nullptr) {
             clusterName = (char *)xmlName;
@@ -351,18 +350,18 @@ void ThermalSrvConfigParser::ParsePolicyNode(xmlNodePtr node)
 
         ParsePolicySubnode(cur, policyConfig);
 
-        if (diffName != clusterName) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "diffName: %{public}s", diffName.c_str());
-            g_clusterPolicyMap.insert(std::make_pair(diffName, g_policyList));
-            diffName = clusterName;
-            g_policyList.clear();
+        const auto& clusterIter = clusterPolicyMap.find(clusterName);
+        THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "clusterName: %{public}s", clusterName.c_str());
+        if (clusterIter == clusterPolicyMap.end()) {
+            std::vector<PolicyConfig> policyList;
+            policyList.push_back(policyConfig);
+            clusterPolicyMap.emplace(clusterName, policyList);
+        } else {
+            clusterIter->second.push_back(policyConfig);
         }
-        g_policyList.push_back(policyConfig);
-
         cur = cur->next;
     }
-    g_clusterPolicyMap.insert(std::make_pair(clusterName, g_policyList));
-    g_service->GetPolicy()->SetPolicyMap(g_clusterPolicyMap);
+    g_service->GetPolicy()->SetPolicyMap(clusterPolicyMap);
 }
 
 void ThermalSrvConfigParser::ParsePolicySubnode(const xmlNode *cur, PolicyConfig& policyConfig)
@@ -373,10 +372,10 @@ void ThermalSrvConfigParser::ParsePolicySubnode(const xmlNode *cur, PolicyConfig
         policyAction.actionName = (char *)subNode->name;
         xmlChar* xmlactionValue = xmlNodeGetContent(subNode);
         if (xmlactionValue != nullptr) {
-        policyAction.actionValue = (char *)xmlactionValue;
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-            "policyAction.actionNodeName: %{public}s, policyAction.value:%{public}s",
-            policyAction.actionName.c_str(), policyAction.actionValue.c_str());
+            policyAction.actionValue = (char *)xmlactionValue;
+            THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE,
+                "policyAction.actionNodeName: %{public}s, policyAction.value:%{public}s",
+                policyAction.actionName.c_str(), policyAction.actionValue.c_str());
             xmlFree(xmlactionValue);
         }
 
