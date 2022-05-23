@@ -25,7 +25,7 @@ namespace OHOS {
 namespace PowerMgr {
 std::shared_ptr<IStateCollection> StateCollectionFactory::Create(std::string &stateName)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s StateMachine enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (stateName == STATE_CHARGER) {
         return std::make_shared<ChargerStateCollection>();
     } else if (stateName == STATE_SCREEN) {
