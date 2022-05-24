@@ -40,7 +40,7 @@ ohos_source_set("thermal_utils") {
 ohos_executable("thermal-shell") {
   include_dirs = [
     "shell/include",
-    "//foundation/aafwk/standard/services/common/include",
+    "${aafwk_services_path}/common/include",
     "//foundation/aafwk/standard/tools/aa/include",
     "//utils/native/base/include",
   ]
@@ -58,7 +58,7 @@ ohos_executable("thermal-shell") {
 
   configs = [
     "//foundation/aafwk/standard/tools/aa:ability_command_config",
-    "//foundation/aafwk/standard/services/common:common_config",
+    "${aafwk_services_path}/common:common_config",
   ]
 
   external_deps = [
