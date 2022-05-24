@@ -53,8 +53,8 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "//drivers/peripheral/display/interfaces/include/",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//foundation/aafwk/standard/services/appmgr/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_services_path}/appmgr/include",
+    "${aafwk_inner_api_path}/app_manager/include/appmgr",
     "//base/startup/appspawn_standard/include/",
     "//drivers/peripheral/thermal/interfaces",
     "//drivers/peripheral/thermal/interfaces/include/",
@@ -64,11 +64,11 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
   ]
 
   deps = [
+    "${aafwk_services_path}/appmgr:libappms",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
     "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
-    "//foundation/aafwk/standard/services/appmgr:libappms",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -100,8 +100,8 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "//drivers/peripheral/display/interfaces/include/",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//foundation/aafwk/standard/services/appmgr/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_services_path}/appmgr/include",
+    "${aafwk_inner_api_path}/app_manager/include/appmgr",
     "//base/startup/appspawn_standard/include/",
     "//drivers/peripheral/thermal/interfaces",
     "//drivers/peripheral/thermal/interfaces/include/",
@@ -111,10 +111,10 @@ ohos_systemtest("ThermalMgrSystemTest") {
   ]
 
   deps = [
+    "${aafwk_services_path}/appmgr:libappms",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
-    "//foundation/aafwk/standard/services/appmgr:libappms",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
