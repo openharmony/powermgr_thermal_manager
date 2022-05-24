@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2196,7 +2196,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
     std::string shutdown = shutdownValue;
     value = ThermalMgrPolicyTest::ConvertInt(shutdown);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest049 failed";
+    EXPECT_EQ(true, value == 0) << "ThermalMgrPolicyTest049 failed";
     GTEST_LOG_(INFO) << "ThermalMgrPolicyTest049: end.";
 }
 
