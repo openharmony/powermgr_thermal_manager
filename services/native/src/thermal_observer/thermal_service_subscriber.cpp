@@ -41,13 +41,8 @@ void ThermalServiceSubscriber::OnTemperatureChanged(TypeTempMap typeTempMap)
 {
     std::string type;
     if (typeTempMap.empty()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get sensor info: %{public}zu", typeTempMap.size());
+        THERMAL_HILOGE(COMP_SVC, "failed to get sensor info: %{public}zu", typeTempMap.size());
         return;
-    }
-
-    for (auto it : typeTempMap) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "size: %{public}zu, type: %{public}s, temp:%{public}d",
-            typeTempMap.size(), it.first.c_str(), it.second);
     }
 
     if (!typeTempMap_.empty()) {
@@ -78,7 +73,7 @@ void ThermalServiceSubscriber::OnTemperatureChanged(TypeTempMap typeTempMap)
 
 void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "SetHistoryTypeTempMap: historyCount_=%{public}d", historyCount_);
+    THERMAL_HILOGD(COMP_SVC, "SetHistoryTypeTempMap: historyCount_=%{public}d", historyCount_);
 
     for (auto itMap : typeTempMap) {
         auto iter = typeHistoryMap_.find(itMap.first);
@@ -92,12 +87,11 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
         }
     }
     int sec = static_cast<int>(difftime(endTime_, startTime_)) / magnification_;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "SetHistoryTypeTempMap: sec=%{public}d", sec);
+    THERMAL_HILOGI(COMP_SVC, "SetHistoryTypeTempMap: sec=%{public}d", sec);
     for (auto history : typeHistoryMap_) {
         double sum = 0;
         double rate = 0;
         for (auto iter : history.second) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "SetHistoryTypeTempMap: temp=%{public}d", iter);
             sum += iter;
         }
 
@@ -105,9 +99,6 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
             rate = (sum / THOUSAND_UNIT / sec) * SEC_MIN_NUM;
         }
 
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-            "SetHistoryTypeTempMap: sum=%{public}f, rate=%{public}f, sensorsRateMap_.size=%{public}zu",
-            sum, rate, sensorsRateMap_.size());
         sensorsRateMap_.insert(std::make_pair(history.first, rate));
     }
 }

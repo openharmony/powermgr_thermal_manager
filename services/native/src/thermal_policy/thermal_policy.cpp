@@ -37,7 +37,7 @@ ThermalPolicy::ThermalPolicy() {};
 
 bool ThermalPolicy::Init()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     DumpConfigInfo();
     SortLevel();
     if (g_service == nullptr) {
@@ -50,19 +50,15 @@ bool ThermalPolicy::Init()
 
 void ThermalPolicy::RegisterObserver()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "RegisterObserver: Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     ThermalObserver::Callback callback = std::bind(&ThermalPolicy::GetSensorInfomation, this, std::placeholders::_1);
     g_service->GetObserver()->SetRegisterCallback(callback);
 }
 
 void ThermalPolicy::GetSensorInfomation(TypeTempMap info)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
     typeTempMap = info;
-    for (auto it : typeTempMap) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s type:%{public}s temp:%{public}d",
-            __func__, it.first.c_str(), it.second);
-    }
+
     LevelDecision();
     WriteLevel();
     PolicyDecision(clusterLevelMap_);
@@ -70,13 +66,10 @@ void ThermalPolicy::GetSensorInfomation(TypeTempMap info)
 
 void ThermalPolicy::LevelDecision()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
     for (auto cluster = msc_.begin(); cluster != msc_.end(); cluster++) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s: name: %{public}s", __func__, cluster->first.c_str());
         cluster->second->UpdateThermalLevel(typeTempMap);
         uint32_t level = cluster->second->GetCurrentLevel();
         clusterLevelMap_[cluster->first] = level;
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s cluster level %{public}d", __func__, level);
     }
 }
 
@@ -86,8 +79,6 @@ void ThermalPolicy::WriteLevel()
     int32_t ret = -1;
     char levelBuf[MAX_PATH] = {0};
     for (auto iter = clusterLevelMap_.begin(); iter != clusterLevelMap_.end(); iter++) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s name = %{public}s, level = %{public}d",
-            __func__, iter->first.c_str(), iter->second);
         levelList.push_back(iter->second);
     }
     auto level = *max_element(levelList.begin(), levelList.end());
@@ -105,8 +96,8 @@ void ThermalPolicy::WriteLevel()
 
 void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevelMap)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s policySize = %{public}zu, clusterSize = %{public}zu",
-        __func__, clusterPolicyMap_.size(), clusterLevelMap.size());
+    THERMAL_HILOGD(COMP_SVC, "policySize = %{public}zu, clusterSize = %{public}zu",
+        clusterPolicyMap_.size(), clusterLevelMap.size());
     for (auto clusterPolicy = clusterPolicyMap_.begin(); clusterPolicy != clusterPolicyMap_.end(); clusterPolicy++) {
         if (clusterPolicy->first.empty() && clusterPolicy->second.empty()) {
             continue;
@@ -115,56 +106,49 @@ void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevel
         if (clusterIter != clusterLevelMap.end()) {
             for (auto levelAction = clusterPolicy->second.rbegin(); levelAction != clusterPolicy->second.rend();
                 levelAction++) {
-                THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-                    "%{public}s levelAction->level = %{public}d, clusterIter->second = %{public}d",
-                    __func__, levelAction->level, clusterIter->second);
                 if (clusterIter->second >= levelAction->level) {
-                    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s start to action decision", __func__);
-
                     ActionDecision(levelAction->vPolicyAction);
                     break;
                 }
             }
         } else {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s failed to find policy of cluster", __func__);
             continue;
         }
     }
 
     /* Action Execute */
     if (!ActionExecution()) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s failed to execute action", __func__);
+        THERMAL_HILOGW(COMP_SVC, "failed to execute action");
         return;
     }
 }
 
 void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s action.size=%{public}zu", __func__, vAction.size());
+    THERMAL_HILOGD(COMP_SVC, "action.size=%{public}zu", vAction.size());
 
     for (auto action = vAction.begin(); action != vAction.end(); action++) {
         ThermalActionManager::ThermalActionMap actionMap = g_service->GetActionManagerObj()->GetActionMap();
         auto actionIter = actionMap.find(action->actionName);
         if (actionIter != actionMap.end()) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s: actoinIterName = %{public}s",
-                __func__, actionIter->first.c_str());
+            THERMAL_HILOGD(COMP_SVC, "actoinIterName = %{public}s", actionIter->first.c_str());
             if (actionIter->second == nullptr) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, " %{public}s: action instance is nullptr", __func__);
+                THERMAL_HILOGE(COMP_SVC, "action instance is nullptr");
                 continue;
             }
             if (action->isProp) {
-                THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: start state decision", __func__);
+                THERMAL_HILOGD(COMP_SVC, "start state decision");
                 if (StateMachineDecision(action->mActionProp)) {
                     actionIter->second->AddActionValue(action->actionValue);
                 } else {
-                    THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, " %{public}s: failed to decide state", __func__);
+                    THERMAL_HILOGE(COMP_SVC, "failed to decide state");
                 }
             } else {
-                THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: add action value", __func__);
+                THERMAL_HILOGD(COMP_SVC, "add action value");
                 actionIter->second->AddActionValue(action->actionValue);
             }
         } else {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, " %{public}s failed to find action", __func__);
+            THERMAL_HILOGE(COMP_SVC, "failed to find action");
             continue;
         }
     }
@@ -172,18 +156,17 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
 
 bool ThermalPolicy::StateMachineDecision(std::map<std::string, std::string> &stateMap)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
-
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     bool ret = true;
+
     for (auto prop = stateMap.begin(); prop != stateMap.end(); prop++) {
         StateMachine::StateMachineMap stateMachineMap = g_service->GetStateMachineObj()->GetStateCollectionMap();
         auto stateIter = stateMachineMap.find(prop->first);
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-            " %{public}s statename = %{public}s stateItername = %{public}s",
-            __func__, prop->first.c_str(), stateIter->first.c_str());
+        THERMAL_HILOGD(COMP_SVC, "statename = %{public}s stateItername = %{public}s",
+            prop->first.c_str(), stateIter->first.c_str());
         if (stateIter != stateMachineMap.end()) {
             if (stateIter->second == nullptr) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, " %{public}s: state instance is nullptr", __func__);
+                THERMAL_HILOGE(COMP_SVC, "state instance is nullptr");
                 continue;
             }
             if (stateIter->second->DecideState(prop->second)) {
@@ -199,7 +182,7 @@ bool ThermalPolicy::StateMachineDecision(std::map<std::string, std::string> &sta
 
 bool ThermalPolicy::ActionExecution()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s action execution", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto actionMgr = g_service->GetActionManagerObj();
     if (actionMgr == nullptr) {
         return false;
@@ -214,7 +197,6 @@ bool ThermalPolicy::ActionExecution()
 
     ThermalActionManager::ThermalActionMap actionMap = actionMgr->GetActionMap();
     for (auto iter = actionMap.begin(); iter != actionMap.end(); iter++) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s action start execution", __func__);
         iter->second->Execute();
         actionFallbackSet_.insert(iter->second);
     }
@@ -223,7 +205,7 @@ bool ThermalPolicy::ActionExecution()
 
 bool ThermalPolicy::ActionFallbackDecision()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!preExecuteList_.empty()) {
         for (auto preAction = preExecuteList_.begin(); preAction != preExecuteList_.end(); preAction++) {
             auto currentAction = actionFallbackSet_.find(*preAction);
@@ -242,7 +224,7 @@ bool ThermalPolicy::ActionFallbackDecision()
 
 void ThermalPolicy::SortLevel()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     for (auto clusterPolicy = clusterPolicyMap_.begin(); clusterPolicy != clusterPolicyMap_.end(); clusterPolicy++) {
         sort(clusterPolicy->second.begin(), clusterPolicy->second.end(), LevelCompare);
     }
@@ -265,43 +247,37 @@ std::map<std::string, uint32_t> ThermalPolicy::GetClusterLevelMap()
 
 void ThermalPolicy::DumpConfigInfo()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     for (auto cluster : msc_) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s: name: %{public}s", __func__, cluster.first.c_str());
+        THERMAL_HILOGD(COMP_SVC, "name: %{public}s", cluster.first.c_str());
         for (auto levelinfo : cluster.second->GetSensorInfoList()) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s type %{public}s", __func__, levelinfo.first.c_str());
+            THERMAL_HILOGD(COMP_SVC, "type %{public}s", levelinfo.first.c_str());
             for (auto item : levelinfo.second) {
-                THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-                    "%{public}s:threshold:%{public}d, clr:%{public}d, tempRiseRate:%{public}f, level:%{public}d",
-                    __func__, item.threshold, item.thresholdClr, item.tempRiseRate, item.level);
+                THERMAL_HILOGD(COMP_SVC,
+                    "threshold:%{public}d, clr:%{public}d, tempRiseRate:%{public}f, level:%{public}d",
+                    item.threshold, item.thresholdClr, item.tempRiseRate, item.level);
             }
         }
         for (auto auxlevelinfo : cluster.second->GetAuxSensorInfoList()) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s: type: %{public}s",
-                __func__, auxlevelinfo.first.c_str());
+            THERMAL_HILOGD(COMP_SVC, "type: %{public}s", auxlevelinfo.first.c_str());
             for (auto item : auxlevelinfo.second) {
-                THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-                    " %{public}s: lowerTemp: %{public}d, upperTemp: %{public}d",
-                    __func__, item.lowerTemp, item.upperTemp);
+                THERMAL_HILOGD(COMP_SVC, "lowerTemp: %{public}d, upperTemp: %{public}d",
+                    item.lowerTemp, item.upperTemp);
             }
         }
     }
 
     for (auto policy : clusterPolicyMap_) {
         if (policy.first.empty() && policy.second.empty()) continue;
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s: clusterName = %{public}s",
-            __func__, policy.first.c_str());
+        THERMAL_HILOGD(COMP_SVC, "clusterName = %{public}s", policy.first.c_str());
         for (auto policyConfig : policy.second) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s: level = %{public}d",
-                __func__, policyConfig.level);
+            THERMAL_HILOGD(COMP_SVC, "level = %{public}d", policyConfig.level);
             for (auto action : policyConfig.vPolicyAction) {
-                THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-                    " %{public}s: actionName = %{public}s, actionValue = %{public}s, prop = %{public}d",
-                    __func__, action.actionName.c_str(), action.actionValue.c_str(), action.isProp);
+                THERMAL_HILOGD(COMP_SVC, "actionName = %{public}s, actionValue = %{public}s, prop = %{public}d",
+                    action.actionName.c_str(), action.actionValue.c_str(), action.isProp);
                 for (auto prop : action.mActionProp) {
-                    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-                        " %{public}s: propName = %{public}s, propValue = %{public}s",
-                        __func__, prop.first.c_str(), prop.second.c_str());
+                    THERMAL_HILOGD(COMP_SVC, "propName = %{public}s, propValue = %{public}s",
+                        prop.first.c_str(), prop.second.c_str());
                 }
             }
         }

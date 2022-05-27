@@ -36,12 +36,12 @@ static sptr<IThermalLevelCallback> testLevelCb_;
 
 void ThermalFuzzerTest::ThermalTempTestCallback::OnThermalTempChanged(TempCallbackMap &tempCbMap)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "temp callback");
+    THERMAL_HILOGI(COMP_SVC, "temp callback");
 }
 
 void ThermalFuzzerTest::ThermalLevelTestCallback::GetThermalLevel(ThermalLevel level)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "level is: %{public}d", static_cast<int32_t>(level));
+    THERMAL_HILOGI(COMP_SVC, "level is: %{public}d", static_cast<int32_t>(level));
 }
 
 void ThermalFuzzerTest::TestSubscribeTemp(const uint8_t* data)

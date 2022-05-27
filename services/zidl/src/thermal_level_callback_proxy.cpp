@@ -30,8 +30,7 @@ void ThermalLevelCallbackProxy::GetThermalLevel(ThermalLevel level)
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalLevelCallbackProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalLevelCallbackProxy::%{public}s write descriptor failed!",
-            __func__);
+        THERMAL_HILOGE(COMP_FWK, "ThermalLevelCallbackProxy::GetThermalLevel write descriptor failed!");
         return;
     }
 
@@ -39,8 +38,7 @@ void ThermalLevelCallbackProxy::GetThermalLevel(ThermalLevel level)
 
     int ret = remote->SendRequest(static_cast<int>(IThermalLevelCallback::GET_THERMAL_LEVEL), data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "%{public}s SendRequest is failed, error code: %{public}d",
-            __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
     }
 }
 } // namespace PowerMgr

@@ -44,31 +44,29 @@ ErrCode ThermalMgrClient::Connect()
 
     sptr<ISystemAbilityManager> sam = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (sam == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "%{public}s:Failed to get Registry!", __func__);
+        THERMAL_HILOGE(COMP_FWK, "Failed to get Registry!");
         return E_GET_SYSTEM_ABILITY_MANAGER_FAILED_THERMAL;
     }
 
     sptr<IRemoteObject> remoteObject_ = sam->CheckSystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID);
     if (remoteObject_ == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "GetSystemAbility failed!");
+        THERMAL_HILOGE(COMP_FWK, "GetSystemAbility failed!");
         return E_GET_THERMAL_SERVICE_FAILED;
     }
 
     deathRecipient_ = sptr<IRemoteObject::DeathRecipient>(new ThermalMgrDeathRecipient());
     if (deathRecipient_ == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "%{public}s :Failed to create ThermalMgrDeathRecipient!",
-            __func__);
+        THERMAL_HILOGE(COMP_FWK, "Failed to create ThermalMgrDeathRecipient!");
         return ERR_NO_MEMORY;
     }
 
     if ((remoteObject_->IsProxyObject()) && (!remoteObject_->AddDeathRecipient(deathRecipient_))) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "%{public}s :Add death recipient to PowerMgr service failed.",
-            __func__);
+        THERMAL_HILOGE(COMP_FWK, "Add death recipient to PowerMgr service failed.");
         return E_ADD_DEATH_RECIPIENT_FAILED_THERMAL;
     }
 
     thermalSrv_ = iface_cast<IThermalSrv>(remoteObject_);
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s :Connecting ThermalMgrService success.", __func__);
+    THERMAL_HILOGI(COMP_FWK, "Connecting ThermalMgrService success.");
     return ERR_OK;
 }
 
@@ -87,40 +85,40 @@ void ThermalMgrClient::ResetProxy(const wptr<IRemoteObject>& remote)
 void ThermalMgrClient::ThermalMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
     if (remote == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalMgrDeathRecipient::OnRemoteDied failed, remote is nullptr.");
+        THERMAL_HILOGE(COMP_FWK, "ThermalMgrDeathRecipient::OnRemoteDied failed, remote is nullptr.");
         return;
     }
 
     ThermalMgrClient::GetInstance().ResetProxy(remote);
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "ThermalMgrDeathRecipient::Recv death notice.");
+    THERMAL_HILOGI(COMP_FWK, "ThermalMgrDeathRecipient::Recv death notice.");
 }
 
 void ThermalMgrClient::SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
     const sptr<IThermalTempCallback> &callback)
 {
     THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s.", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->SubscribeThermalTempCallback(typeList, callback);
 }
 
 void ThermalMgrClient::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback> &callback)
 {
     THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s.", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->UnSubscribeThermalTempCallback(callback);
 }
 
 void ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
     THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s.", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->SubscribeThermalLevelCallback(callback);
 }
 
 void ThermalMgrClient::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
     THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s.", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->UnSubscribeThermalLevelCallback(callback);
 }
 
@@ -129,7 +127,7 @@ bool ThermalMgrClient::GetThermalSrvSensorInfo(const SensorType &type, ThermalSr
     if (Connect() != ERR_OK) {
         return false;
     }
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s.", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     bool ret = thermalSrv_->GetThermalSrvSensorInfo(type, sensorInfo);
     return ret;
 }
@@ -139,21 +137,21 @@ int32_t ThermalMgrClient::GetThermalSensorTemp(const SensorType type)
     ThermalSrvSensorInfo info;
     bool ret = GetThermalSrvSensorInfo(type, info);
     if (!ret) {
-        THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s: failed  to Get sensor info", __func__);
+        THERMAL_HILOGI(COMP_FWK, "failed  to Get sensor info");
     }
     return info.GetTemp();
 }
 
 void ThermalMgrClient::GetLevel(ThermalLevel& level)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     THERMAL_RETURN_IF(Connect() != ERR_OK);
     thermalSrv_->GetThermalLevel(level);
 }
 
 ThermalLevel ThermalMgrClient::GetThermalLevel()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     ThermalLevel level = ThermalLevel::INVALID_LEVEL;
     GetLevel(level);
     return level;
@@ -163,7 +161,7 @@ std::string ThermalMgrClient::Dump(const std::vector<std::string>& args)
 {
     std::string error = "can't connect service";
     THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, error);
-    THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s called.", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     return thermalSrv_->ShellDump(args, args.size());
 }
 } // namespace PowerMgr

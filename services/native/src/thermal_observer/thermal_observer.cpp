@@ -35,26 +35,25 @@ ThermalObserver::~ThermalObserver() {};
 
 bool ThermalObserver::Init()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (sensorTempCBDeathRecipient_ == nullptr) {
         sensorTempCBDeathRecipient_ = new SensorTempCallbackDeathRecipient();
     }
 
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s init sensor type", __func__);
     InitSensorTypeMap();
+    THERMAL_HILOGD(COMP_SVC, "Exit");
     return true;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s success", __func__);
 }
 
 void ThermalObserver::InitSensorTypeMap()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::vector<std::string> sensorType(TYPE_MAX_SIZE);
     auto baseInfo = g_service->GetBaseinfoObj();
     if (baseInfo == nullptr) return;
     auto typeList = baseInfo->GetSensorsType();
 
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s sensorType size = %{public}zu", __func__, typeList.size());
+    THERMAL_HILOGD(COMP_SVC, "sensorType size = %{public}zu", typeList.size());
     if (typeList.size() <= TYPE_MAX_SIZE) {
         typeList.resize(TYPE_MAX_SIZE);
     } else {
@@ -63,8 +62,7 @@ void ThermalObserver::InitSensorTypeMap()
 
     if (!typeList.empty()) {
         for (uint32_t i = 0; i < typeList.size(); i++) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s sensorType = %{public}s", __func__,
-                typeList[i].c_str());
+            THERMAL_HILOGI(COMP_SVC, "sensorType = %{public}s", typeList[i].c_str());
             sensorType[i] = typeList[i];
         }
     }
@@ -78,7 +76,7 @@ void ThermalObserver::InitSensorTypeMap()
     typeMap_.insert(std::make_pair(SensorType::SENSOR5, sensorType[ARG_7]));
     typeMap_.insert(std::make_pair(SensorType::SENSOR6, sensorType[ARG_8]));
     typeMap_.insert(std::make_pair(SensorType::SENSOR7, sensorType[ARG_9]));
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s return", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Exit");
 }
 
 void ThermalObserver::SetRegisterCallback(Callback &callback)
@@ -89,7 +87,7 @@ void ThermalObserver::SetRegisterCallback(Callback &callback)
 void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
     const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard<std::mutex> lock(mutex_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -99,15 +97,15 @@ void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string
         object->AddDeathRecipient(sensorTempCBDeathRecipient_);
     }
     callbackTypeMap_.insert(std::make_pair(callback, typeList));
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-        "%{public}s, object=%{public}p, callback=%{public}p, listeners.size=%{public}d, insertOk=%{public}d",
-        __func__, object.GetRefPtr(), callback.GetRefPtr(),
+    THERMAL_HILOGI(COMP_SVC,
+        "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, insertOk=%{public}d",
+        object.GetRefPtr(), callback.GetRefPtr(),
         static_cast<unsigned int>(sensorTempListeners_.size()), retIt.second);
 }
 
 void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGI(COMP_SVC, "Enter");
     std::lock_guard lock(mutex_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -120,25 +118,24 @@ void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
     if (eraseNum != 0) {
         object->RemoveDeathRecipient(sensorTempCBDeathRecipient_);
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-        "%{public}s, object=%{public}p, callback=%{public}p, listeners.size=%{public}d, eraseNum=%{public}zu",
-        __func__, object.GetRefPtr(), callback.GetRefPtr(), static_cast<unsigned int>(sensorTempListeners_.size()),
-        eraseNum);
+    THERMAL_HILOGI(COMP_SVC,
+        "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, eraseNum=%{public}zu",
+        object.GetRefPtr(), callback.GetRefPtr(), static_cast<unsigned int>(sensorTempListeners_.size()), eraseNum);
 }
 
 void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap &tempCbMap)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGI(COMP_SVC, "Enter");
     static std::map<std::string, int32_t> preSensor;
     IThermalTempCallback::TempCallbackMap newTempCbMap;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE,
-        "%{public}s listeners.size = %{public}d, callbackTypeMap.size = %{public}zu",
-        __func__, static_cast<unsigned int>(sensorTempListeners_.size()), callbackTypeMap_.size());
+    THERMAL_HILOGI(COMP_SVC,
+        "listeners.size = %{public}d, callbackTypeMap.size = %{public}zu",
+        static_cast<unsigned int>(sensorTempListeners_.size()), callbackTypeMap_.size());
     if (sensorTempListeners_.empty()) return;
     for (auto& listener : sensorTempListeners_) {
         auto callbackIter = callbackTypeMap_.find(listener);
         if (callbackIter != callbackTypeMap_.end()) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s find callback", __func__);
+            THERMAL_HILOGD(COMP_SVC, "find callback");
             for (auto type : callbackIter->second) {
                 if (preSensor[type] != tempCbMap[type]) {
                     newTempCbMap.insert(std::make_pair(type, tempCbMap[type]));
@@ -152,11 +149,8 @@ void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallback
 
 void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap &info)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
     callbackinfo_ = info;
-
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: callbackinfo_ size = %{public}zu",
-        __func__, callbackinfo_.size());
+    THERMAL_HILOGI(COMP_SVC, "callbackinfo_ size = %{public}zu", callbackinfo_.size());
 
     if (callback_ != nullptr) {
         callback_(callbackinfo_);
@@ -167,17 +161,16 @@ void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap &info)
 
 bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter type=%{public}d",
-        __func__, static_cast<uint32_t>(type));
+    THERMAL_HILOGD(COMP_SVC, "Enter type=%{public}d", static_cast<uint32_t>(type));
 
     for (auto iter : typeMap_) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "configType=%{public}s", iter.second.c_str());
+        THERMAL_HILOGD(COMP_SVC, "configType=%{public}s", iter.second.c_str());
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "typeMap_=%{public}s", typeMap_[type].c_str());
+    THERMAL_HILOGI(COMP_SVC, "typeMap_=%{public}s", typeMap_[type].c_str());
 
     auto iter = callbackinfo_.find(typeMap_[type]);
     if (iter != callbackinfo_.end()) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "set temp for sensor");
+            THERMAL_HILOGI(COMP_SVC, "set temp for sensor");
             sensorInfo.SetType(typeMap_[type]);
             if (iter->second == INVALID_TEMP) {
                 return false;
@@ -186,7 +179,7 @@ bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrv
             }
             return true;
     } else {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "set invalid temp for sensor");
+            THERMAL_HILOGI(COMP_SVC, "set invalid temp for sensor");
             sensorInfo.SetType(typeMap_[type]);
             sensorInfo.SetTemp(INVALID_TEMP);
             return false;
@@ -203,12 +196,11 @@ int32_t ThermalObserver::GetTemp(const SensorType &type)
 
 void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGI(COMP_SVC, "Enter");
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalSensorTemp::%{public}s remote = %{public}p",
-        __func__, remote.promote().GetRefPtr());
+    THERMAL_HILOGI(COMP_SVC, "ThermalSensorTemp::OnRemoteDied remote = %{public}p", remote.promote().GetRefPtr());
     auto pms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (pms == nullptr) {
         return;
