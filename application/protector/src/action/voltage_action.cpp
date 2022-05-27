@@ -25,7 +25,7 @@ constexpr int32_t MAX_PATH = 256;
 }
 bool VoltageAction::AddActionValue(uint32_t value)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     latestvalue_ = value;
     return true;
 }
@@ -35,7 +35,7 @@ void VoltageAction::Execute()
     static uint32_t value;
     if (value != latestvalue_) {
         if (BatteryVoltageActionRequest(latestvalue_) != ERR_OK) {
-            THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "failed to set battery volatage");
+            THERMAL_HILOGW(FEATURE_PROTECTOR, "failed to set battery volatage");
         }
         value = latestvalue_;
     } else {

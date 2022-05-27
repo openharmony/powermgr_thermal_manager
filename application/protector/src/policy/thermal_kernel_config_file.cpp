@@ -25,7 +25,7 @@ std::vector<LevelAction> g_levelActionList;
 }
 bool ThermalKernelConfigFile::Init(const std::string &path)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     if (!baseInfo_) {
         baseInfo_ = std::make_unique<ProtectorBaseInfo>();
     }
@@ -36,18 +36,18 @@ bool ThermalKernelConfigFile::Init(const std::string &path)
 
 void ThermalKernelConfigFile::ParseThermalKernelXML(const std::string &path)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: Enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
 
     std::unique_ptr<xmlDoc, decltype(&xmlFreeDoc)> docPtr(
         xmlReadFile(path.c_str(), nullptr, XML_PARSE_NOBLANKS), xmlFreeDoc);
     if (docPtr == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: Init failed, read file failed.", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "Init failed, read file failed.");
         return;
     }
 
     auto rootNode = xmlDocGetRootElement(docPtr.get());
     if (rootNode == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: Get root node failed.", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "Get root node failed.");
         return;
     }
 
@@ -126,7 +126,7 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
 void ThermalKernelConfigFile::ParseSubNode(xmlNodePtr cur, std::vector<ThermalZoneInfoItem>& tzItemList,
     std::string& type)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: Enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     LevelAction levelAction;
     levelAction.name = type;
 

@@ -37,7 +37,7 @@ ThermalManagerNativeEvent::~ThermalManagerNativeEvent()
 
 void ThermalManagerNativeEvent::On(const std::string &eventType, napi_value handler)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "ThermalManagerNativeEvent On in for event: %{public}s", eventType.c_str());
+    THERMAL_HILOGD(COMP_FWK, "ThermalManagerNativeEvent On in for event: %{public}s", eventType.c_str());
     auto listener = std::make_shared<ThermalEventListener>();
     listener->eventType = eventType;
     napi_create_reference(env_, handler, 1, &listener->handlerRef);
@@ -46,17 +46,17 @@ void ThermalManagerNativeEvent::On(const std::string &eventType, napi_value hand
 
 void ThermalManagerNativeEvent::Off(const std::string &eventType)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "ThermalManagerNativeEvent off in for event: %{public}s", eventType.c_str());
+    THERMAL_HILOGD(COMP_FWK, "ThermalManagerNativeEvent off in for event: %{public}s", eventType.c_str());
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(env_, &scope);
     if (scope == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI, "scope is nullptr");
+        THERMAL_HILOGE(COMP_FWK, "scope is nullptr");
         return;
     }
 
     auto iter = eventMap_.find(eventType);
     if (iter == eventMap_.end()) {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI, "eventType %{public}s not find", eventType.c_str());
+        THERMAL_HILOGE(COMP_FWK, "eventType %{public}s not find", eventType.c_str());
         return;
     }
     auto listener = iter->second;
@@ -67,24 +67,24 @@ void ThermalManagerNativeEvent::Off(const std::string &eventType)
 
 void ThermalManagerNativeEvent::OnEvent(const std::string &eventType, size_t argc, const napi_value* argv)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "OnEvent for %{public}s", eventType.c_str());
+    THERMAL_HILOGD(COMP_FWK, "OnEvent for %{public}s", eventType.c_str());
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(env_, &scope);
     if (scope == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI, "scope is nullptr");
+        THERMAL_HILOGE(COMP_FWK, "scope is nullptr");
         return;
     }
 
     auto iter = eventMap_.find(eventType);
     if (iter == eventMap_.end()) {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI, "OnEvent: eventType %{public}s not find", eventType.c_str());
+        THERMAL_HILOGE(COMP_FWK, "OnEvent: eventType %{public}s not find", eventType.c_str());
         return;
     }
     auto listener = iter->second;
     napi_value thisVar = nullptr;
     napi_status status = napi_get_reference_value(env_, thisVarRef_, &thisVar);
     if (status != napi_ok) {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI,
+        THERMAL_HILOGE(COMP_FWK,
             "OnEvent napi_get_reference_value thisVar for %{public}s failed, status = %{public}d",
             eventType.c_str(), status);
         return;
@@ -92,7 +92,7 @@ void ThermalManagerNativeEvent::OnEvent(const std::string &eventType, size_t arg
     napi_value handler = nullptr;
     status = napi_get_reference_value(env_, listener->handlerRef, &handler);
     if (status != napi_ok) {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI,
+        THERMAL_HILOGE(COMP_FWK,
             "OnEvent napi_get_reference_value handler for %{public}s failed, status = %{public}d",
             eventType.c_str(), status);
         return;
@@ -100,11 +100,11 @@ void ThermalManagerNativeEvent::OnEvent(const std::string &eventType, size_t arg
     napi_value callResult = nullptr;
     status = napi_call_function(env_, thisVar, handler, argc, argv, &callResult);
     if (status != napi_ok) {
-        THERMAL_HILOGE(MODULE_THERMAL_JS_NAPI,
+        THERMAL_HILOGE(COMP_FWK,
             "OnEvent: napi_call_function for %{public}s failed, status = %{public}d",
             eventType.c_str(), status);
         return;
     }
     napi_close_handle_scope(env_, scope);
-    THERMAL_HILOGD(MODULE_THERMAL_JS_NAPI, "%{public}s: return", __func__);
+    THERMAL_HILOGD(COMP_FWK, "Exit");
 }

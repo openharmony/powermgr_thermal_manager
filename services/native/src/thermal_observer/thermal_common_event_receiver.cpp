@@ -36,14 +36,14 @@ ThermalCommonEventReceiver::~ThermalCommonEventReceiver()
 
 bool ThermalCommonEventReceiver::Start(std::string eventName, EventHandle callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "eventName=%{public}s", eventName.c_str());
+    THERMAL_HILOGD(COMP_SVC, "eventName=%{public}s", eventName.c_str());
     InitEventHandles(eventName, callback);
     return RegisterSubscriber(GetSubscribeInfo());
 }
 
 void ThermalCommonEventReceiver::InitEventHandles(std::string eventName, EventHandle callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Add Event: %{public}s", eventName.c_str());
+    THERMAL_HILOGD(COMP_SVC, "Add Event: %{public}s", eventName.c_str());
     eventHandles_.insert(std::make_pair(eventName, callback));
 }
 
@@ -59,32 +59,32 @@ sptr<CesInfo> ThermalCommonEventReceiver::GetSubscribeInfo() const
 
 bool ThermalCommonEventReceiver::RegisterSubscriber(const sptr<CesInfo>& info)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     static const int32_t MAX_RETRY_TIMES = 2;
 
     auto succeed = false;
     std::shared_ptr<Ces> s = std::make_shared<EventSubscriber>(info, eventHandles_);
     for (int32_t tryTimes = 0; tryTimes < MAX_RETRY_TIMES; tryTimes++) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start subscribe", __func__);
+        THERMAL_HILOGI(COMP_SVC, "start subscribe");
         succeed = CommonEventManager::SubscribeCommonEvent(s);
         if (succeed) {
             break;
         }
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "Sleep for a while and retry to register subscriber");
+        THERMAL_HILOGE(COMP_SVC, "Sleep for a while and retry to register subscriber");
         usleep(DELAY_TIME);
     }
     if (!succeed) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "Failed to register subscriber");
+        THERMAL_HILOGE(COMP_SVC, "Failed to register subscriber");
         return false;
     }
     subscriber_ = s;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Succeed to register subscriber");
+    THERMAL_HILOGI(COMP_SVC, "Succeed to register subscriber");
     return true;
 }
 
 void ThermalCommonEventReceiver::HandleEventChanged(const CommonEventData& __attribute__((unused))data) const
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Handle common event");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
 }
 
 void ThermalCommonEventReceiver::EventSubscriber::HandleEvent(const OHOS::EventFwk::CommonEventData &data)
@@ -92,10 +92,10 @@ void ThermalCommonEventReceiver::EventSubscriber::HandleEvent(const OHOS::EventF
     auto action = data.GetWant().GetAction();
     auto it = eventHandles_.find(action);
     if (it == eventHandles_.end()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "Ignore event: %{public}s", action.c_str());
+        THERMAL_HILOGE(COMP_SVC, "Ignore event: %{public}s", action.c_str());
         return;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Handle Event: %{public}s", action.c_str());
+    THERMAL_HILOGI(COMP_SVC, "Handle Event: %{public}s", action.c_str());
     it->second(data);
 }
 } // namespace PowerMgr

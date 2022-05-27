@@ -26,7 +26,7 @@ const std::string CONFIG_FILE_PATH = "/system/etc/thermal_config/thermal_kernel_
 void ThermalKernelService::OnStart()
 {
     if (!Init()) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to init service", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to init service");
     }
 }
 
@@ -51,12 +51,12 @@ bool ThermalKernelService::Init()
     ThermalKernelConfigFile::GetInstance().Init(CONFIG_FILE_PATH);
 
     if (!policy_->Init()) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to init policy", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to init policy");
         return false;
     }
 
     if (!control_->Init()) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to init device control", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to init device control");
         return false;
     }
 
