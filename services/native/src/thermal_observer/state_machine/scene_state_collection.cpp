@@ -142,7 +142,6 @@ bool SceneStateCollection::DecideState(const std::string &value)
                 ret = true;
             } else {
                 ret = false;
-                break;
             }
             allRet |= ret;
         }

@@ -64,7 +64,7 @@ void ActionThermalLevel::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "valueList_.size=%{public}zu", valueList_.size());
 
-    uint32_t value = laststValue_;
+    uint32_t value;
     if (valueList_.empty()) {
         value = 0;
     } else {
