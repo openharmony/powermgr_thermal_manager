@@ -18,6 +18,7 @@
 #include "message_parcel.h"
 #include "string_ex.h"
 
+#include "ithermal_action_callback.h"
 #include "ithermal_temp_callback.h"
 #include "ithermal_level_callback.h"
 #include "thermal_srv_sensor_info.h"
@@ -63,6 +64,12 @@ int32_t ThermalSrvStub::CheckRequestCode(const uint32_t code, MessageParcel& dat
         }
         case static_cast<int>(IThermalSrv::UNREG_THERMAL_LEVEL_CALLBACK): {
             return UnSubscribeThermalLevelCallbackStub(data);
+        }
+        case static_cast<int>(IThermalSrv::REG_THERMAL_ACTION_CALLBACK): {
+            return SubscribeThermalActionCallbackStub(data);
+        }
+        case static_cast<int>(IThermalSrv::UNREG_THERMAL_ACTION_CALLBACK): {
+            return UnSubscribeThermalActionCallbackStub(data);
         }
         case static_cast<int>(IThermalSrv::GET_SENSOR_INFO): {
             return GetThermalSrvSensorInfoStub(data, reply);
@@ -124,7 +131,39 @@ int32_t ThermalSrvStub::UnSubscribeThermalLevelCallbackStub(MessageParcel &data)
     THERMAL_RETURN_IF_WITH_RET((obj == nullptr), E_READ_PARCEL_ERROR_THERMAL);
     sptr<IThermalLevelCallback> callback = iface_cast<IThermalLevelCallback>(obj);
     THERMAL_RETURN_IF_WITH_RET((callback == nullptr), E_READ_PARCEL_ERROR_THERMAL);
-    SubscribeThermalLevelCallback(callback);
+    UnSubscribeThermalLevelCallback(callback);
+    return ERR_OK;
+}
+
+int32_t ThermalSrvStub::SubscribeThermalActionCallbackStub(MessageParcel &data)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    sptr<IRemoteObject> obj = data.ReadRemoteObject();
+    THERMAL_RETURN_IF_WITH_RET((obj == nullptr), E_READ_PARCEL_ERROR_THERMAL);
+    sptr<IThermalActionCallback> callback = iface_cast<IThermalActionCallback>(obj);
+    THERMAL_RETURN_IF_WITH_RET((callback == nullptr), E_READ_PARCEL_ERROR_THERMAL);
+
+    std::vector<std::string> actionList;
+    if (!data.ReadStringVector(&actionList)) {
+        THERMAL_HILOGI(COMP_SVC, "failed to read action list");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::string desc;
+    THERMAL_READ_PARCEL_WITH_RET(data, String, desc, E_READ_PARCEL_ERROR_THERMAL);
+
+    SubscribeThermalActionCallback(actionList, desc, callback);
+    return ERR_OK;
+}
+
+int32_t ThermalSrvStub::UnSubscribeThermalActionCallbackStub(MessageParcel& data)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    sptr<IRemoteObject> obj = data.ReadRemoteObject();
+    THERMAL_RETURN_IF_WITH_RET((obj == nullptr), E_READ_PARCEL_ERROR_THERMAL);
+    sptr<IThermalActionCallback> callback = iface_cast<IThermalActionCallback>(obj);
+    THERMAL_RETURN_IF_WITH_RET((callback == nullptr), E_READ_PARCEL_ERROR_THERMAL);
+    UnSubscribeThermalActionCallback(callback);
     return ERR_OK;
 }
 

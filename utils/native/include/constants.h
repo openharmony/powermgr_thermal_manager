@@ -44,6 +44,7 @@ namespace PowerMgr {
 
     constexpr int TIME_TO_SLEEP = 1000;
     constexpr int32_t INVAILD_TEMP = -1000;
+    constexpr int32_t INVALID_ACTION_VALUE = -2147483648;
 
     // sensor type
     const std::string BATTERY = "battery";

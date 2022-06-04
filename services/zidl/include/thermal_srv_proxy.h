@@ -34,6 +34,9 @@ public:
     virtual void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback> &callback) override;
     virtual void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
     virtual void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
+    virtual void SubscribeThermalActionCallback(const std::vector<std::string> &actionList,
+        const std::string& desc, const sptr<IThermalActionCallback>& callback) override;
+    virtual void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback> &callback) override;
     virtual bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) override;
     virtual void GetThermalLevel(ThermalLevel& level) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;

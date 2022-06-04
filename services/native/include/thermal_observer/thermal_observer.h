@@ -23,6 +23,7 @@
 #include <set>
 #include "delayed_sp_singleton.h"
 
+#include "ithermal_action_callback.h"
 #include "ithermal_temp_callback.h"
 #include "thermal_srv_sensor_info.h"
 
@@ -39,18 +40,28 @@ public:
     ~ThermalObserver();
 
     bool Init();
-    void OnReceivedSensorInfo(const TypeTempMap &info);
-    void SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
+    void OnReceivedSensorInfo(const TypeTempMap& info);
+    void SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
         const sptr<IThermalTempCallback>& callback);
     void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback);
-    void NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap &tempCbMap);
-    bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo);
-    void SetRegisterCallback(Callback &callback);
-    void SetSensorTemp(const std::string &type, const int32_t &temp);
+    void SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
+        const std::string& desc, const sptr<IThermalActionCallback>& callback);
+    void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback);
+    void FindSubscribeActionValue(const std::map<std::string, int32_t>& xmlActionMap);
+    void NotifyActionChanged(const sptr<IThermalActionCallback>& listener,
+        IThermalActionCallback::ActionCallbackMap& newActionCbMap);
+    void NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap& tempCbMap);
+    bool CompareActionCallbackMap(const IThermalActionCallback::ActionCallbackMap& map1,
+        const IThermalActionCallback::ActionCallbackMap& map2);
+    void DecisionActionValue(const std::vector<std::string>& actionList,
+        const std::map<std::string, int32_t>& xmlActionMap, IThermalActionCallback::ActionCallbackMap& newActionCbMap);
+    bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo);
+    void SetRegisterCallback(Callback& callback);
+    void SetSensorTemp(const std::string& type, const int32_t& temp);
     /**
      * Get related function
      */
-    int32_t GetTemp(const SensorType &type);
+    int32_t GetTemp(const SensorType& type);
     std::map<SensorType, std::string> GetSensorType()
     {
         return typeMap_;
@@ -61,6 +72,13 @@ public:
         virtual void OnRemoteDied(const wptr<IRemoteObject>& remote);
         virtual ~SensorTempCallbackDeathRecipient() = default;
     };
+
+    class ActionCallbackDeathRecipient : public IRemoteObject::DeathRecipient {
+    public:
+        ActionCallbackDeathRecipient() = default;
+        virtual void OnRemoteDied(const wptr<IRemoteObject>& remote);
+        virtual ~ActionCallbackDeathRecipient() = default;
+    };
 private:
     void InitSensorTypeMap();
     struct classcomp {
@@ -70,12 +88,22 @@ private:
         }
     };
 
+    struct ClassActionComp {
+        bool operator() (const sptr<IThermalActionCallback>& l, const sptr<IThermalActionCallback>& r) const
+        {
+            return l->AsObject() < r->AsObject();
+        }
+    };
+
     const wptr<ThermalService> tms_;
     std::mutex mutex_;
     TypeTempMap callbackinfo_;
     sptr<IRemoteObject::DeathRecipient> sensorTempCBDeathRecipient_;
+    sptr<IRemoteObject::DeathRecipient> actionCBDeathRecipient_;
     std::set<const sptr<IThermalTempCallback>, classcomp> sensorTempListeners_;
     std::map<const sptr<IThermalTempCallback>, std::vector<std::string>> callbackTypeMap_;
+    std::set<const sptr<IThermalActionCallback>, ClassActionComp> actionListeners_;
+    std::map<const sptr<IThermalActionCallback>, std::vector<std::string>> callbackActionMap_;
     Callback callback_;
     std::map<SensorType, std::string> typeMap_;
 };

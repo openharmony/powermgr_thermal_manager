@@ -122,6 +122,21 @@ void ThermalMgrClient::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelC
     thermalSrv_->UnSubscribeThermalLevelCallback(callback);
 }
 
+void ThermalMgrClient::SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
+    const std::string& desc, const sptr<IThermalActionCallback>& callback)
+{
+    THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
+    THERMAL_HILOGD(COMP_FWK, "Enter");
+    thermalSrv_->SubscribeThermalActionCallback(actionList, desc, callback);
+}
+
+void ThermalMgrClient::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
+{
+    THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
+    THERMAL_HILOGD(COMP_FWK, "Enter");
+    thermalSrv_->UnSubscribeThermalActionCallback(callback);
+}
+
 bool ThermalMgrClient::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
 {
     if (Connect() != ERR_OK) {

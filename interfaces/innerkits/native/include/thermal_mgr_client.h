@@ -34,6 +34,9 @@ public:
     void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback);
     void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
+    void SubscribeThermalActionCallback(const std::vector<std::string> &actionList,
+        const std::string& desc, const sptr<IThermalActionCallback>& callback);
+    void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback);
     int32_t GetThermalSensorTemp(const SensorType type);
     ThermalLevel GetThermalLevel();
     std::string Dump(const std::vector<std::string>& args);
