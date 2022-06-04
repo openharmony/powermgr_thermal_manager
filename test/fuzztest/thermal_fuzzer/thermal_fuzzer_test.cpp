@@ -29,10 +29,17 @@ constexpr int32_t MAX = 3;
 constexpr int32_t WAIT_TIME = 1000;
 }
 
+static sptr<IThermalActionCallback> actionCb_;
+static sptr<IThermalActionCallback> testActionCb_;
 static sptr<IThermalTempCallback> tempCb_;
 static sptr<IThermalTempCallback> testTempCb_;
 static sptr<IThermalLevelCallback> levelCb_;
 static sptr<IThermalLevelCallback> testLevelCb_;
+
+void ThermalFuzzerTest::ThermalActionTestCallback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+{
+    THERMAL_HILOGI(COMP_SVC, "action callback");
+}
 
 void ThermalFuzzerTest::ThermalTempTestCallback::OnThermalTempChanged(TempCallbackMap &tempCbMap)
 {
@@ -66,6 +73,31 @@ void ThermalFuzzerTest::TestUnSubscribeTemp()
 {
     g_thermalMgrClient.UnSubscribeThermalTempCallback(tempCb_);
     g_thermalMgrClient.UnSubscribeThermalTempCallback(testTempCb_);
+}
+
+void ThermalFuzzerTest::TestSubscribeAction(const uint8_t* data)
+{
+    std::string desc = "";
+    const int32_t NUMBER_FOUR = 4;
+    int32_t type[1];
+    int32_t idSize = 4;
+    std::vector<std::string> actionList;
+    for (int32_t i = 0; i < NUMBER_FOUR; i++) {
+        if (memcpy_s(type, sizeof(type), data, idSize) != EOK) {
+            return;
+        }
+        actionList.push_back(to_string(type[0]));
+    }
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, actionCb_);
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, testActionCb_);
+    std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_TIME));
+    TestUnSubscribeAction();
+}
+
+void ThermalFuzzerTest::TestUnSubscribeAction()
+{
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(actionCb_);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(testActionCb_);
 }
 
 void ThermalFuzzerTest::TestSubscribeLevel(const uint8_t* data)
@@ -127,6 +159,9 @@ bool ThermalFuzzerTest::DoSomethingInterestingWithMyAPI(const uint8_t* data, siz
                 break;
             case ApiNumber::NUM_THREE:
                 TestGetSensorTemp(data);
+                break;
+            case ApiNumber::NUM_FOUR:
+                TestSubscribeAction(data);
                 break;
             default:
                 break;

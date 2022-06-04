@@ -34,6 +34,8 @@ private:
     int32_t UnSubscribeThermalTempCallbackStub(MessageParcel& data);
     int32_t SubscribeThermalLevelCallbackStub(MessageParcel &data);
     int32_t UnSubscribeThermalLevelCallbackStub(MessageParcel& data);
+    int32_t SubscribeThermalActionCallbackStub(MessageParcel &data);
+    int32_t UnSubscribeThermalActionCallbackStub(MessageParcel &data);
     int32_t GetThermalSrvSensorInfoStub(MessageParcel &data, MessageParcel& reply);
     int32_t GetThermalevelStub(MessageParcel& reply);
     int32_t ShellDumpStub(MessageParcel& data, MessageParcel& reply);

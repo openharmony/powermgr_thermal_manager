@@ -53,13 +53,16 @@ class ThermalService final : public SystemAbility, public ThermalSrvStub {
 public:
     virtual void OnStart() override;
     virtual void OnStop() override;
-    virtual int32_t Dump(int fd, const std::vector<std::u16string> &args) override;
-    void SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
-        const sptr<IThermalTempCallback> &callback) override;
-    void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback> &callback) override;
-    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback) override;
-    void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback) override;
-    bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) override;
+    virtual int32_t Dump(int fd, const std::vector<std::u16string>& args) override;
+    void SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
+        const sptr<IThermalTempCallback>& callback) override;
+    void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) override;
+    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
+    void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
+    void SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
+       const std::string& desc, const sptr<IThermalActionCallback>& callback) override;
+    void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) override;
+    bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo) override;
     void GetThermalLevel(ThermalLevel& level) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 

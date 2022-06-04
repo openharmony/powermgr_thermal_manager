@@ -123,6 +123,57 @@ void ThermalSrvProxy::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCa
     }
 }
 
+void ThermalSrvProxy::SubscribeThermalActionCallback(const std::vector<std::string> &actionList,
+    const std::string& desc, const sptr<IThermalActionCallback>& callback)
+{
+    THERMAL_HILOGD(COMP_FWK, "Enter");
+    sptr<IRemoteObject> remote = Remote();
+    THERMAL_RETURN_IF((remote == nullptr) || (callback == nullptr));
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
+        return;
+    }
+
+    THERMAL_WRITE_PARCEL_NO_RET(data, RemoteObject, callback->AsObject());
+    THERMAL_WRITE_PARCEL_NO_RET(data, StringVector, actionList);
+    THERMAL_WRITE_PARCEL_NO_RET(data, String, desc);
+
+    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::REG_THERMAL_ACTION_CALLBACK), data, reply, option);
+    if (ret != ERR_OK) {
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
+        return;
+    }
+}
+
+void ThermalSrvProxy::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
+{
+    THERMAL_HILOGD(COMP_FWK, "Enter");
+    sptr<IRemoteObject> remote = Remote();
+    THERMAL_RETURN_IF((remote == nullptr) || (callback == nullptr));
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
+        return;
+    }
+
+    THERMAL_WRITE_PARCEL_NO_RET(data, RemoteObject, callback->AsObject());
+
+    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::UNREG_THERMAL_ACTION_CALLBACK), data, reply, option);
+    if (ret != ERR_OK) {
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
+        return;
+    }
+}
+
 bool ThermalSrvProxy::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
