@@ -18,6 +18,9 @@
     "syscap": ["SystemCapability.PowerManager.ThermalManager"],
     "features": [],
     "adapted_system_type": [ "standard" ],
+    "hisysevent_config": [
+        "//base/powermgr/thermal_manager/thermalmgr.yaml"
+    ],
     "rom": "1024KB",
     "ram": "2048KB",
     "deps": {
