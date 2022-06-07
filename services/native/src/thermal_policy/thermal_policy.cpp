@@ -126,6 +126,7 @@ void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevel
 void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
 {
     THERMAL_HILOGD(COMP_SVC, "action.size=%{public}zu", vAction.size());
+    std::map<std::string, int32_t> xmlActionMap;
 
     for (auto action = vAction.begin(); action != vAction.end(); action++) {
         ThermalActionManager::ThermalActionMap actionMap = g_service->GetActionManagerObj()->GetActionMap();
@@ -151,7 +152,10 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
             THERMAL_HILOGE(COMP_SVC, "failed to find action");
             continue;
         }
+        xmlActionMap.insert(std::make_pair(action->actionName, std::stoi(action->actionValue)));
     }
+
+    g_service->GetObserver()->FindSubscribeActionValue(xmlActionMap);
 }
 
 bool ThermalPolicy::StateMachineDecision(std::map<std::string, std::string> &stateMap)
