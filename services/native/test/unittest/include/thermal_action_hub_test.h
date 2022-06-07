@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace PowerMgr {
-constexpr int SLEEP_WAIT_TIME_S = 1;
 constexpr int SLEEP_WAIT_TIME_LOOP_S = 3;
 const uint32_t MAX_PATH = 256;
 const uint32_t WAIT_TIME = 10;
