@@ -162,7 +162,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
     EXPECT_EQ(true, ret >= ERR_OK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(WAIT_TIME_5_SEC);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
 
@@ -183,7 +183,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
     EXPECT_EQ(true, ret >= ERR_OK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(WAIT_TIME_5_SEC);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
 
@@ -204,7 +204,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
     EXPECT_EQ(true, ret >= ERR_OK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(WAIT_TIME_5_SEC);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
 
@@ -234,7 +234,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
     sTemp = to_string(amTemp) + "\n";
     ret = FileOperation::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(WAIT_TIME_5_SEC);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
 
@@ -265,7 +265,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest005, TestSize.Level0)
     sTemp = to_string(amTemp) + "\n";
     ret = FileOperation::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(WAIT_TIME_5_SEC);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
 
@@ -303,7 +303,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest006, TestSize.Level0)
     sTemp = to_string(shellTemp) + "\n";
     ret = FileOperation::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(WAIT_TIME_5_SEC);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
 
@@ -324,7 +324,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest007, TestSize.Level0)
     std::string sTemp = to_string(socTemp);
     ret = FileOperation::WriteFile(socTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(WAIT_TIME_5_SEC);
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
 }
 
@@ -346,7 +346,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest008, TestSize.Level0)
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    sleep(WAIT_TIME * 10);
+    sleep(WAIT_TIME_5_SEC);
 
     CommonEventData stickyData;
     CommonEventManager::GetStickyCommonEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, stickyData);
