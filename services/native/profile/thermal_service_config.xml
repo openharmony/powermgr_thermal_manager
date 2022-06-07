@@ -48,12 +48,14 @@
         <item name="shut_down"/>
         <item name="thermallevel"/>
         <item name="popup"/>
+        <item name="test"/>
     </action>
 
     <policy>
         <config name="base_safe" level="1">
             <lcd>188</lcd>
             <cpu>99000</cpu>
+            <test>99999</test>
             <process_ctrl>3</process_ctrl>
             <cpu scene="cam" charge="1">80000</cpu>
             <cpu scene="cam" charge="0">90000</cpu>

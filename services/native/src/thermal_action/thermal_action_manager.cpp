@@ -32,6 +32,10 @@ bool ThermalActionManager::Init()
     for (auto item = vActionItem_.begin(); item != vActionItem_.end(); ++item) {
         THERMAL_HILOGI(COMP_SVC, "ThermalActionManager name = %{public}s", item->name.c_str());
         std::shared_ptr<IThermalAction> thermalAction = ThermalActionFactory::Create(item->name);
+        if (thermalAction == nullptr) {
+            THERMAL_HILOGE(COMP_SVC, "failed to create action");
+            break;
+        }
         thermalAction->InitParams(item->params);
         thermalAction->SetStrict(item->strict);
         actionMap_.emplace(std::pair(item->name, thermalAction));
