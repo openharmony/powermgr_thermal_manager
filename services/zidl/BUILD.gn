@@ -42,6 +42,7 @@ deps_ex = [
 ohos_shared_library("thermalmgr_proxy") {
   sources = [
     "${thermal_manager_path}/frameworks/native/thermal_srv_sensor_info.cpp",
+    "src/thermal_action_callback_stub.cpp",
     "src/thermal_level_callback_stub.cpp",
     "src/thermal_srv_proxy.cpp",
     "src/thermal_temp_callback_stub.cpp",
@@ -65,6 +66,7 @@ ohos_shared_library("thermalmgr_proxy") {
 ohos_shared_library("thermalmgr_stub") {
   sources = [
     "${thermal_manager_path}/frameworks/native/thermal_srv_sensor_info.cpp",
+    "src/thermal_action_callback_proxy.cpp",
     "src/thermal_level_callback_proxy.cpp",
     "src/thermal_srv_stub.cpp",
     "src/thermal_temp_callback_proxy.cpp",

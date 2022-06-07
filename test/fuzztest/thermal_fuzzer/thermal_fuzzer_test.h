@@ -30,10 +30,12 @@
 #include <thread>
 #include <securec.h>
 
+#include "ithermal_action_callback.h"
 #include "ithermal_level_callback.h"
 #include "ithermal_temp_callback.h"
 #include "securec.h"
 #include "thermal_mgr_client.h"
+#include "thermal_action_callback_stub.h"
 #include "thermal_temp_callback_stub.h"
 #include "thermal_level_callback_stub.h"
 
@@ -45,7 +47,8 @@ enum class ApiNumber : int32_t {
     NUM_ZERO = 0,
     NUM_ONE,
     NUM_TWO,
-    NUM_THREE
+    NUM_THREE,
+    NUM_FOUR
 };
 
 class ThermalFuzzerTest {
@@ -55,6 +58,8 @@ public:
     static void TestUnSubscribeTemp();
     static void TestSubscribeLevel(const uint8_t* data);
     static void TestUnSubscribeLevel();
+    static void TestSubscribeAction(const uint8_t* data);
+    static void TestUnSubscribeAction();
     static void TestGetLevel();
     static void TestGetSensorTemp(const uint8_t* data);
 
@@ -69,6 +74,12 @@ public:
         ThermalLevelTestCallback() {};
         virtual ~ThermalLevelTestCallback() {};
         virtual void GetThermalLevel(ThermalLevel level) override;
+    };
+    class ThermalActionTestCallback : public ThermalActionCallbackStub {
+    public:
+        ThermalActionTestCallback() {};
+        virtual ~ThermalActionTestCallback() {};
+        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
     };
 };
 }

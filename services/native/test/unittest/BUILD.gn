@@ -175,9 +175,50 @@ ohos_unittest("ThermalClientApiTest") {
 
   external_deps = deps_ex
 }
+
+# thermal action hub test
+ohos_unittest("ThermalActionHubTest") {
+  module_out_path = module_output_path
+
+  sources = [ "src/thermal_action_hub_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  include_dirs = [
+    "//third_party/libxml2/include",
+    "${appspawn_path}/include",
+    "//base/powermgr/power_manager/services/native/include",
+    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
+    "//base/powermgr/power_manager/utils/native/include",
+    "//base/powermgr/power_manager/services/native/src/actions/default",
+    "${aafwk_services_path}/appmgr/include",
+    "${aafwk_inner_api_path}/app_manager/include/appmgr",
+  ]
+
+  deps = [
+    "${aafwk_services_path}/appmgr:libappms",
+    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
+    "//base/powermgr/power_manager/services:powermgrservice",
+    "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
+    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
+    "//foundation/graphic/graphic_2d:libwmclient",
+    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = deps_ex
+}
 group("unittest") {
   testonly = true
   deps = [
+    ":ThermalActionHubTest",
     ":ThermalClientApiTest",
     ":ThermalLevelEventTest",
     ":ThermalPolicyTest",

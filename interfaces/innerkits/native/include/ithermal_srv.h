@@ -18,6 +18,7 @@
 
 #include "iremote_broker.h"
 #include "iremote_object.h"
+#include "ithermal_action_callback.h"
 #include "ithermal_temp_callback.h"
 #include "ithermal_level_callback.h"
 #include "thermal_srv_sensor_info.h"
@@ -31,6 +32,8 @@ public:
         UNREG_THERMAL_TEMP_CALLBACK,
         REG_THERMAL_LEVEL_CALLBACK,
         UNREG_THERMAL_LEVEL_CALLBACK,
+        REG_THERMAL_ACTION_CALLBACK,
+        UNREG_THERMAL_ACTION_CALLBACK,
         GET_SENSOR_INFO,
         GET_TEMP_LEVEL,
         SHELL_DUMP
@@ -41,6 +44,9 @@ public:
     virtual void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) = 0;
     virtual void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
     virtual void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
+    virtual void SubscribeThermalActionCallback(const std::vector<std::string> &actionList,
+        const std::string& desc, const sptr<IThermalActionCallback>& callback) = 0;
+    virtual void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) = 0;
     virtual bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) = 0;
     virtual void GetThermalLevel(ThermalLevel& level) = 0;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) = 0;
