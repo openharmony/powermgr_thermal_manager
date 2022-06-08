@@ -18,7 +18,7 @@ import("//build/ohos.gni")
 config("thermalsrv_private_config") {
   include_dirs = [
     "//third_party/libxml2/include",
-    "//base/startup/appspawn_standard/include/",
+    "//base/startup/appspawn/include/",
     "${aafwk_services_path}/abilitymgr/include/",
     "${aafwk_services_path}/appmgr/include",
     "${aafwk_inner_api_path}/app_manager/include/appmgr",
