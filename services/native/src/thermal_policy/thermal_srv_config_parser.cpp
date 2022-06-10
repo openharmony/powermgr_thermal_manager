@@ -379,7 +379,7 @@ void ThermalSrvConfigParser::ParsePolicySubnode(const xmlNode *cur, PolicyConfig
         }
 
         if (subNode->properties == nullptr) {
-            THERMAL_HILOGI(COMP_SVC, "action prop is nullptr");
+            THERMAL_HILOGD(COMP_SVC, "action prop is nullptr");
             policyAction.isProp = false;
             policyConfig.vPolicyAction.push_back(policyAction);
             continue;

@@ -29,7 +29,7 @@ namespace {
  */
 HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_001, TestSize.Level0)
 {
-    GTEST_LOG_(INFO) << "ThermalClientApiTest_001:: Test Start!!";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientApiTest_001:: Test Start!!");
     size_t size = 1000;
     std::vector<std::string> cmdsList;
     for (size_t i = 0; i < size; i++) {
@@ -39,9 +39,9 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_001, TestSize.Level0)
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     std::string result = thermalMgrClient.Dump(cmdsList);
 
-    GTEST_LOG_(INFO) << "result: " << result;
+    THERMAL_HILOGD(LABEL_TEST, "result : %{public}s", result.c_str());
     EXPECT_EQ(true, result == "remote error");
-    GTEST_LOG_(INFO) << "ThermalClientApiTest_001:: Test End!!";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientApiTest_001:: Test End!!");
 }
 
 /*
@@ -51,7 +51,7 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_001, TestSize.Level0)
  */
 HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_002, TestSize.Level0)
 {
-    GTEST_LOG_(INFO) << "ThermalClientApiTest_002:: Test Start!!";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientApiTest_002:: Test Start!!");
     size_t size = 5;
     std::vector<std::string> cmdsList;
     for (size_t i = 0; i < size; i++) {
@@ -61,9 +61,9 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_002, TestSize.Level0)
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     std::string result = thermalMgrClient.Dump(cmdsList);
 
-    GTEST_LOG_(INFO) << "result: " << result;
+    THERMAL_HILOGD(LABEL_TEST, "result : %{public}s", result.c_str());
     EXPECT_EQ(true, result.empty());
-    GTEST_LOG_(INFO) << "ThermalClientApiTest_002:: Test End!!";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientApiTest_002:: Test End!!");
 }
 
 /*
@@ -73,12 +73,12 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_002, TestSize.Level0)
  */
 HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_003, TestSize.Level0)
 {
-    GTEST_LOG_(INFO) << "ThermalClientApiTest_003:: Test Start!!";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientApiTest_003:: Test Start!!");
 
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     ThermalLevel level = thermalMgrClient.GetThermalLevel();
 
     EXPECT_EQ(true, level == ThermalLevel::INVALID_LEVEL);
-    GTEST_LOG_(INFO) << "ThermalClientApiTest_003:: Test End!!";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientApiTest_003:: Test End!!");
 }
 }

@@ -65,7 +65,7 @@ void ThermalService::OnStart()
         return;
     }
     ready_ = true;
-    THERMAL_HILOGI(COMP_SVC, "OnStart and add system ability success");
+    THERMAL_HILOGD(COMP_SVC, "OnStart and add system ability success");
 }
 
 bool ThermalService::Init()
@@ -97,7 +97,7 @@ bool ThermalService::Init()
     if (!InitModules()) {
         return false;
     }
-    THERMAL_HILOGI(COMP_SVC, "Init success");
+    THERMAL_HILOGD(COMP_SVC, "Init success");
     return true;
 }
 
