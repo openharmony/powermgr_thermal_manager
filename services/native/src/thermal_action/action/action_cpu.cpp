@@ -43,7 +43,7 @@ void ActionCpu::AddActionValue(std::string value)
 void ActionCpu::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    uint32_t value = lastValue_;
+    uint32_t value;
     if (valueList_.empty()) {
         value = 0;
     } else {
