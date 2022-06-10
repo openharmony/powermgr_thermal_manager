@@ -111,7 +111,7 @@ void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string
 
 void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_HILOGI(COMP_SVC, "Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lock(mutex_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -173,7 +173,7 @@ void ThermalObserver::FindSubscribeActionValue(const std::map<std::string, int32
     THERMAL_HILOGD(COMP_SVC, "Enter");
     IThermalActionCallback::ActionCallbackMap newActionCbMap;
     if (actionListeners_.empty()) {
-        THERMAL_HILOGI(COMP_SVC, "no subscribe.");
+        THERMAL_HILOGD(COMP_SVC, "no subscribe.");
         return;
     }
 
@@ -244,7 +244,7 @@ bool ThermalObserver::CompareActionCallbackMap(const IThermalActionCallback::Act
 
 void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap& tempCbMap)
 {
-    THERMAL_HILOGI(COMP_SVC, "Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     static std::map<std::string, int32_t> preSensor;
     IThermalTempCallback::TempCallbackMap newTempCbMap;
     THERMAL_HILOGI(COMP_SVC,
@@ -289,7 +289,7 @@ bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrv
 
     auto iter = callbackinfo_.find(typeMap_[type]);
     if (iter != callbackinfo_.end()) {
-            THERMAL_HILOGI(COMP_SVC, "set temp for sensor");
+            THERMAL_HILOGD(COMP_SVC, "set temp for sensor");
             sensorInfo.SetType(typeMap_[type]);
             if (iter->second == INVALID_TEMP) {
                 return false;
@@ -298,7 +298,7 @@ bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrv
             }
             return true;
     } else {
-            THERMAL_HILOGI(COMP_SVC, "set invalid temp for sensor");
+            THERMAL_HILOGD(COMP_SVC, "set invalid temp for sensor");
             sensorInfo.SetType(typeMap_[type]);
             sensorInfo.SetTemp(INVALID_TEMP);
             return false;
@@ -315,7 +315,7 @@ int32_t ThermalObserver::GetTemp(const SensorType& type)
 
 void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    THERMAL_HILOGI(COMP_SVC, "Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
@@ -336,7 +336,7 @@ void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<
 
 void ThermalObserver::ActionCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    THERMAL_HILOGI(COMP_SVC, "Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
