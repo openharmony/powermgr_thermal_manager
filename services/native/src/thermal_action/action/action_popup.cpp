@@ -26,10 +26,6 @@ namespace PowerMgr {
 namespace {
 constexpr int UI_DIALOG_POWER_WIDTH_NARROW = 400;
 constexpr int UI_DIALOG_POWER_HEIGHT_NARROW = 240;
-constexpr int UI_DEFAULT_WIDTH = 2560;
-constexpr int UI_DEFAULT_HEIGHT = 1600;
-constexpr int UI_DEFAULT_BUTTOM_CLIP = 50 * 2;
-constexpr int UI_HALF = 2;
 }
 bool ActionPopup::InitParams(const std::string &params)
 {
@@ -72,6 +68,9 @@ void ActionPopup::Execute()
 
 void ActionPopup::HandlePopupEvent(const int32_t value)
 {
+    if (dialogId_ >= 0) {
+        return;
+    }
     bool ret = false;
     switch (value) {
         case LOWER_TEMP:
@@ -95,26 +94,22 @@ void ActionPopup::HandlePopupEvent(const int32_t value)
 
 bool ActionPopup::ShowDialog(const std::string &params)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     // show dialog
-    int pos_x;
-    int pos_y;
     int width;
     int height;
-    bool wideScreen;
 
-    GetDisplayPosition(pos_x, pos_y, width, height, wideScreen);
+    GetDisplayPosition(width, height);
 
     if (params.empty()) {
         return false;
     }
 
-    Ace::UIServiceMgrClient::GetInstance()->ShowDialog(
+    int32_t errCode = Ace::UIServiceMgrClient::GetInstance()->ShowDialog(
         "thermal_dialog",
         params,
         OHOS::Rosen::WindowType::WINDOW_TYPE_SYSTEM_ALARM_WINDOW,
-        pos_x,
-        pos_y,
+        0,
+        0,
         width,
         height,
         [this](int32_t id, const std::string& event, const std::string& params) {
@@ -122,15 +117,16 @@ bool ActionPopup::ShowDialog(const std::string &params)
                 event.c_str(), params.c_str());
             if (event == "EVENT_CANCEL") {
                 Ace::UIServiceMgrClient::GetInstance()->CancelDialog(id);
+                dialogId_ = -1;
             }
-        });
+        },
+        &dialogId_);
+    THERMAL_HILOGI(COMP_SVC, "Show dialog errCode %{public}d, dialogId=%{public}d", errCode, dialogId_);
     return true;
 }
 
-void ActionPopup::GetDisplayPosition(
-    int32_t& offsetX, int32_t& offsetY, int32_t& width, int32_t& height, bool& wideScreen)
+void ActionPopup::GetDisplayPosition(int32_t& width, int32_t& height)
 {
-    wideScreen = true;
     auto display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
     if (display == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "dialog GetDefaultDisplay fail, try again.");
@@ -140,35 +136,14 @@ void ActionPopup::GetDisplayPosition(
     if (display != nullptr) {
         THERMAL_HILOGI(COMP_SVC, "display size: %{public}d x %{public}d",
             display->GetWidth(), display->GetHeight());
-        if (display->GetWidth() < display->GetHeight()) {
-            THERMAL_HILOGI(COMP_SVC, "share dialog narrow.");
-            const int NARROW_WIDTH_N = 3;
-            const int NARROW_WIDTH_D = 4;
-            const int NARROW_HEIGHT_RATE = 8;
-            wideScreen = false;
-            width = display->GetWidth() * NARROW_WIDTH_N / NARROW_WIDTH_D;
-            height = display->GetHeight() / NARROW_HEIGHT_RATE;
-        } else {
-            THERMAL_HILOGI(COMP_SVC, "share dialog wide.");
-            const int NARROW_WIDTH_N = 1;
-            const int NARROW_WIDTH_D = 3;
-            const int NARROW_HEIGHT_RATE = 6;
-            wideScreen = true;
-            width = display->GetWidth() * NARROW_WIDTH_N / NARROW_WIDTH_D;
-            height = display->GetHeight() / NARROW_HEIGHT_RATE;
-        }
-        offsetX = (display->GetWidth() - width) / UI_HALF;
-        offsetY = display->GetHeight() - height - UI_DEFAULT_BUTTOM_CLIP;
+        width = display->GetWidth();
+        height = display->GetHeight();
     } else {
         THERMAL_HILOGI(COMP_SVC, "dialog get display fail, use default wide.");
-        wideScreen = false;
         width = UI_DIALOG_POWER_WIDTH_NARROW;
         height = UI_DIALOG_POWER_HEIGHT_NARROW;
-        offsetX = (UI_DEFAULT_WIDTH - width) / UI_HALF;
-        offsetY = UI_DEFAULT_HEIGHT - height - UI_DEFAULT_BUTTOM_CLIP;
     }
-    THERMAL_HILOGI(COMP_SVC, "GetDisplayPosition: %{public}d, %{public}d (%{public}d x %{public}d)",
-        offsetX, offsetY, width, height);
+    THERMAL_HILOGI(COMP_SVC, "GetDisplayPosition: :w:%{public}d x h:%{public}d)", width, height);
 }
 } // namespace PowerMgr
 } // namespace OHOS
