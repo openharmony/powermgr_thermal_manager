@@ -17,11 +17,18 @@ import router from '@ohos.router'
 
 export default {
     data: {
-        message: router.getParams().message,
-        cancelButton: router.getParams().cancelButton,
+        temperature: router.getParams().temperature,
+        dialogTitle: "",
+        cancelButton: "Cancel",
     },
     onInit() {
         console.info('getParams: ' + router.getParams());
+        if (this.temperature == "LowerTemp") {
+            this.dialogTitle = this.$t("message.lowerTemperature");
+        } else if (this.temperature == "HighTemp") {
+            this.dialogTitle = this.$t("message.highTemperature");
+        }
+        this.cancelButton = this.$t("message.cancelButton");
     },
     onCancel() {
         console.info('click cancel');
