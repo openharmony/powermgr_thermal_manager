@@ -36,12 +36,13 @@ public:
 
     bool ShowDialog(const std::string &params);
     void HandlePopupEvent(const int32_t value);
-    void GetDisplayPosition(int32_t& offsetX, int32_t& offsetY, int32_t& width, int32_t& height, bool& wideScreen);
+    void GetDisplayPosition(int32_t& width, int32_t& height);
 private:
     std::vector<uint32_t> valueList_;
     std::string params_;
     bool flag_;
     uint32_t lastValue_;
+    int32_t dialogId_ {-1};
 };
 } // namespace PowerMgr
 } // namespace OHOS
