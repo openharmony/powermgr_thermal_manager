@@ -196,8 +196,7 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
     }
 
     // Notify thermal level change event to battery statistics
-    HiSysEvent::Write(HiSysEvent::Domain::POWERMGR, "THERMAL_LEVEL_CHANGED", HiSysEvent::EventType::STATISTIC, "level",
-        level);
+    HiSysEvent::Write("THERMAL", "THERMAL_LEVEL_CHANGED", HiSysEvent::EventType::STATISTIC, "LEVEL", level);
 }
 
 /**
