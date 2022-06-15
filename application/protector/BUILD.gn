@@ -56,9 +56,6 @@ ohos_executable("thermal_protector") {
   include_dirs = [ "//third_party/libxml2/include" ]
 
   deps = [
-    "//drivers/adapter/uhdf2/host:libhdf_host",
-    "//drivers/adapter/uhdf2/ipc:libhdf_ipc_adapter",
-    "//drivers/adapter/uhdf2/utils:libhdf_utils",
     "//third_party/libxml2:xml2",
     "//utils/native/base:utils",
   ]
