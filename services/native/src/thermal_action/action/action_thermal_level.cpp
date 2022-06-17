@@ -31,7 +31,7 @@ namespace {
 const std::string TASK_UNREG_THERMAL_LEVEL_CALLBACK = "ThermalLevel_UnRegThermalLevelpCB";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
-int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::INVALID_LEVEL);
+int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::COOL);
 std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> ActionThermalLevel::thermalLevelListeners_;
 
 ActionThermalLevel::ActionThermalLevel(const wptr<ThermalService>& tms) : tms_(tms), laststValue_(0) {}
@@ -94,11 +94,7 @@ bool ActionThermalLevel::Init()
 int32_t ActionThermalLevel::GetThermalLevel()
 {
     THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s level = %{public}d", __func__, level_);
-    if (level_ != static_cast<int32_t>(ThermalLevel::INVALID_LEVEL)) {
         return level_;
-    } else {
-        return static_cast<int32_t>(ThermalLevel::INVALID_LEVEL);
-    }
 }
 
 uint32_t ActionThermalLevel::LevelRequest(int32_t level)
@@ -264,9 +260,6 @@ void ActionThermalLevel::SendThermalLevelEvents(int32_t level)
         }
         case ThermalLevel::EMERGENCY: {
             PushlishLevelChangedEvents(level, THERMAL_LEVEL_EMERGENCY);
-            break;
-        }
-        case ThermalLevel::INVALID_LEVEL: {
             break;
         }
         default: {
