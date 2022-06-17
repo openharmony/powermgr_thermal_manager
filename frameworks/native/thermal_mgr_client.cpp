@@ -154,7 +154,7 @@ void ThermalMgrClient::GetLevel(ThermalLevel& level)
 ThermalLevel ThermalMgrClient::GetThermalLevel()
 {
     THERMAL_HILOGI(MODULE_THERMAL_INNERKIT, "%{public}s enter", __func__);
-    ThermalLevel level = ThermalLevel::INVALID_LEVEL;
+    ThermalLevel level = ThermalLevel::COOL;
     GetLevel(level);
     return level;
 }
