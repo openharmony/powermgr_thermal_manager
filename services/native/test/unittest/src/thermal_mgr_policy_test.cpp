@@ -2175,7 +2175,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
     ret = ThermalMgrPolicyTest::WriteFile(stateScreenBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 3);
+    sleep(WAIT_TIME * 10);
     char procsessBuf[MAX_PATH] = {0};
     char procsesValue[MAX_PATH] = {0};
     ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
@@ -2196,7 +2196,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
     std::string shutdown = shutdownValue;
     value = ThermalMgrPolicyTest::ConvertInt(shutdown);
     GTEST_LOG_(INFO) << "value:" << value;
-    EXPECT_EQ(true, value == 0) << "ThermalMgrPolicyTest049 failed";
+    EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest049 failed";
     GTEST_LOG_(INFO) << "ThermalMgrPolicyTest049: end.";
 }
 
