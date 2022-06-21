@@ -129,6 +129,7 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
     std::map<std::string, int32_t> xmlActionMap;
 
     for (auto action = vAction.begin(); action != vAction.end(); action++) {
+        xmlActionMap.insert(std::make_pair(action->actionName, std::stoi(action->actionValue)));
         ThermalActionManager::ThermalActionMap actionMap = g_service->GetActionManagerObj()->GetActionMap();
         auto actionIter = actionMap.find(action->actionName);
         if (actionIter != actionMap.end()) {
@@ -152,7 +153,6 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
             THERMAL_HILOGE(COMP_SVC, "failed to find action");
             continue;
         }
-        xmlActionMap.insert(std::make_pair(action->actionName, std::stoi(action->actionValue)));
     }
 
     g_service->GetObserver()->FindSubscribeActionValue(xmlActionMap);
