@@ -31,6 +31,7 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 TypeTempMap typeTempMap;
 const std::string levelPath = "/data/thermal/config/configLevel";
 const int MAX_PATH = 256;
+std::map<std::string, int32_t> g_xmlActionMap;
 }
 
 ThermalPolicy::ThermalPolicy() {};
@@ -126,10 +127,10 @@ void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevel
 void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
 {
     THERMAL_HILOGD(COMP_SVC, "action.size=%{public}zu", vAction.size());
-    std::map<std::string, int32_t> xmlActionMap;
+    g_xmlActionMap.erase(g_xmlActionMap.begin(), g_xmlActionMap.end());
 
     for (auto action = vAction.begin(); action != vAction.end(); action++) {
-        xmlActionMap.insert(std::make_pair(action->actionName, std::stoi(action->actionValue)));
+        g_xmlActionMap.insert(std::make_pair(action->actionName, std::stoi(action->actionValue)));
         ThermalActionManager::ThermalActionMap actionMap = g_service->GetActionManagerObj()->GetActionMap();
         auto actionIter = actionMap.find(action->actionName);
         if (actionIter != actionMap.end()) {
@@ -155,7 +156,23 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
         }
     }
 
-    g_service->GetObserver()->FindSubscribeActionValue(xmlActionMap);
+    handler_->SendEvent(ThermalsrvEventHandler::SEND_ACTION_HUB_LISTENER, 0, 0);
+}
+
+void ThermalPolicy::FindSubscribeActionValue()
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    if (g_service == nullptr) {
+        THERMAL_HILOGI(COMP_SVC, "g_service is nullptr");
+        return;
+    }
+    if (g_service->GetObserver() ==nullptr) {
+        THERMAL_HILOGI(COMP_SVC, "g_service->GetObserver() is nullptr");
+        return;
+    }
+
+    THERMAL_HILOGI(COMP_SVC, "g_service->GetObserver() is %{public}p", g_service->GetObserver().get());
+    g_service->GetObserver()->FindSubscribeActionValue(g_xmlActionMap);
 }
 
 bool ThermalPolicy::StateMachineDecision(std::map<std::string, std::string> &stateMap)

@@ -347,6 +347,10 @@ void ThermalService::HandleEvent(int event)
             RegisterHdiStatusListener();
             break;
         }
+        case ThermalsrvEventHandler::SEND_ACTION_HUB_LISTENER: {
+            policy_->FindSubscribeActionValue();
+            break;
+        }
         default:
             break;
     }

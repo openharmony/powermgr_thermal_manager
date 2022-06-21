@@ -64,6 +64,7 @@ public:
     bool ActionExecution();
     void SortLevel();
     void WriteLevel();
+    void FindSubscribeActionValue();
 public:
     /* Test */
     std::map<std::string, uint32_t> GetClusterLevelMap();
@@ -81,7 +82,7 @@ private:
 private:
     std::set<const std::shared_ptr<IThermalAction>, classcomp> actionFallbackSet_;
     std::set<const std::shared_ptr<IThermalAction>, classcomp> preExecuteList_;
-    std::weak_ptr<ThermalsrvEventHandler> handler_;
+    std::shared_ptr<ThermalsrvEventHandler> handler_;
     std::map<std::string, std::shared_ptr<ThermalConfigSensorCluster>> msc_;
     std::map<std::string, uint32_t> clusterLevelMap_;
     PolicyConfigMap clusterPolicyMap_;
