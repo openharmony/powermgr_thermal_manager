@@ -171,8 +171,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(SLEEP_WAIT_TIME_S * 10);
-
+    sleep(5);
     thermalMgrClient.UnSubscribeThermalActionCallback(cb1);
     GTEST_LOG_(INFO) << "ThermalActionHubTest001 end.";
 }
@@ -215,8 +214,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
     ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(SLEEP_WAIT_TIME_S * 10);
-
+    sleep(5);
     thermalMgrClient.UnSubscribeThermalActionCallback(cb2);
     GTEST_LOG_(INFO) << "ThermalActionHubTest002 end.";
 }
@@ -255,8 +253,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(SLEEP_WAIT_TIME_S * 10);
-
+    sleep(5);
     thermalMgrClient.UnSubscribeThermalActionCallback(cb3);
     GTEST_LOG_(INFO) << "ThermalActionHubTest003 end.";
 }
