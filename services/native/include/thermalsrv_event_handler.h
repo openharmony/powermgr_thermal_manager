@@ -32,6 +32,7 @@ public:
         SEND_POPUP_MSG,
         SEND_REGISTER_THERMAL_HDI_CALLBACK,
         SEND_RETRY_REGISTER_HDI_STATUS_LISTENER,
+        SEND_ACTION_HUB_LISTENER,
     };
 
     ThermalsrvEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
