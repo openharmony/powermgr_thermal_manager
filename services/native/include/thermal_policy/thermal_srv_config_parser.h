@@ -34,7 +34,7 @@ public:
     ThermalSrvConfigParser(const ThermalSrvConfigParser&) = delete;
     ThermalSrvConfigParser& operator=(const ThermalSrvConfigParser&) = delete;
     bool ThermalSrvConfigInit(std::string &path);
-    void ParseXMLFile(std::string &path);
+    bool ParseXMLFile(std::string &path);
 private:
     void ParseBaseNode(xmlNodePtr node);
     void ParseLevelNode(xmlNodePtr node);
