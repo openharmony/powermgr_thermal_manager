@@ -28,11 +28,6 @@ const std::string THERMAL_LEVEL_EMERGENCY = "thermal.level.EMERGENCY";
 
 enum class ThermalLevel : int32_t {
     /**
-     * @brief Invaild level
-     *
-     */
-        INVALID_LEVEL = -1,
-    /**
      * @brief cool level
      *
      */
