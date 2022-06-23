@@ -23,7 +23,6 @@ namespace OHOS {
 namespace PowerMgr {
 const uint32_t MAX_PATH = 256;
 const uint32_t WAIT_TIME_5_SEC = 5;
-const uint32_t WAIT_TIME_3_SEC = 3;
 std::string batteryPath = "/data/sensor/battery/temp";
 std::string shellPath = "/data/sensor/shell/temp";
 std::string chargerPath = "/data/sensor/charger/temp";
