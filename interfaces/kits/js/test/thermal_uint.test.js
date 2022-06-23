@@ -323,7 +323,7 @@ function test14() {
     it('Thermal_014', 0, async function (done) {
         thermal.subscribeThermalLevel((level) => {
             console.info("level is: " + level);
-            expect(level == -1).assertTrue();
+            expect(level >= thermal.ThermalLevel.COOL && level <= thermal.ThermalLevel.EMERGENCY).assertTrue();
             done();
         })
         await new Promise((resolve, reject) => {
