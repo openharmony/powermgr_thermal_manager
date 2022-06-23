@@ -52,8 +52,8 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "//drivers/peripheral/display/interfaces/include/",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "${aafwk_services_path}/appmgr/include",
-    "${aafwk_inner_api_path}/app_manager/include/appmgr",
+    "${ability_runtime_services_path}/appmgr/include",
+    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
     "//base/startup/appspawn/include/",
     "//foundation/windowmanager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
@@ -61,7 +61,7 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
   ]
 
   deps = [
-    "${aafwk_services_path}/appmgr:libappms",
+    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
@@ -97,8 +97,8 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "//drivers/peripheral/display/interfaces/include/",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "${aafwk_services_path}/appmgr/include",
-    "${aafwk_inner_api_path}/app_manager/include/appmgr",
+    "${ability_runtime_services_path}/appmgr/include",
+    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
     "//base/startup/appspawn/include/",
     "//foundation/windowmanager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
@@ -106,7 +106,7 @@ ohos_systemtest("ThermalMgrSystemTest") {
   ]
 
   deps = [
-    "${aafwk_services_path}/appmgr:libappms",
+    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
