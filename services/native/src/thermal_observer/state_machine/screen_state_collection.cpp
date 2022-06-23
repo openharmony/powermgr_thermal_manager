@@ -102,7 +102,7 @@ void ScreenStateCollection::SetState()
     if (snprintf_s(screenBuf, PATH_MAX, sizeof(screenBuf) - 1, screenPath.c_str()) < ERR_OK) {
         return;
     }
-    THERMAL_HILOGI(COMP_SVC, "read screen state");
+    THERMAL_HILOGD(COMP_SVC, "read screen state");
     ret = FileOperation::ReadFile(screenBuf, screenValue, sizeof(screenValue));
     if (ret != ERR_OK) {
         return;

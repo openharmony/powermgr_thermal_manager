@@ -27,6 +27,7 @@
 #include "thermal_mgr_client.h"
 #include "constants.h"
 #include "thermal_common.h"
+#include "thermal_log.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -43,7 +44,7 @@ static constexpr HiLogLabel LABEL = {LOG_CORE, 0, "ThermalMST"};
 
 static bool StartThermalProtector()
 {
-    GTEST_LOG_(INFO) << "enter";
+    THERMAL_HILOGD(LABEL_TEST, "enter");
     FILE *fp = nullptr;
     fp = popen("/system/bin/thermal_protector&", "r");
     if (fp == nullptr) {
@@ -54,12 +55,12 @@ static bool StartThermalProtector()
     pclose(fp);
 
     return true;
-    GTEST_LOG_(INFO) << "return";
+    THERMAL_HILOGD(LABEL_TEST, "return");
 }
 
 static bool StopThermalProtector()
 {
-    GTEST_LOG_(INFO) << "enter";
+    THERMAL_HILOGD(LABEL_TEST, "enter");
     FILE *fp = nullptr;
     fp = popen("kill -9 $(pidof thermal_protector)", "r");
     if (fp == nullptr) {
@@ -70,12 +71,12 @@ static bool StopThermalProtector()
     pclose(fp);
 
     return true;
-    GTEST_LOG_(INFO) << "return";
+    THERMAL_HILOGD(LABEL_TEST, "return");
 }
 
 static bool CheckThermalProtectorPID()
 {
-    GTEST_LOG_(INFO) << "enter";
+    THERMAL_HILOGD(LABEL_TEST, "enter");
     FILE *fp = nullptr;
     fp = popen("pidof thermal_protector", "r");
     if (fp == nullptr) {
@@ -93,7 +94,7 @@ static bool CheckThermalProtectorPID()
     pclose(fp);
 
     return true;
-    GTEST_LOG_(INFO) << "return";
+    THERMAL_HILOGD(LABEL_TEST, "return");
 }
 
 int32_t ThermalMgrSystemTest::WriteFile(std::string path, std::string buf, size_t size)
@@ -124,13 +125,13 @@ int32_t ThermalMgrSystemTest::ReadFile(const char *path, char *buf, size_t size)
 
     int32_t fd = open(path, O_RDONLY);
     if (fd < ERR_OK) {
-        GTEST_LOG_(INFO) << "WriteFile: failed to open file" << fd;
+        THERMAL_HILOGD(LABEL_TEST, "WriteFile: failed to open file fd: %{public}d", fd);
         return ERR_INVALID_VALUE;
     }
 
     ret = read(fd, buf, size);
     if (ret < ERR_OK) {
-        GTEST_LOG_(INFO) << "WriteFile: failed to read file" << ret;
+        THERMAL_HILOGD(LABEL_TEST, "WriteFile: failed to read file ret: %{public}d", ret);
         close(fd);
         return ERR_INVALID_VALUE;
     }
@@ -209,7 +210,7 @@ namespace {
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest001: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest001: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -229,9 +230,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest001 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest001: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest001: end.");
 }
 
 /**
@@ -243,7 +244,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest002: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest002: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -263,9 +264,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest002 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest002: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest002: end.");
 }
 
 /**
@@ -277,7 +278,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest003: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest003: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -297,9 +298,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest003 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest003: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest003: end.");
 }
 
 /**
@@ -311,7 +312,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest003: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest003: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -332,7 +333,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest005 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest004: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest004: end.");
 }
 
 /**
@@ -344,7 +345,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest005: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest005: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -380,9 +381,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest005 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest005: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest005: end.");
 }
 
 /**
@@ -394,7 +395,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest006: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest006: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -430,9 +431,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest006 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest006: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest006: end.");
 }
 
 /**
@@ -444,7 +445,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest007: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest007: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -480,9 +481,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest007 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest007: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest007: end.");
 }
 
 /**
@@ -494,7 +495,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest008: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest008: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -530,9 +531,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest008 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest008: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest008: end.");
 }
 
 /**
@@ -544,7 +545,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest009: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest009: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -565,7 +566,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest009 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest009: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest009: end.");
 }
 
 /**
@@ -577,7 +578,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest010: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest010: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -598,7 +599,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest010 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest010: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest010: end.");
 }
 
 /**
@@ -610,7 +611,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest011: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest011: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -631,7 +632,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest011 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest011: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest011: end.");
 }
 
 /**
@@ -643,7 +644,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest012: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest012: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -664,7 +665,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest012 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest012: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest012: end.");
 }
 
 /**
@@ -676,7 +677,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest013: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest013: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -712,9 +713,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest013 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest013: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest013: end.");
 }
 
 /**
@@ -726,7 +727,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest014: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest014: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -762,9 +763,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest014 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest014: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest014: end.");
 }
 
 /**
@@ -776,7 +777,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest015: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest015: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -812,9 +813,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest015 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest015: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest015: end.");
 }
 
 /**
@@ -826,7 +827,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest016: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest016: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -862,9 +863,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest016 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest016: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest016: end.");
 }
 
 /**
@@ -876,7 +877,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest017: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest017: start.");
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -904,9 +905,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest017 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest017: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest017: end.");
 }
 
 /**
@@ -918,7 +919,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest018: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest018: start.");
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -946,9 +947,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest018 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest018: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest018: end.");
 }
 
 /**
@@ -960,7 +961,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest019: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest019: start.");
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -988,9 +989,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest019 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest019: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest019: end.");
 }
 
 /**
@@ -1002,7 +1003,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest020, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest020: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest020: start.");
     int32_t ret = -1;
     char apTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -1038,9 +1039,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest020, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest020 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest020: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest020: end.");
 }
 
 /**
@@ -1052,7 +1053,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest020, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest021, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest021: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest021: start.");
     int32_t ret = -1;
     char apTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -1088,9 +1089,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest021, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    GTEST_LOG_(INFO) << "value is:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value is: %{public}d", value);
     EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest021 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest021: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest021: end.");
 }
 
 /**
@@ -1102,7 +1103,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest021, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest022: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest022: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1122,9 +1123,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest022 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest022: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest022: end.");
 }
 
 /**
@@ -1137,7 +1138,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Lev
 
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest023: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest023: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1157,9 +1158,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest023 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest023: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest023: end.");
 }
 
 /**
@@ -1171,7 +1172,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest024: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest024: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1191,9 +1192,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest024 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest024: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest024: end.");
 }
 
 /**
@@ -1205,7 +1206,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest025: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest025: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1225,9 +1226,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest025 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest025: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest025: end.");
 }
 
 /**
@@ -1239,7 +1240,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest026: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest026: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1265,9 +1266,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest026 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest026: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest026: end.");
 }
 
 /**
@@ -1279,7 +1280,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest027: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest027: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1311,12 +1312,12 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest027 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest027: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest027: end.");
 }
 
 /**
@@ -1328,7 +1329,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest028: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest028: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1360,12 +1361,12 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest028 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest028: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest028: end.");
 }
 
 /**
@@ -1377,7 +1378,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest029: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest029: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1403,9 +1404,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest029 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest029: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest029: end.");
 }
 
 /**
@@ -1417,7 +1418,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest030: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest030: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1449,12 +1450,12 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest030 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest030: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest030: end.");
 }
 
 /**
@@ -1466,7 +1467,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest031: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest031: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1498,12 +1499,12 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest031 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest031: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest031: end.");
 }
 
 /**
@@ -1515,7 +1516,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest032: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest032: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1541,9 +1542,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest032 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest032: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest032: end.");
 }
 
 /**
@@ -1555,7 +1556,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest033: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest033: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1587,12 +1588,12 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest033 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest033: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest033: end.");
 }
 
 /**
@@ -1604,7 +1605,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest034: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest034: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
@@ -1636,12 +1637,12 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest034 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest034: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest034: end.");
 }
 
 /**
@@ -1653,7 +1654,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest035, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest035: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest035: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1673,9 +1674,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest035, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1800) << "ThermalMgrSystemTest035 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest035: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest035: end.");
 }
 
 /**
@@ -1687,7 +1688,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest035, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest036, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest036: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest036: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
@@ -1713,13 +1714,13 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest036, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1200) << "ThermalMgrSystemTest036 failed";
 
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest036: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest036: end.");
 }
 
 /**
@@ -1731,7 +1732,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest036, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest037, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest035: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest035: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1751,9 +1752,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest037, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1500) << "ThermalMgrSystemTest037 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest037: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest037: end.");
 }
 
 /**
@@ -1765,7 +1766,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest037, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest038, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest038: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest038: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
@@ -1791,13 +1792,13 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest038, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1000) << "ThermalMgrSystemTest038 failed";
 
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest038: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest038: end.");
 }
 
 /**
@@ -1809,7 +1810,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest038, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest039, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest039: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest039: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1829,9 +1830,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest039, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1300) << "ThermalMgrSystemTest039 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest039: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest039: end.");
 }
 
 /**
@@ -1843,7 +1844,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest039, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest040, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest040: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest040: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
@@ -1869,14 +1870,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest040, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 800) << "ThermalMgrSystemTest040 failed";
 
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest040: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest040: end.");
 }
 
 /**
@@ -1888,7 +1889,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest040, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest041, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest041: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest041: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1908,9 +1909,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest041, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1850) << "ThermalMgrSystemTest041 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest041: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest041: end.");
 }
 
 /**
@@ -1922,7 +1923,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest041, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest042, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest042: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest042: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1942,9 +1943,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest042, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1550) << "ThermalMgrSystemTest042 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest042: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest042: end.");
 }
 
 /**
@@ -1956,7 +1957,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest042, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest043, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest043: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest043: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -1976,9 +1977,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest043, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string current = currentValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(current);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1150) << "ThermalMgrSystemTest043 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest043: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest043: end.");
 }
 
 /**
@@ -1990,7 +1991,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest043, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest044: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest044: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -2010,9 +2011,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 120) << "ThermalMgrSystemTest044 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest044: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest044: end.");
 }
 
 /**
@@ -2024,7 +2025,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest045, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest045: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest045: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -2044,9 +2045,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest045, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 120) << "ThermalMgrSystemTest045 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest045: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest045: end.");
 }
 
 /**
@@ -2058,7 +2059,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest045, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest046, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest046: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest046: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -2078,9 +2079,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest046, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 120) << "ThermalMgrSystemTest046 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest046: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest046: end.");
 }
 
 /**
@@ -2092,7 +2093,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest046, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest047, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest047: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest047: start.");
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -2120,9 +2121,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest047, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 130) << "ThermalMgrSystemTest047 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest047: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest047: end.");
 }
 
 /**
@@ -2134,7 +2135,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest047, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest048, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest047: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest047: start.");
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -2162,9 +2163,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest048, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 100) << "ThermalMgrSystemTest048 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest048: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest048: end.");
 }
 
 /**
@@ -2176,7 +2177,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest048, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest049: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest049: start.");
     int32_t ret = -1;
     char apTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -2212,7 +2213,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest049 failed";
 
     char shutdownBuf[MAX_PATH] = {0};
@@ -2223,9 +2224,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string shutdown = shutdownValue;
     value = ThermalMgrSystemTest::ConvertInt(shutdown);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest049 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest049: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest049: end.");
 }
 
 /**
@@ -2237,7 +2238,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest044: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest044: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -2257,9 +2258,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest050 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest050: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest050: end.");
 }
 
 /**
@@ -2271,7 +2272,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest051, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest051: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest051: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -2291,9 +2292,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest051, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest051 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest051: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest051: end.");
 }
 
 /**
@@ -2305,7 +2306,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest051, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest052, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest052: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest052: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
@@ -2325,9 +2326,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest052, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest052 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest052: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest052: end.");
 }
 
 /**
@@ -2339,7 +2340,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest052, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest053, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest053: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest053: start.");
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -2367,9 +2368,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest053, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest053 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest053: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest053: end.");
 }
 
 /**
@@ -2381,7 +2382,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest053, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest054, Function|MediumTest|Level2)
 {
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest054: start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest054: start.");
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
@@ -2409,9 +2410,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest054, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    GTEST_LOG_(INFO) << "value:" << value;
+    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest054 failed";
-    GTEST_LOG_(INFO) << "ThermalMgrSystemTest054: end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest054: end.");
 }
 
 /*

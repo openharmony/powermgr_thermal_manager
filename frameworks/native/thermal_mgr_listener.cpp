@@ -28,7 +28,7 @@ void ThermalMgrListener::ThermalLevelCallback::GetThermalLevel(ThermalLevel leve
 void ThermalMgrListener::RegisterServiceEvent()
 {
     callback_ = new ThermalLevelCallback(shared_from_this());
-    THERMAL_HILOGI(COMP_FWK, "start register");
+    THERMAL_HILOGD(COMP_FWK, "start register");
     ThermalMgrClient::GetInstance().SubscribeThermalLevelCallback(callback_);
 }
 
