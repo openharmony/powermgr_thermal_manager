@@ -71,13 +71,13 @@ int32_t ThermalActionHubTest::ReadFile(const char *path, char *buf, size_t size)
 
     int32_t fd = open(path, O_RDONLY);
     if (fd < ERR_OK) {
-        GTEST_LOG_(INFO) << "WriteFile: failed to open file" << fd;
+        THERMAL_HILOGD(LABEL_TEST, "WriteFile: failed to open file fd: %{public}d", fd);
         return ERR_INVALID_VALUE;
     }
 
     ret = read(fd, buf, size);
     if (ret < ERR_OK) {
-        GTEST_LOG_(INFO) << "WriteFile: failed to read file" << ret;
+        THERMAL_HILOGD(LABEL_TEST, "WriteFile: failed to read file ret: %{public}d", ret);
         close(fd);
         return ERR_INVALID_VALUE;
     }
@@ -116,7 +116,7 @@ void ThermalActionHubTest::InitData()
 
 void ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
-    GTEST_LOG_(INFO) << "ThermalActionTest1Callback::OnThermalActionChanged Enter";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest1Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
@@ -124,7 +124,7 @@ void ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(Ac
 
 void ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
-    GTEST_LOG_(INFO) << "ThermalActionTest2Callback::OnThermalActionChanged Enter";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest2Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
@@ -132,7 +132,7 @@ void ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
 
 void ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
-    GTEST_LOG_(INFO) << "ThermalActionTest3Callback::OnThermalActionChanged Enter";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
@@ -146,7 +146,7 @@ namespace {
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 {
-    GTEST_LOG_(INFO) << "ThermalActionHubTest001 start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start.");
     std::vector<std::string> actionList;
     actionList.push_back(CPU);
 
@@ -163,7 +163,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb1 = new ThermalActionTest1Callback();
 
-    GTEST_LOG_(INFO) << "ThermalActionHubTest001 start register";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
     thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb1);
 
     int32_t batteryTemp = 40100;
@@ -173,7 +173,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 
     sleep(5);
     thermalMgrClient.UnSubscribeThermalActionCallback(cb1);
-    GTEST_LOG_(INFO) << "ThermalActionHubTest001 end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end.");
 }
 
 /**
@@ -183,7 +183,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 {
-    GTEST_LOG_(INFO) << "ThermalActionHubTest002 start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start.");
     const std::string LCD = "lcd";
     std::vector<std::string> actionList;
     actionList.push_back(LCD);
@@ -206,7 +206,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
     ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    GTEST_LOG_(INFO) << "ThermalActionHubTest002 start register";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start register");
     thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb2);
 
     batteryTemp = 43100;
@@ -216,7 +216,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 
     sleep(5);
     thermalMgrClient.UnSubscribeThermalActionCallback(cb2);
-    GTEST_LOG_(INFO) << "ThermalActionHubTest002 end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 end.");
 }
 
 /**
@@ -226,7 +226,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
 {
-    GTEST_LOG_(INFO) << "ThermalActionHubTest003 start.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start.");
     const std::string LCD = "lcd";
     std::vector<std::string> actionList;
     actionList.push_back(CPU);
@@ -245,7 +245,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb3 = new ThermalActionTest3Callback();
 
-    GTEST_LOG_(INFO) << "ThermalActionHubTest003 start register";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start register");
     thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb3);
 
     int32_t batteryTemp = 46100;
@@ -255,6 +255,6 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
 
     sleep(5);
     thermalMgrClient.UnSubscribeThermalActionCallback(cb3);
-    GTEST_LOG_(INFO) << "ThermalActionHubTest003 end.";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 end.");
 }
 }

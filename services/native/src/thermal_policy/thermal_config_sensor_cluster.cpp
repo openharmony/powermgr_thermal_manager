@@ -261,7 +261,7 @@ bool ThermalConfigSensorCluster::IsTempRateTrigger(TypeTempMap &typeTempInfo, ui
 
 bool ThermalConfigSensorCluster::IsAuxSensorTrigger(TypeTempMap &typeTempInfo, uint32_t &level)
 {
-    THERMAL_HILOGI(COMP_SVC, "Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     bool ret = false;
     bool allAux = false;
 
@@ -286,7 +286,7 @@ bool ThermalConfigSensorCluster::IsAuxSensorTrigger(TypeTempMap &typeTempInfo, u
 
 uint32_t ThermalConfigSensorCluster::GetCurrentLevel()
 {
-    THERMAL_HILOGI(COMP_SVC, "Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::unique_lock<std::mutex> lock(levelMutex_);
     return latestLevel_;
 }
