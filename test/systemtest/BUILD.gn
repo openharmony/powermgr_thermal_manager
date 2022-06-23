@@ -26,7 +26,7 @@ deps_ex = [
   "safwk:system_ability_fwk",
   "samgr_standard:samgr_proxy",
   "appspawn:appspawn_socket_client",
-  "thermal_device_driver_interface:libthermal_proxy_1.0",
+  "drivers_interface_thermal:libthermal_proxy_1.0",
 ]
 
 ohos_systemtest("ThermalMgrInterfaceTest") {
