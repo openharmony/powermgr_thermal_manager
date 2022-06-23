@@ -167,7 +167,7 @@ void ThermalMgrClient::GetLevel(ThermalLevel& level)
 ThermalLevel ThermalMgrClient::GetThermalLevel()
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
-    ThermalLevel level = ThermalLevel::INVALID_LEVEL;
+    ThermalLevel level = ThermalLevel::COOL;
     GetLevel(level);
     return level;
 }
