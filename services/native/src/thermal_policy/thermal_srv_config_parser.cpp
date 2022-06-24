@@ -35,11 +35,13 @@ ThermalSrvConfigParser &ThermalSrvConfigParser::GetInstance()
 
 bool ThermalSrvConfigParser::ThermalSrvConfigInit(std::string &path)
 {
-    ParseXMLFile(path);
-    return true;
+    if (ParseXMLFile(path)) {
+        return true;
+    }
+    return false;
 }
 
-void ThermalSrvConfigParser::ParseXMLFile(std::string &path)
+bool ThermalSrvConfigParser::ParseXMLFile(std::string &path)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
 
@@ -47,13 +49,13 @@ void ThermalSrvConfigParser::ParseXMLFile(std::string &path)
         xmlReadFile(path.c_str(), nullptr, XML_PARSE_NOBLANKS), xmlFreeDoc);
     if (docPtr == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "ParseXMLFile::Init failed, read file failed.");
-        return;
+        return false;
     }
 
     auto rootNode = xmlDocGetRootElement(docPtr.get());
     if (rootNode == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "ParseXMLFile::Get root node failed.");
-        return;
+        return false;
     }
 
     for (auto node = rootNode->children; node; node = node->next) {
@@ -72,6 +74,7 @@ void ThermalSrvConfigParser::ParseXMLFile(std::string &path)
             ParsePolicyNode(node);
         }
     }
+    return true;
 }
 
 void ThermalSrvConfigParser::ParseBaseNode(xmlNodePtr node)
