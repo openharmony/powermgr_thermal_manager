@@ -30,7 +30,7 @@ namespace {
 const uint32_t SCREEN_ON = 1;
 const uint32_t SCREEN_OFF = 0;
 const int MAX_PATH = 256;
-std::string screenPath = "/data/thermal/state/screen";
+std::string screenPath = "/data/service/el0/thermal/state/screen";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 bool ScreenStateCollection::Init()
