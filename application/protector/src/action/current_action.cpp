@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string SIM_BATTERY_CURRENT_PATH = "/data/cooling/battery/current";
+const std::string SIM_BATTERY_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
 constexpr int32_t MAX_PATH = 256;
 }
 bool CurrentAction::AddActionValue(uint32_t value)

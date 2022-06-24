@@ -76,8 +76,8 @@ uint32_t ThermalActionManager::GetThermalLevel()
 int32_t ThermalActionManager::CreateActionMockFile()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    std::string configDir = "/data/thermal/config/%s";
-    std::string stateDir = "/data/thermal/state/%s";
+    std::string configDir = "/data/service/el0/thermal/config/%s";
+    std::string stateDir = "/data/service/el0/thermal/state/%s";
     char fileBuf[MAX_PATH] = {0};
     char stateFileBuf[MAX_PATH] = {0};
     std::string action = "config";
