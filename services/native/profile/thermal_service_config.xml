@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2022 Huawei Device Co., Ltd.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <thermal version="0.01" product="lya">
     <base>
         <item tag="history_temp_count" value="10"/>
@@ -53,7 +68,7 @@
     <policy>
         <config name="base_safe" level="1">
             <lcd>188</lcd>
-            <cpu>99000</cpu>
+            <cpu>1992000</cpu>
             <process_ctrl>3</process_ctrl>
             <cpu scene="cam" charge="1">80000</cpu>
             <cpu scene="cam" charge="0">90000</cpu>
@@ -65,7 +80,7 @@
         </config>
         <config name="base_safe" level="2">
             <lcd>155</lcd>
-            <cpu>90000</cpu>
+            <cpu>1992000</cpu>
             <process_ctrl>2</process_ctrl>
             <cpu scene="cam" charge="1">70000</cpu>
             <cpu scene="cam" charge="0">80000</cpu>
@@ -77,7 +92,7 @@
         </config>
         <config name="base_safe" level="3">
             <lcd>120</lcd>
-            <cpu>80000</cpu>
+            <cpu>1992000</cpu>
             <process_ctrl>1</process_ctrl>
             <cpu scene="cam" charge="1">60000</cpu>
             <cpu scene="cam" charge="0">70000</cpu>
