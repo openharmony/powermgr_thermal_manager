@@ -1062,7 +1062,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest021, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state not satisfied
- * @tc.result level 1, freq 99000
+ * @tc.result level 1, freq 1992000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, Function|MediumTest|Level2)
 {
@@ -1087,7 +1087,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 99000) << "ThermalMgrPolicyTest022 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrPolicyTest022 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest022: end.");
 }
 
@@ -1096,7 +1096,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state not satisfied
- * @tc.result level 2, freq 90000
+ * @tc.result level 2, freq 1992000
  */
 
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, Function|MediumTest|Level2)
@@ -1122,7 +1122,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 90000) << "ThermalMgrPolicyTest023 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrPolicyTest023 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest023: end.");
 }
 
@@ -1131,7 +1131,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state not satisfied
- * @tc.result level 3, freq 80000
+ * @tc.result level 3, freq 1992000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, Function|MediumTest|Level2)
 {
@@ -1156,7 +1156,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest024 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrPolicyTest024 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest024: end.");
 }
 
@@ -1165,7 +1165,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state not satisfied
- * @tc.result level 4, freq 80000
+ * @tc.result level 4, freq 1992000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, Function|MediumTest|Level2)
 {
@@ -1190,7 +1190,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest025 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrPolicyTest025 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest025: end.");
 }
 
@@ -1199,7 +1199,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
- * @tc.result level 1, freq 99000
+ * @tc.result level 1, freq 1992000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Level2)
 {
@@ -1230,7 +1230,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 99000) << "ThermalMgrPolicyTest026 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrPolicyTest026 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest026: end.");
 }
 
@@ -1239,7 +1239,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
- * @tc.result level 1, freq 80000
+ * @tc.result level 1, freq 8000000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Level2)
 {
@@ -1276,7 +1276,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest027 failed";
+    EXPECT_EQ(true, value == 8000000) << "ThermalMgrPolicyTest027 failed";
     sceneState = "null";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1288,7 +1288,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
- * @tc.result level 1, freq 90000
+ * @tc.result level 1, freq 9000000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Level2)
 {
@@ -1325,7 +1325,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 90000) << "ThermalMgrPolicyTest028 failed";
+    EXPECT_EQ(true, value == 9000000) << "ThermalMgrPolicyTest028 failed";
     sceneState = "null";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1337,7 +1337,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
- * @tc.result level 2, freq 90000
+ * @tc.result level 2, freq 1992000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Level2)
 {
@@ -1368,7 +1368,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 90000) << "ThermalMgrPolicyTest029 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrPolicyTest029 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest029: end.");
 }
 
@@ -1377,7 +1377,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
- * @tc.result level 2, freq 70000
+ * @tc.result level 2, freq 7000000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Level2)
 {
@@ -1414,7 +1414,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 70000) << "ThermalMgrPolicyTest030 failed";
+    EXPECT_EQ(true, value == 7000000) << "ThermalMgrPolicyTest030 failed";
     sceneState = "null";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1426,7 +1426,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
- * @tc.result level 2, freq 80000
+ * @tc.result level 2, freq 8000000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Level2)
 {
@@ -1463,7 +1463,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest031 failed";
+    EXPECT_EQ(true, value == 8000000) << "ThermalMgrPolicyTest031 failed";
     sceneState = "null";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1475,7 +1475,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
- * @tc.result level 3, freq 80000
+ * @tc.result level 3, freq 1992000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Level2)
 {
@@ -1506,7 +1506,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrPolicyTest032 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrPolicyTest032 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest032: end.");
 }
 
@@ -1515,7 +1515,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
- * @tc.result level 3, freq 60000
+ * @tc.result level 3, freq 6000000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Level2)
 {
@@ -1552,7 +1552,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 60000) << "ThermalMgrPolicyTest033 failed";
+    EXPECT_EQ(true, value == 6000000) << "ThermalMgrPolicyTest033 failed";
     sceneState = "null";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1564,7 +1564,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
- * @tc.result level 3, freq 80000
+ * @tc.result level 3, freq 7000000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Level2)
 {
@@ -1601,7 +1601,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 70000) << "ThermalMgrPolicyTest034 failed";
+    EXPECT_EQ(true, value == 7000000) << "ThermalMgrPolicyTest034 failed";
     sceneState = "null";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
