@@ -78,7 +78,7 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_003, TestSize.Level0)
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     ThermalLevel level = thermalMgrClient.GetThermalLevel();
 
-    EXPECT_EQ(true, level == ThermalLevel::INVALID_LEVEL);
+    EXPECT_EQ(true, level <= ThermalLevel::EMERGENCY && level >= ThermalLevel::COOL);
     GTEST_LOG_(INFO) << "ThermalClientApiTest_003:: Test End!!";
 }
 }
