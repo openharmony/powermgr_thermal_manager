@@ -53,7 +53,7 @@
     <policy>
         <config name="base_safe" level="1">
             <lcd>188</lcd>
-            <cpu>99000</cpu>
+            <cpu>1992000</cpu>
             <process_ctrl>3</process_ctrl>
             <cpu scene="cam" charge="1">80000</cpu>
             <cpu scene="cam" charge="0">90000</cpu>
@@ -65,7 +65,7 @@
         </config>
         <config name="base_safe" level="2">
             <lcd>155</lcd>
-            <cpu>90000</cpu>
+            <cpu>1992000</cpu>
             <process_ctrl>2</process_ctrl>
             <cpu scene="cam" charge="1">70000</cpu>
             <cpu scene="cam" charge="0">80000</cpu>
@@ -77,7 +77,7 @@
         </config>
         <config name="base_safe" level="3">
             <lcd>120</lcd>
-            <cpu>80000</cpu>
+            <cpu>1992000</cpu>
             <process_ctrl>1</process_ctrl>
             <cpu scene="cam" charge="1">60000</cpu>
             <cpu scene="cam" charge="0">70000</cpu>
