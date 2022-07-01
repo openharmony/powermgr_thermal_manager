@@ -13,9 +13,9 @@
 
 import("//build/ohos.gni")
 
-aafwk_inner_api_path =
-    "//foundation/ability/ability_runtime/interfaces/inner_api"
-aafwk_services_path = "//foundation/ability/ability_runtime/services"
+ability_runtime_path = "//foundation/ability/ability_runtime"
+ability_runtime_inner_api_path = "${ability_runtime_path}/interfaces/inner_api"
+ability_runtime_services_path = "${ability_runtime_path}/services"
 thermalmgr_native_part_name = "thermal_manager"
 thermal_manager_path = "//base/powermgr/thermal_manager"
 utils_path = "${thermal_manager_path}/utils"

@@ -40,8 +40,8 @@ ohos_source_set("thermal_utils") {
 ohos_executable("thermal-shell") {
   include_dirs = [
     "shell/include",
-    "${aafwk_services_path}/common/include",
-    "//foundation/ability/ability_runtime/tools/aa/include",
+    "${ability_runtime_services_path}/common/include",
+    "${ability_runtime_path}/tools/aa/include",
     "//utils/native/base/include",
   ]
 
@@ -51,14 +51,14 @@ ohos_executable("thermal-shell") {
   ]
 
   deps = [
+    "${ability_runtime_path}/tools/aa:tools_aa_source_set",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
-    "//foundation/ability/ability_runtime/tools/aa:tools_aa_source_set",
     "//utils/native/base:utils",
   ]
 
   configs = [
-    "//foundation/ability/ability_runtime/tools/aa:ability_command_config",
-    "${aafwk_services_path}/common:common_config",
+    "${ability_runtime_path}/tools/aa:ability_command_config",
+    "${ability_runtime_services_path}/common:common_config",
   ]
 
   external_deps = [
