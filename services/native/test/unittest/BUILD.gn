@@ -31,8 +31,8 @@ config("module_private_config") {
     "//drivers/peripheral/display/interfaces/include/",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "${aafwk_services_path}/appmgr/include",
-    "${aafwk_inner_api_path}/app_manager/include/appmgr",
+    "${ability_runtime_services_path}/appmgr/include",
+    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
     "//base/startup/appspawn/include/",
     "//foundation/graphic/ui/interfaces/kits",
     "//foundation/arkui/ace_engine/adapter/ohos/entrance",
@@ -77,12 +77,12 @@ ohos_unittest("ThermalPolicyTest") {
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
     "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${aafwk_services_path}/appmgr/include",
-    "${aafwk_inner_api_path}/app_manager/include/appmgr",
+    "${ability_runtime_services_path}/appmgr/include",
+    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
   ]
 
   deps = [
-    "${aafwk_services_path}/appmgr:libappms",
+    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
@@ -115,12 +115,12 @@ ohos_unittest("ThermalLevelEventTest") {
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
     "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${aafwk_services_path}/appmgr/include",
-    "${aafwk_inner_api_path}/app_manager/include/appmgr",
+    "${ability_runtime_services_path}/appmgr/include",
+    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
   ]
 
   deps = [
-    "${aafwk_services_path}/appmgr:libappms",
+    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
@@ -153,12 +153,12 @@ ohos_unittest("ThermalClientApiTest") {
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
     "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${aafwk_services_path}/appmgr/include",
-    "${aafwk_inner_api_path}/app_manager/include/appmgr",
+    "${ability_runtime_services_path}/appmgr/include",
+    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
   ]
 
   deps = [
-    "${aafwk_services_path}/appmgr:libappms",
+    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
@@ -191,12 +191,12 @@ ohos_unittest("ThermalActionHubTest") {
     "//base/powermgr/power_manager/interfaces/innerkits/native/include",
     "//base/powermgr/power_manager/utils/native/include",
     "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${aafwk_services_path}/appmgr/include",
-    "${aafwk_inner_api_path}/app_manager/include/appmgr",
+    "${ability_runtime_services_path}/appmgr/include",
+    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
   ]
 
   deps = [
-    "${aafwk_services_path}/appmgr:libappms",
+    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
