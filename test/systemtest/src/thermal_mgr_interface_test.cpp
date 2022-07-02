@@ -119,7 +119,7 @@ void ThermalMgrInterfaceTest::ThermalTempTest1Callback::OnThermalTempChanged(Tem
     int assertValue = 0;
     for (auto iter : tempCbMap) {
         GTEST_LOG_(INFO) << "type: " << iter.first << " temp: " << iter.second;
-        EXPECT_EQ(true, iter.second > assertValue) << "Test Failed";
+        EXPECT_EQ(true, iter.second >= assertValue) << "Test Failed";
     }
 }
 
@@ -128,7 +128,7 @@ void ThermalMgrInterfaceTest::ThermalTempTest2Callback::OnThermalTempChanged(Tem
     int assertValue = 0;
     for (auto iter : tempCbMap) {
         GTEST_LOG_(INFO) << "type: " << iter.first << " temp: " << iter.second;
-        EXPECT_EQ(true, iter.second > assertValue) << "Test Failed";
+        EXPECT_EQ(true, iter.second >= assertValue) << "Test Failed";
     }
 }
 
