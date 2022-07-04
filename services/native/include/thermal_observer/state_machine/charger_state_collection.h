@@ -18,10 +18,19 @@
 
 #include "istate_collection.h"
 #include "thermal_common_event_receiver.h"
+#include "thermal_level_info.h"
+#include "thermal_mgr_listener.h"
 
 using IntentWant = OHOS::AAFwk::Want;
 namespace OHOS {
 namespace PowerMgr {
+typedef struct IdleState {
+    int32_t level;
+    int32_t soc;
+    int32_t charging;
+    int32_t current;
+} IdleState;
+
 class ChargerStateCollection : public IStateCollection {
 public:
     enum {
@@ -57,12 +66,21 @@ public:
     virtual bool DecideState(const std::string &value) override;
     void HandleChangerStatusCompleted(const EventFwk::CommonEventData &data);
     bool RegisterEvent();
+    class InnerThermalLevelCallback : public ThermalLevelCallbackStub {
+    public:
+        InnerThermalLevelCallback() = default;
+        ~InnerThermalLevelCallback() override = default;
+        void GetThermalLevel(ThermalLevel level) override;
+    };
 public:
     virtual void SetState() override;
 private:
+    static void HandleChargeIdleState();
+    static void PublishIdleEvent(bool isIdle);
     std::string state_;
     std::string params_;
     std::string mockState_;
+    sptr<IThermalLevelCallback> callback_ {nullptr};
 };
 } // namespace PowerMgr
 } // namespace OHOS

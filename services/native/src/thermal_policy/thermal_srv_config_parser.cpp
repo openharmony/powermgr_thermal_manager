@@ -72,6 +72,8 @@ bool ThermalSrvConfigParser::ParseXMLFile(std::string &path)
             ParseActionNode(node);
         } else if (!xmlStrcmp(node->name, BAD_CAST"policy")) {
             ParsePolicyNode(node);
+        } else if (!xmlStrcmp(node->name, BAD_CAST"idle")) {
+            ParseIdleNode(node);
         }
     }
     return true;
@@ -401,6 +403,43 @@ void ThermalSrvConfigParser::ParsePolicySubnode(const xmlNode *cur, PolicyConfig
         }
         policyConfig.vPolicyAction.push_back(policyAction);
     }
+}
+
+void ThermalSrvConfigParser::ParseIdleNode(xmlNodePtr node)
+{
+    IdleState idleState;
+    for (auto subNode = node->children; subNode != nullptr; subNode = subNode->next) {
+        if (!xmlStrcmp(subNode->name, BAD_CAST"thermallevel")) {
+            xmlChar* value = xmlNodeGetContent(subNode);
+            if (value != nullptr) {
+                idleState.level = atoi((char *)value);
+                xmlFree(value);
+            }
+        } else if (!xmlStrcmp(subNode->name, BAD_CAST"soc")) {
+            xmlChar* value = xmlNodeGetContent(subNode);
+            if (value != nullptr) {
+                idleState.soc = atoi((char *)value);
+                xmlFree(value);
+            }
+        } else if (!xmlStrcmp(subNode->name, BAD_CAST"charging")) {
+            xmlChar* value = xmlNodeGetContent(subNode);
+            if (value != nullptr) {
+                idleState.charging = atoi((char *)value);
+                xmlFree(value);
+            }
+        } else if (!xmlStrcmp(subNode->name, BAD_CAST"current")) {
+            xmlChar* value = xmlNodeGetContent(subNode);
+            if (value != nullptr) {
+                idleState.current = atoi((char *)value);
+                xmlFree(value);
+            }
+        } else {
+            THERMAL_HILOGD(COMP_SVC, "not supported node, name=%{public}s", subNode->name);
+        }
+    }
+    THERMAL_HILOGI(COMP_SVC, "level=%{public}d, soc=%{public}d, charging=%{public}d, current=%{public}d",
+                   idleState.level, idleState.soc, idleState.charging, idleState.current);
+    g_service->GetStateMachineObj()->SetIdleStateConfig(idleState);
 }
 } // namespace PowerMgr
 } // namespace OHOS

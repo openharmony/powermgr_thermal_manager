@@ -133,4 +133,11 @@
             <thermallevel>0</thermallevel>
         </config>
     </policy>
+
+    <idle name="charging">
+        <thermallevel>1</thermallevel>  <!-- thermal level is equal or less than 1 -->
+        <soc>80</soc> <!-- battery soc is equal or more than 80% -->
+        <charging>1</charging> <!-- battery is charging -->
+        <current>1000</current> <!-- battery charging current is equal or more than 1000mA -->
+    </idle>
 </thermal>
