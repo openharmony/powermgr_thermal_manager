@@ -41,6 +41,7 @@ private:
     void ParseStateNode(xmlNodePtr node);
     void ParseActionNode(xmlNodePtr node);
     void ParsePolicyNode(xmlNodePtr node);
+    void ParseIdleNode(xmlNodePtr node);
     void ParseAuxSensorInfo(const xmlNode *cur, std::shared_ptr<ThermalConfigSensorCluster> &sc);
     void ParseSensorInfo(const xmlNode *cur, std::shared_ptr<ThermalConfigSensorCluster> &sc);
     std::vector<AuxLevelItem> ParseAuxSensorSubnodeInfo(const xmlNode *cur,

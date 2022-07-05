@@ -21,7 +21,9 @@
 #include <memory>
 #include <map>
 
-#include <istate_collection.h>
+#include "charger_state_collection.h"
+#include "constants.h"
+#include "istate_collection.h"
 #include "thermal_common_event_receiver.h"
 
 namespace OHOS {
@@ -34,20 +36,8 @@ struct StateItem {
 
 class StateMachine {
 public:
-    enum {
-        STRING = 0,
-        BOOL = 1,
-        UINT = 2,
-        INT = 3,
-    };
     using StateMachineMap = std::map<std::string, std::shared_ptr<IStateCollection>>;
     bool Init();
-    bool CreateInstance();
-    /* Provide system attribute query capability */
-    template<typename T> T QuerySystemProperty(uint32_t id, const std::string& key, const T& def);
-    /* Provide file node read capability */
-    template<typename T> T ReadFileNode(const std::string& path, T& value);
-    void CommonEventReceiverInit();
     void SetStateItem(std::vector<StateItem>& vstateItem)
     {
         vState_ = vstateItem;
@@ -58,6 +48,16 @@ public:
         return stateCollectionMap_;
     }
 
+    void SetIdleStateConfig(const IdleState& idleState)
+    {
+        idleStateConfig_ = idleState;
+    }
+
+    IdleState& GetIdleStateConfig()
+    {
+        return idleStateConfig_;
+    }
+
     std::shared_ptr<ThermalCommonEventReceiver> GetCommonEventReceiver()
     {
         return receiver_;
@@ -66,6 +66,7 @@ private:
     StateMachineMap stateCollectionMap_;
     std::vector<StateItem> vState_;
     std::shared_ptr<ThermalCommonEventReceiver> receiver_;
+    IdleState idleStateConfig_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
