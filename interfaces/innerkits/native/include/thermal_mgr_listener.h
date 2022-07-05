@@ -53,6 +53,10 @@ private:
     sptr<IThermalLevelCallback> callback_;
     std::shared_ptr<ThermalLevelEvent> levelEvent_;
 };
+
+enum class ChargeIdleEventCode : uint32_t {
+    EVENT_CODE_CHARGE_IDLE_STATE = 0,
+};
 } // namespace Msdp
 } // namespace OHOS
 #endif // THERMAL_MGR_LISTENER_H
