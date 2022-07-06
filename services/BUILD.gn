@@ -32,7 +32,6 @@ config("thermalsrv_private_config") {
     "//foundation/windowmanager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
     "//foundation/windowmanager/utils/include",
-    "//base/startup/syspara_lite/adapter/native/syspara/include",
     "//foundation/windowmanager/interfaces/innerkits/dm",
   ]
 }
@@ -100,7 +99,6 @@ ohos_shared_library("thermalservice") {
     "//base/powermgr/thermal_manager/frameworks/dialog/dialog_ui/js:dialog_js_files_etc",
     "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
     "//base/powermgr/thermal_manager/services/zidl:thermalmgr_stub",
-    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//foundation/windowmanager/utils:libwmutil",
@@ -123,6 +121,7 @@ ohos_shared_library("thermalservice") {
     "hdf_core:libhdi",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
+    "init:libbegetutil",
     "ipc:ipc_core",
     "multimedia_image_standard:image_native",
     "safwk:system_ability_fwk",
