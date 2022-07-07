@@ -220,7 +220,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -254,7 +254,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -288,7 +288,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -322,7 +322,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -355,7 +355,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -373,7 +373,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
@@ -405,7 +405,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -423,7 +423,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
@@ -455,7 +455,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -473,7 +473,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
@@ -505,7 +505,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -523,7 +523,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
@@ -555,7 +555,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -588,7 +588,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -621,7 +621,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -654,7 +654,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -687,7 +687,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -705,7 +705,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
@@ -737,7 +737,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -755,7 +755,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
@@ -787,7 +787,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -805,7 +805,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
@@ -837,7 +837,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
@@ -855,7 +855,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
     EXPECT_EQ(true, ret >= ERR_OK);
@@ -896,7 +896,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
@@ -938,7 +938,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
@@ -980,7 +980,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
@@ -1030,7 +1030,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest020, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
@@ -1080,7 +1080,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest021, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char levelBuf[MAX_PATH] = {0};
     char levelValue[MAX_PATH] = {0};
     ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
@@ -1099,7 +1099,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest021, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state not satisfied
- * @tc.result level 1, freq 99000
+ * @tc.result level 1, freq 1992000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Level2)
 {
@@ -1113,7 +1113,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1124,7 +1124,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest022 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest022 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest022: end.");
 }
 
@@ -1133,7 +1133,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state not satisfied
- * @tc.result level 2, freq 90000
+ * @tc.result level 2, freq 1992000
  */
 
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Level2)
@@ -1148,7 +1148,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1159,7 +1159,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest023 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest023 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest023: end.");
 }
 
@@ -1168,7 +1168,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state not satisfied
- * @tc.result level 3, freq 80000
+ * @tc.result level 3, freq 1992000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Level2)
 {
@@ -1182,7 +1182,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1193,7 +1193,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest024 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest024 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest024: end.");
 }
 
@@ -1202,7 +1202,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state not satisfied
- * @tc.result level 4, freq 80000
+ * @tc.result level 4, freq 1992000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Level2)
 {
@@ -1216,7 +1216,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1227,7 +1227,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest025 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest025 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest025: end.");
 }
 
@@ -1236,7 +1236,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
- * @tc.result level 1, freq 99000
+ * @tc.result level 1, freq 1992000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Level2)
 {
@@ -1256,7 +1256,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Lev
     std::string chargeState = "1";
     ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1267,7 +1267,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest026 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest026 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest026: end.");
 }
 
@@ -1276,7 +1276,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
- * @tc.result level 1, freq 80000
+ * @tc.result level 1, freq 8000000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Level2)
 {
@@ -1302,7 +1302,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Lev
     std::string sceneState = "cam";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1313,7 +1313,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest027 failed";
+    EXPECT_EQ(true, value == 8000000) << "ThermalMgrSystemTest027 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1325,7 +1325,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
- * @tc.result level 1, freq 90000
+ * @tc.result level 1, freq 9000000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Level2)
 {
@@ -1351,7 +1351,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Lev
     std::string sceneState = "cam";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1362,7 +1362,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 99000) << "ThermalMgrSystemTest028 failed";
+    EXPECT_EQ(true, value == 9000000) << "ThermalMgrSystemTest028 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1374,7 +1374,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
- * @tc.result level 2, freq 90000
+ * @tc.result level 2, freq 1992000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Level2)
 {
@@ -1394,7 +1394,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Lev
     std::string chargeState = "1";
     ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1405,7 +1405,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest029 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest029 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest029: end.");
 }
 
@@ -1414,7 +1414,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
- * @tc.result level 2, freq 90000
+ * @tc.result level 2, freq 7000000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Level2)
 {
@@ -1440,7 +1440,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Lev
     std::string sceneState = "cam";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1451,7 +1451,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest030 failed";
+    EXPECT_EQ(true, value == 7000000) << "ThermalMgrSystemTest030 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1463,7 +1463,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
- * @tc.result level 2, freq 90000
+ * @tc.result level 2, freq 8000000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Level2)
 {
@@ -1489,7 +1489,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Lev
     std::string sceneState = "cam";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1500,7 +1500,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 90000) << "ThermalMgrSystemTest031 failed";
+    EXPECT_EQ(true, value == 8000000) << "ThermalMgrSystemTest031 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1512,7 +1512,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
- * @tc.result level 3, freq 80000
+ * @tc.result level 3, freq 1992000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Level2)
 {
@@ -1532,7 +1532,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Lev
     std::string chargeState = "1";
     ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1543,7 +1543,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest032 failed";
+    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest032 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest032: end.");
 }
 
@@ -1552,7 +1552,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
- * @tc.result level 3, freq 80000
+ * @tc.result level 3, freq 6000000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Level2)
 {
@@ -1578,7 +1578,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Lev
     std::string sceneState = "cam";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1589,7 +1589,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest033 failed";
+    EXPECT_EQ(true, value == 6000000) << "ThermalMgrSystemTest033 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1601,7 +1601,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Lev
  * @tc.desc: test get cpu freq by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
- * @tc.result level 3, freq 80000
+ * @tc.result level 3, freq 7000000
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Level2)
 {
@@ -1627,7 +1627,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Lev
     std::string sceneState = "cam";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
@@ -1638,7 +1638,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Lev
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 80000) << "ThermalMgrSystemTest034 failed";
+    EXPECT_EQ(true, value == 7000000) << "ThermalMgrSystemTest034 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1664,7 +1664,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest035, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -1704,7 +1704,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest036, Function|MediumTest|Lev
     std::string sceneState = "cam,call";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -1742,7 +1742,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest037, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -1782,7 +1782,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest038, Function|MediumTest|Lev
     std::string sceneState = "cam,call";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 20);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -1820,7 +1820,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest039, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -1860,7 +1860,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest040, Function|MediumTest|Lev
     std::string sceneState = "cam,call";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -1899,7 +1899,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest041, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentlBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -1933,7 +1933,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest042, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentlBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -1967,7 +1967,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest043, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char currentlBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
@@ -2001,7 +2001,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char lcdBuf[MAX_PATH] = {0};
     char lcdValue[MAX_PATH]= {0};
@@ -2012,7 +2012,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest044, Function|MediumTest|Lev
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 120) << "ThermalMgrSystemTest044 failed";
+    EXPECT_EQ(true, value == 188) << "ThermalMgrSystemTest044 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest044: end.");
 }
 
@@ -2035,7 +2035,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest045, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char lcdBuf[MAX_PATH] = {0};
     char lcdValue[MAX_PATH] = {0};
@@ -2046,7 +2046,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest045, Function|MediumTest|Lev
     std::string lcd = lcdValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(lcd);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 120) << "ThermalMgrSystemTest045 failed";
+    EXPECT_EQ(true, value == 155) << "ThermalMgrSystemTest045 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest045: end.");
 }
 
@@ -2069,7 +2069,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest046, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char lcdBuf[MAX_PATH] = {0};
     char lcdValue[MAX_PATH] = {0};
@@ -2112,7 +2112,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest047, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char lcdBuf[MAX_PATH] = {0};
     char lcdValue[MAX_PATH] = {0};
     ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
@@ -2154,7 +2154,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest048, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char lcdBuf[MAX_PATH] = {0};
     char lcdValue[MAX_PATH] = {0};
     ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
@@ -2204,7 +2204,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char procsessBuf[MAX_PATH] = {0};
     char procsesValue[MAX_PATH] = {0};
     ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
@@ -2248,7 +2248,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char procsessBuf[MAX_PATH] = {0};
     char procsesValue[MAX_PATH] = {0};
@@ -2259,7 +2259,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest050, Function|MediumTest|Lev
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest050 failed";
+    EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest050 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest050: end.");
 }
 
@@ -2282,7 +2282,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest051, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char procsessBuf[MAX_PATH] = {0};
     char procsesValue[MAX_PATH] = {0};
@@ -2293,7 +2293,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest051, Function|MediumTest|Lev
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest051 failed";
+    EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest051 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest051: end.");
 }
 
@@ -2316,7 +2316,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest052, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
 
     char procsessBuf[MAX_PATH] = {0};
     char procsesValue[MAX_PATH] = {0};
@@ -2359,7 +2359,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest053, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char procsessBuf[MAX_PATH] = {0};
     char procsesValue[MAX_PATH] = {0};
     ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
@@ -2401,7 +2401,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest054, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(WAIT_TIME * 10);
+    sleep(SLEEP_INTERVAL_SEC);
     char procsessBuf[MAX_PATH] = {0};
     char procsesValue[MAX_PATH] = {0};
     ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
@@ -2427,7 +2427,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest055, TestSize.Level0)
     if (!CheckThermalProtectorPID()) {
         EXPECT_EQ(true, StartThermalProtector());
     }
-    sleep(WAIT_TIME);
+    sleep(SLEEP_INTERVAL_SEC);
     if (!CheckThermalProtectorPID()) {
         EXPECT_EQ(true, StopThermalProtector());
     }

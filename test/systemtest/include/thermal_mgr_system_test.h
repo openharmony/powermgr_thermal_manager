@@ -23,7 +23,7 @@ namespace OHOS {
 namespace PowerMgr {
 const int32_t BUFFER_SIZE = 512;
 const uint32_t MAX_PATH = 256;
-const uint32_t WAIT_TIME = 1;
+const uint32_t SLEEP_INTERVAL_SEC = 5;
 std::string batteryPath = "/data/service/el0/thermal/sensor/battery/temp";
 std::string shellPath = "/data/service/el0/thermal/sensor/shell/temp";
 std::string chargerPath = "/data/service/el0/thermal/sensor/charger/temp";
