@@ -65,13 +65,8 @@ public:
     std::string GetState() override;
     virtual bool DecideState(const std::string &value) override;
     void HandleChangerStatusCompleted(const EventFwk::CommonEventData &data);
+    void HandleThermalLevelCompleted(const EventFwk::CommonEventData &data);
     bool RegisterEvent();
-    class InnerThermalLevelCallback : public ThermalLevelCallbackStub {
-    public:
-        InnerThermalLevelCallback() = default;
-        ~InnerThermalLevelCallback() override = default;
-        void GetThermalLevel(ThermalLevel level) override;
-    };
 public:
     virtual void SetState() override;
 private:
