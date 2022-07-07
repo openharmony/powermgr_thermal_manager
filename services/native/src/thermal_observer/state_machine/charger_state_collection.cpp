@@ -33,7 +33,7 @@ namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const int MAX_PATH = 256;
-std::string chargePath = "/data/thermal/state/charge";
+std::string chargePath = "/data/service/el0/thermal/state/charge";
 IdleState g_idleStateConfig {};
 IdleState g_cachedIdleState {};
 bool g_isChargeIdle = true;

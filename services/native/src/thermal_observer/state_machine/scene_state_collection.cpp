@@ -29,7 +29,7 @@ namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const int MAX_PATH = 256;
-std::string scenePath = "/data/thermal/state/scene";
+std::string scenePath = "/data/service/el0/thermal/state/scene";
 }
 bool SceneStateCollection::Init()
 {

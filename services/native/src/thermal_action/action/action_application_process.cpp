@@ -35,7 +35,7 @@ namespace PowerMgr {
 namespace {
 const int32_t SIGNAL_KILL = 9;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-const std::string processPath = "/data/thermal/config/process_ctrl";
+const std::string processPath = "/data/service/el0/thermal/config/process_ctrl";
 const int MAX_PATH = 256;
 }
 bool ActionApplicationProcess::Init()

@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string BATTERY_VOLTAGE_PATH = "/data/cooling/battery/voltage";
+const std::string BATTERY_VOLTAGE_PATH = "/data/service/el0/thermal/cooling/battery/voltage";
 constexpr int32_t MAX_PATH = 256;
 }
 bool VoltageAction::AddActionValue(uint32_t value)

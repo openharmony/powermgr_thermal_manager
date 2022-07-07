@@ -21,7 +21,7 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 const std::string ACTUAL_CPU_FREQ_PATH = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq";
-const std::string SIM_CPU_FREQ_PATH = "/data/cooling/cpu/freq";
+const std::string SIM_CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
 constexpr int32_t MAX_PATH = 256;
 }
 bool CpuAction::AddActionValue(uint32_t value)

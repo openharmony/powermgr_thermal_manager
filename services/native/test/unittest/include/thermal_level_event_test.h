@@ -24,15 +24,15 @@ namespace PowerMgr {
 namespace {
 const uint32_t MAX_PATH = 256;
 const uint32_t WAIT_TIME_5_SEC = 5;
-std::string batteryPath = "/data/sensor/battery/temp";
-std::string shellPath = "/data/sensor/shell/temp";
-std::string chargerPath = "/data/sensor/charger/temp";
-std::string socPath = "/data/sensor/soc/temp";
-std::string ambientPath = "/data/sensor/ambient/temp";
-std::string cpuPath = "/data/sensor/cpu/temp";
-std::string paPath = "/data/sensor/pa/temp";
-std::string apPath = "/data/sensor/ap/temp";
-const std::string SIMULATION_TEMP_DIR = "/data/sensor/%s/temp";
+std::string batteryPath = "/data/service/el0/thermal/sensor/battery/temp";
+std::string shellPath = "/data/service/el0/thermal/sensor/shell/temp";
+std::string chargerPath = "/data/service/el0/thermal/sensor/charger/temp";
+std::string socPath = "/data/service/el0/thermal/sensor/soc/temp";
+std::string ambientPath = "/data/service/el0/thermal/sensor/ambient/temp";
+std::string cpuPath = "/data/service/el0/thermal/sensor/cpu/temp";
+std::string paPath = "/data/service/el0/thermal/sensor/pa/temp";
+std::string apPath = "/data/service/el0/thermal/sensor/ap/temp";
+const std::string SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
 }
 class ThermalLevelEventTest : public testing::Test {
 public:
