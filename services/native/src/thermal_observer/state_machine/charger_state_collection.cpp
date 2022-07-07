@@ -70,23 +70,31 @@ bool ChargerStateCollection::RegisterEvent()
         return false;
     }
 
-    callback_ = new InnerThermalLevelCallback();
-    g_service->SubscribeThermalLevelCallback(callback_);
-
     auto receiver = g_service->GetStateMachineObj()->GetCommonEventReceiver();
-    if (receiver == nullptr) return false;
-    THERMAL_HILOGI(COMP_SVC, "start register charger state change event");
-    EventHandle handler = std::bind(&ChargerStateCollection::HandleChangerStatusCompleted, this, std::placeholders::_1);
-    
-    bool ret = receiver->Start(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED, handler);
+    if (receiver == nullptr) {
+        return false;
+    }
+    bool ret;
+    THERMAL_HILOGI(COMP_SVC, "start register battery change event");
+    EventHandle batteryChangedHandler =
+        std::bind(&ChargerStateCollection::HandleChangerStatusCompleted, this, std::placeholders::_1);
+    ret = receiver->Start(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED, batteryChangedHandler);
     if (!ret) {
         THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_BATTERY_CHANGED");
+        return false;
+    }
+    THERMAL_HILOGI(COMP_SVC, "start register thermal level change event");
+    EventHandle thermalLevelHandler =
+        std::bind(&ChargerStateCollection::HandleThermalLevelCompleted, this, std::placeholders::_1);
+    ret = receiver->Start(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, thermalLevelHandler);
+    if (!ret) {
+        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_THERMAL_LEVEL_CHANGED");
         return false;
     }
     return true;
 }
 
-void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData &data __attribute__((__unused__)))
+void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData &data)
 {
     g_cachedIdleState.soc = data.GetWant().GetIntParam(ToString(BatteryInfo::COMMON_EVENT_CODE_CAPACITY), -1);
     g_cachedIdleState.current = data.GetWant().GetIntParam(
@@ -148,7 +156,9 @@ bool ChargerStateCollection::DecideState(const std::string &value)
 
 void ChargerStateCollection::HandleChargeIdleState()
 {
-    THERMAL_HILOGD(COMP_SVC, "Start to handle charge idle state");
+    THERMAL_HILOGI(COMP_SVC, "soc=%{public}d, charging==%{public}d, current==%{public}d, level==%{public}d",
+                   g_cachedIdleState.soc, g_cachedIdleState.charging, g_cachedIdleState.current,
+                   g_cachedIdleState.level);
     bool isIdle = ((g_cachedIdleState.soc >= g_idleStateConfig.soc) &&
                    (g_cachedIdleState.charging == g_idleStateConfig.charging) &&
                    (g_cachedIdleState.current >= g_idleStateConfig.current) &&
@@ -173,10 +183,11 @@ void ChargerStateCollection::PublishIdleEvent(bool isIdle)
         THERMAL_HILOGW(COMP_SVC, "failed to publish charge idle event");
     }
 }
-
-void ChargerStateCollection::InnerThermalLevelCallback::GetThermalLevel(ThermalLevel level)
+void ChargerStateCollection::HandleThermalLevelCompleted(const CommonEventData& data)
 {
-    g_cachedIdleState.level = static_cast<int32_t>(level);
+    std::string key = ToString(static_cast<int32_t>(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED));
+    int32_t level = data.GetWant().GetIntParam(key, -1);
+    g_cachedIdleState.level =level;
     HandleChargeIdleState();
 }
 } // namespace PowerMgr

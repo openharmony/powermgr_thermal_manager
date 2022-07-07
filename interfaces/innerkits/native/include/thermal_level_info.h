@@ -16,16 +16,10 @@
 #ifndef THERMAL_LEVEL_INFO_H
 #define THERMAL_LEVEL_INFO_H
 
+#include <string>
+
 namespace OHOS {
 namespace PowerMgr {
-const std::string THERMAL_LEVEL_COOL = "thermal.level.COOL";
-const std::string THERMAL_LEVEL_NORMAL = "thermal.level.NORMAL";
-const std::string THERMAL_LEVEL_WARM = "thermal.level.WARM";
-const std::string THERMAL_LEVEL_HOT = "thermal.level.HOT";
-const std::string THERMAL_LEVEL_OVERHEATED = "thermal.level.OVERHEATED";
-const std::string THERMAL_LEVEL_WARNING = "thermal.level.WARNING";
-const std::string THERMAL_LEVEL_EMERGENCY = "thermal.level.EMERGENCY";
-
 enum class ThermalLevel : int32_t {
     /**
      * @brief cool level
@@ -62,6 +56,13 @@ enum class ThermalLevel : int32_t {
      *
      */
         EMERGENCY,
+};
+
+enum class ThermalCommonEventCode : uint32_t {
+    /**
+     * @brief The thermal level changed common event code.
+     */
+    CODE_THERMAL_LEVEL_CHANGED = 0
 };
 } // PowerMgr
 } // OHOS

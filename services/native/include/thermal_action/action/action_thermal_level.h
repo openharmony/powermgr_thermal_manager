@@ -49,9 +49,7 @@ public:
     uint32_t LevelRequest(int32_t level);
 
     void NotifyThermalLevelChanged(int32_t level);
-    void SendThermalLevelEvents(int32_t level);
-    bool PushlishLevelChangedEvents(const int &code, const std::string &data);
-    bool PublishEvent(const std::string &eventAction, const int &code, const std::string &data);
+    bool PublishLevelChangedEvents(ThermalCommonEventCode code, int32_t level);
 public:
     class ThermalLevelCallbackDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
