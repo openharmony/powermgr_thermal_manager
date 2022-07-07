@@ -25,7 +25,7 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-const std::string lcdPath = "/data/thermal/config/lcd";
+const std::string lcdPath = "/data/service/el0/thermal/config/lcd";
 const int MAX_PATH = 256;
 }
 bool ActionDisplay::InitParams(const std::string &params)

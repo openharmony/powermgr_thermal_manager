@@ -29,7 +29,7 @@ namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 TypeTempMap typeTempMap;
-const std::string levelPath = "/data/thermal/config/configLevel";
+const std::string levelPath = "/data/service/el0/thermal/config/configLevel";
 const int MAX_PATH = 256;
 std::map<std::string, int32_t> g_xmlActionMap;
 }
