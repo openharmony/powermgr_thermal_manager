@@ -58,6 +58,8 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "//foundation/windowmanager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
     "//foundation/windowmanager/utils/include",
+    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_base/include/",
+    "//base/notification/common_event_service/interfaces/inner_api/",
   ]
 
   deps = [
@@ -103,6 +105,8 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "//foundation/windowmanager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
     "//foundation/windowmanager/utils/include",
+    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_base/include/",
+    "//base/notification/common_event_service/interfaces/inner_api/",
   ]
 
   deps = [
