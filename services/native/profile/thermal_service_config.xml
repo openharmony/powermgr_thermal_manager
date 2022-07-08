@@ -55,8 +55,10 @@
     </state>
 
     <action>
-        <item name="cpu" param="1.251,3.246"/>
-        <item name="gpu" param="1.251,3.246"/>
+        <item name="cpu_big" param="1.251,3.246"/>
+        <item name="cpu_med" param="1.206,3.218"/>
+        <item name="cpu_lit" param="1.101,3.107"/>
+        <item name="gpu" param="1.015,3.026"/>
         <item name="lcd" strict="1"/>
         <item name="current"/>
         <item name="process_ctrl" param="32,64,128,256"/>
@@ -69,37 +71,43 @@
     <policy>
         <config name="base_safe" level="1">
             <lcd>188</lcd>
-            <cpu>1992000</cpu>
+            <cpu_big>1992000</cpu_big>
+            <cpu_med>1991500</cpu_med>
+            <cpu_lit>1991200</cpu_lit>
             <test>99999</test>
             <process_ctrl>3</process_ctrl>
-            <cpu scene="cam" charge="1">80000</cpu>
-            <cpu scene="cam" charge="0">90000</cpu>
-            <gpu screen="0">60000</gpu>
-            <gpu screen="1">50000</gpu>
+            <cpu_big scene="cam" charge="1">1991800</cpu_big>
+            <cpu_big scene="cam" charge="0">1991600</cpu_big>
+            <gpu screen="0">524288</gpu>
+            <gpu screen="1">512000</gpu>
             <thermallevel>1</thermallevel>
             <current>1800</current>
             <current scene="cam,call">1200</current>
         </config>
         <config name="base_safe" level="2">
             <lcd>155</lcd>
-            <cpu>1992000</cpu>
+            <cpu_big>1991000</cpu_big>
+            <cpu_med>1990500</cpu_med>
+            <cpu_lit>1990200</cpu_lit>
             <process_ctrl>2</process_ctrl>
-            <cpu scene="cam" charge="1">70000</cpu>
-            <cpu scene="cam" charge="0">80000</cpu>
-            <gpu screen="0">50000</gpu>
-            <gpu screen="1">40000</gpu>
+            <cpu_big scene="cam" charge="1">1990800</cpu_big>
+            <cpu_big scene="cam" charge="0">1990600</cpu_big>
+            <gpu screen="0">499712</gpu>
+            <gpu screen="1">487424</gpu>
             <current>1500</current>
             <thermallevel>2</thermallevel>
             <current scene="cam,call">1000</current>
         </config>
         <config name="base_safe" level="3">
             <lcd>120</lcd>
-            <cpu>1992000</cpu>
+            <cpu_big>1990000</cpu_big>
+            <cpu_med>1989500</cpu_med>
+            <cpu_lit>1989200</cpu_lit>
             <process_ctrl>1</process_ctrl>
-            <cpu scene="cam" charge="1">60000</cpu>
-            <cpu scene="cam" charge="0">70000</cpu>
-            <gpu screen="0">40000</gpu>
-            <gpu screen="1">30000</gpu>
+            <cpu_big scene="cam" charge="1">1989800</cpu_big>
+            <cpu_big scene="cam" charge="0">1989600</cpu_big>
+            <gpu screen="0">475136</gpu>
+            <gpu screen="1">462848</gpu>
             <current>1300</current>
             <current scene="cam,call">800</current>
             <thermallevel>3</thermallevel>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@ public:
     ActionGpu() = default;
     ~ActionGpu() = default;
 
-    bool InitParams(const std::string &params) override;
+    bool InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
@@ -42,4 +42,4 @@ private:
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // ACTION_CPU_H
+#endif // ACTION_GPU_H
