@@ -1,5 +1,7 @@
 {
   "message":{
-    "cancelButton": "Cancel"
+    "cancelButton": "Cancel",
+    "lowerTemperature": "LowerTemp",
+    "highTemperature": "HighTemp"
   }
 }
