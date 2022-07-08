@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,38 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef ACTION_POPUP_H
-#define ACTION_POPUP_H
+
+#ifndef ACTION_CPU_LIT_H
+#define ACTION_CPU_LIT_H
 
 #include "ithermal_action.h"
-#include "window_manager.h"
-#include "refbase.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionPopup : public IThermalAction {
+class ActionCpuLit : public IThermalAction {
 public:
-    ActionPopup() = default;
-    ~ActionPopup() = default;
-    enum {
-        LOWER_TEMP = 1,
-        HIGHER_TEMP = 2
-    };
-    bool InitParams(const std::string &params) override;
+    ActionCpuLit() = default;
+    ~ActionCpuLit() = default;
+
+    bool InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-
-    bool ShowDialog(const std::string &params);
-    void HandlePopupEvent(const int32_t value);
-    void GetDisplayPosition(int32_t& width, int32_t& height);
+    int32_t CpuRuquest(uint32_t freq);
 private:
     std::vector<uint32_t> valueList_;
     std::string params_;
     bool flag_;
     uint32_t lastValue_;
-    int32_t dialogId_ {-1};
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // ACTION_POPUP_H
+#endif // ACTION_CPU_LIT_H
