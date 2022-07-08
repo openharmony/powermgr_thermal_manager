@@ -38,6 +38,7 @@ std::string shutdownPath = "/data/service/el0/thermal/config/shut_down";
 std::string stateScreenPath = "/data/service/el0/thermal/state/screen";
 std::string stateScenePath = "/data/service/el0/thermal/state/scene";
 std::string stateChargePath = "/data/service/el0/thermal/state/charge";
+std::string vendorConfig = "/vendor/etc/thermal_config/thermal_service_config.xml";
 const std::string CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
 const std::string GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
 const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
