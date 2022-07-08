@@ -118,7 +118,7 @@ void ThermalMgrInterfaceTest::ThermalTempTest1Callback::OnThermalTempChanged(Tem
 {
     int assertValue = 0;
     for (auto iter : tempCbMap) {
-        THERMAL_HILOGD(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first, iter.second);
+        THERMAL_HILOGD(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first.c_str(), iter.second);
         EXPECT_EQ(true, iter.second > assertValue) << "Test Failed";
     }
 }
@@ -127,7 +127,7 @@ void ThermalMgrInterfaceTest::ThermalTempTest2Callback::OnThermalTempChanged(Tem
 {
     int assertValue = 0;
     for (auto iter : tempCbMap) {
-        THERMAL_HILOGD(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first, iter.second);
+        THERMAL_HILOGD(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first.c_str(), iter.second);
         EXPECT_EQ(true, iter.second > assertValue) << "Test Failed";
     }
 }
