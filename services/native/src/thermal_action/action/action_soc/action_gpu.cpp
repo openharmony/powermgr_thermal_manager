@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,37 +13,37 @@
  * limitations under the License.
  */
 
-#include "action_cpu.h"
+#include "action_gpu.h"
 
+#include <unistd.h>
+#include "socperf_client.h"
 #include "thermal_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
+constexpr int32_t LIM_GPU_ID = 2001;
+constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
-bool ActionCpu::InitParams(const std::string &params)
+bool ActionGpu::InitParams(const std::string& params)
 {
-    params_ = params;
     return true;
 }
 
-void ActionCpu::SetStrict(bool flag)
+void ActionGpu::SetStrict(bool flag)
 {
     flag_ = flag;
 }
 
-void ActionCpu::AddActionValue(std::string value)
+void ActionGpu::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
-    if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
 }
 
-void ActionCpu::Execute()
+void ActionGpu::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    uint32_t value;
+    uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
     } else {
@@ -55,24 +55,33 @@ void ActionCpu::Execute()
         valueList_.clear();
     }
 
+    THERMAL_HILOGD(COMP_SVC, "Enter value=%{public}d, lastValue_=%{public}d", value, lastValue_);
     if (value != lastValue_) {
-        CpuRuquest(value);
+        GpuRequest(value);
         lastValue_ = value;
     }
 }
 
-int32_t ActionCpu::CpuRuquest(uint32_t freq)
+int32_t ActionGpu::GpuRequest(uint32_t freq)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    auto thermalInterface = g_service->GetThermalInterface();
-    if (thermalInterface != nullptr) {
-        int32_t ret = thermalInterface->SetCpuFreq(freq);
-        if (ret != ERR_OK) {
-            THERMAL_HILOGE(COMP_SVC, "failed to set cpu freq");
-            return ret;
+    std::vector<int32_t> tags;
+    std::vector<int32_t> configs;
+
+    if (!g_service->GetSimulationXml()) {
+        tags.push_back(LIM_GPU_ID);
+        configs.push_back(freq);
+        OHOS::SOCPERF::SocPerfClient::GetInstance().LimitRequest(ACTION_TYPE_THERMAL_ID, tags, configs, "");
+    } else {
+        auto thermalInterface = g_service->GetThermalInterface();
+        if (thermalInterface != nullptr) {
+            int32_t ret = thermalInterface->SetGpuFreq(freq);
+            if (ret != ERR_OK) {
+                return ret;
+            }
         }
     }
+
     return ERR_OK;
 }
-} // namespace PowerMgr
+} // namespace PowermMgr
 } // namespace OHOS

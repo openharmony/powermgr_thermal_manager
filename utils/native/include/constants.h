@@ -21,7 +21,9 @@
 namespace OHOS {
 namespace PowerMgr {
     // action name
-    const std::string CPU_ACTION_NAME = "cpu";
+    const std::string CPU_BIG_ACTION_NAME = "cpu_big";
+    const std::string CPU_MED_ACTION_NAME = "cpu_med";
+    const std::string CPU_LIT_ACTION_NAME = "cpu_lit";
     const std::string GPU_ACTION_NAME = "gpu";
     const std::string LCD_ACTION_NAME = "lcd";
     const std::string CHARGER_ACTION_NAME = "current";

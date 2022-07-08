@@ -154,6 +154,7 @@ bool ThermalService::InitModules()
             THERMAL_HILOGE(COMP_SVC, "thermal service config init fail:SYSTEM_CONFIG");
             return false;
         }
+        isSimulation_ = true;
     }
 
     if (popup_ == nullptr) {

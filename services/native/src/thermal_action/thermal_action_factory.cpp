@@ -17,7 +17,9 @@
 
 #include "action_application_process.h"
 #include "action_charger.h"
-#include "action_cpu.h"
+#include "action_cpu_big.h"
+#include "action_cpu_med.h"
+#include "action_cpu_lit.h"
 #include "action_gpu.h"
 #include "action_display.h"
 #include "action_shutdown.h"
@@ -32,8 +34,12 @@ namespace PowerMgr {
 std::shared_ptr<IThermalAction> ThermalActionFactory::Create(std::string &actionName)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (StringOperation::Compare(actionName, CPU_ACTION_NAME)) {
-        return std::make_shared<ActionCpu>();
+    if (StringOperation::Compare(actionName, CPU_BIG_ACTION_NAME)) {
+        return std::make_shared<ActionCpuBig>();
+    } else if (StringOperation::Compare(actionName, CPU_MED_ACTION_NAME)) {
+        return std::make_shared<ActionCpuMed>();
+    } else if (StringOperation::Compare(actionName, CPU_LIT_ACTION_NAME)) {
+        return std::make_shared<ActionCpuLit>();
     } else if (StringOperation::Compare(actionName, GPU_ACTION_NAME)) {
         return std::make_shared<ActionGpu>();
     } else if (StringOperation::Compare(actionName, LCD_ACTION_NAME)) {
