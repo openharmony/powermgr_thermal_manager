@@ -29,10 +29,10 @@ config("thermalsrv_private_config") {
     "${displaymgr_native_innerkits_path}/native/src",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
     "//base/miscservices/time/interfaces/innerkits/include",
-    "//foundation/windowmanager/interfaces/innerkits/wm/",
+    "//foundation/window/window_manager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
-    "//foundation/windowmanager/utils/include",
-    "//foundation/windowmanager/interfaces/innerkits/dm",
+    "//foundation/window/window_manager/utils/include",
+    "//foundation/window/window_manager/interfaces/innerkits/dm",
   ]
 }
 
@@ -105,7 +105,7 @@ ohos_shared_library("thermalservice") {
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//foundation/resourceschedule/resource_schedule_service/soc_perf:socperf_client",
-    "//foundation/windowmanager/utils:libwmutil",
+    "//foundation/window/window_manager/utils:libwmutil",
     "//third_party/libxml2:xml2",
     "//utils/native/base:utils",
   ]
