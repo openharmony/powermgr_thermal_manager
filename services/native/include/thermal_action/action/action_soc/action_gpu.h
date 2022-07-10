@@ -29,6 +29,7 @@ public:
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
+    virtual void SetProtocol(const std::string& protocol) override;
     bool GetStrict()
     {
         return flag_;

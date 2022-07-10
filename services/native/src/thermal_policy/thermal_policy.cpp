@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,8 @@
 #include "thermal_policy.h"
 
 #include <algorithm>
+#include "action_charger.h"
+#include "action_voltage.h"
 #include "constants.h"
 #include "file_operation.h"
 #include "thermal_common.h"
@@ -122,6 +124,9 @@ void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevel
         THERMAL_HILOGW(COMP_SVC, "failed to execute action");
         return;
     }
+
+    ActionCharger::ExecuteCurrentLimit();
+    ActionVoltage::ExecuteVoltageLimit();
 }
 
 void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
@@ -130,11 +135,12 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
     g_xmlActionMap.erase(g_xmlActionMap.begin(), g_xmlActionMap.end());
 
     for (auto action = vAction.begin(); action != vAction.end(); action++) {
+        THERMAL_HILOGD(COMP_SVC, "actionName: %{public}s", action->actionName.c_str());
         g_xmlActionMap.insert(std::make_pair(action->actionName, std::stoi(action->actionValue)));
         ThermalActionManager::ThermalActionMap actionMap = g_service->GetActionManagerObj()->GetActionMap();
         auto actionIter = actionMap.find(action->actionName);
         if (actionIter != actionMap.end()) {
-            THERMAL_HILOGD(COMP_SVC, "actoinIterName = %{public}s", actionIter->first.c_str());
+            THERMAL_HILOGD(COMP_SVC, "action Iter Name = %{public}s", actionIter->first.c_str());
             if (actionIter->second == nullptr) {
                 THERMAL_HILOGE(COMP_SVC, "action instance is nullptr");
                 continue;
@@ -144,7 +150,7 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
                 if (StateMachineDecision(action->mActionProp)) {
                     actionIter->second->AddActionValue(action->actionValue);
                 } else {
-                    THERMAL_HILOGE(COMP_SVC, "failed to decide state");
+                    THERMAL_HILOGW(COMP_SVC, "failed to decide state");
                 }
             } else {
                 THERMAL_HILOGD(COMP_SVC, "add action value");

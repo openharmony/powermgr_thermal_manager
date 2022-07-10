@@ -313,6 +313,11 @@ void ThermalSrvConfigParser::ParseActionNode(xmlNodePtr node)
                 ai.params = (char *) param;
                 xmlFree(param);
             }
+            xmlChar* protocol = xmlGetProp(cur, BAD_CAST("protocol"));
+            if (protocol != nullptr) {
+                ai.protocol = (char *) protocol;
+                xmlFree(protocol);
+            }
             xmlChar* strict = xmlGetProp(cur, BAD_CAST("strict"));
             if (strict != nullptr) {
                 std::string strictValue = (char *)strict;
@@ -321,9 +326,11 @@ void ThermalSrvConfigParser::ParseActionNode(xmlNodePtr node)
                 }
                 xmlFree(strict);
             }
+
             THERMAL_HILOGD(COMP_SVC,
-                "ai.name: %{public}s, ai.strict: %{public}d, ai.params: %{public}s",
-                ai.name.c_str(), ai.strict, ai.params.c_str());
+                "ai.name: %{public}s, ai.strict: %{public}d, ai.params: %{public}s, ai.strict: %{public}s",
+                ai.name.c_str(), ai.strict, ai.params.c_str(), ai.protocol.c_str());
+
             vActionItem.push_back(ai);
         }
         cur = cur->next;

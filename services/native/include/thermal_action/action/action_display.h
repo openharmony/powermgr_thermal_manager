@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,7 @@ public:
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-
+    virtual void SetProtocol(const std::string& protocol) override;
     uint32_t DisplayRequest(uint32_t brightness);
     uint32_t DisplayExecution(uint32_t brightness);
     std::string GetParams()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,13 +25,14 @@
 #include "action_shutdown.h"
 #include "action_thermal_level.h"
 #include "action_popup.h"
+#include "action_voltage.h"
 #include "string_operation.h"
 #include "constants.h"
 #include "thermal_common.h"
 
 namespace OHOS {
 namespace PowerMgr {
-std::shared_ptr<IThermalAction> ThermalActionFactory::Create(std::string &actionName)
+std::shared_ptr<IThermalAction> ThermalActionFactory::Create(const std::string& actionName)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     if (StringOperation::Compare(actionName, CPU_BIG_ACTION_NAME)) {
@@ -44,8 +45,6 @@ std::shared_ptr<IThermalAction> ThermalActionFactory::Create(std::string &action
         return std::make_shared<ActionGpu>();
     } else if (StringOperation::Compare(actionName, LCD_ACTION_NAME)) {
         return std::make_shared<ActionDisplay>();
-    } else if (StringOperation::Compare(actionName, CHARGER_ACTION_NAME)) {
-        return std::make_shared<ActionCharger>();
     } else if (StringOperation::Compare(actionName, SHUTDOWN_ACTION_NAME)) {
         return std::make_shared<ActionShutdown>();
     } else if (StringOperation::Compare(actionName, PROCESS_ACTION_NAME)) {
@@ -54,6 +53,14 @@ std::shared_ptr<IThermalAction> ThermalActionFactory::Create(std::string &action
         return std::make_shared<ActionThermalLevel>();
     }  else if (StringOperation::Compare(actionName, POPUP_ACTION_NAME)) {
         return std::make_shared<ActionPopup>();
+    } else if (StringOperation::Compare(actionName, CURRENT_SC_ACTION_NAME)) {
+        return std::make_shared<ActionCharger>();
+    } else if (StringOperation::Compare(actionName, CURRENT_BUCK_ACTION_NAME)) {
+        return std::make_shared<ActionCharger>();
+    } else if (StringOperation::Compare(actionName, VOLATAGE_SC_ACTION_NAME)) {
+        return std::make_shared<ActionVoltage>();
+    } else if (StringOperation::Compare(actionName, VOLATAGE_BUCK_ACTION_NAME)) {
+        return std::make_shared<ActionVoltage>();
     } else {
         return nullptr;
     }

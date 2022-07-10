@@ -37,6 +37,10 @@ void ActionCpuBig::SetStrict(bool flag)
     flag_ = flag;
 }
 
+void ActionCpuBig::SetProtocol(const std::string& protocol)
+{
+}
+
 void ActionCpuBig::AddActionValue(std::string value)
 {
     if (value.empty()) return;

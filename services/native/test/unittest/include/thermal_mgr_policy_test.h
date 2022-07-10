@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,6 +43,10 @@ const std::string CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
 const std::string GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
 const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
 const std::string SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
+const std::string SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
+const std::string BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
+const std::string SC_VOLTAGE_PATH = "/data/service/el0/thermal/config/sc_voltage";
+const std::string BUCK_VOLTAGE_PATH = "/data/service/el0/thermal/config/buck_voltage";
 class ThermalMgrPolicyTest : public testing::Test {
 public:
     static void SetUpTestCase();

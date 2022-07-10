@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include "file_operation.h"
 #include "thermal_action_factory.h"
 #include "securec.h"
+#include "string_operation.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -28,17 +29,24 @@ const int ARG_1 = 1;
 bool ThermalActionManager::Init()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-
     for (auto item = vActionItem_.begin(); item != vActionItem_.end(); ++item) {
         THERMAL_HILOGI(COMP_SVC, "ThermalActionManager name = %{public}s", item->name.c_str());
-        std::shared_ptr<IThermalAction> thermalAction = ThermalActionFactory::Create(item->name);
-        if (thermalAction == nullptr) {
-            THERMAL_HILOGE(COMP_SVC, "failed to create action");
-            break;
+        if (!item->protocol.empty()) {
+            std::vector<std::string> protocolList;
+            StringOperation::SplitString(item->protocol, protocolList, ",");
+            if (protocolList.empty()) {
+                THERMAL_HILOGW(COMP_SVC, "protocolList is empty");
+                continue;
+            }
+
+            for (auto& iter : protocolList) {
+                std::string str = item->name;
+                std::string combinedActionName = str.append("_").append(iter.c_str());
+                InsertActionMap(combinedActionName, iter, item->params, item->strict);
+            }
+        } else {
+            InsertActionMap(item->name, item->protocol, item->params, item->strict);
         }
-        thermalAction->InitParams(item->params);
-        thermalAction->SetStrict(item->strict);
-        actionMap_.emplace(std::pair(item->name, thermalAction));
     }
 
     if (actionThermalLevel_ == nullptr) {
@@ -49,6 +57,20 @@ bool ThermalActionManager::Init()
     }
     CreateActionMockFile();
     return true;
+}
+
+void ThermalActionManager::InsertActionMap(const std::string& actionName,
+    const std::string& protocol, const std::string& params, bool strict)
+{
+    std::shared_ptr<IThermalAction> thermalAction = ThermalActionFactory::Create(actionName);
+    if (thermalAction == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "failed to create action");
+        return;
+    }
+    thermalAction->SetProtocol(protocol);
+    thermalAction->InitParams(params);
+    thermalAction->SetStrict(strict);
+    actionMap_.emplace(actionName, thermalAction);
 }
 
 void ThermalActionManager::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
@@ -82,7 +104,8 @@ int32_t ThermalActionManager::CreateActionMockFile()
     char stateFileBuf[MAX_PATH] = {0};
     std::string action = "config";
     std::string state = "state";
-    std::vector<std::string> actionValueList = {"lcd", "process_ctrl", "configLevel", "shut_down"};
+    std::vector<std::string> actionValueList = {"lcd", "process_ctrl", "configLevel", "shut_down", "sc_current",
+        "buck_current", "sc_voltage", "buck_voltage"};
     std::vector<std::string> stateValueList = {"scene", "screen", "charge"};
     int32_t ret = -1;
     for (auto iter : actionValueList) {
