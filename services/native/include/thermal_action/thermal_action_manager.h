@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,7 @@ namespace PowerMgr {
 struct ActionItem {
     std::string name;
     std::string params;
+    std::string protocol;
     bool strict = false;
 };
 
@@ -36,8 +37,8 @@ class ThermalActionManager {
 public:
     using ThermalActionMap = std::map<std::string, std::shared_ptr<IThermalAction>>;
     bool Init();
-    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback);
-    void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback);
+    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
+    void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     uint32_t GetThermalLevel();
     void SetActionItem(std::vector<ActionItem> vActionItem)
     {
@@ -54,6 +55,8 @@ public:
 
     int32_t CreateActionMockFile();
 private:
+    void InsertActionMap(const std::string& actionName,
+        const std::string& protocol, const std::string& params, bool strict);
     ThermalActionMap actionMap_;
     std::vector<std::string> actionNameList_;
     std::shared_ptr<ActionThermalLevel> actionThermalLevel_;

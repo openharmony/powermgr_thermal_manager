@@ -172,7 +172,7 @@ bool ThermalService::InitModules()
     }
 
     if (!InitActionManager()) {
-        THERMAL_HILOGE(COMP_SVC, "actiom manager init fail");
+        THERMAL_HILOGE(COMP_SVC, "action manager init fail");
         return false;
     }
 
