@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,38 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef ACTION_POPUP_H
-#define ACTION_POPUP_H
+
+#ifndef ACTION_VOLATEG_H
+#define ACTION_VOLATEG_H
 
 #include "ithermal_action.h"
-#include "window_manager.h"
-#include "refbase.h"
+#include "v1_1/types.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionPopup : public IThermalAction {
+using namespace OHOS::HDI::Battery::V1_1;
+class ActionVoltage : public IThermalAction {
 public:
-    ActionPopup() = default;
-    ~ActionPopup() = default;
-    enum {
-        LOWER_TEMP = 1,
-        HIGHER_TEMP = 2
-    };
-    bool InitParams(const std::string &params) override;
+    ActionVoltage() = default;
+    ~ActionVoltage() = default;
+
+    bool InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     virtual void SetProtocol(const std::string& protocol) override;
-    bool ShowDialog(const std::string &params);
-    void HandlePopupEvent(const int32_t value);
-    void GetDisplayPosition(int32_t& width, int32_t& height);
+    int32_t SetVoltage(int32_t voltage);
+    int32_t WriteMockNode(int32_t mockValue);
+    static void ExecuteVoltageLimit();
 private:
     std::vector<uint32_t> valueList_;
     std::string params_;
     bool flag_;
     uint32_t lastValue_;
-    int32_t dialogId_ {-1};
+    std::string protocol_;
+    static std::vector<ChargingLimit> chargeLimitList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // ACTION_POPUP_H
+#endif // ACTION_CPU_H

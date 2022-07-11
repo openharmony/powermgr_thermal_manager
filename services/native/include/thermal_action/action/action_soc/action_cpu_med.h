@@ -28,6 +28,7 @@ public:
     bool InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
+    virtual void SetProtocol(const std::string& protocol) override;
     virtual void Execute() override;
     int32_t CpuRuquest(uint32_t freq);
 private:
