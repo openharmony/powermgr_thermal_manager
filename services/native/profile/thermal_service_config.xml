@@ -60,7 +60,8 @@
         <item name="cpu_lit" param="1.101,3.107"/>
         <item name="gpu" param="1.015,3.026"/>
         <item name="lcd" strict="1"/>
-        <item name="current"/>
+        <item name="current" protocol="sc,buck"/>
+        <item name="voltage" protocol="sc,buck"/>
         <item name="process_ctrl" param="32,64,128,256"/>
         <item name="shut_down"/>
         <item name="thermallevel"/>
@@ -81,8 +82,11 @@
             <gpu screen="0">524288</gpu>
             <gpu screen="1">512000</gpu>
             <thermallevel>1</thermallevel>
-            <current>1800</current>
-            <current scene="cam,call">1200</current>
+            <current_sc>1800</current_sc>
+            <current_sc scene="cam,call">1200</current_sc>
+            <current_buck>1200</current_buck>
+            <voltage_sc>4000</voltage_sc>
+            <voltage_buck>3000</voltage_buck>
         </config>
         <config name="base_safe" level="2">
             <lcd>155</lcd>
@@ -94,9 +98,12 @@
             <cpu_big scene="cam" charge="0">1990600</cpu_big>
             <gpu screen="0">499712</gpu>
             <gpu screen="1">487424</gpu>
-            <current>1500</current>
             <thermallevel>2</thermallevel>
-            <current scene="cam,call">1000</current>
+            <current_sc>1500</current_sc>
+            <current_sc scene="cam,call">1000</current_sc>
+            <current_buck>1000</current_buck>
+            <voltage_sc>3000</voltage_sc>
+            <voltage_buck>2000</voltage_buck>
         </config>
         <config name="base_safe" level="3">
             <lcd>120</lcd>
@@ -108,9 +115,12 @@
             <cpu_big scene="cam" charge="0">1989600</cpu_big>
             <gpu screen="0">475136</gpu>
             <gpu screen="1">462848</gpu>
-            <current>1300</current>
-            <current scene="cam,call">800</current>
             <thermallevel>3</thermallevel>
+            <current_sc>1300</current_sc>
+            <current_sc scene="cam,call">800</current_sc>
+            <current_buck>800</current_buck>
+            <voltage_sc>2000</voltage_sc>
+            <voltage_buck>1000</voltage_buck>
             <shut_down>1</shut_down>
         </config>
         <config name="warm_5G" level="1">
@@ -129,15 +139,15 @@
             <thermallevel>6</thermallevel>
         </config>
         <config name="cold_safe" level="1">
-            <current>1850</current>
+            <current_sc>1850</current_sc>
             <thermallevel>0</thermallevel>
         </config>
         <config name="cold_safe" level="2">
-            <current>1550</current>
+            <current_sc>1550</current_sc>
             <thermallevel>0</thermallevel>
         </config>
         <config name="cold_safe" level="3">
-            <current>1150</current>
+            <current_sc>1150</current_sc>
             <thermallevel>0</thermallevel>
         </config>
     </policy>

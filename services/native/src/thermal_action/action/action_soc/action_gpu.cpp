@@ -41,6 +41,10 @@ void ActionGpu::AddActionValue(std::string value)
     valueList_.push_back(atoi(value.c_str()));
 }
 
+void ActionGpu::SetProtocol(const std::string& protocol)
+{
+}
+
 void ActionGpu::Execute()
 {
     uint32_t value = lastValue_;

@@ -1,5 +1,5 @@
-    /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+/*
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,11 +26,14 @@ namespace PowerMgr {
     const std::string CPU_LIT_ACTION_NAME = "cpu_lit";
     const std::string GPU_ACTION_NAME = "gpu";
     const std::string LCD_ACTION_NAME = "lcd";
-    const std::string CHARGER_ACTION_NAME = "current";
     const std::string SHUTDOWN_ACTION_NAME = "shut_down";
     const std::string PROCESS_ACTION_NAME = "process_ctrl";
     const std::string THERMAL_LEVEL_NAME = "thermallevel";
     const std::string POPUP_ACTION_NAME = "popup";
+    const std::string CURRENT_SC_ACTION_NAME = "current_sc";
+    const std::string CURRENT_BUCK_ACTION_NAME = "current_buck";
+    const std::string VOLATAGE_SC_ACTION_NAME = "voltage_sc";
+    const std::string VOLATAGE_BUCK_ACTION_NAME = "voltage_buck";
     // state name
     const std::string STATE_CHARGER = "charge";
     const std::string STATE_SCREEN = "screen";
@@ -43,7 +46,8 @@ namespace PowerMgr {
     const int MIN = 0;
     const int MAX = 3;
     const int INTERVAL = 5000;
-
+    const std::string SC_PROTOCOL = "sc";
+    const std::string BUCK_PROTOCOL = "buck";
     constexpr int TIME_TO_SLEEP = 1000;
     constexpr int32_t INVAILD_TEMP = -1000;
     constexpr int32_t INVALID_ACTION_VALUE = -2147483648;

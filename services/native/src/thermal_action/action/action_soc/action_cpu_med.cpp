@@ -37,6 +37,10 @@ void ActionCpuMed::SetStrict(bool flag)
     flag_ = flag;
 }
 
+void ActionCpuMed::SetProtocol(const std::string& protocol)
+{
+}
+
 void ActionCpuMed::AddActionValue(std::string value)
 {
     if (value.empty()) return;
