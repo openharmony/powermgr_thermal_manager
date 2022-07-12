@@ -24,22 +24,22 @@ The thermal manager provides the device temperature management and control capab
 /base/powermgr/thermal_manager
 ├── application                  # Native application
 │   └── protector                # Thermal Protector code
-├── etc                          # init configuration
-├── figures                      # Figures
-├── frameworks                   # NAPIs
-├── hdi                          # Thermal HDI code
-│   ├── api                      # APIs
-│   ├── client                   # Client code
-│   └── service                  # Service code
+├── etc                          # Init configuration
+├── figures                      # Architecture diagram
+├── frameworks                   # Architecture layer
+│   ├── dialog                   # Dialog
+│   ├── napi                     # NAPI layer
+│   └── native                   # Native layer
 ├── interface                    # APIs
 │   ├── innerkits                # Internal APIs
 │   └── kits                     # External APIs
 ├── sa_profile                   # SA profile
 ├── services                     # Thermal Service code
 │   ├── native                   # Native APIs
-│   ├── test                     # Unit test code
-│   └── zidl                     # zidl APIs
+│   └── zidl                     # Zidl APIs
 ├── test                         # Test code
+│   ├── fuzztest                 # Fuzz test
+│   └── systemtest               # Systemtest
 └── utils                        # Utilities
 ```
 
@@ -112,69 +112,6 @@ thermal                          # Root directory. Wherein, version indicates th
         └── <action_name>        # action name corresponding to the action value. The state condition and its value can be configured in this attribute.
 ```
 
-**2. thermal\_hdi\_config.xml**
-Configuration example:
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<thermal version="0.99" product="ipx">
-    <base>
-        <item tag="xxx" value="3"/>
-    </base>
-    <polling>
-        <group name="v1" interval="5000">
-            <thermal_zone type="skin" replace="shell"/>
-            <thermal_zone type="soc"/>
-            <thermal_node type="charger" path="/sys/module/thermal/param/chg_thermal"/>
-            <thermal_zone type="battery"/>
-        </group>
-    </polling>
-</thermal>
-```
-Directory structure:
-```
-thermal                          # Root directory. Wherein, version indicates the version number, and product indicates the product name.
-├── base                         # base directory, used to configure basic parameters.
-│   └── item                     # item directory. Wherein, tag indicates the configuration tag, and value indicates the configuration value.
-└── polling                      # polling directory, used to configure the temperature reporting information
-    └── group                    # group directory, used to configure the temperature reporting group. Wherein, name indicates the group name, and interval indicates the polling and reporting interval, in milliseconds.
-        ├── thermal_zone         # thermal_zone directory, used to configure the thermal zone reporting information. Wherein, type indicates the driver type, and replace (optional) indicates the name of the driver type to replace.
-        └── thermal_node         # thermal_node directory, used to configure driver node reporting information. Wherein, path indicates the node path.
-```
-
-**3. thermal\_protector\_config.xml**
-Configuration example:
-
-```
-<?xml version="1.0" encoding="utf-8"?>
-<thermal version="0.99" product="ipx">
-    <base>
-        <item tag="xxx" value="3"/>
-    </base>
-    <control>
-        <thermal_zone type="battery" interval="5000">
-            <item level="1" threshold="37000" threshold_clr="35000">
-                <current>1800</current>
-            </item>
-            <item level="2" threshold="40000" threshold_clr="38000">
-                <current>1500</current>
-                <voltage>5</voltage>
-            </item>
-        </thermal_zone>
-    </control>
-</thermal>
-
-```
-Directory structure:
-```
-thermal                          # Root directory. Wherein, version indicates the version number, and product indicates the product name.
-├── base                         # base directory, used to configure basic parameters.
-│   └── item                     # item directory. Wherein, tag indicates the configuration tag, and value indicates the configuration value.
-└── control                      # control directory, used to configure the temperature level and corresponding action.
-    └── thermal_zone             # thermal_zone directory, used to configure the thermal zone reporting information. Wherein, type indicates the driver type, and interval indicates the polling and reporting interval, in milliseconds.
-        └── item                 # item directory, used to configure the temperature level information. Wherein, level indicates the temperature level, threshold indicates the triggering temperature, and xxx_clr indicates the setback temperature.
-            └── <action_name>    # action name corresponding to the action value.
-```
 
 ## Repositories Involved<a name="section0056945904"></a>
 [Power Management Subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/power-management.md)

@@ -22,24 +22,24 @@
 ## 目录<a name="section0056945902"></a>
 ```
 /base/powermgr/thermal_manager
-├── application                  # native应用
+├── application                  # Native应用
 │   └── protector                # Thermal Protector代码
-├── etc                          # init配置
-├── figures                      # 图片
-├── frameworks                   # napi接口
-├── hdi                          # Thermal HDI代码
-│   ├── api                      # api接口
-│   ├── client                   # 客户端代码
-│   └── service                  # 服务代码
+├── etc                          # Init配置
+├── figures                      # 架构图
+├── frameworks                   # Framework层
+│   ├── dialog                   # 对话框
+│   ├── napi                     # NAPI层
+│   └── native                   # Native层
 ├── interface                    # 接口
 │   ├── innerkits                # 内部接口
 │   └── kits                     # 外部接口
 ├── sa_profile                   # SA配置文件
 ├── services                     # Thermal Service代码
-│   ├── native                   # native层
-│   ├── test                     # 单元测试代码
-│   └── zidl                     # zidl层
+│   ├── native                   # Native层
+│   └── zidl                     # Zidl层
 ├── test                         # 测试代码
+│   ├── fuzztest                 # Fuzz测试
+│   └── systemtest               # 系统测试
 └── utils                        # 工具和通用层
 ```
 
@@ -112,69 +112,6 @@ thermal                          # 根目录，version为版本号；product为�
         └── <action_name>        # 标签值对应动作的动作值，属性中可以配置state条件及对应的值
 ```
 
-**2）thermal_hdi_config.xml**
-配置示例：
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<thermal version="0.99" product="ipx">
-    <base>
-        <item tag="xxx" value="3"/>
-    </base>
-    <polling>
-        <group name="v1" interval="5000">
-            <thermal_zone type="skin" replace="shell"/>
-            <thermal_zone type="soc"/>
-            <thermal_node type="charger" path="/sys/module/thermal/param/chg_thermal"/>
-            <thermal_zone type="battery"/>
-        </group>
-    </polling>
-</thermal>
-```
-目录说明：
-```
-thermal                          # 根目录，version为版本号；product为产品名
-├── base                         # base目录，配置基本参数
-│   └── item                     # item目录，tag为配置标签，value为配置值；
-└── polling                      # polling目录，配置温度上报信息
-    └── group                    # group目录，配置上报组，name为组名，interval为轮询上报周期，单位ms
-        ├── thermal_zone         # thermal_zone目录，配置thermal zone上报，type对应该驱动的type，replace（可选）为替换的type名
-        └── thermal_node         # thermal_node目录，配置驱动节点上报，path为节点路径
-```
-
-**3）thermal_protector_config.xml**
-配置示例：
-
-```
-<?xml version="1.0" encoding="utf-8"?>
-<thermal version="0.99" product="ipx">
-    <base>
-        <item tag="xxx" value="3"/>
-    </base>
-    <control>
-        <thermal_zone type="battery" interval="5000">
-            <item level="1" threshold="37000" threshold_clr="35000">
-                <current>1800</current>
-            </item>
-            <item level="2" threshold="40000" threshold_clr="38000">
-                <current>1500</current>
-                <voltage>5</voltage>
-            </item>
-        </thermal_zone>
-    </control>
-</thermal>
-
-```
-目录说明：
-```
-thermal                          # 根目录，version为版本号；product为产品名
-├── base                         # base目录，配置基本参数
-│   └── item                     # item目录，tag为配置标签，value为配置值；
-└── control                      # control，配置温度档位及动作
-    └── thermal_zone             # thermal_zone目录，type为对应类型，interval为轮询上报周期，单位ms
-        └── item                 # item目录，配置具体档位信息，level为等级，threshold为触发温度，xxx_clr为回退温度
-            └── <action_name>    # 标签值对应动作的动作值
-```
 
 ## 相关仓<a name="section0056945904"></a>
 [电源管理子系统](https://gitee.com/openharmony/docs/blob/master/zh-cn/readme/%E7%94%B5%E6%BA%90%E7%AE%A1%E7%90%86%E5%AD%90%E7%B3%BB%E7%BB%9F.md)
