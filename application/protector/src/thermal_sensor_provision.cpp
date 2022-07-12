@@ -78,13 +78,13 @@ int32_t ThermalSensorProvision::ReadSysfsFile(const char* path, char* buf, size_
     int32_t readSize;
     int32_t fd = open(path, O_RDONLY);
     if (fd < NUM_ZERO) {
-        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to open %{public}s", path);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to open %{private}s", path);
         return ERR_INVALID_OPERATION;
     }
 
     readSize = read(fd, buf, size - 1);
     if (readSize < NUM_ZERO) {
-        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to read %{public}s", path);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to read %{private}s", path);
         close(fd);
         return ERR_INVALID_OPERATION;
     }
@@ -118,7 +118,7 @@ void ThermalSensorProvision::FormatThermalSysfsPaths(struct ThermalSysfsPathInfo
     FormatThermalPaths(tzSysPathInfo_.typePath, sizeof(tzSysPathInfo_.typePath),
         THEERMAL_TYPE_PATH.c_str(), pTSysPathInfo->name);
 
-    THERMAL_HILOGI(FEATURE_PROTECTOR, "temp path: %{public}s, type path: %{public}s ",
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "temp path: %{private}s, type path: %{private}s ",
         tzSysPathInfo_.tempPath, tzSysPathInfo_.typePath);
 
     tzSysPathInfo_.fd = pTSysPathInfo->fd;
