@@ -37,9 +37,9 @@ config("module_private_config") {
     "//foundation/graphic/ui/interfaces/kits",
     "//foundation/arkui/ace_engine/adapter/ohos/entrance",
     "//foundation/graphic/graphic_2d/interfaces/innerkits/wmclient/",
-    "//foundation/windowmanager/interfaces/innerkits/wm/",
+    "//foundation/window/window_manager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
-    "//foundation/windowmanager/utils/include",
+    "//foundation/window/window_manager/utils/include",
   ]
 }
 
