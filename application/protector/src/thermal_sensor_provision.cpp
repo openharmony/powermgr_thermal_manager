@@ -165,6 +165,7 @@ int32_t ThermalSensorProvision::InitThermalZoneSysfs()
             THERMAL_HILOGI(FEATURE_PROTECTOR, "init sysfs info of %{public}s", sysfsInfo.name);
             int32_t ret = sscanf_s(sysfsInfo.name, THERMAL_ZONE_DIR_NAME.c_str(), &id);
             if (ret < ARG_0) {
+                closedir(dir);
                 return ret;
             }
 
