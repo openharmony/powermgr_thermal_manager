@@ -13,9 +13,13 @@
  * limitations under the License.
  */
 #include "cpu_action.h"
+#include <string>
+#include <iosfwd>
 #include <climits>
 #include "securec.h"
-#include "thermal_common.h"
+#include "errors.h"
+#include "thermal_log.h"
+#include "thermal_protector_util.h"
 
 namespace OHOS {
 namespace PowerMgr {

@@ -14,7 +14,7 @@
  */
 
 #include "protector_thermal_zone_info.h"
-#include "thermal_common.h"
+#include "thermal_log.h"
 
 namespace OHOS {
 namespace PowerMgr {
