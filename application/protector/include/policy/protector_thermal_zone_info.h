@@ -18,6 +18,8 @@
 
 #include <string>
 #include <vector>
+#include <stdint.h>
+#include "iosfwd"
 #include "thermal_sensor_provision.h"
 
 namespace OHOS {
