@@ -57,29 +57,12 @@ CommonEventThermalLevelTest::CommonEventThermalLevelTest
 void CommonEventThermalLevelTest::OnReceiveEvent(const CommonEventData &data)
 {
     THERMAL_HILOGD(LABEL_TEST, "CommonEventThermalLevelTest: OnReceiveEvent Enter \n");
-    int cool = -1;
-    int normal = -1;
-    int warm = -1;
-    int hot = -1;
-    int overheated = -1;
-    int warning = -1;
-    int emergency = -1;
+    int invalidLevel = -1;
     std::string action = data.GetWant().GetAction();
     if (action == CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED) {
-        data.GetWant().GetIntParam(THERMAL_LEVEL_COOL, cool);
-        GTEST_LOG_(INFO) << "cool: " << cool;
-        data.GetWant().GetIntParam(THERMAL_LEVEL_NORMAL, normal);
-        GTEST_LOG_(INFO) << "normal: " << normal;
-        data.GetWant().GetIntParam(THERMAL_LEVEL_WARM, warm);
-        GTEST_LOG_(INFO) << "warm: " << warm;
-        data.GetWant().GetIntParam(THERMAL_LEVEL_HOT, hot);
-        GTEST_LOG_(INFO) << "hot: " << hot;
-        data.GetWant().GetIntParam(THERMAL_LEVEL_OVERHEATED, overheated);
-        GTEST_LOG_(INFO) << "overheated: " << overheated;
-        data.GetWant().GetIntParam(THERMAL_LEVEL_WARNING, warning);
-        GTEST_LOG_(INFO) << "warning: " << warning;
-        data.GetWant().GetIntParam(THERMAL_LEVEL_EMERGENCY, emergency);
-        GTEST_LOG_(INFO) << "emergency: " << emergency;
+        std::string key = ToString(static_cast<int32_t>(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED));
+        int32_t level = data.GetWant().GetIntParam(key, invalidLevel);
+        GTEST_LOG_(INFO) << "thermal level: " << level;
     }
 }
 
