@@ -187,7 +187,7 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
     level_ = level;
     THERMAL_HILOGI(COMP_SVC, "level = %{public}d", level_);
     // Send Notification event
-    SendThermalLevelEvents(level_);
+    PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, level_);
 
     // Call back all level listeners
     for (auto& listener : thermalLevelListeners_) {
@@ -198,80 +198,20 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
     HiSysEvent::Write("THERMAL", "THERMAL_LEVEL_CHANGED", HiSysEvent::EventType::STATISTIC, "LEVEL", level);
 }
 
-/**
- * @brief publish thermal level to other subsystem
- *
- * @param eventAction thermal level change common event
- * @param code thermal level mode
- * @param data thermal level value
- */
-bool ActionThermalLevel::PublishEvent(const std::string &eventAction, const int &code, const std::string &data)
+bool ActionThermalLevel::PublishLevelChangedEvents(ThermalCommonEventCode code, int32_t level)
 {
-    THERMAL_HILOGI(COMP_SVC, "publish event: %{public}s, code: %{public}d, data:%{public}s",
-        eventAction.c_str(), code, data.c_str());
     Want want;
-    want.SetParam(data, code);
-    want.SetAction(eventAction);
+    want.SetParam(ToString(static_cast<int32_t>(code)), level);
+    want.SetAction(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED);
     CommonEventData commonData;
     commonData.SetWant(want);
     CommonEventPublishInfo publishInfo;
     publishInfo.SetOrdered(false);
     if (!CommonEventManager::PublishCommonEvent(commonData, publishInfo)) {
-        THERMAL_HILOGE(COMP_SVC,
-            "failed to publish thermal level change event: %{public}s, code:%{public}d",
-            eventAction.c_str(), code);
+        THERMAL_HILOGE(COMP_SVC, "failed to publish thermal level change event");
         return false;
     }
     return true;
-}
-
-bool ActionThermalLevel::PushlishLevelChangedEvents(const int &code, const std::string &data)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    bool ret = PublishEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, code, data);
-    if (!ret) {
-        THERMAL_HILOGE(COMP_SVC, "publish level event");
-        return false;
-    }
-    return true;
-}
-
-void ActionThermalLevel::SendThermalLevelEvents(int32_t level)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    switch (static_cast<ThermalLevel>(level)) {
-        case ThermalLevel::COOL: {
-            PushlishLevelChangedEvents(level, THERMAL_LEVEL_COOL);
-            break;
-        }
-        case ThermalLevel::NORMAL: {
-            PushlishLevelChangedEvents(level, THERMAL_LEVEL_NORMAL);
-            break;
-        }
-        case ThermalLevel::WARM: {
-            PushlishLevelChangedEvents(level, THERMAL_LEVEL_WARM);
-            break;
-        }
-        case ThermalLevel::HOT: {
-            PushlishLevelChangedEvents(level, THERMAL_LEVEL_HOT);
-            break;
-        }
-        case ThermalLevel::OVERHEATED: {
-            PushlishLevelChangedEvents(level, THERMAL_LEVEL_OVERHEATED);
-            break;
-        }
-        case ThermalLevel::WARNING: {
-            PushlishLevelChangedEvents(level, THERMAL_LEVEL_WARNING);
-            break;
-        }
-        case ThermalLevel::EMERGENCY: {
-            PushlishLevelChangedEvents(level, THERMAL_LEVEL_EMERGENCY);
-            break;
-        }
-        default: {
-            break;
-        }
-    }
 }
 } // namespace PowerMgr
 } // namespace OHOS
