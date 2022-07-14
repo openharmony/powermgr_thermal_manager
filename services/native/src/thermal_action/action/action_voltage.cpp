@@ -120,13 +120,13 @@ int32_t ActionVoltage::WriteMockNode(int32_t mockValue)
     int32_t ret = -1;
     char buf[MAX_PATH] = {0};
     if (protocol_ == SC_PROTOCOL) {
-        ret = snprintf_s(buf, PATH_MAX, sizeof(buf) - 1, SC_VOLTAGE_PATH.c_str());
-        if (ret < ERR_OK) {
+        ret = snprintf_s(buf, MAX_PATH, sizeof(buf) - 1, SC_VOLTAGE_PATH.c_str());
+        if (ret < EOK) {
             return ret;
         }
     } else if (protocol_ == BUCK_PROTOCOL) {
-        ret = snprintf_s(buf, PATH_MAX, sizeof(buf) - 1, BUCK_VOLTAGE_PATH.c_str());
-        if (ret < ERR_OK) {
+        ret = snprintf_s(buf, MAX_PATH, sizeof(buf) - 1, BUCK_VOLTAGE_PATH.c_str());
+        if (ret < EOK) {
             return ret;
         }
     }

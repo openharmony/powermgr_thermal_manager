@@ -94,8 +94,8 @@ uint32_t ActionShutdown::ShutdownExecution(bool isShutdown)
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char shutdownBuf[MAX_PATH] = {0};
-    ret = snprintf_s(shutdownBuf, PATH_MAX, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
-    if (ret < ERR_OK) {
+    ret = snprintf_s(shutdownBuf, MAX_PATH, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
+    if (ret < EOK) {
         return ret;
     }
     std::string valueString = std::to_string(isShutdown) + "\n";
