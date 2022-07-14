@@ -28,19 +28,13 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string lcdPath = "/data/service/el0/thermal/config/lcd";
 const int MAX_PATH = 256;
 }
-bool ActionDisplay::InitParams(const std::string &params)
+void ActionDisplay::InitParams(const std::string& params)
 {
-    params_ = params;
-    return true;
 }
 
 void ActionDisplay::SetStrict(bool flag)
 {
     flag_ = flag;
-}
-
-void ActionDisplay::SetProtocol(const std::string& protocol)
-{
 }
 
 void ActionDisplay::AddActionValue(std::string value)

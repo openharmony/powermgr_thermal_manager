@@ -27,19 +27,13 @@ namespace {
 constexpr int UI_DIALOG_POWER_WIDTH_NARROW = 400;
 constexpr int UI_DIALOG_POWER_HEIGHT_NARROW = 240;
 }
-bool ActionPopup::InitParams(const std::string &params)
+void ActionPopup::InitParams(const std::string& params)
 {
-    params_ = params;
-    return true;
 }
 
 void ActionPopup::SetStrict(bool flag)
 {
     flag_ = flag;
-}
-
-void ActionPopup::SetProtocol(const std::string& protocol)
-{
 }
 
 void ActionPopup::AddActionValue(std::string value)

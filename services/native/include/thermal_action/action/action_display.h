@@ -25,20 +25,14 @@ public:
     ActionDisplay() = default;
     ~ActionDisplay() = default;
 
-    bool InitParams(const std::string &params) override;
+    void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    virtual void SetProtocol(const std::string& protocol) override;
     uint32_t DisplayRequest(uint32_t brightness);
     uint32_t DisplayExecution(uint32_t brightness);
-    std::string GetParams()
-    {
-        return params_;
-    }
 private:
     std::vector<uint32_t> valueList_;
-    std::string params_;
     bool flag_;
     uint32_t lastValue_;
 };

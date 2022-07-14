@@ -25,11 +25,10 @@ public:
     ActionGpu() = default;
     ~ActionGpu() = default;
 
-    bool InitParams(const std::string& params) override;
+    void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    virtual void SetProtocol(const std::string& protocol) override;
     bool GetStrict()
     {
         return flag_;
@@ -37,7 +36,6 @@ public:
     int32_t GpuRequest(uint32_t freq);
 private:
     std::vector<uint32_t> valueList_;
-    std::string params_;
     bool flag_;
     uint32_t lastValue_;
 };
