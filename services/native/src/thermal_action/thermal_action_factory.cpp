@@ -32,39 +32,38 @@
 
 namespace OHOS {
 namespace PowerMgr {
+namespace {
+std::map<std::string, std::shared_ptr<IThermalAction>> g_actionMap;
+}
+void ThermalActionFactory::InitFactory()
+{
+    g_actionMap.clear();
+    g_actionMap.insert(std::make_pair(CPU_BIG_ACTION_NAME, std::make_shared<ActionCpuBig>()));
+    g_actionMap.insert(std::make_pair(CPU_MED_ACTION_NAME, std::make_shared<ActionCpuMed>()));
+    g_actionMap.insert(std::make_pair(CPU_LIT_ACTION_NAME, std::make_shared<ActionCpuLit>()));
+    g_actionMap.insert(std::make_pair(GPU_ACTION_NAME, std::make_shared<ActionGpu>()));
+    g_actionMap.insert(std::make_pair(LCD_ACTION_NAME, std::make_shared<ActionDisplay>()));
+    g_actionMap.insert(std::make_pair(SHUTDOWN_ACTION_NAME, std::make_shared<ActionShutdown>()));
+    g_actionMap.insert(std::make_pair(PROCESS_ACTION_NAME, std::make_shared<ActionApplicationProcess>()));
+    g_actionMap.insert(std::make_pair(THERMAL_LEVEL_NAME, std::make_shared<ActionThermalLevel>()));
+    g_actionMap.insert(std::make_pair(POPUP_ACTION_NAME, std::make_shared<ActionPopup>()));
+    g_actionMap.insert(std::make_pair(CURRENT_SC_ACTION_NAME, std::make_shared<ActionCharger>()));
+    g_actionMap.insert(std::make_pair(CURRENT_BUCK_ACTION_NAME, std::make_shared<ActionCharger>()));
+    g_actionMap.insert(std::make_pair(VOLATAGE_SC_ACTION_NAME, std::make_shared<ActionVoltage>()));
+    g_actionMap.insert(std::make_pair(VOLATAGE_BUCK_ACTION_NAME, std::make_shared<ActionVoltage>()));
+}
+
 std::shared_ptr<IThermalAction> ThermalActionFactory::Create(const std::string& actionName)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (StringOperation::Compare(actionName, CPU_BIG_ACTION_NAME)) {
-        return std::make_shared<ActionCpuBig>();
-    } else if (StringOperation::Compare(actionName, CPU_MED_ACTION_NAME)) {
-        return std::make_shared<ActionCpuMed>();
-    } else if (StringOperation::Compare(actionName, CPU_LIT_ACTION_NAME)) {
-        return std::make_shared<ActionCpuLit>();
-    } else if (StringOperation::Compare(actionName, GPU_ACTION_NAME)) {
-        return std::make_shared<ActionGpu>();
-    } else if (StringOperation::Compare(actionName, LCD_ACTION_NAME)) {
-        return std::make_shared<ActionDisplay>();
-    } else if (StringOperation::Compare(actionName, SHUTDOWN_ACTION_NAME)) {
-        return std::make_shared<ActionShutdown>();
-    } else if (StringOperation::Compare(actionName, PROCESS_ACTION_NAME)) {
-        return std::make_shared<ActionApplicationProcess>();
-    } else if (StringOperation::Compare(actionName, THERMAL_LEVEL_NAME)) {
-        return std::make_shared<ActionThermalLevel>();
-    }  else if (StringOperation::Compare(actionName, POPUP_ACTION_NAME)) {
-        return std::make_shared<ActionPopup>();
-    } else if (StringOperation::Compare(actionName, CURRENT_SC_ACTION_NAME)) {
-        return std::make_shared<ActionCharger>();
-    } else if (StringOperation::Compare(actionName, CURRENT_BUCK_ACTION_NAME)) {
-        return std::make_shared<ActionCharger>();
-    } else if (StringOperation::Compare(actionName, VOLATAGE_SC_ACTION_NAME)) {
-        return std::make_shared<ActionVoltage>();
-    } else if (StringOperation::Compare(actionName, VOLATAGE_BUCK_ACTION_NAME)) {
-        return std::make_shared<ActionVoltage>();
-    } else {
-        return nullptr;
+    for (auto iter = g_actionMap.begin(); iter != g_actionMap.end(); ++iter) {
+        if (StringOperation::Compare(actionName, iter->first)) {
+            return iter->second;
+        }
     }
-    THERMAL_HILOGD(COMP_SVC, "Exit");
+
+    THERMAL_HILOGD(COMP_SVC, "create factory failed");
+    return nullptr;
 }
 } // namespace PowerMgr
 } // namespace OHOS
