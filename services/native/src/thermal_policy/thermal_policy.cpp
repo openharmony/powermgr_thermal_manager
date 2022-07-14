@@ -86,8 +86,8 @@ void ThermalPolicy::WriteLevel()
     }
     auto level = *max_element(levelList.begin(), levelList.end());
 
-    ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, levelPath.c_str());
-    if (ret < ERR_OK) {
+    ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, levelPath.c_str());
+    if (ret < EOK) {
         return;
     }
     std::string valueString = std::to_string(level) + "\n";
