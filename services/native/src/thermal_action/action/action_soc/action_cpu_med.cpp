@@ -26,19 +26,13 @@ constexpr int32_t LIM_CPU_MED_ID = 1003;
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
-bool ActionCpuMed::InitParams(const std::string& params)
+void ActionCpuMed::InitParams(const std::string& params)
 {
-    params_ = params;
-    return true;
 }
 
 void ActionCpuMed::SetStrict(bool flag)
 {
     flag_ = flag;
-}
-
-void ActionCpuMed::SetProtocol(const std::string& protocol)
-{
 }
 
 void ActionCpuMed::AddActionValue(std::string value)

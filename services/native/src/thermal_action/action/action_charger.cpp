@@ -32,20 +32,14 @@ const int MAX_PATH = 256;
 
 std::vector<ChargingLimit> ActionCharger::chargeLimitList_;
 
-bool ActionCharger::InitParams(const std::string &params)
+void ActionCharger::InitParams(const std::string& protocol)
 {
-    params_ = params;
-    return true;
+    protocol_ = protocol;
 }
 
 void ActionCharger::SetStrict(bool flag)
 {
     flag_ = flag;
-}
-
-void ActionCharger::SetProtocol(const std::string& protocol)
-{
-    protocol_ = protocol;
 }
 
 void ActionCharger::AddActionValue(std::string value)

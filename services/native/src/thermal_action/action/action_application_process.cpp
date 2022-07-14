@@ -47,13 +47,7 @@ bool ActionApplicationProcess::Init()
     return true;
 }
 
-bool ActionApplicationProcess::InitParams(const std::string& params)
-{
-    params_ = params;
-    return true;
-}
-
-void ActionApplicationProcess::SetProtocol(const std::string& protocol)
+void ActionApplicationProcess::InitParams(const std::string& params)
 {
 }
 
