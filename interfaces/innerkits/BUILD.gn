@@ -14,7 +14,7 @@
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 
 config("thermalsrv_private_config") {
-  include_dirs = [ "${thermal_manager_path}/services/zidl/include" ]
+  include_dirs = [ "${thermal_service_zidl}/include" ]
 }
 
 config("thermalsrv_public_config") {
@@ -22,8 +22,7 @@ config("thermalsrv_public_config") {
 }
 
 ohos_shared_library("thermalsrv_client") {
-  sources =
-      [ "${thermal_manager_path}/frameworks/native/thermal_mgr_client.cpp" ]
+  sources = [ "${thermal_frameworks}/native/thermal_mgr_client.cpp" ]
 
   configs = [
     "${utils_path}:utils_config",
@@ -32,7 +31,7 @@ ohos_shared_library("thermalsrv_client") {
 
   public_configs = [ ":thermalsrv_public_config" ]
 
-  deps = [ "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy" ]
+  deps = [ "${thermal_service_zidl}:thermalmgr_proxy" ]
 
   external_deps = [
     "ability_base:base",
@@ -51,8 +50,7 @@ ohos_shared_library("thermalsrv_client") {
 }
 
 ohos_shared_library("thermalmgr_listener") {
-  sources =
-      [ "${thermal_manager_path}/frameworks/native/thermal_mgr_listener.cpp" ]
+  sources = [ "${thermal_frameworks}/native/thermal_mgr_listener.cpp" ]
 
   configs = [
     "${utils_path}:utils_config",
@@ -62,8 +60,8 @@ ohos_shared_library("thermalmgr_listener") {
   public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
-    "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_proxy",
   ]
 
   external_deps = [
@@ -75,11 +73,4 @@ ohos_shared_library("thermalmgr_listener") {
 
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
-}
-
-group("thermalmgr_innerkits_native") {
-  deps = [
-    ":thermalmgr_listener",
-    ":thermalsrv_client",
-  ]
 }

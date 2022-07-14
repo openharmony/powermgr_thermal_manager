@@ -12,14 +12,6 @@
 # limitations under the License.
 
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
-import("//build/ohos.gni")
-
-config("thermal_protector_private_config") {
-  include_dirs = [
-    "//commonlibrary/c_utils/base/include/",
-    "//drivers/framework/include/",
-  ]
-}
 
 config("thermal_protector_public_config") {
   include_dirs = [
@@ -48,12 +40,7 @@ ohos_executable("thermal_protector") {
 
   public_configs = [ ":thermal_protector_public_config" ]
 
-  configs = [
-    "${utils_path}:utils_config",
-    ":thermal_protector_private_config",
-  ]
-
-  include_dirs = [ "//third_party/libxml2/include" ]
+  configs = [ "${utils_path}:utils_config" ]
 
   deps = [ "//third_party/libxml2:xml2" ]
 

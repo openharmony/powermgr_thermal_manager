@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
-import("//base/startup/appspawn/appspawn.gni")
 import("//build/test.gni")
 
 module_output_path = "thermal_manager/thermal_native"
@@ -21,6 +20,7 @@ deps_ex = [
   "ability_base:base",
   "ability_base:want",
   "eventhandler:libeventhandler",
+  "bundle_framework:appexecfwk_base",
   "ipc:ipc_core",
   "hiviewdfx_hilog_native:libhilog",
   "safwk:system_ability_fwk",
@@ -28,6 +28,9 @@ deps_ex = [
   "appspawn:appspawn_socket_client",
   "drivers_interface_thermal:libthermal_proxy_1.0",
   "c_utils:utils",
+  "power_manager:powermgr_client",
+  "window_manager:libwm",
+  "common_event_service:cesfwk_innerkits",
 ]
 
 ohos_systemtest("ThermalMgrInterfaceTest") {
@@ -39,7 +42,6 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
 
   include_dirs = [
     "include",
-    "//foundation/graphic/graphic_2d/utils/include/",
     "${thermal_manager_path}/services/native/include",
     "${thermal_manager_path}/services/native/include/thermal_action",
     "${thermal_manager_path}/services/native/include/thermal_observer",
@@ -47,28 +49,13 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
     "${thermal_manager_path}/services/zidl/include",
-    "//base/powermgr/display_manager/interfaces/innerkits/native/include/",
-    "//base/powermgr/display_manager/service/native/include/",
-    "//base/powermgr/display_manager/service/zidl/include/",
-    "//drivers/peripheral/display/interfaces/include/",
-    "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
-    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "${ability_runtime_services_path}/appmgr/include",
-    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
-    "//base/startup/appspawn/include/",
-    "//foundation/window/window_manager/interfaces/innerkits/wm/",
-    "//third_party/flutter/skia/",
-    "//foundation/window/window_manager/utils/include",
-    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_base/include/",
-    "//base/notification/common_event_service/interfaces/inner_api/",
   ]
 
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
-    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
-    "//base/powermgr/power_manager/services:powermgrservice",
-    "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -92,28 +79,11 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "${thermal_manager_path}/services/native/include/thermal_policy",
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
-    "//foundation/graphic/graphic_2d/utils/include/",
-    "//base/powermgr/display_manager/interfaces/innerkits/native/include/",
-    "//base/powermgr/display_manager/service/native/include/",
-    "//base/powermgr/display_manager/service/zidl/include/",
-    "//drivers/peripheral/display/interfaces/include/",
-    "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
-    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "${ability_runtime_services_path}/appmgr/include",
-    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
-    "//base/startup/appspawn/include/",
-    "//foundation/window/window_manager/interfaces/innerkits/wm/",
-    "//third_party/flutter/skia/",
-    "//foundation/window/window_manager/utils/include",
-    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_base/include/",
-    "//base/notification/common_event_service/interfaces/inner_api/",
   ]
 
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/services:thermalservice",
-    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
-    "//base/powermgr/power_manager/services:powermgrservice",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
