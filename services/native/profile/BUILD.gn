@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
-import("//build/ohos.gni")
 
 ## Install thermal_service_config.xml to /system/etc/thermal_config/thermal_service_config.xml
 ohos_prebuilt_etc("thermal_service_config") {

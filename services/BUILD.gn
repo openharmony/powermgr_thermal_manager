@@ -11,28 +11,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base/powermgr/display_manager/displaymgr.gni")
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
-import("//build/ohos.gni")
 
 config("thermalsrv_private_config") {
-  include_dirs = [
-    "//third_party/libxml2/include",
-    "//base/startup/appspawn/include/",
-    "${ability_runtime_services_path}/abilitymgr/include/",
-    "${ability_runtime_services_path}/appmgr/include",
-    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
-    "//base/powermgr/power_manager/services/native/include",
-    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//base/powermgr/power_manager/utils/native/include",
-    "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${displaymgr_native_innerkits_path}/native/src",
-    "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
-    "//foundation/window/window_manager/interfaces/innerkits/wm/",
-    "//third_party/flutter/skia/",
-    "//foundation/window/window_manager/utils/include",
-    "//foundation/window/window_manager/interfaces/innerkits/dm",
-  ]
+  include_dirs = [ "${ability_runtime_services_path}/appmgr/include" ]
 }
 
 config("thermalsrv_public_config") {
@@ -44,8 +26,7 @@ config("thermalsrv_public_config") {
     "native/include/thermal_observer/state_machine",
     "native/include/thermal_action/action",
     "native/include/thermal_action/action/action_soc",
-    "//base/powermgr/thermal_manager/services/zidl/include",
-    "//base/powermgr/thermal_manager/interfaces/innerkits/native/include",
+    "${thermal_innerkits}/native/include",
   ]
 }
 
@@ -93,17 +74,12 @@ ohos_shared_library("thermalservice") {
 
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
-    "${displaymgr_native_innerkits_path}:displaymgr",
+    "${thermal_frameworks}:thermal_dialog",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
-    "//base/powermgr/battery_manager/interfaces/innerkits:batterysrv_client",
-    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
-    "//base/powermgr/power_manager/services:powermgrservice",
-    "//base/powermgr/thermal_manager/frameworks/dialog/dialog_ui/js:dialog_js_files_etc",
-    "//base/powermgr/thermal_manager/services/zidl:thermalmgr_stub",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//foundation/resourceschedule/resource_schedule_service/soc_perf:socperf_client",
-    "//foundation/window/window_manager/utils:libwmutil",
     "//third_party/libxml2:xml2",
   ]
 
@@ -113,32 +89,37 @@ ohos_shared_library("thermalservice") {
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "appspawn:appspawn_socket_client",
+    "battery_manager:batterysrv_client",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
+    "display_manager:displaymgr",
     "drivers_interface_battery:libbattery_proxy_1.1",
     "drivers_interface_thermal:libthermal_proxy_1.0",
     "eventhandler:libeventhandler",
-    "hdf_core:libhdf_utils",
-    "hdf_core:libhdi",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
     "ipc:ipc_core",
     "multimedia_image_standard:image_native",
+    "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "time_service:time_service",
     "window_manager:libdm",
+    "window_manager:libwm",
   ]
 
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }
 
-group("thermalmgr_service") {
+group("service") {
   deps = [
     ":thermalservice",
+    "${thermal_manager_path}/etc/init:thermal.cfg",
+    "${thermal_manager_path}/sa_profile:thermalmgr_sa_profile",
     "native/profile:thermal_service_config",
   ]
 }
