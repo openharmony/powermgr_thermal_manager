@@ -30,7 +30,6 @@
         "ability_tools",
         "ace_engine",
         "appspawn",
-        "battery_manager_native",
         "bundle_framework",
         "common_event_service",
         "display_manager_native",
