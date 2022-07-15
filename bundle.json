@@ -33,7 +33,6 @@
         "battery_manager_native",
         "bundle_framework",
         "common_event_service",
-        "display_manager_native",
         "drivers_interface_thermal",
         "eventhandler",
         "hdf_core",
