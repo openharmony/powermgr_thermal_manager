@@ -45,7 +45,7 @@
         "libxml2",
         "multimedia_image_standard",
         "napi",
-        "power_manager_native",
+        "power_manager",
         "safwk",
         "samgr_standard",
         "time_native",
