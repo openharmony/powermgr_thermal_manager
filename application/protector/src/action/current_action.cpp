@@ -47,7 +47,7 @@ int32_t CurrentAction::BatteryCurrentActionRequest(uint32_t current)
 {
     THERMAL_HILOGD(FEATURE_PROTECTOR, "%{public}d", current);
     char currentBuf[MAX_PATH] = {0};
-    if (snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, SIM_BATTERY_CURRENT_PATH.c_str()) < ERR_OK) {
+    if (snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, SIM_BATTERY_CURRENT_PATH.c_str()) < EOK) {
         return ERR_INVALID_VALUE;
     }
     std::string currentStr = std::to_string(current);

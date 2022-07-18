@@ -111,8 +111,8 @@ int32_t ThermalActionManager::CreateActionMockFile()
     int32_t ret = -1;
     for (auto iter : actionValueList) {
         THERMAL_HILOGD(COMP_SVC, "start create file");
-        ret = snprintf_s(fileBuf, PATH_MAX, sizeof(fileBuf) - ARG_1, configDir.c_str(), iter.c_str());
-        if (ret < ERR_OK) {
+        ret = snprintf_s(fileBuf, MAX_PATH, sizeof(fileBuf) - ARG_1, configDir.c_str(), iter.c_str());
+        if (ret < EOK) {
             return ret;
         }
         FileOperation::CreateNodeFile(static_cast<std::string>(fileBuf));
@@ -120,8 +120,8 @@ int32_t ThermalActionManager::CreateActionMockFile()
 
     for (auto iter : stateValueList) {
         THERMAL_HILOGD(COMP_SVC, "start create file");
-        ret = snprintf_s(stateFileBuf, PATH_MAX, sizeof(stateFileBuf) - ARG_1, stateDir.c_str(), iter.c_str());
-        if (ret < ERR_OK) {
+        ret = snprintf_s(stateFileBuf, MAX_PATH, sizeof(stateFileBuf) - ARG_1, stateDir.c_str(), iter.c_str());
+        if (ret < EOK) {
             return ret;
         }
         FileOperation::CreateNodeFile(static_cast<std::string>(stateFileBuf));

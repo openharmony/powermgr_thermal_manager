@@ -155,11 +155,11 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     char socTempBuf[MAX_PATH] = {0};
     int32_t ret = -1;
     InitData();
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
-    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb1 = new ThermalActionTest1Callback();
 
@@ -193,11 +193,11 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
     char socTempBuf[MAX_PATH] = {0};
     int32_t ret = -1;
     InitData();
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
-    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb2 = new ThermalActionTest2Callback();
 
@@ -237,11 +237,11 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     char socTempBuf[MAX_PATH] = {0};
     int32_t ret = -1;
     InitData();
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
-    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb3 = new ThermalActionTest3Callback();
 

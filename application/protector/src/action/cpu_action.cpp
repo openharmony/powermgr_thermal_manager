@@ -51,7 +51,7 @@ int32_t CpuAction::CpuActionRequest(uint32_t freq)
 {
     THERMAL_HILOGD(FEATURE_PROTECTOR, "%{public}d", freq);
     char cpuBuf[MAX_PATH] = {0};
-    if (snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, SIM_CPU_FREQ_PATH.c_str()) < ERR_OK) {
+    if (snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, SIM_CPU_FREQ_PATH.c_str()) < EOK) {
         return ERR_INVALID_VALUE;
     }
     std::string freqStr = std::to_string(freq);
