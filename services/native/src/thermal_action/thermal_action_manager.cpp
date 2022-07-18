@@ -29,6 +29,7 @@ const int ARG_1 = 1;
 bool ThermalActionManager::Init()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
+    ThermalActionFactory::InitFactory();
     for (auto item = vActionItem_.begin(); item != vActionItem_.end(); ++item) {
         THERMAL_HILOGI(COMP_SVC, "ThermalActionManager name = %{public}s", item->name.c_str());
         if (!item->protocol.empty()) {
