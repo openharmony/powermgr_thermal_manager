@@ -27,17 +27,15 @@ public:
     ActionVoltage() = default;
     ~ActionVoltage() = default;
 
-    bool InitParams(const std::string& params) override;
+    void InitParams(const std::string& protocol) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    virtual void SetProtocol(const std::string& protocol) override;
     int32_t SetVoltage(int32_t voltage);
     int32_t WriteMockNode(int32_t mockValue);
     static void ExecuteVoltageLimit();
 private:
     std::vector<uint32_t> valueList_;
-    std::string params_;
     bool flag_;
     uint32_t lastValue_;
     std::string protocol_;

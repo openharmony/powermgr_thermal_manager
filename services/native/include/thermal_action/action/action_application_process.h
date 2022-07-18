@@ -36,11 +36,10 @@ public:
         KILL_ALL_PROCESS_APP = 3,
     };
 
-    bool InitParams(const std::string &params) override;
+    void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    virtual void SetProtocol(const std::string& protocol) override;
     bool Init();
     ErrCode KillApplicationAction(const std::string &bundleName);
     ErrCode GetRunningProcessInfo(std::vector<AppExecFwk::RunningProcessInfo> &info);
@@ -57,7 +56,6 @@ public:
     void ProcessAppActionExecution(const uint32_t &value);
 private:
     std::vector<uint32_t> valueList_;
-    std::string params_;
     bool flag_;
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;
     std::vector<AppExecFwk::RunningProcessInfo> bgAppProcessInfos_;

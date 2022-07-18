@@ -37,11 +37,10 @@ public:
     ~ActionThermalLevel();
     explicit ActionThermalLevel(const wptr<ThermalService> &tms);
 
-    bool InitParams(const std::string &params) override;
+    void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    virtual void SetProtocol(const std::string& protocol) override;
     bool Init();
     void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback);
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback);

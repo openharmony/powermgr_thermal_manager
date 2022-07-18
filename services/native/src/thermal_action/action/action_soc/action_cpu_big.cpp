@@ -26,19 +26,13 @@ constexpr int32_t LIM_CPU_BIG_ID = 1005;
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
-bool ActionCpuBig::InitParams(const std::string& params)
+void ActionCpuBig::InitParams(const std::string& params)
 {
-    params_ = params;
-    return true;
 }
 
 void ActionCpuBig::SetStrict(bool flag)
 {
     flag_ = flag;
-}
-
-void ActionCpuBig::SetProtocol(const std::string& protocol)
-{
 }
 
 void ActionCpuBig::AddActionValue(std::string value)

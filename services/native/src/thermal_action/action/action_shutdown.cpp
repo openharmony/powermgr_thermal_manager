@@ -33,19 +33,13 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string shutdownPath = "/data/service/el0/thermal/config/shut_down";
 const int MAX_PATH = 256;
 }
-bool ActionShutdown::InitParams(const std::string &params)
+void ActionShutdown::InitParams(const std::string& params)
 {
-    params_ = params;
-    return true;
 }
 
 void ActionShutdown::SetStrict(bool flag)
 {
     flag_ = flag;
-}
-
-void ActionShutdown::SetProtocol(const std::string& protocol)
-{
 }
 
 void ActionShutdown::AddActionValue(std::string value)

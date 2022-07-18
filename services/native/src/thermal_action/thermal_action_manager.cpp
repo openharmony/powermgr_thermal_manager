@@ -43,10 +43,10 @@ bool ThermalActionManager::Init()
             for (auto& iter : protocolList) {
                 std::string str = item->name;
                 std::string combinedActionName = str.append("_").append(iter.c_str());
-                InsertActionMap(combinedActionName, iter, item->params, item->strict);
+                InsertActionMap(combinedActionName, iter, item->strict);
             }
         } else {
-            InsertActionMap(item->name, item->protocol, item->params, item->strict);
+            InsertActionMap(item->name, item->protocol, item->strict);
         }
     }
 
@@ -60,16 +60,14 @@ bool ThermalActionManager::Init()
     return true;
 }
 
-void ThermalActionManager::InsertActionMap(const std::string& actionName,
-    const std::string& protocol, const std::string& params, bool strict)
+void ThermalActionManager::InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict)
 {
     std::shared_ptr<IThermalAction> thermalAction = ThermalActionFactory::Create(actionName);
     if (thermalAction == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "failed to create action");
         return;
     }
-    thermalAction->SetProtocol(protocol);
-    thermalAction->InitParams(params);
+    thermalAction->InitParams(protocol);
     thermalAction->SetStrict(strict);
     actionMap_.emplace(actionName, thermalAction);
 }
