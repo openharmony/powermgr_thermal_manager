@@ -55,8 +55,7 @@ public:
 
     int32_t CreateActionMockFile();
 private:
-    void InsertActionMap(const std::string& actionName,
-        const std::string& protocol, const std::string& params, bool strict);
+    void InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict);
     ThermalActionMap actionMap_;
     std::vector<std::string> actionNameList_;
     std::shared_ptr<ActionThermalLevel> actionThermalLevel_;

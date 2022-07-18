@@ -32,20 +32,14 @@ const int32_t MAX_PATH = 256;
 
 std::vector<ChargingLimit> ActionVoltage::chargeLimitList_;
 
-bool ActionVoltage::InitParams(const std::string& params)
+void ActionVoltage::InitParams(const std::string& protocol)
 {
-    params_ = params;
-    return true;
+    protocol_ = protocol;
 }
 
 void ActionVoltage::SetStrict(bool flag)
 {
     flag_ = flag;
-}
-
-void ActionVoltage::SetProtocol(const std::string& protocol)
-{
-    protocol_ = protocol;
 }
 
 void ActionVoltage::AddActionValue(std::string value)

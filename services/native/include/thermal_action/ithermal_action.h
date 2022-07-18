@@ -28,9 +28,8 @@ public:
     IThermalAction() = default;
     virtual ~IThermalAction() = default;
 
-    virtual bool InitParams(const std::string& params) = 0;
+    virtual void InitParams(const std::string& params) = 0;
     virtual void SetStrict(bool flag) = 0;
-    virtual void SetProtocol(const std::string& protocol) = 0;
     virtual void AddActionValue(std::string value) = 0;
     virtual void Execute() = 0;
 };

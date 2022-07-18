@@ -39,19 +39,13 @@ std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> Actio
 ActionThermalLevel::ActionThermalLevel(const wptr<ThermalService>& tms) : tms_(tms), laststValue_(0) {}
 ActionThermalLevel::~ActionThermalLevel() {}
 
-bool ActionThermalLevel::InitParams(const std::string &params)
+void ActionThermalLevel::InitParams(const std::string& params)
 {
-    params_ = params;
-    return true;
 }
 
 void ActionThermalLevel::SetStrict(bool flag)
 {
     flag_ = flag;
-}
-
-void ActionThermalLevel::SetProtocol(const std::string& protocol)
-{
 }
 
 void ActionThermalLevel::AddActionValue(std::string value)
@@ -99,7 +93,7 @@ bool ActionThermalLevel::Init()
 
 int32_t ActionThermalLevel::GetThermalLevel()
 {
-        return level_;
+    return level_;
 }
 
 uint32_t ActionThermalLevel::LevelRequest(int32_t level)

@@ -29,17 +29,15 @@ public:
         LOWER_TEMP = 1,
         HIGHER_TEMP = 2
     };
-    bool InitParams(const std::string &params) override;
+    void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    virtual void SetProtocol(const std::string& protocol) override;
     bool ShowDialog(const std::string &params);
     void HandlePopupEvent(const int32_t value);
     void GetDisplayPosition(int32_t& width, int32_t& height);
 private:
     std::vector<uint32_t> valueList_;
-    std::string params_;
     bool flag_;
     uint32_t lastValue_;
     int32_t dialogId_ {-1};

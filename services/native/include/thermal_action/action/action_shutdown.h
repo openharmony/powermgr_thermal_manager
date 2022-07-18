@@ -25,17 +25,15 @@ public:
     ActionShutdown() = default;
     ~ActionShutdown() = default;
 
-    bool InitParams(const std::string &params) override;
+    void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    virtual void SetProtocol(const std::string& protocol) override;
     uint32_t ShutdownRequest(bool isShutdown);
     uint32_t DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr);
     /* the api is used to test */
     uint32_t ShutdownExecution(bool isShutdown);
 private:
-    std::string params_;
     bool flag_;
     std::vector<int32_t> valuesList_;
     int32_t lastValue_;

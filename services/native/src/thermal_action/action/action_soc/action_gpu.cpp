@@ -26,9 +26,8 @@ constexpr int32_t LIM_GPU_ID = 2001;
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
-bool ActionGpu::InitParams(const std::string& params)
+void ActionGpu::InitParams(const std::string& params)
 {
-    return true;
 }
 
 void ActionGpu::SetStrict(bool flag)
@@ -39,10 +38,6 @@ void ActionGpu::SetStrict(bool flag)
 void ActionGpu::AddActionValue(std::string value)
 {
     valueList_.push_back(atoi(value.c_str()));
-}
-
-void ActionGpu::SetProtocol(const std::string& protocol)
-{
 }
 
 void ActionGpu::Execute()
