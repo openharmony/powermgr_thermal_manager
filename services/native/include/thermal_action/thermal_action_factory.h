@@ -24,6 +24,7 @@ namespace OHOS {
 namespace PowerMgr {
 class ThermalActionFactory {
 public:
+    static void InitFactory();
     static std::shared_ptr<IThermalAction> Create(const std::string& actionName);
 };
 } // namespace PowerMgr
