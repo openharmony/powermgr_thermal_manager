@@ -99,7 +99,7 @@ void ScreenStateCollection::SetState()
     char screenValue[MAX_PATH] = {0};
     int32_t ret = -1;
 
-    if (snprintf_s(screenBuf, PATH_MAX, sizeof(screenBuf) - 1, screenPath.c_str()) < ERR_OK) {
+    if (snprintf_s(screenBuf, MAX_PATH, sizeof(screenBuf) - 1, screenPath.c_str()) < EOK) {
         return;
     }
     THERMAL_HILOGD(COMP_SVC, "read screen state");
