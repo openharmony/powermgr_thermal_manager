@@ -38,19 +38,23 @@ std::map<std::string, std::shared_ptr<IThermalAction>> g_actionMap;
 void ThermalActionFactory::InitFactory()
 {
     g_actionMap.clear();
-    g_actionMap.insert(std::make_pair(CPU_BIG_ACTION_NAME, std::make_shared<ActionCpuBig>()));
-    g_actionMap.insert(std::make_pair(CPU_MED_ACTION_NAME, std::make_shared<ActionCpuMed>()));
-    g_actionMap.insert(std::make_pair(CPU_LIT_ACTION_NAME, std::make_shared<ActionCpuLit>()));
-    g_actionMap.insert(std::make_pair(GPU_ACTION_NAME, std::make_shared<ActionGpu>()));
-    g_actionMap.insert(std::make_pair(LCD_ACTION_NAME, std::make_shared<ActionDisplay>()));
-    g_actionMap.insert(std::make_pair(SHUTDOWN_ACTION_NAME, std::make_shared<ActionShutdown>()));
-    g_actionMap.insert(std::make_pair(PROCESS_ACTION_NAME, std::make_shared<ActionApplicationProcess>()));
-    g_actionMap.insert(std::make_pair(THERMAL_LEVEL_NAME, std::make_shared<ActionThermalLevel>()));
-    g_actionMap.insert(std::make_pair(POPUP_ACTION_NAME, std::make_shared<ActionPopup>()));
-    g_actionMap.insert(std::make_pair(CURRENT_SC_ACTION_NAME, std::make_shared<ActionCharger>()));
-    g_actionMap.insert(std::make_pair(CURRENT_BUCK_ACTION_NAME, std::make_shared<ActionCharger>()));
-    g_actionMap.insert(std::make_pair(VOLATAGE_SC_ACTION_NAME, std::make_shared<ActionVoltage>()));
-    g_actionMap.insert(std::make_pair(VOLATAGE_BUCK_ACTION_NAME, std::make_shared<ActionVoltage>()));
+    g_actionMap.insert(std::make_pair(CPU_BIG_ACTION_NAME, std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(CPU_MED_ACTION_NAME, std::make_shared<ActionCpuMed>(CPU_MED_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(CPU_LIT_ACTION_NAME, std::make_shared<ActionCpuLit>(CPU_LIT_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(GPU_ACTION_NAME, std::make_shared<ActionGpu>(GPU_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(LCD_ACTION_NAME, std::make_shared<ActionDisplay>(LCD_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(SHUTDOWN_ACTION_NAME, std::make_shared<ActionShutdown>(SHUTDOWN_ACTION_NAME)));
+    g_actionMap.insert(
+        std::make_pair(PROCESS_ACTION_NAME, std::make_shared<ActionApplicationProcess>(PROCESS_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(THERMAL_LEVEL_NAME, std::make_shared<ActionThermalLevel>(THERMAL_LEVEL_NAME)));
+    g_actionMap.insert(std::make_pair(POPUP_ACTION_NAME, std::make_shared<ActionPopup>(POPUP_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(CURRENT_SC_ACTION_NAME, std::make_shared<ActionCharger>(CURRENT_SC_ACTION_NAME)));
+    g_actionMap.insert(
+        std::make_pair(CURRENT_BUCK_ACTION_NAME, std::make_shared<ActionCharger>(CURRENT_BUCK_ACTION_NAME)));
+    g_actionMap.insert(
+        std::make_pair(VOLATAGE_SC_ACTION_NAME, std::make_shared<ActionVoltage>(VOLATAGE_SC_ACTION_NAME)));
+    g_actionMap.insert(
+        std::make_pair(VOLATAGE_BUCK_ACTION_NAME, std::make_shared<ActionVoltage>(VOLATAGE_BUCK_ACTION_NAME)));
 }
 
 std::shared_ptr<IThermalAction> ThermalActionFactory::Create(const std::string& actionName)

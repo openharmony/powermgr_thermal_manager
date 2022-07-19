@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 #include "socperf_client.h"
+#include "thermal_hisysevent.h"
 #include "thermal_service.h"
 
 namespace OHOS {
@@ -26,6 +27,11 @@ constexpr int32_t LIM_GPU_ID = 2001;
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
+ActionGpu::ActionGpu(const std::string& actionName)
+{
+    actionName_ = actionName;
+}
+
 void ActionGpu::InitParams(const std::string& params)
 {
 }
@@ -33,6 +39,11 @@ void ActionGpu::InitParams(const std::string& params)
 void ActionGpu::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionGpu::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionGpu::AddActionValue(std::string value)
@@ -57,6 +68,7 @@ void ActionGpu::Execute()
     THERMAL_HILOGD(COMP_SVC, "Enter value=%{public}d, lastValue_=%{public}d", value, lastValue_);
     if (value != lastValue_) {
         GpuRequest(value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }
