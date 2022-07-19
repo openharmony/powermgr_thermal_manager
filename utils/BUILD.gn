@@ -21,8 +21,9 @@ config("utils_config") {
 
 ohos_source_set("thermal_utils") {
   sources = [
-    "native/src//file_operation.cpp",
+    "native/src/file_operation.cpp",
     "native/src/string_operation.cpp",
+    "native/src/thermal_hisysevent.cpp",
   ]
 
   public_configs = [ ":utils_config" ]
@@ -30,6 +31,7 @@ ohos_source_set("thermal_utils") {
   deps = [ "//utils/native/base:utils" ]
 
   external_deps = [
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
   ]

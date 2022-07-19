@@ -15,6 +15,7 @@
 
 #include "thermal_action_manager.h"
 
+#include "constants.h"
 #include "file_operation.h"
 #include "thermal_action_factory.h"
 #include "securec.h"
@@ -24,7 +25,6 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 const int MAX_PATH = 256;
-const int ARG_1 = 1;
 }
 bool ThermalActionManager::Init()
 {
@@ -43,15 +43,15 @@ bool ThermalActionManager::Init()
             for (auto& iter : protocolList) {
                 std::string str = item->name;
                 std::string combinedActionName = str.append("_").append(iter.c_str());
-                InsertActionMap(combinedActionName, iter, item->strict);
+                InsertActionMap(combinedActionName, iter, item->strict, item->enableEvent);
             }
         } else {
-            InsertActionMap(item->name, item->protocol, item->strict);
+            InsertActionMap(item->name, item->protocol, item->strict, item->enableEvent);
         }
     }
 
     if (actionThermalLevel_ == nullptr) {
-        actionThermalLevel_ = std::make_shared<ActionThermalLevel>();
+        actionThermalLevel_ = std::make_shared<ActionThermalLevel>(THERMAL_LEVEL_NAME);
         if (!actionThermalLevel_->Init()) {
             THERMAL_HILOGE(COMP_SVC, "failed to create level action");
         }
@@ -60,7 +60,8 @@ bool ThermalActionManager::Init()
     return true;
 }
 
-void ThermalActionManager::InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict)
+void ThermalActionManager::InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict,
+    bool enableEvent)
 {
     std::shared_ptr<IThermalAction> thermalAction = ThermalActionFactory::Create(actionName);
     if (thermalAction == nullptr) {
@@ -69,6 +70,7 @@ void ThermalActionManager::InsertActionMap(const std::string& actionName, const 
     }
     thermalAction->InitParams(protocol);
     thermalAction->SetStrict(strict);
+    thermalAction->SetEnableEvent(enableEvent);
     actionMap_.emplace(actionName, thermalAction);
 }
 

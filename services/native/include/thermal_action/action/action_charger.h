@@ -24,11 +24,12 @@ namespace PowerMgr {
 using namespace OHOS::HDI::Battery::V1_1;
 class ActionCharger : public IThermalAction {
 public:
-    ActionCharger() = default;
+    ActionCharger(const std::string& actionName);
     ~ActionCharger() = default;
 
     void InitParams(const std::string& protocol) override;
     virtual void SetStrict(bool flag) override;
+    virtual void SetEnableEvent(bool enable) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     int32_t ChargerRequest(int32_t current);
@@ -37,6 +38,7 @@ public:
 private:
     std::vector<uint32_t> valueList_;
     bool flag_;
+    bool enableEvent_ = false;
     uint32_t lastValue_;
     std::string protocol_;
     static std::vector<ChargingLimit> chargeLimitList_;

@@ -26,6 +26,7 @@
 #include "singleton.h"
 #include "securec.h"
 
+#include "thermal_hisysevent.h"
 #include "thermal_service.h"
 
 using namespace OHOS::AppExecFwk;
@@ -38,6 +39,11 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string processPath = "/data/service/el0/thermal/config/process_ctrl";
 const int MAX_PATH = 256;
 }
+ActionApplicationProcess::ActionApplicationProcess(const std::string& actionName)
+{
+    actionName_ = actionName;
+}
+
 bool ActionApplicationProcess::Init()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
@@ -54,6 +60,11 @@ void ActionApplicationProcess::InitParams(const std::string& params)
 void ActionApplicationProcess::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionApplicationProcess::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionApplicationProcess::AddActionValue(std::string value)
@@ -84,6 +95,7 @@ void ActionApplicationProcess::Execute()
         } else {
             ProcessAppActionRequest(value);
         }
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }

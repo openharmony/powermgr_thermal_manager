@@ -30,8 +30,11 @@ public:
 
     virtual void InitParams(const std::string& params) = 0;
     virtual void SetStrict(bool flag) = 0;
+    virtual void SetEnableEvent(bool enable) = 0;
     virtual void AddActionValue(std::string value) = 0;
     virtual void Execute() = 0;
+protected:
+    std::string actionName_ = "";
 };
 } // namespace PowerMgr
 } // namespace OHOS

@@ -18,6 +18,7 @@
 #include "constants.h"
 #include "file_operation.h"
 #include "securec.h"
+#include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "v1_1/battery_interface_proxy.h"
 
@@ -28,6 +29,10 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
 const std::string BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
 const int MAX_PATH = 256;
+}
+ActionCharger::ActionCharger(const std::string& actionName)
+{
+    actionName_ = actionName;
 }
 
 std::vector<ChargingLimit> ActionCharger::chargeLimitList_;
@@ -40,6 +45,11 @@ void ActionCharger::InitParams(const std::string& protocol)
 void ActionCharger::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionCharger::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionCharger::AddActionValue(std::string value)
@@ -67,6 +77,7 @@ void ActionCharger::Execute()
     if (value != lastValue_) {
         ChargerRequest(value);
         WriteSimValue(value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }

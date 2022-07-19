@@ -31,6 +31,7 @@ struct ActionItem {
     std::string params;
     std::string protocol;
     bool strict = false;
+    bool enableEvent = false;
 };
 
 class ThermalActionManager {
@@ -55,7 +56,7 @@ public:
 
     int32_t CreateActionMockFile();
 private:
-    void InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict);
+    void InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict, bool enableEvent);
     ThermalActionMap actionMap_;
     std::vector<std::string> actionNameList_;
     std::shared_ptr<ActionThermalLevel> actionThermalLevel_;

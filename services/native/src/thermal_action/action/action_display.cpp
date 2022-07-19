@@ -17,6 +17,7 @@
 
 #include "display_power_mgr_client.h"
 #include "file_operation.h"
+#include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "securec.h"
 
@@ -28,6 +29,11 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string lcdPath = "/data/service/el0/thermal/config/lcd";
 const int MAX_PATH = 256;
 }
+ActionDisplay::ActionDisplay(const std::string& actionName)
+{
+    actionName_ = actionName;
+}
+
 void ActionDisplay::InitParams(const std::string& params)
 {
 }
@@ -35,6 +41,11 @@ void ActionDisplay::InitParams(const std::string& params)
 void ActionDisplay::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionDisplay::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionDisplay::AddActionValue(std::string value)
@@ -66,6 +77,7 @@ void ActionDisplay::Execute()
         } else {
             DisplayRequest(value);
         }
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }

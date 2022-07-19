@@ -22,17 +22,19 @@ namespace OHOS {
 namespace PowerMgr {
 class ActionCpuMed : public IThermalAction {
 public:
-    ActionCpuMed() = default;
+    ActionCpuMed(const std::string& actionName);
     ~ActionCpuMed() = default;
 
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
+    virtual void SetEnableEvent(bool enable) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     int32_t CpuRuquest(uint32_t freq);
 private:
     std::vector<uint32_t> valueList_;
     bool flag_;
+    bool enableEvent_ = false;
     uint32_t lastValue_;
 };
 } // namespace PowerMgr

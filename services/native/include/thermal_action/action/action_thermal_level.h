@@ -33,12 +33,13 @@ class ThermalService;
 
 class ActionThermalLevel : public IThermalAction {
 public:
-    ActionThermalLevel() = default;
+    ActionThermalLevel(const std::string& actionName);
     ~ActionThermalLevel();
     explicit ActionThermalLevel(const wptr<ThermalService> &tms);
 
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
+    virtual void SetEnableEvent(bool enable) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     bool Init();
@@ -70,6 +71,7 @@ private:
     std::vector<uint32_t> valueList_;
     std::string params_;
     bool flag_;
+    bool enableEvent_ = false;
     static std::set<const sptr<IThermalLevelCallback>, classcomp> thermalLevelListeners_;
     static int32_t level_;
     uint32_t laststValue_;
