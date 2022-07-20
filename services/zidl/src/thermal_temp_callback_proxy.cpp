@@ -14,8 +14,11 @@
  */
 
 #include "thermal_temp_callback_proxy.h"
-#include <ipc_types.h>
+
 #include <message_parcel.h>
+#include "errors.h"
+#include "message_option.h"
+#include "thermal_log.h"
 #include "thermal_common.h"
 
 namespace OHOS {

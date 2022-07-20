@@ -16,8 +16,12 @@
 #ifndef THERMAL_ACTION_CALLBACK_PROXY_H
 #define THERMAL_ACTION_CALLBACK_PROXY_H
 
+#include <functional>
 #include <iremote_proxy.h>
 #include <nocopyable.h>
+#include "refbase.h"
+#include "iremote_broker.h"
+#include "iremote_object.h"
 #include "ithermal_action_callback.h"
 
 namespace OHOS {

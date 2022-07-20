@@ -15,7 +15,12 @@
 
 #include "thermal_napi_context.h"
 
-#include "thermal_common.h"
+#include <cstddef>
+#include <cstdint>
+#include "js_native_api.h"
+#include "js_native_api_types.h"
+#include "node_api.h"
+#include "thermal_log.h"
 
 using namespace OHOS::PowerMgr;
 

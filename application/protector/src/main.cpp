@@ -14,8 +14,7 @@
  */
 
 #include <iostream>
-
-#include "thermal_common.h"
+#include "errors.h"
 #include "thermal_kernel_service.h"
 
 namespace OHOS {
