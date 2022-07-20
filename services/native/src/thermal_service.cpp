@@ -158,7 +158,7 @@ bool ThermalService::InitModules()
     }
 
     if (popup_ == nullptr) {
-        popup_ = std::make_shared<ActionPopup>();
+        popup_ = std::make_shared<ActionPopup>(POPUP_ACTION_NAME);
     }
 
     if (!InitThermalObserver()) {

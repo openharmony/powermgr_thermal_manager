@@ -22,11 +22,12 @@ namespace OHOS {
 namespace PowerMgr {
 class ActionShutdown : public IThermalAction {
 public:
-    ActionShutdown() = default;
+    ActionShutdown(const std::string& actionName);
     ~ActionShutdown() = default;
 
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
+    virtual void SetEnableEvent(bool enable) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     uint32_t ShutdownRequest(bool isShutdown);
@@ -35,6 +36,7 @@ public:
     uint32_t ShutdownExecution(bool isShutdown);
 private:
     bool flag_;
+    bool enableEvent_ = false;
     std::vector<int32_t> valuesList_;
     int32_t lastValue_;
 };

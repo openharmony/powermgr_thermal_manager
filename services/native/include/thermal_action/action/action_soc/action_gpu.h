@@ -22,11 +22,12 @@ namespace OHOS {
 namespace PowerMgr {
 class ActionGpu : public IThermalAction {
 public:
-    ActionGpu() = default;
+    ActionGpu(const std::string& params);
     ~ActionGpu() = default;
 
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
+    virtual void SetEnableEvent(bool enable) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     bool GetStrict()
@@ -37,6 +38,7 @@ public:
 private:
     std::vector<uint32_t> valueList_;
     bool flag_;
+    bool enableEvent_ = false;
     uint32_t lastValue_;
 };
 } // namespace PowerMgr

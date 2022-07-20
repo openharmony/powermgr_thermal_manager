@@ -307,7 +307,6 @@ void ThermalSrvConfigParser::ParseActionNode(xmlNodePtr node)
                 ai.name = (char *)xmlName;
                 xmlFree(xmlName);
             }
-
             xmlChar* param = xmlGetProp(cur, BAD_CAST("param"));
             if (param != nullptr) {
                 ai.params = (char *) param;
@@ -321,15 +320,19 @@ void ThermalSrvConfigParser::ParseActionNode(xmlNodePtr node)
             xmlChar* strict = xmlGetProp(cur, BAD_CAST("strict"));
             if (strict != nullptr) {
                 std::string strictValue = (char *)strict;
-                if (atoi(strictValue.c_str()) == 1) {
-                    ai.strict = true;
-                }
+                ai.strict = atoi(strictValue.c_str()) == 1 ? true : false;
                 xmlFree(strict);
             }
-
+            xmlChar* event = xmlGetProp(cur, BAD_CAST("event"));
+            if (event != nullptr) {
+                std::string eventValue = (char *)event;
+                ai.enableEvent = atoi(eventValue.c_str()) == 1 ? true : false;
+                xmlFree(event);
+            }
             THERMAL_HILOGD(COMP_SVC,
-                "ai.name: %{public}s, ai.strict: %{public}d, ai.params: %{public}s, ai.strict: %{public}s",
-                ai.name.c_str(), ai.strict, ai.params.c_str(), ai.protocol.c_str());
+                "ai.name: %{public}s, ai.strict: %{public}d, ai.params: %{public}s, ai.strict: %{public}s, "    \
+                "ai.enableEvent: %{public}d",
+                ai.name.c_str(), ai.strict, ai.params.c_str(), ai.protocol.c_str(), ai.enableEvent);
 
             vActionItem.push_back(ai);
         }

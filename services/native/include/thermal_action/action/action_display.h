@@ -22,11 +22,12 @@ namespace OHOS {
 namespace PowerMgr {
 class ActionDisplay : public IThermalAction {
 public:
-    ActionDisplay() = default;
+    ActionDisplay(const std::string& actionName);
     ~ActionDisplay() = default;
 
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
+    virtual void SetEnableEvent(bool enable) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     uint32_t DisplayRequest(uint32_t brightness);
@@ -34,6 +35,7 @@ public:
 private:
     std::vector<uint32_t> valueList_;
     bool flag_;
+    bool enableEvent_ = false;
     uint32_t lastValue_;
 };
 } // namespace PowerMgr

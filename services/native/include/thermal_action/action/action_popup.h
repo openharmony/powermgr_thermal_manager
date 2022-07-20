@@ -23,7 +23,7 @@ namespace OHOS {
 namespace PowerMgr {
 class ActionPopup : public IThermalAction {
 public:
-    ActionPopup() = default;
+    ActionPopup(const std::string& actionName);
     ~ActionPopup() = default;
     enum {
         LOWER_TEMP = 1,
@@ -31,6 +31,7 @@ public:
     };
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
+    virtual void SetEnableEvent(bool enable) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     bool ShowDialog(const std::string &params);
@@ -39,6 +40,7 @@ public:
 private:
     std::vector<uint32_t> valueList_;
     bool flag_;
+    bool enableEvent_ = false;
     uint32_t lastValue_;
     int32_t dialogId_ {-1};
 };

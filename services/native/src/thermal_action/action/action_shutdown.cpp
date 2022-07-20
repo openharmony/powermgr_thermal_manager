@@ -21,8 +21,10 @@
 #include "event_queue.h"
 #include "power_mgr_client.h"
 #include "file_operation.h"
+#include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "securec.h"
+
 using namespace OHOS::PowerMgr;
 using namespace OHOS::AppExecFwk;
 namespace OHOS {
@@ -33,6 +35,11 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string shutdownPath = "/data/service/el0/thermal/config/shut_down";
 const int MAX_PATH = 256;
 }
+ActionShutdown::ActionShutdown(const std::string& actionName)
+{
+    actionName_ = actionName;
+}
+
 void ActionShutdown::InitParams(const std::string& params)
 {
 }
@@ -40,6 +47,11 @@ void ActionShutdown::InitParams(const std::string& params)
 void ActionShutdown::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionShutdown::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionShutdown::AddActionValue(std::string value)
@@ -69,6 +81,7 @@ void ActionShutdown::Execute()
         } else {
             ShutdownRequest(static_cast<bool>(value));
         }
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }

@@ -28,7 +28,7 @@ namespace OHOS {
 namespace PowerMgr {
 class ActionApplicationProcess : public IThermalAction {
 public:
-    ActionApplicationProcess() = default;
+    ActionApplicationProcess(const std::string& actionName);
     ~ActionApplicationProcess() = default;
     enum {
         KILL_FG_PROCESS_APP = 1,
@@ -38,6 +38,7 @@ public:
 
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
+    virtual void SetEnableEvent(bool enable) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     bool Init();
@@ -57,6 +58,7 @@ public:
 private:
     std::vector<uint32_t> valueList_;
     bool flag_;
+    bool enableEvent_ = false;
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;
     std::vector<AppExecFwk::RunningProcessInfo> bgAppProcessInfos_;
     std::vector<AppExecFwk::RunningProcessInfo> fgAppProcessInfos_;

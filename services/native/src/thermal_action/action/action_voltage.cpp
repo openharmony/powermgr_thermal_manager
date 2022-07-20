@@ -16,6 +16,7 @@
 #include "action_voltage.h"
 
 #include "v1_1/battery_interface_proxy.h"
+#include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "file_operation.h"
 #include "securec.h"
@@ -32,6 +33,11 @@ const int32_t MAX_PATH = 256;
 
 std::vector<ChargingLimit> ActionVoltage::chargeLimitList_;
 
+ActionVoltage::ActionVoltage(const std::string& actionName)
+{
+    actionName_ = actionName;
+}
+
 void ActionVoltage::InitParams(const std::string& protocol)
 {
     protocol_ = protocol;
@@ -40,6 +46,11 @@ void ActionVoltage::InitParams(const std::string& protocol)
 void ActionVoltage::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionVoltage::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionVoltage::AddActionValue(std::string value)
@@ -69,6 +80,7 @@ void ActionVoltage::Execute()
     if (value != lastValue_) {
         SetVoltage(value);
         WriteMockNode(value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }

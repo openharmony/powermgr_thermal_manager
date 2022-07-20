@@ -20,6 +20,7 @@
 #include "wm_common.h"
 #include "constants.h"
 #include "thermal_common.h"
+#include "thermal_hisysevent.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -27,6 +28,11 @@ namespace {
 constexpr int UI_DIALOG_POWER_WIDTH_NARROW = 400;
 constexpr int UI_DIALOG_POWER_HEIGHT_NARROW = 240;
 }
+ActionPopup::ActionPopup(const std::string& actionName)
+{
+    actionName_ = actionName;
+}
+
 void ActionPopup::InitParams(const std::string& params)
 {
 }
@@ -34,6 +40,11 @@ void ActionPopup::InitParams(const std::string& params)
 void ActionPopup::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionPopup::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionPopup::AddActionValue(std::string value)
@@ -60,6 +71,7 @@ void ActionPopup::Execute()
 
     if (value != lastValue_) {
         HandlePopupEvent(value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }

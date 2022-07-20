@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 #include "socperf_client.h"
+#include "thermal_hisysevent.h"
 #include "thermal_service.h"
 
 namespace OHOS {
@@ -26,6 +27,11 @@ constexpr int32_t LIM_CPU_MED_ID = 1003;
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
+ActionCpuMed::ActionCpuMed(const std::string& actionName)
+{
+    actionName_ = actionName;
+}
+
 void ActionCpuMed::InitParams(const std::string& params)
 {
 }
@@ -33,6 +39,11 @@ void ActionCpuMed::InitParams(const std::string& params)
 void ActionCpuMed::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionCpuMed::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionCpuMed::AddActionValue(std::string value)
@@ -58,6 +69,7 @@ void ActionCpuMed::Execute()
     THERMAL_HILOGD(COMP_SVC, "Enter value=%{public}d, lastValue_=%{public}d", value, lastValue_);
     if (value != lastValue_) {
         CpuRuquest(value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }
