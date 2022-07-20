@@ -16,9 +16,20 @@
 #ifndef THERMAL_SRV_PROXY_H
 #define THERMAL_SRV_PROXY_H
 
-#include "ithermal_srv.h"
+#include <cstdint>
+#include <functional>
+#include <iosfwd>
+#include <vector>
+#include "refbase.h"
 #include "nocopyable.h"
+#include "iremote_broker.h"
+#include "iremote_object.h"
 #include "iremote_proxy.h"
+#include "ithermal_action_callback.h"
+#include "ithermal_level_callback.h"
+#include "thermal_level_info.h"
+#include "thermal_srv_sensor_info.h"
+#include "ithermal_srv.h"
 
 namespace OHOS {
 namespace PowerMgr {
