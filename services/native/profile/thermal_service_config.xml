@@ -55,16 +55,16 @@
     </state>
 
     <action>
-        <item name="cpu_big" param="1.251,3.246"/>
-        <item name="cpu_med" param="1.206,3.218"/>
-        <item name="cpu_lit" param="1.101,3.107"/>
+        <item name="cpu_big" param="1.251,3.246" event="1"/>
+        <item name="cpu_med" param="1.206,3.218" event="0"/>
+        <item name="cpu_lit" param="1.101,3.107" event=""/>
         <item name="gpu" param="1.015,3.026"/>
-        <item name="lcd" strict="1"/>
-        <item name="current" protocol="sc,buck"/>
-        <item name="voltage" protocol="sc,buck"/>
-        <item name="process_ctrl" param="32,64,128,256"/>
-        <item name="shut_down"/>
-        <item name="thermallevel"/>
+        <item name="lcd" strict="1" event="0"/>
+        <item name="current" protocol="sc,buck" event="1"/>
+        <item name="voltage" protocol="sc,buck" event="1"/>
+        <item name="process_ctrl" param="32,64,128,256" event=""/>
+        <item name="shut_down" event="0"/>
+        <item name="thermallevel" event="1"/>
         <item name="popup"/>
         <item name="test"/>
     </action>

@@ -13,30 +13,15 @@
  * limitations under the License.
  */
 
-#ifndef ACTION_CPU_BIG_H
-#define ACTION_CPU_BIG_H
+#ifndef THERMAL_HISYSEVENT_H
+#define THERMAL_HISYSEVENT_H
 
-#include "ithermal_action.h"
+#include <string>
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionCpuBig : public IThermalAction {
-public:
-    ActionCpuBig(const std::string& actionName);
-    ~ActionCpuBig() = default;
-
-    void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
-    int32_t CpuRuquest(uint32_t freq);
-private:
-    std::vector<uint32_t> valueList_;
-    bool flag_;
-    bool enableEvent_ = false;
-    uint32_t lastValue_;
-};
+void WriteLevelChangedHiSysEvent(bool enableEvent, int32_t level);
+void WriteActionTriggeredHiSysEvent(bool enableEvent, const std::string& actionName, int32_t value);
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // ACTION_CPU_BIG_H
+#endif // THERMAL_HISYSEVENT_H

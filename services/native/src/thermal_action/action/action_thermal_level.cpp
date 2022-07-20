@@ -18,8 +18,9 @@
 #include <common_event_data.h>
 #include <common_event_manager.h>
 #include <common_event_support.h>
-#include <hisysevent.h>
+
 #include "constants.h"
+#include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "thermal_common.h"
 
@@ -39,6 +40,11 @@ std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> Actio
 ActionThermalLevel::ActionThermalLevel(const wptr<ThermalService>& tms) : tms_(tms), laststValue_(0) {}
 ActionThermalLevel::~ActionThermalLevel() {}
 
+ActionThermalLevel::ActionThermalLevel(const std::string& actionName)
+{
+    actionName_ = actionName;
+}
+
 void ActionThermalLevel::InitParams(const std::string& params)
 {
 }
@@ -46,6 +52,11 @@ void ActionThermalLevel::InitParams(const std::string& params)
 void ActionThermalLevel::SetStrict(bool flag)
 {
     flag_ = flag;
+}
+
+void ActionThermalLevel::SetEnableEvent(bool enable)
+{
+    enableEvent_ = enable;
 }
 
 void ActionThermalLevel::AddActionValue(std::string value)
@@ -76,6 +87,7 @@ void ActionThermalLevel::Execute()
 
     if (value != laststValue_) {
         LevelRequest(value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         laststValue_ = value;
     }
 }
@@ -189,7 +201,7 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
     }
 
     // Notify thermal level change event to battery statistics
-    HiSysEvent::Write("THERMAL", "THERMAL_LEVEL_CHANGED", HiSysEvent::EventType::STATISTIC, "LEVEL", level);
+    WriteLevelChangedHiSysEvent(enableEvent_, level);
 }
 
 bool ActionThermalLevel::PublishLevelChangedEvents(ThermalCommonEventCode code, int32_t level)
