@@ -15,6 +15,7 @@
 
 #include "action_popup.h"
 
+#include <ipc_skeleton.h>
 #include "display_manager.h"
 #include "ui_service_mgr_client.h"
 #include "wm_common.h"
@@ -137,11 +138,13 @@ bool ActionPopup::ShowDialog(const std::string &params)
 
 void ActionPopup::GetDisplayPosition(int32_t& width, int32_t& height)
 {
+    std::string identity = IPCSkeleton::ResetCallingIdentity();
     auto display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
     if (display == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "dialog GetDefaultDisplay fail, try again.");
         display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
     }
+    IPCSkeleton::SetCallingIdentity(identity);
 
     if (display != nullptr) {
         THERMAL_HILOGI(COMP_SVC, "display size: %{public}d x %{public}d",
