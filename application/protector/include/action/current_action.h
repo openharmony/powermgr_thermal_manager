@@ -15,6 +15,7 @@
 #ifndef CURRENT_ACTION_H
 #define CURRENT_ACTION_H
 
+#include <cstdint>
 #include "ithermal_action.h"
 
 namespace OHOS {

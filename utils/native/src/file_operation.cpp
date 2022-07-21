@@ -15,18 +15,15 @@
 
 #include "file_operation.h"
 
-#include <iostream>
-#include <cstring>
 #include <cstdio>
-#include <dirent.h>
+#include <string>
 #include <fcntl.h>
 #include <mutex>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-
-#include "thermal_common.h"
-#include "securec.h"
+#include "bits/fcntl.h"
+#include "errors.h"
+#include "thermal_log.h"
 
 namespace OHOS {
 namespace PowerMgr {
