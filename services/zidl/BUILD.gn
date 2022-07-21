@@ -36,7 +36,7 @@ deps_ex = [
   "hicollie_native:libhicollie",
   "ipc:ipc_core",
   "safwk:system_ability_fwk",
-  "samgr_standard:samgr_proxy",
+  "samgr:samgr_proxy",
 ]
 
 ohos_shared_library("thermalmgr_proxy") {
