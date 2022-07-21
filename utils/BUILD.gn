@@ -15,7 +15,7 @@ import("//base/powermgr/thermal_manager/thermalmgr.gni")
 config("utils_config") {
   include_dirs = [
     "native/include",
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
   ]
 }
 
@@ -28,9 +28,8 @@ ohos_source_set("thermal_utils") {
 
   public_configs = [ ":utils_config" ]
 
-  deps = [ "//utils/native/base:utils" ]
-
   external_deps = [
+    "c_utils:utils",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
@@ -44,7 +43,7 @@ ohos_executable("thermal-shell") {
     "shell/include",
     "${ability_runtime_services_path}/common/include",
     "${ability_runtime_path}/tools/aa/include",
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
   ]
 
   sources = [
@@ -55,7 +54,6 @@ ohos_executable("thermal-shell") {
   deps = [
     "${ability_runtime_path}/tools/aa:tools_aa_source_set",
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
-    "//utils/native/base:utils",
   ]
 
   configs = [
@@ -66,6 +64,7 @@ ohos_executable("thermal-shell") {
   external_deps = [
     "ability_base:base",
     "ability_base:want",
+    "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
