@@ -16,7 +16,7 @@ import("//build/ohos.gni")
 
 config("thermal_protector_private_config") {
   include_dirs = [
-    "//utils/native/base/include/",
+    "//commonlibrary/c_utils/base/include/",
     "//drivers/framework/include/",
   ]
 }
@@ -55,12 +55,10 @@ ohos_executable("thermal_protector") {
 
   include_dirs = [ "//third_party/libxml2/include" ]
 
-  deps = [
-    "//third_party/libxml2:xml2",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//third_party/libxml2:xml2" ]
 
   external_deps = [
+    "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
