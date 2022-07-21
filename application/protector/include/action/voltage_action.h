@@ -15,6 +15,7 @@
 #ifndef VOLTAGE_ACTION_H
 #define VOLTAGE_ACTION_H
 
+#include <cstdint>
 #include "ithermal_action.h"
 
 namespace OHOS {

@@ -15,6 +15,9 @@
 
 #include "string_operation.h"
 
+#include <cstdint>
+#include <string>
+
 namespace OHOS {
 namespace PowerMgr {
 namespace {

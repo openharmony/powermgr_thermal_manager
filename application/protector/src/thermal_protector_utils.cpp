@@ -15,16 +15,12 @@
 
 #include "thermal_protector_util.h"
 
-#include <iostream>
-#include <cstring>
 #include <cstdio>
-#include <fcntl.h>
+#include <cstdint>
+#include <iosfwd>
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
-#include "thermal_common.h"
-#include "securec.h"
+#include "errors.h"
+#include "thermal_log.h"
 
 namespace OHOS {
 namespace PowerMgr {

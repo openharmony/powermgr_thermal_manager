@@ -17,6 +17,7 @@
 
 #include <memory>
 #include <string>
+#include <iosfwd>
 #include "ithermal_action.h"
 
 namespace OHOS {
