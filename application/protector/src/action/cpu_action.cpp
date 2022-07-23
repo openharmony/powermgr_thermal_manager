@@ -24,8 +24,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string ACTUAL_CPU_FREQ_PATH = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq";
-const std::string SIM_CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
+constexpr const char* SIM_CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
 constexpr int32_t MAX_PATH = 256;
 }
 bool CpuAction::AddActionValue(uint32_t value)
@@ -51,7 +50,7 @@ int32_t CpuAction::CpuActionRequest(uint32_t freq)
 {
     THERMAL_HILOGD(FEATURE_PROTECTOR, "%{public}d", freq);
     char cpuBuf[MAX_PATH] = {0};
-    if (snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, SIM_CPU_FREQ_PATH.c_str()) < EOK) {
+    if (snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, SIM_CPU_FREQ_PATH) < EOK) {
         return ERR_INVALID_VALUE;
     }
     std::string freqStr = std::to_string(freq);

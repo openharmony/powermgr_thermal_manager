@@ -30,7 +30,7 @@ using namespace OHOS::HiviewDFX;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string TASK_UNREG_THERMAL_LEVEL_CALLBACK = "ThermalLevel_UnRegThermalLevelpCB";
+constexpr const char* TASK_UNREG_THERMAL_LEVEL_CALLBACK = "ThermalLevel_UnRegThermalLevelpCB";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::COOL);

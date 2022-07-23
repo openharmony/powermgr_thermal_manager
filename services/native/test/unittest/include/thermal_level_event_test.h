@@ -32,7 +32,7 @@ std::string ambientPath = "/data/service/el0/thermal/sensor/ambient/temp";
 std::string cpuPath = "/data/service/el0/thermal/sensor/cpu/temp";
 std::string paPath = "/data/service/el0/thermal/sensor/pa/temp";
 std::string apPath = "/data/service/el0/thermal/sensor/ap/temp";
-const std::string SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
+constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
 }
 class ThermalLevelEventTest : public testing::Test {
 public:

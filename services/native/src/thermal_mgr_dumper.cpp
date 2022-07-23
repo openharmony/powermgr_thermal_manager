@@ -22,9 +22,9 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string ARGS_HELP = "-h";
-const std::string ARGS_DIALOG = "-d";
-const std::string ARGS_THERMALINFO = "-t";
+constexpr const char* ARGS_HELP = "-h";
+constexpr const char* ARGS_DIALOG = "-d";
+constexpr const char* ARGS_THERMALINFO = "-t";
 }
 
 bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& result)

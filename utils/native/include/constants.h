@@ -21,46 +21,46 @@
 namespace OHOS {
 namespace PowerMgr {
     // action name
-    const std::string CPU_BIG_ACTION_NAME = "cpu_big";
-    const std::string CPU_MED_ACTION_NAME = "cpu_med";
-    const std::string CPU_LIT_ACTION_NAME = "cpu_lit";
-    const std::string GPU_ACTION_NAME = "gpu";
-    const std::string LCD_ACTION_NAME = "lcd";
-    const std::string SHUTDOWN_ACTION_NAME = "shut_down";
-    const std::string PROCESS_ACTION_NAME = "process_ctrl";
-    const std::string THERMAL_LEVEL_NAME = "thermallevel";
-    const std::string POPUP_ACTION_NAME = "popup";
-    const std::string CURRENT_SC_ACTION_NAME = "current_sc";
-    const std::string CURRENT_BUCK_ACTION_NAME = "current_buck";
-    const std::string VOLATAGE_SC_ACTION_NAME = "voltage_sc";
-    const std::string VOLATAGE_BUCK_ACTION_NAME = "voltage_buck";
+    constexpr const char* CPU_BIG_ACTION_NAME = "cpu_big";
+    constexpr const char* CPU_MED_ACTION_NAME = "cpu_med";
+    constexpr const char* CPU_LIT_ACTION_NAME = "cpu_lit";
+    constexpr const char* GPU_ACTION_NAME = "gpu";
+    constexpr const char* LCD_ACTION_NAME = "lcd";
+    constexpr const char* SHUTDOWN_ACTION_NAME = "shut_down";
+    constexpr const char* PROCESS_ACTION_NAME = "process_ctrl";
+    constexpr const char* THERMAL_LEVEL_NAME = "thermallevel";
+    constexpr const char* POPUP_ACTION_NAME = "popup";
+    constexpr const char* CURRENT_SC_ACTION_NAME = "current_sc";
+    constexpr const char* CURRENT_BUCK_ACTION_NAME = "current_buck";
+    constexpr const char* VOLATAGE_SC_ACTION_NAME = "voltage_sc";
+    constexpr const char* VOLATAGE_BUCK_ACTION_NAME = "voltage_buck";
     // state name
-    const std::string STATE_CHARGER = "charge";
-    const std::string STATE_SCREEN = "screen";
-    const std::string STATE_SCNEN = "scene";
+    constexpr const char* STATE_CHARGER = "charge";
+    constexpr const char* STATE_SCREEN = "screen";
+    constexpr const char* STATE_SCNEN = "scene";
 
     // scene name
-    const std::string SCENE_CAMERA = "cam";
-    const std::string SCENE_CALL = "call";
-    const std::string SCENE_GAME = "game";
+    constexpr const char* SCENE_CAMERA = "cam";
+    constexpr const char* SCENE_CALL = "call";
+    constexpr const char* SCENE_GAME = "game";
     const int MIN = 0;
     const int MAX = 3;
     const int INTERVAL = 5000;
-    const std::string SC_PROTOCOL = "sc";
-    const std::string BUCK_PROTOCOL = "buck";
+    constexpr const char* SC_PROTOCOL = "sc";
+    constexpr const char* BUCK_PROTOCOL = "buck";
     constexpr int TIME_TO_SLEEP = 1000;
     constexpr int32_t INVAILD_TEMP = -1000;
     constexpr int32_t INVALID_ACTION_VALUE = -2147483648;
 
     // sensor type
-    const std::string BATTERY = "battery";
-    const std::string SHELL = "shell";
-    const std::string CPU = "cpu";
-    const std::string SOC = "soc";
-    const std::string AP = "ap";
-    const std::string PA = "pa";
-    const std::string CHARGER = "charger";
-    const std::string AMBIENT = "ambient";
+    constexpr const char* BATTERY = "battery";
+    constexpr const char* SHELL = "shell";
+    constexpr const char* CPU = "cpu";
+    constexpr const char* SOC = "soc";
+    constexpr const char* AP = "ap";
+    constexpr const char* PA = "pa";
+    constexpr const char* CHARGER = "charger";
+    constexpr const char* AMBIENT = "ambient";
 
     constexpr int APP_FIRST_UID = 15000;
 
@@ -69,7 +69,7 @@ namespace PowerMgr {
     const int32_t TYPE_MAX_SIZE = 10;
 
     // fallback value
-    const std::string FALLBACK_ACTION_VALUE = "0";
+    constexpr const char* FALLBACK_ACTION_VALUE = "0";
     const uint32_t ARG_0 = 0;
     const uint32_t ARG_1 = 1;
     const uint32_t ARG_2 = 2;
@@ -81,8 +81,8 @@ namespace PowerMgr {
     const uint32_t ARG_8 = 8;
     const uint32_t ARG_9 = 9;
     // dialog
-    const std::string THERMAL_LOWER_TEMP_PARAMS = "{\"cancelButton\":\"Cancel\", \"temperature\":\"LowerTemp\"}";
-    const std::string THERMAL_HIGH_TEMP_PARAMS = "{\"cancelButton\":\"Cancel\", \"temperature\":\"HighTemp\"}";
+    constexpr const char* THERMAL_LOWER_TEMP_PARAMS = "{\"cancelButton\":\"Cancel\", \"temperature\":\"LowerTemp\"}";
+    constexpr const char* THERMAL_HIGH_TEMP_PARAMS = "{\"cancelButton\":\"Cancel\", \"temperature\":\"HighTemp\"}";
 } // namespace PowerMgr
 } // namespace OHOS
 #endif // OHOS_THERMAL_CONSTANTS_H
