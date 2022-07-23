@@ -28,8 +28,8 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-const std::string TASK_UNREG_SENSOR_TEMP_CALLBACK = "SensorTemp_UnRegSensorTempCB";
-const std::string TASK_UNREG_ACTION_CALLBACK = "Action_UnRegActionCB";
+constexpr const char* TASK_UNREG_SENSOR_TEMP_CALLBACK = "SensorTemp_UnRegSensorTempCB";
+constexpr const char* TASK_UNREG_ACTION_CALLBACK = "Action_UnRegActionCB";
 std::map<sptr<IThermalActionCallback>, std::map<std::string, int32_t>> g_actionLastCbMap;
 }
 ThermalObserver::ThermalObserver(const wptr<ThermalService>& tms) : tms_(tms) {};

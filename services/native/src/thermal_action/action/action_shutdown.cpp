@@ -28,9 +28,9 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string SHUTDOWN_REASON = "DeviceTempTooHigh";
+constexpr const char* SHUTDOWN_REASON = "DeviceTempTooHigh";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-const std::string shutdownPath = "/data/service/el0/thermal/config/shut_down";
+constexpr const char* shutdownPath = "/data/service/el0/thermal/config/shut_down";
 const int MAX_PATH = 256;
 }
 void ActionShutdown::InitParams(const std::string& params)
@@ -88,7 +88,7 @@ uint32_t ActionShutdown::ShutdownExecution(bool isShutdown)
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char shutdownBuf[MAX_PATH] = {0};
-    ret = snprintf_s(shutdownBuf, MAX_PATH, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
+    ret = snprintf_s(shutdownBuf, MAX_PATH, sizeof(shutdownBuf) - 1, shutdownPath);
     if (ret < EOK) {
         return ret;
     }

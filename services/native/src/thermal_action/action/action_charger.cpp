@@ -25,8 +25,8 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-const std::string SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
-const std::string BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
+constexpr const char* SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
+constexpr const char* BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
 const int MAX_PATH = 256;
 }
 
@@ -116,12 +116,12 @@ int32_t ActionCharger::WriteSimValue(int32_t simValue)
     int32_t ret = -1;
     char buf[MAX_PATH] = {0};
     if (protocol_ == SC_PROTOCOL) {
-        ret = snprintf_s(buf, MAX_PATH, sizeof(buf) - 1, SC_CURRENT_PATH.c_str());
+        ret = snprintf_s(buf, MAX_PATH, sizeof(buf) - 1, SC_CURRENT_PATH);
         if (ret < EOK) {
             return ret;
         }
     } else if (protocol_ == BUCK_PROTOCOL) {
-        ret = snprintf_s(buf, MAX_PATH, sizeof(buf) - 1, BUCK_CURRENT_PATH.c_str());
+        ret = snprintf_s(buf, MAX_PATH, sizeof(buf) - 1, BUCK_CURRENT_PATH);
         if (ret < EOK) {
             return ret;
         }
