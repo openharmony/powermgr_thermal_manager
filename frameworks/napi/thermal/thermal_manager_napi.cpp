@@ -26,7 +26,7 @@ thread_local auto &g_thermalMgrClient = ThermalMgrClient::GetInstance();
 thread_local ThermalManagerNapi *g_obj = nullptr;
 const uint8_t ARG_0 = 0;
 const uint8_t ARG_1 = 1;
-const std::string THERMAL_NAPI_LEVEL_CHANGED = "LevelChanged";
+constexpr const char* THERMAL_NAPI_LEVEL_CHANGED = "LevelChanged";
 }
 
 sptr<IThermalLevelCallback> ThermalManagerNapi::callback_ = nullptr;

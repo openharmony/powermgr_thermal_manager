@@ -22,9 +22,9 @@
 
 namespace OHOS {
 namespace PowerMgr {
-const std::string CPU_ACTION = "cpu";
-const std::string CURRENT_ACTION = "current";
-const std::string VOLTAGE_ACTION = "voltage";
+constexpr const char* CPU_ACTION = "cpu";
+constexpr const char* CURRENT_ACTION = "current";
+constexpr const char* VOLTAGE_ACTION = "voltage";
 
 class DeviceControlFactory {
 public:

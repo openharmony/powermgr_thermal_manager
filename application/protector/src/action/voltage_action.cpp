@@ -25,7 +25,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string BATTERY_VOLTAGE_PATH = "/data/service/el0/thermal/cooling/battery/voltage";
+constexpr const char* BATTERY_VOLTAGE_PATH = "/data/service/el0/thermal/cooling/battery/voltage";
 constexpr int32_t MAX_PATH = 256;
 }
 bool VoltageAction::AddActionValue(uint32_t value)
@@ -51,7 +51,7 @@ void VoltageAction::Execute()
 int32_t VoltageAction::BatteryVoltageActionRequest(uint32_t voltage)
 {
     char voltageBuf[MAX_PATH] = {0};
-    if (snprintf_s(voltageBuf, MAX_PATH, sizeof(voltageBuf) - 1, BATTERY_VOLTAGE_PATH.c_str()) < EOK) {
+    if (snprintf_s(voltageBuf, MAX_PATH, sizeof(voltageBuf) - 1, BATTERY_VOLTAGE_PATH) < EOK) {
         return ERR_INVALID_VALUE;
     }
     std::string voltageStr = std::to_string(voltage);
