@@ -39,14 +39,14 @@ std::string stateScreenPath = "/data/service/el0/thermal/state/screen";
 std::string stateScenePath = "/data/service/el0/thermal/state/scene";
 std::string stateChargePath = "/data/service/el0/thermal/state/charge";
 std::string vendorConfig = "/vendor/etc/thermal_config/thermal_service_config.xml";
-const std::string CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
-const std::string GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
-const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
-const std::string SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
-const std::string SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
-const std::string BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
-const std::string SC_VOLTAGE_PATH = "/data/service/el0/thermal/config/sc_voltage";
-const std::string BUCK_VOLTAGE_PATH = "/data/service/el0/thermal/config/buck_voltage";
+constexpr const char* CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
+constexpr const char* GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
+constexpr const char* BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
+constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
+constexpr const char* SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
+constexpr const char* BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
+constexpr const char* SC_VOLTAGE_PATH = "/data/service/el0/thermal/config/sc_voltage";
+constexpr const char* BUCK_VOLTAGE_PATH = "/data/service/el0/thermal/config/buck_voltage";
 class ThermalMgrPolicyTest : public testing::Test {
 public:
     static void SetUpTestCase();

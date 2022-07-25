@@ -15,8 +15,12 @@
 
 #ifndef THERMAL_TEMP_CALLBACK_STUB_H
 #define THERMAL_TEMP_CALLBACK_STUB_H
+
+#include <cstdint>
 #include <iremote_stub.h>
 #include <nocopyable.h>
+#include "refbase.h"
+#include "message_option.h"
 #include "ithermal_temp_callback.h"
 
 namespace OHOS {

@@ -14,11 +14,16 @@
  */
 
 #include "thermal_temp_callback_stub.h"
-#include <message_parcel.h>
 
+#include <message_parcel.h>
+#include "errors.h"
+#include "ipc_object_stub.h"
 #include "constants.h"
+#include "thermal_log.h"
+#include "thermal_mgr_errors.h"
 #include "thermal_common.h"
 #include "xcollie.h"
+#include "xcollie_define.h"
 
 namespace OHOS {
 namespace PowerMgr {

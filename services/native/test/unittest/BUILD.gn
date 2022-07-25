@@ -57,6 +57,7 @@ deps_ex = [
   "drivers_interface_thermal:libthermal_proxy_1.0",
   "hdf_core:libhdi",
   "hdf_core:libhdf_utils",
+  "c_utils:utils",
 ]
 
 # thermal service test
@@ -91,7 +92,6 @@ ohos_unittest("ThermalPolicyTest") {
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
   external_deps = deps_ex
@@ -129,7 +129,6 @@ ohos_unittest("ThermalLevelEventTest") {
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
   external_deps = deps_ex
@@ -167,7 +166,6 @@ ohos_unittest("ThermalClientApiTest") {
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
   external_deps = deps_ex
@@ -206,7 +204,6 @@ ohos_unittest("ThermalActionHubTest") {
     "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
   external_deps = deps_ex

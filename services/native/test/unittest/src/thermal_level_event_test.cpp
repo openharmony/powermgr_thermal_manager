@@ -99,7 +99,7 @@ int32_t ThermalLevelEventTest::InitNode()
     sensor["soc"] = 0;
     sensor["shell"] = 0;
     for (auto iter : sensor) {
-        ret = snprintf_s(bufTemp, MAX_PATH, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR.c_str(), iter.first.c_str());
+        ret = snprintf_s(bufTemp, MAX_PATH, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR, iter.first.c_str());
         if (ret < EOK) {
             return ret;
         }

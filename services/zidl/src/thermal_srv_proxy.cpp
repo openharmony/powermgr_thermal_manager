@@ -15,12 +15,11 @@
 
 #include "thermal_srv_proxy.h"
 
-#include <ipc_types.h>
 #include <message_option.h>
 #include <message_parcel.h>
-#include <string_ex.h>
-
+#include "errors.h"
 #include "ithermal_temp_callback.h"
+#include "thermal_log.h"
 #include "thermal_common.h"
 
 namespace OHOS {

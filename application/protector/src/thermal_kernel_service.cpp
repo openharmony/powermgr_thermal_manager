@@ -21,7 +21,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string CONFIG_FILE_PATH = "/system/etc/thermal_config/thermal_kernel_config.xml";
+constexpr const char* CONFIG_FILE_PATH = "/system/etc/thermal_config/thermal_kernel_config.xml";
 }
 void ThermalKernelService::OnStart()
 {

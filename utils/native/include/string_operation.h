@@ -16,8 +16,8 @@
 #ifndef STRING_OPERATION_H
 #define STRING_OPERATION_H
 
-#include <string>
 #include <vector>
+#include <iosfwd>
 
 namespace OHOS {
 namespace PowerMgr {

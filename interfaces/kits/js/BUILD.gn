@@ -41,13 +41,13 @@ ohos_shared_library("thermal") {
     "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
     "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
     "//foundation/arkui/napi:ace_napi",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
     "ability_base:base",
     "ability_base:want",
     "bundle_framework:appexecfwk_base",
+    "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",

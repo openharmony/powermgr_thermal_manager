@@ -155,7 +155,7 @@ int32_t ThermalMgrSystemTest::InitNode()
     sensor["soc"] = 0;
     sensor["shell"] = 0;
     for (auto iter : sensor) {
-        ret = snprintf_s(bufTemp, MAX_PATH, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR.c_str(), iter.first.c_str());
+        ret = snprintf_s(bufTemp, MAX_PATH, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR, iter.first.c_str());
         if (ret < EOK) {
             return ret;
         }
@@ -1117,14 +1117,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest022, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest022 failed";
+    EXPECT_EQ(true, value == 1992000 || value == 1991500 || value == 1991200) << "ThermalMgrSystemTest022 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest022: end.");
 }
 
@@ -1152,14 +1152,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest023, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest023 failed";
+    EXPECT_EQ(true, value == 1991000 || value == 1990500 || value == 1990200) << "ThermalMgrSystemTest023 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest023: end.");
 }
 
@@ -1186,14 +1186,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest024, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest024 failed";
+    EXPECT_EQ(true, value == 1990000 || value == 1989500 || value == 1989200) << "ThermalMgrSystemTest024 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest024: end.");
 }
 
@@ -1220,14 +1220,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest025 failed";
+    EXPECT_EQ(true, value == 1990000 || value == 1989500 || value == 1989200) << "ThermalMgrSystemTest025 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest025: end.");
 }
 
@@ -1260,14 +1260,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest026 failed";
+    EXPECT_EQ(true, value == 1992000 || value == 1991500 || value == 1991200) << "ThermalMgrSystemTest026 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest026: end.");
 }
 
@@ -1306,14 +1306,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest027, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 8000000) << "ThermalMgrSystemTest027 failed";
+    EXPECT_EQ(true, value == 1991800) << "ThermalMgrSystemTest027 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1355,14 +1355,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest028, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 9000000) << "ThermalMgrSystemTest028 failed";
+    EXPECT_EQ(true, value == 1991600) << "ThermalMgrSystemTest028 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1398,14 +1398,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest029, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest029 failed";
+    EXPECT_EQ(true, value == 1990500) << "ThermalMgrSystemTest029 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest029: end.");
 }
 
@@ -1444,14 +1444,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest030, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 7000000) << "ThermalMgrSystemTest030 failed";
+    EXPECT_EQ(true, value == 1990800) << "ThermalMgrSystemTest030 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1493,14 +1493,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest031, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 8000000) << "ThermalMgrSystemTest031 failed";
+    EXPECT_EQ(true, value == 1990600) << "ThermalMgrSystemTest031 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1536,14 +1536,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest032, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1992000) << "ThermalMgrSystemTest032 failed";
+    EXPECT_EQ(true, value == 1989500) << "ThermalMgrSystemTest032 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest032: end.");
 }
 
@@ -1582,14 +1582,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest033, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 6000000) << "ThermalMgrSystemTest033 failed";
+    EXPECT_EQ(true, value == 1989800) << "ThermalMgrSystemTest033 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1631,14 +1631,14 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest034, Function|MediumTest|Lev
 
     char cpuBuf[MAX_PATH] = {0};
     char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string freq = freqValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 7000000) << "ThermalMgrSystemTest034 failed";
+    EXPECT_EQ(true, value == 1989600) << "ThermalMgrSystemTest034 failed";
     sceneState = "null";
     ret = ThermalMgrSystemTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1668,7 +1668,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest035, Function|MediumTest|Lev
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1708,7 +1708,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest036, Function|MediumTest|Lev
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1746,7 +1746,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest037, Function|MediumTest|Lev
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1786,7 +1786,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest038, Function|MediumTest|Lev
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1824,7 +1824,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest039, Function|MediumTest|Lev
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1864,7 +1864,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest040, Function|MediumTest|Lev
 
     char currentBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1903,7 +1903,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest041, Function|MediumTest|Lev
 
     char currentlBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1937,7 +1937,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest042, Function|MediumTest|Lev
 
     char currentlBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);
@@ -1971,7 +1971,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest043, Function|MediumTest|Lev
 
     char currentlBuf[MAX_PATH] = {0};
     char currentValue[MAX_PATH] = {0};
-    ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+    ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);
     EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrSystemTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
     EXPECT_EQ(true, ret == ERR_OK);

@@ -24,8 +24,8 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 using BaseInfoMap = std::map<std::string, std::string>;
-const std::string HISTORY_TEMP_COUNT_TAG = "history_temp_count";
-const std::string SENSORS_TYPE_TAG = "temperature_query_enum";
+constexpr const char* HISTORY_TEMP_COUNT_TAG = "history_temp_count";
+constexpr const char* SENSORS_TYPE_TAG = "temperature_query_enum";
 }
 
 struct BaseItem {
