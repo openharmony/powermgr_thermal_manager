@@ -123,8 +123,8 @@ int32_t ThermalMgrPolicyTest::InitNode()
     sensor["soc"] = 0;
     sensor["shell"] = 0;
     for (auto iter : sensor) {
-        ret = snprintf_s(bufTemp, PATH_MAX, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR.c_str(), iter.first.c_str());
-        if (ret < ERR_OK) {
+        ret = snprintf_s(bufTemp, MAX_PATH, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR.c_str(), iter.first.c_str());
+        if (ret < EOK) {
             return ret;
         }
         std::string temp = std::to_string(iter.second);
@@ -151,10 +151,10 @@ void ThermalMgrPolicyTest::TearDown(void)
     int32_t ret = -1;
     char stateChargeBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     std::string chargeState = "0";
     ret = WriteFile(stateChargeBuf, chargeState, chargeState.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -176,8 +176,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest001, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest001: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -188,8 +188,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest001, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -213,8 +213,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest002, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest002: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -225,8 +225,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest002, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -249,8 +249,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest003, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest003: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -261,8 +261,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest003, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -285,8 +285,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest004, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest003: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 48100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -297,8 +297,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest004, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -320,8 +320,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest005, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest005: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -334,8 +334,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest005, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -343,8 +343,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest005, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest005 failed";
     }
 
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     batteryTemp = 48100;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -353,8 +353,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest005, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -377,8 +377,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest006, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest006: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -391,8 +391,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest006, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -400,8 +400,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest006, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest006 failed";
     }
 
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     batteryTemp = 48100;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -410,8 +410,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest006, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -434,8 +434,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest007, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest007: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 48200;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -450,8 +450,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest007, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -459,8 +459,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest007, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest007 failed";
     }
 
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     batteryTemp = 40900;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -469,8 +469,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest007, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -493,8 +493,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest008, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest008: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -509,8 +509,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest008, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -518,8 +518,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest008, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest008 failed";
     }
 
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     batteryTemp = 37000;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -528,8 +528,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest008, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -552,8 +552,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest009, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest009: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -10000;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -564,8 +564,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest009, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -587,8 +587,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest010, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest010: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -15000;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -599,8 +599,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest010, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -622,8 +622,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest011, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest011: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -20100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -634,8 +634,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest011, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -657,8 +657,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest012, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest012: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -22000;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -669,8 +669,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest012, Function|MediumTest|Lev
 
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -692,8 +692,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest013, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest013: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -10000;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -706,8 +706,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest013, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -715,8 +715,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest013, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest013 failed";
     }
 
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     batteryTemp = -22000;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -725,8 +725,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest013, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -749,8 +749,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest014, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest014: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -15000;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -763,8 +763,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest014, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -772,8 +772,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest014, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 2) << "ThermalMgrPolicyTest014 failed";
     }
 
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     batteryTemp = -22000;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -782,8 +782,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest014, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -806,8 +806,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest015, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest015: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -22000;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -820,8 +820,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest015, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -829,8 +829,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest015, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 4) << "ThermalMgrPolicyTest015 failed";
     }
 
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     batteryTemp = -10000;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -839,8 +839,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest015, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -863,8 +863,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest016, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest016: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -19100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -877,8 +877,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest016, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -886,8 +886,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest016, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 3) << "ThermalMgrPolicyTest016 failed";
     }
 
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     batteryTemp = -1000;
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -896,8 +896,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest016, Function|MediumTest|Lev
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
 
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         level = levelValue;
@@ -921,10 +921,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest017, Function|MediumTest|Lev
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 41000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -940,8 +940,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest017, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -965,10 +965,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest018, Function|MediumTest|Lev
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 44000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -984,8 +984,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest018, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -1009,10 +1009,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest019, Function|MediumTest|Lev
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 44000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -1028,8 +1028,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest019, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -1054,12 +1054,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest020, Function|MediumTest|Lev
     char apTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
     char shellTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(apTempBuf, MAX_PATH, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(shellTempBuf, MAX_PATH, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t apTemp = 78000;
     std::string sTemp = to_string(apTemp) + "\n";
@@ -1080,8 +1080,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest020, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -1106,12 +1106,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest021, Function|MediumTest|Lev
     char apTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
     char shellTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(apTempBuf, MAX_PATH, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(shellTempBuf, MAX_PATH, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t apTemp = 78000;
     std::string sTemp = to_string(apTemp) + "\n";
@@ -1132,8 +1132,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest021, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char levelBuf[MAX_PATH] = {0};
         char levelValue[MAX_PATH] = {0};
-        ret = snprintf_s(levelBuf, PATH_MAX, sizeof(levelBuf) - 1, configLevelPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, configLevelPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(levelBuf, levelValue, sizeof(levelValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string level = levelValue;
@@ -1156,8 +1156,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest022: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -1168,8 +1168,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1193,8 +1193,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest023: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -1205,8 +1205,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1229,8 +1229,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest024: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -1241,8 +1241,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1265,8 +1265,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest025: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 48100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -1277,8 +1277,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1302,10 +1302,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1320,8 +1320,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1346,12 +1346,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1369,8 +1369,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1398,12 +1398,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Lev
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1421,8 +1421,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1449,10 +1449,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1467,8 +1467,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1493,12 +1493,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1516,8 +1516,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1545,12 +1545,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Lev
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1568,8 +1568,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1596,10 +1596,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1614,8 +1614,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1640,12 +1640,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1663,8 +1663,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1692,12 +1692,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Lev
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateChargeBuf, PATH_MAX, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1715,8 +1715,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Lev
 
         char cpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(cpuBuf, PATH_MAX, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -1742,8 +1742,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest035, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest035: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -1754,8 +1754,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest035, Function|MediumTest|Lev
 
         char currentBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -1779,14 +1779,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     std::string sceneState = "cam,call";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
@@ -1797,8 +1797,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Lev
 
         char currentBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -1825,8 +1825,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest037, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest035: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -1837,8 +1837,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest037, Function|MediumTest|Lev
 
         char currentBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -1862,14 +1862,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     std::string sceneState = "cam,call";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
@@ -1880,8 +1880,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Lev
 
         char currentBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -1908,8 +1908,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest039, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest039: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -1920,8 +1920,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest039, Function|MediumTest|Lev
 
         char currentBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -1945,14 +1945,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    ret = snprintf_s(stateSceneBuf, PATH_MAX, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     std::string sceneState = "cam,call";
     ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
@@ -1963,8 +1963,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Lev
 
         char currentBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentBuf, PATH_MAX, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -1991,8 +1991,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest041, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest041: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -10000;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2003,8 +2003,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest041, Function|MediumTest|Lev
 
         char currentlBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -2027,8 +2027,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest042, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest042: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -14100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2039,8 +2039,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest042, Function|MediumTest|Lev
 
         char currentlBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -2063,8 +2063,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest043, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest043: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = -19100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2075,8 +2075,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest043, Function|MediumTest|Lev
 
         char currentlBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
-        ret = snprintf_s(currentlBuf, PATH_MAX, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(currentlBuf, MAX_PATH, sizeof(currentlBuf) - 1, BATTERY_CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(currentlBuf, currentValue, sizeof(currentValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string current = currentValue;
@@ -2099,8 +2099,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest044: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2111,8 +2111,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Lev
 
         char lcdBuf[MAX_PATH] = {0};
         char lcdValue[MAX_PATH]= {0};
-        ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
@@ -2135,8 +2135,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest045: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2147,8 +2147,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Lev
 
         char lcdBuf[MAX_PATH] = {0};
         char lcdValue[MAX_PATH] = {0};
-        ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
@@ -2171,8 +2171,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest046: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2183,8 +2183,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Lev
 
         char lcdBuf[MAX_PATH] = {0};
         char lcdValue[MAX_PATH] = {0};
-        ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
@@ -2208,10 +2208,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Lev
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 41000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -2227,8 +2227,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char lcdBuf[MAX_PATH] = {0};
         char lcdValue[MAX_PATH] = {0};
-        ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
@@ -2252,10 +2252,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Lev
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 44000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -2271,8 +2271,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char lcdBuf[MAX_PATH] = {0};
         char lcdValue[MAX_PATH] = {0};
-        ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
@@ -2298,14 +2298,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
     char amTempBuf[MAX_PATH] = {0};
     char shellTempBuf[MAX_PATH] = {0};
     char stateScreenBuf[MAX_PATH] = {0};
-    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateScreenBuf, PATH_MAX, sizeof(stateScreenBuf) - 1, stateScreenPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(apTempBuf, MAX_PATH, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(shellTempBuf, MAX_PATH, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateScreenBuf, MAX_PATH, sizeof(stateScreenBuf) - 1, stateScreenPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t apTemp = 78000;
     std::string sTemp = to_string(apTemp) + "\n";
@@ -2331,8 +2331,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char procsessBuf[MAX_PATH] = {0};
         char procsesValue[MAX_PATH] = {0};
-        ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(procsessBuf, MAX_PATH, sizeof(procsessBuf) - 1, processPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string process = procsesValue;
@@ -2342,8 +2342,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
 
         char shutdownBuf[MAX_PATH] = {0};
         char shutdownValue[MAX_PATH] = {0};
-        ret = snprintf_s(shutdownBuf, PATH_MAX, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(shutdownBuf, MAX_PATH, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(shutdownBuf, shutdownValue, sizeof(shutdownValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string shutdown = shutdownValue;
@@ -2366,8 +2366,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest050, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest050: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2378,8 +2378,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest050, Function|MediumTest|Lev
 
         char procsessBuf[MAX_PATH] = {0};
         char procsesValue[MAX_PATH] = {0};
-        ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(procsessBuf, MAX_PATH, sizeof(procsessBuf) - 1, processPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string process = procsesValue;
@@ -2402,8 +2402,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest051, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest051: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2414,8 +2414,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest051, Function|MediumTest|Lev
 
         char procsessBuf[MAX_PATH] = {0};
         char procsesValue[MAX_PATH] = {0};
-        ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(procsessBuf, MAX_PATH, sizeof(procsessBuf) - 1, processPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string process = procsesValue;
@@ -2438,8 +2438,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest052, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest052: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2450,8 +2450,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest052, Function|MediumTest|Lev
 
         char procsessBuf[MAX_PATH] = {0};
         char procsesValue[MAX_PATH] = {0};
-        ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(procsessBuf, MAX_PATH, sizeof(procsessBuf) - 1, processPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string process = procsesValue;
@@ -2475,10 +2475,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest053, Function|MediumTest|Lev
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 41000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -2494,8 +2494,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest053, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char procsessBuf[MAX_PATH] = {0};
         char procsesValue[MAX_PATH] = {0};
-        ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(procsessBuf, MAX_PATH, sizeof(procsessBuf) - 1, processPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string process = procsesValue;
@@ -2518,10 +2518,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest054, Function|MediumTest|Lev
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 44000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -2537,8 +2537,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest054, Function|MediumTest|Lev
         sleep(WAIT_TIME_5_SEC);
         char procsessBuf[MAX_PATH] = {0};
         char procsesValue[MAX_PATH] = {0};
-        ret = snprintf_s(procsessBuf, PATH_MAX, sizeof(procsessBuf) - 1, processPath.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(procsessBuf, MAX_PATH, sizeof(procsessBuf) - 1, processPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string process = procsesValue;
@@ -2561,8 +2561,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest055, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest055: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2572,8 +2572,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest055, Function|MediumTest|Lev
 
     char buckCurrentBuf[MAX_PATH] = {0};
     char buckCurrentValue[MAX_PATH] = {0};
-    ret = snprintf_s(buckCurrentBuf, PATH_MAX, sizeof(buckCurrentBuf) - 1, BUCK_CURRENT_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(buckCurrentBuf, MAX_PATH, sizeof(buckCurrentBuf) - 1, BUCK_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(buckCurrentBuf, buckCurrentValue, sizeof(buckCurrentValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = buckCurrentValue;
@@ -2596,8 +2596,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest056, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest056: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2607,8 +2607,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest056, Function|MediumTest|Lev
 
     char scVoltageBuf[MAX_PATH] = {0};
     char scVoltageValue[MAX_PATH] = {0};
-    ret = snprintf_s(scVoltageBuf, PATH_MAX, sizeof(scVoltageBuf) - 1, SC_VOLTAGE_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(scVoltageBuf, MAX_PATH, sizeof(scVoltageBuf) - 1, SC_VOLTAGE_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(scVoltageBuf, scVoltageValue, sizeof(scVoltageValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = scVoltageValue;
@@ -2630,8 +2630,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest057, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest057: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2641,8 +2641,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest057, Function|MediumTest|Lev
 
     char buckVoltageBuf[MAX_PATH] = {0};
     char buckVoltageValue[MAX_PATH] = {0};
-    ret = snprintf_s(buckVoltageBuf, PATH_MAX, sizeof(buckVoltageBuf) - 1, BUCK_VOLTAGE_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(buckVoltageBuf, MAX_PATH, sizeof(buckVoltageBuf) - 1, BUCK_VOLTAGE_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(buckVoltageBuf, buckVoltageValue, sizeof(buckVoltageValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = buckVoltageValue;
@@ -2664,8 +2664,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest058, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest058: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2675,8 +2675,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest058, Function|MediumTest|Lev
 
     char buckCurrentBuf[MAX_PATH] = {0};
     char buckCurrentValue[MAX_PATH] = {0};
-    ret = snprintf_s(buckCurrentBuf, PATH_MAX, sizeof(buckCurrentBuf) - 1, BUCK_CURRENT_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(buckCurrentBuf, MAX_PATH, sizeof(buckCurrentBuf) - 1, BUCK_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(buckCurrentBuf, buckCurrentValue, sizeof(buckCurrentValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = buckCurrentValue;
@@ -2698,8 +2698,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest059, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest059: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2709,8 +2709,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest059, Function|MediumTest|Lev
 
     char scVoltageBuf[MAX_PATH] = {0};
     char scVoltageValue[MAX_PATH] = {0};
-    ret = snprintf_s(scVoltageBuf, PATH_MAX, sizeof(scVoltageBuf) - 1, SC_VOLTAGE_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(scVoltageBuf, MAX_PATH, sizeof(scVoltageBuf) - 1, SC_VOLTAGE_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(scVoltageBuf, scVoltageValue, sizeof(scVoltageValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = scVoltageValue;
@@ -2732,8 +2732,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest060, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest060: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2743,8 +2743,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest060, Function|MediumTest|Lev
 
     char buckVoltageBuf[MAX_PATH] = {0};
     char buckVoltageValue[MAX_PATH] = {0};
-    ret = snprintf_s(buckVoltageBuf, PATH_MAX, sizeof(buckVoltageBuf) - 1, BUCK_VOLTAGE_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(buckVoltageBuf, MAX_PATH, sizeof(buckVoltageBuf) - 1, BUCK_VOLTAGE_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(buckVoltageBuf, buckVoltageValue, sizeof(buckVoltageValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = buckVoltageValue;
@@ -2766,8 +2766,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest061, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest061: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2777,8 +2777,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest061, Function|MediumTest|Lev
 
     char buckCurrentBuf[MAX_PATH] = {0};
     char buckCurrentValue[MAX_PATH] = {0};
-    ret = snprintf_s(buckCurrentBuf, PATH_MAX, sizeof(buckCurrentBuf) - 1, BUCK_CURRENT_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(buckCurrentBuf, MAX_PATH, sizeof(buckCurrentBuf) - 1, BUCK_CURRENT_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(buckCurrentBuf, buckCurrentValue, sizeof(buckCurrentValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = buckCurrentValue;
@@ -2800,8 +2800,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest062, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest062: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2811,8 +2811,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest062, Function|MediumTest|Lev
 
     char scVoltageBuf[MAX_PATH] = {0};
     char scVoltageValue[MAX_PATH] = {0};
-    ret = snprintf_s(scVoltageBuf, PATH_MAX, sizeof(scVoltageBuf) - 1, SC_VOLTAGE_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(scVoltageBuf, MAX_PATH, sizeof(scVoltageBuf) - 1, SC_VOLTAGE_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(scVoltageBuf, scVoltageValue, sizeof(scVoltageValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = scVoltageValue;
@@ -2834,8 +2834,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest063, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest063: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2845,8 +2845,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest063, Function|MediumTest|Lev
 
     char buckVoltageBuf[MAX_PATH] = {0};
     char buckVoltageValue[MAX_PATH] = {0};
-    ret = snprintf_s(buckVoltageBuf, PATH_MAX, sizeof(buckVoltageBuf) - 1, BUCK_VOLTAGE_PATH.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(buckVoltageBuf, MAX_PATH, sizeof(buckVoltageBuf) - 1, BUCK_VOLTAGE_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = ThermalMgrPolicyTest::ReadFile(buckVoltageBuf, buckVoltageValue, sizeof(buckVoltageValue));
     EXPECT_EQ(true, ret == ERR_OK);
     std::string valueStr = buckVoltageValue;
@@ -2869,10 +2869,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest064, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateScreenBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateScreenBuf, PATH_MAX, sizeof(stateScreenBuf) - 1, stateScreenPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateScreenBuf, MAX_PATH, sizeof(stateScreenBuf) - 1, stateScreenPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2888,8 +2888,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest064, Function|MediumTest|Lev
 
         char gpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(gpuBuf, PATH_MAX, sizeof(gpuBuf) - 1, GPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(gpuBuf, MAX_PATH, sizeof(gpuBuf) - 1, GPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(gpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
@@ -2913,10 +2913,10 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest065, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateScreenBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(stateScreenBuf, PATH_MAX, sizeof(stateScreenBuf) - 1, stateScreenPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(stateScreenBuf, MAX_PATH, sizeof(stateScreenBuf) - 1, stateScreenPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
@@ -2932,8 +2932,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest065, Function|MediumTest|Lev
 
         char gpuBuf[MAX_PATH] = {0};
         char freqValue[MAX_PATH] = {0};
-        ret = snprintf_s(gpuBuf, PATH_MAX, sizeof(gpuBuf) - 1, GPU_FREQ_PATH.c_str());
-        EXPECT_EQ(true, ret >= ERR_OK);
+        ret = snprintf_s(gpuBuf, MAX_PATH, sizeof(gpuBuf) - 1, GPU_FREQ_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
         ret = ThermalMgrPolicyTest::ReadFile(gpuBuf, freqValue, sizeof(freqValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string freq = freqValue;
