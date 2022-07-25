@@ -101,7 +101,7 @@ void SceneStateCollection::SetState()
     char sceneValue[MAX_PATH] = {0};
     std::string separator = ",";
     int32_t result = -1;
-    if (snprintf_s(sceneBuf, PATH_MAX, sizeof(sceneBuf) - 1, scenePath.c_str()) < ERR_OK) {
+    if (snprintf_s(sceneBuf, MAX_PATH, sizeof(sceneBuf) - 1, scenePath.c_str()) < EOK) {
         return;
     }
     THERMAL_HILOGD(COMP_SVC, "read scene state");
