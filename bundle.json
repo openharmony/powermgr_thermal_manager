@@ -48,7 +48,7 @@
         "power_manager",
         "safwk",
         "samgr_standard",
-        "time_native",
+        "time_service",
         "window_manager"
       ],
       "third_party": [
