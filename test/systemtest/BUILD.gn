@@ -27,6 +27,7 @@ deps_ex = [
   "samgr_standard:samgr_proxy",
   "appspawn:appspawn_socket_client",
   "drivers_interface_thermal:libthermal_proxy_1.0",
+  "c_utils:utils",
 ]
 
 ohos_systemtest("ThermalMgrInterfaceTest") {
@@ -71,7 +72,6 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
   external_deps = deps_ex
 }
@@ -117,7 +117,6 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
   external_deps = deps_ex
 }
