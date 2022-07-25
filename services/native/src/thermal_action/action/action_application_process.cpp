@@ -223,13 +223,13 @@ void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t &value)
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char processBuf[MAX_PATH] = {0};
-    ret = snprintf_s(processBuf, PATH_MAX, sizeof(processBuf) - 1, processPath.c_str());
-    if (ret < ERR_OK) {
+    ret = snprintf_s(processBuf, MAX_PATH, sizeof(processBuf) - 1, processPath.c_str());
+    if (ret < EOK) {
         return;
     }
     std::string valueString = std::to_string(value) + "\n";
     ret = FileOperation::WriteFile(processBuf, valueString, valueString.length());
-    if (ret != ERR_OK) {
+    if (ret != EOK) {
         return;
     }
 }

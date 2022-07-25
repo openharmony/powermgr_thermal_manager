@@ -126,7 +126,7 @@ void ChargerStateCollection::SetState()
     char chargerBuf[MAX_PATH] = {0};
     char chagerValue[MAX_PATH] = {0};
     int32_t ret = -1;
-    if (snprintf_s(chargerBuf, PATH_MAX, sizeof(chargerBuf) - 1, chargePath.c_str()) < ERR_OK) {
+    if (snprintf_s(chargerBuf, MAX_PATH, sizeof(chargerBuf) - 1, chargePath.c_str()) < EOK) {
         return;
     }
     THERMAL_HILOGD(COMP_SVC, "read charge state");
