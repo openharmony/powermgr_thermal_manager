@@ -37,6 +37,7 @@ deps_ex = [
   "ipc:ipc_core",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
+  "c_utils:utils",
 ]
 
 ohos_shared_library("thermalmgr_proxy") {
@@ -54,8 +55,6 @@ ohos_shared_library("thermalmgr_proxy") {
   ]
 
   public_configs = [ ":thermalmgr_ipc_public_config" ]
-
-  deps = [ "//utils/native/base:utils" ]
 
   external_deps = deps_ex
 
@@ -78,8 +77,6 @@ ohos_shared_library("thermalmgr_stub") {
   ]
 
   public_configs = [ ":thermalmgr_ipc_public_config" ]
-
-  deps = [ "//utils/native/base:utils" ]
 
   external_deps = deps_ex
 

@@ -16,8 +16,8 @@
 #ifndef FILE_OPERATION_H
 #define FILE_OPERATION_H
 
-#include <string>
-#include <vector>
+#include <cstdint>
+#include <iosfwd>
 
 namespace OHOS {
 namespace PowerMgr {

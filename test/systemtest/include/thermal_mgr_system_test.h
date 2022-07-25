@@ -39,10 +39,10 @@ std::string shutdownPath = "/data/service/el0/thermal/config/shut_down";
 std::string stateScreenPath = "/data/service/el0/thermal/state/screen";
 std::string stateScenePath = "/data/service/el0/thermal/state/scene";
 std::string stateChargePath = "/data/service/el0/thermal/state/charge";
-const std::string CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
-const std::string GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
-const std::string BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
-const std::string SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
+constexpr const char* CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
+constexpr const char* GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
+constexpr const char* BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
+constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
 class ThermalMgrSystemTest : public testing::Test {
 public:
     static void SetUpTestCase();

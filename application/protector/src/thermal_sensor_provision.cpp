@@ -42,14 +42,12 @@ constexpr int32_t MAX_BUFF_SIZE = 128;
 constexpr int32_t MAX_SYSFS_SIZE = 128;
 constexpr uint32_t ARG_0 = 0;
 constexpr int32_t NUM_ZERO = 0;
-const std::string THERMAL_SYSFS = "/sys/devices/virtual/thermal";
-const std::string THERMAL_ZONE_DIR_NAME = "thermal_zone%d";
-const std::string COOLING_DEVICE_DIR_NAME = "cooling_device%d";
-const std::string THERMAL_ZONE_DIR_PATH = "/sys/class/thermal/%s";
-const std::string THERMAL_TEMPERATURE_PATH = "/sys/class/thermal/%s/temp";
-const std::string THEERMAL_TYPE_PATH = "/sys/class/thermal/%s/type";
-const std::string CDEV_DIR_NAME = "cooling_device";
-const std::string THERMAL_ZONE_TEMP_PATH_NAME = "/sys/class/thermal/thermal_zone%d/temp";
+constexpr const char* THERMAL_SYSFS = "/sys/devices/virtual/thermal";
+constexpr const char* THERMAL_ZONE_DIR_NAME = "thermal_zone%d";
+constexpr const char* THERMAL_ZONE_DIR_PATH = "/sys/class/thermal/%s";
+constexpr const char* THERMAL_TEMPERATURE_PATH = "/sys/class/thermal/%s/temp";
+constexpr const char* THEERMAL_TYPE_PATH = "/sys/class/thermal/%s/type";
+constexpr const char* CDEV_DIR_NAME = "cooling_device";
 auto &g_service = ThermalKernelService::GetInstance();
 }
 
@@ -109,14 +107,14 @@ void ThermalSensorProvision::FormatThermalSysfsPaths(struct ThermalSysfsPathInfo
 {
     // Format Paths for thermal path
     FormatThermalPaths(pTSysPathInfo->thermalZonePath, sizeof(pTSysPathInfo->thermalZonePath),
-        THERMAL_ZONE_DIR_PATH.c_str(), pTSysPathInfo->name);
+        THERMAL_ZONE_DIR_PATH, pTSysPathInfo->name);
     // Format paths for thermal zone node
     tzSysPathInfo_.name = pTSysPathInfo->name;
     FormatThermalPaths(tzSysPathInfo_.tempPath, sizeof(tzSysPathInfo_.tempPath),
-        THERMAL_TEMPERATURE_PATH.c_str(), pTSysPathInfo->name);
+        THERMAL_TEMPERATURE_PATH, pTSysPathInfo->name);
 
     FormatThermalPaths(tzSysPathInfo_.typePath, sizeof(tzSysPathInfo_.typePath),
-        THEERMAL_TYPE_PATH.c_str(), pTSysPathInfo->name);
+        THEERMAL_TYPE_PATH, pTSysPathInfo->name);
 
     THERMAL_HILOGI(FEATURE_PROTECTOR, "temp path: %{private}s, type path: %{private}s ",
         tzSysPathInfo_.tempPath, tzSysPathInfo_.typePath);
@@ -139,7 +137,7 @@ int32_t ThermalSensorProvision::InitThermalZoneSysfs()
     int32_t index = 0;
     int32_t id = 0;
 
-    dir = opendir(THERMAL_SYSFS.c_str());
+    dir = opendir(THERMAL_SYSFS);
     if (dir == nullptr) {
         THERMAL_HILOGE(FEATURE_PROTECTOR, "cannot open thermal zone path");
         return ERR_INVALID_VALUE;
@@ -155,7 +153,7 @@ int32_t ThermalSensorProvision::InitThermalZoneSysfs()
             continue;
         }
 
-        if (strncmp(entry->d_name, CDEV_DIR_NAME.c_str(), CDEV_DIR_NAME.size()) == 0) {
+        if (strncmp(entry->d_name, CDEV_DIR_NAME, strlen(CDEV_DIR_NAME)) == 0) {
             continue;
         }
 
@@ -163,7 +161,7 @@ int32_t ThermalSensorProvision::InitThermalZoneSysfs()
             struct ThermalSysfsPathInfo sysfsInfo = {0};
             sysfsInfo.name = entry->d_name;
             THERMAL_HILOGI(FEATURE_PROTECTOR, "init sysfs info of %{public}s", sysfsInfo.name);
-            int32_t ret = sscanf_s(sysfsInfo.name, THERMAL_ZONE_DIR_NAME.c_str(), &id);
+            int32_t ret = sscanf_s(sysfsInfo.name, THERMAL_ZONE_DIR_NAME, &id);
             if (ret < ARG_0) {
                 closedir(dir);
                 return ret;

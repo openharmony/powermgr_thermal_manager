@@ -15,7 +15,7 @@
 #ifndef CPU_ACTION_H
 #define CPU_ACTION_H
 
-#include <stdint.h>
+#include <cstdint>
 #include "ithermal_action.h"
 
 namespace OHOS {
