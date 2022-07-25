@@ -46,7 +46,7 @@ void VoltageAction::Execute()
 int32_t VoltageAction::BatteryVoltageActionRequest(uint32_t voltage)
 {
     char voltageBuf[MAX_PATH] = {0};
-    if (snprintf_s(voltageBuf, PATH_MAX, sizeof(voltageBuf) - 1, BATTERY_VOLTAGE_PATH.c_str()) < ERR_OK) {
+    if (snprintf_s(voltageBuf, MAX_PATH, sizeof(voltageBuf) - 1, BATTERY_VOLTAGE_PATH.c_str()) < EOK) {
         return ERR_INVALID_VALUE;
     }
     std::string voltageStr = std::to_string(voltage);

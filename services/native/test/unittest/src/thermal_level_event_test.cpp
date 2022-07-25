@@ -116,8 +116,8 @@ int32_t ThermalLevelEventTest::InitNode()
     sensor["soc"] = 0;
     sensor["shell"] = 0;
     for (auto iter : sensor) {
-        ret = snprintf_s(bufTemp, PATH_MAX, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR.c_str(), iter.first.c_str());
-        if (ret < ERR_OK) {
+        ret = snprintf_s(bufTemp, MAX_PATH, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR.c_str(), iter.first.c_str());
+        if (ret < EOK) {
             return ret;
         }
         std::string temp = std::to_string(iter.second);
@@ -157,8 +157,8 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
     int32_t temp = 41000;
     int32_t ret = -1;
     std::string sTemp = to_string(temp) + "\n";
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME_5_SEC);
@@ -178,8 +178,8 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
     int32_t temp = 43100;
     int32_t ret = -1;
     std::string sTemp = to_string(temp) + "\n";
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME_5_SEC);
@@ -199,8 +199,8 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
     int32_t temp = 46100;
     int32_t ret = -1;
     std::string sTemp = to_string(temp) + "\n";
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
     sleep(WAIT_TIME_5_SEC);
@@ -219,10 +219,10 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 41000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -250,10 +250,10 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest005, TestSize.Level0)
     int32_t ret = -1;
     char paTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(paTempBuf, PATH_MAX, sizeof(paTempBuf) - 1, paPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(paTempBuf, MAX_PATH, sizeof(paTempBuf) - 1, paPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t paTemp = 44000;
     std::string sTemp = to_string(paTemp) + "\n";
@@ -281,12 +281,12 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest006, TestSize.Level0)
     char apTempBuf[MAX_PATH] = {0};
     char amTempBuf[MAX_PATH] = {0};
     char shellTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(apTempBuf, PATH_MAX, sizeof(apTempBuf) - 1, apPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(amTempBuf, PATH_MAX, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
-    ret = snprintf_s(shellTempBuf, PATH_MAX, sizeof(shellTempBuf) - 1, shellPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(apTempBuf, MAX_PATH, sizeof(apTempBuf) - 1, apPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    ret = snprintf_s(shellTempBuf, MAX_PATH, sizeof(shellTempBuf) - 1, shellPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
 
     int32_t apTemp = 78000;
     std::string sTemp = to_string(apTemp) + "\n";
@@ -317,8 +317,8 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest007, TestSize.Level0)
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     int32_t ret = -1;
     char socTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(socTempBuf, PATH_MAX, sizeof(socTempBuf) - 1, socPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, socPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t socTemp = -10000;
     std::string sTemp = to_string(socTemp);
     ret = FileOperation::WriteFile(socTempBuf, sTemp, sTemp.length());
@@ -338,8 +338,8 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest008, TestSize.Level0)
     int32_t ret = -1;
     bool result = false;
     char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, PATH_MAX, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= ERR_OK);
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp);
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
