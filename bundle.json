@@ -32,7 +32,7 @@
         "appspawn",
         "bundle_framework",
         "common_event_service",
-	"c_utils",
+        "c_utils",
         "drivers_interface_thermal",
         "eventhandler",
         "hdf_core",
