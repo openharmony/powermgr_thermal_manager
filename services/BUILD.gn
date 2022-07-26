@@ -28,7 +28,6 @@ config("thermalsrv_private_config") {
     "//base/powermgr/power_manager/services/native/src/actions/default",
     "${displaymgr_native_innerkits_path}/native/src",
     "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
-    "//base/miscservices/time/interfaces/innerkits/include",
     "//foundation/window/window_manager/interfaces/innerkits/wm/",
     "//third_party/flutter/skia/",
     "//foundation/window/window_manager/utils/include",
@@ -96,7 +95,6 @@ ohos_shared_library("thermalservice") {
     "${ability_runtime_services_path}/appmgr:libappms",
     "${displaymgr_native_innerkits_path}:displaymgr",
     "${utils_path}:thermal_utils",
-    "//base/miscservices/time/services:time_service",
     "//base/powermgr/battery_manager/interfaces/innerkits:batterysrv_client",
     "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
     "//base/powermgr/power_manager/services:powermgrservice",
@@ -130,6 +128,7 @@ ohos_shared_library("thermalservice") {
     "multimedia_image_standard:image_native",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "time_service:time_service",
     "window_manager:libdm",
   ]
 
