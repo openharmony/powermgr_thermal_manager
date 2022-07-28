@@ -12,11 +12,9 @@
 # limitations under the License.
 
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
-import("//build/ohos.gni")
 
 config("thermalmgr_ipc_private_config") {
-  include_dirs =
-      [ "//base/powermgr/thermal_manager/interfaces/innerkits/native/include" ]
+  include_dirs = [ "${thermal_innerkits}/native/include" ]
 }
 
 config("thermalmgr_ipc_public_config") {
@@ -40,12 +38,11 @@ deps_ex = [
   "c_utils:utils",
 ]
 
-ohos_shared_library("thermalmgr_proxy") {
+ohos_shared_library("thermalmgr_stub") {
   sources = [
-    "${thermal_manager_path}/frameworks/native/thermal_srv_sensor_info.cpp",
+    "${thermal_frameworks}/native/thermal_srv_sensor_info.cpp",
     "src/thermal_action_callback_stub.cpp",
-    "src/thermal_level_callback_stub.cpp",
-    "src/thermal_srv_proxy.cpp",
+    "src/thermal_srv_stub.cpp",
     "src/thermal_temp_callback_stub.cpp",
   ]
 
@@ -62,12 +59,13 @@ ohos_shared_library("thermalmgr_proxy") {
   part_name = "thermal_manager"
 }
 
-ohos_shared_library("thermalmgr_stub") {
+ohos_shared_library("thermalmgr_proxy") {
   sources = [
     "${thermal_manager_path}/frameworks/native/thermal_srv_sensor_info.cpp",
     "src/thermal_action_callback_proxy.cpp",
     "src/thermal_level_callback_proxy.cpp",
-    "src/thermal_srv_stub.cpp",
+    "src/thermal_level_callback_stub.cpp",
+    "src/thermal_srv_proxy.cpp",
     "src/thermal_temp_callback_proxy.cpp",
   ]
 
@@ -82,11 +80,4 @@ ohos_shared_library("thermalmgr_stub") {
 
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
-}
-
-group("thermalmgr_ipc") {
-  deps = [
-    ":thermalmgr_proxy",
-    ":thermalmgr_stub",
-  ]
 }

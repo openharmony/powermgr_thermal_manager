@@ -35,7 +35,6 @@
         "c_utils",
         "drivers_interface_thermal",
         "eventhandler",
-        "hdf_core",
         "hicollie_native",
         "hisysevent_native",
         "hiviewdfx_hilog_native",
@@ -58,17 +57,19 @@
       ]
     },
     "build": {
-      "sub_component": [
-        "//base/powermgr/thermal_manager/services:thermalmgr_service",
-        "//base/powermgr/thermal_manager/services/zidl:thermalmgr_ipc",
-        "//base/powermgr/thermal_manager/interfaces/innerkits:thermalmgr_innerkits_native",
-        "//base/powermgr/thermal_manager/interfaces/kits/js:thermal",
-        "//base/powermgr/thermal_manager/sa_profile:thermalmgr_sa_profile",
-        "//base/powermgr/thermal_manager/application:thermal_application",
-        "//base/powermgr/thermal_manager/etc/init:thermal.rc",
-        "//base/powermgr/thermal_manager/utils:thermal-shell",
-        "//base/powermgr/thermal_manager/application/init:thermal_protector.cfg"
-      ],
+      "group_type": {
+        "base_group": [
+          "//base/powermgr/thermal_manager/utils:thermal-shell"
+        ],
+        "fwk_group": [
+          "//base/powermgr/thermal_manager/application:thermal_application",
+          "//base/powermgr/thermal_manager/frameworks:client",
+          "//base/powermgr/thermal_manager/frameworks:thermal_napi"
+        ],
+        "service_group": [
+          "//base/powermgr/thermal_manager/services:service"
+        ]
+      },
       "inner_kits": [
         {
           "name": "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",

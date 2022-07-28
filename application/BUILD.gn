@@ -14,5 +14,8 @@
 import("//build/ohos.gni")
 
 group("thermal_application") {
-  deps = [ "protector:thermal_protector_group" ]
+  deps = [
+    "init:thermal_protector.cfg",
+    "protector:thermal_protector_group",
+  ]
 }

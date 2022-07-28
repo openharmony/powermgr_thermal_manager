@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
-import("//base/startup/appspawn/appspawn.gni")
 import("//build/test.gni")
 
 module_output_path = "thermal_manager/thermal_native"
@@ -23,23 +22,8 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "mock",
-    "//foundation/graphic/graphic_2d/utils/include/",
-    "${thermal_manager_path}/services/zidl/include",
-    "//base/powermgr/display_manager/interfaces/innerkits/native/include/",
-    "//base/powermgr/display_manager/service/native/include/",
-    "//base/powermgr/display_manager/service/zidl/include/",
-    "//drivers/peripheral/display/interfaces/include/",
-    "//base/powermgr/battery_manager/interfaces/innerkits/native/include/",
-    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
+    "${thermal_service_zidl}/include",
     "${ability_runtime_services_path}/appmgr/include",
-    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
-    "//base/startup/appspawn/include/",
-    "//foundation/graphic/ui/interfaces/kits",
-    "//foundation/arkui/ace_engine/adapter/ohos/entrance",
-    "//foundation/graphic/graphic_2d/interfaces/innerkits/wmclient/",
-    "//foundation/window/window_manager/interfaces/innerkits/wm/",
-    "//third_party/flutter/skia/",
-    "//foundation/window/window_manager/utils/include",
   ]
 }
 
@@ -54,10 +38,8 @@ deps_ex = [
   "samgr_standard:samgr_proxy",
   "common_event_service:cesfwk_innerkits",
   "appspawn:appspawn_socket_client",
+  "window_manager:libwm",
   "drivers_interface_thermal:libthermal_proxy_1.0",
-  "hdf_core:libhdi",
-  "hdf_core:libhdf_utils",
-  "c_utils:utils",
 ]
 
 # thermal service test
@@ -71,26 +53,11 @@ ohos_unittest("ThermalPolicyTest") {
     ":module_private_config",
   ]
 
-  include_dirs = [
-    "//third_party/libxml2/include",
-    "${appspawn_path}/include",
-    "//base/powermgr/power_manager/services/native/include",
-    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//base/powermgr/power_manager/utils/native/include",
-    "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${ability_runtime_services_path}/appmgr/include",
-    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
-  ]
-
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
-    "//base/powermgr/power_manager/services:powermgrservice",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
-    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -108,26 +75,11 @@ ohos_unittest("ThermalLevelEventTest") {
     ":module_private_config",
   ]
 
-  include_dirs = [
-    "//third_party/libxml2/include",
-    "${appspawn_path}/include",
-    "//base/powermgr/power_manager/services/native/include",
-    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//base/powermgr/power_manager/utils/native/include",
-    "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${ability_runtime_services_path}/appmgr/include",
-    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
-  ]
-
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
-    "//base/powermgr/power_manager/services:powermgrservice",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
-    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -145,26 +97,11 @@ ohos_unittest("ThermalClientApiTest") {
     ":module_private_config",
   ]
 
-  include_dirs = [
-    "//third_party/libxml2/include",
-    "${appspawn_path}/include",
-    "//base/powermgr/power_manager/services/native/include",
-    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//base/powermgr/power_manager/utils/native/include",
-    "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${ability_runtime_services_path}/appmgr/include",
-    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
-  ]
-
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
-    "//base/powermgr/power_manager/services:powermgrservice",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
-    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -182,27 +119,13 @@ ohos_unittest("ThermalActionHubTest") {
     ":module_private_config",
   ]
 
-  include_dirs = [
-    "//third_party/libxml2/include",
-    "${appspawn_path}/include",
-    "//base/powermgr/power_manager/services/native/include",
-    "//base/powermgr/power_manager/interfaces/innerkits/native/include",
-    "//base/powermgr/power_manager/utils/native/include",
-    "//base/powermgr/power_manager/services/native/src/actions/default",
-    "${ability_runtime_services_path}/appmgr/include",
-    "${ability_runtime_inner_api_path}/app_manager/include/appmgr",
-  ]
-
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
+    "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
-    "//base/powermgr/power_manager/services:powermgrservice",
-    "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
-    "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
-    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
