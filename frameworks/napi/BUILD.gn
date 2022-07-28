@@ -12,15 +12,13 @@
 # limitations under the License.
 
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
-import("//build/ohos.gni")
-import("//build/ohos/ace/ace.gni")
 
 config("thermal_private_config") {
-  include_dirs = [ "${thermal_manager_path}/services/zidl/include" ]
+  include_dirs = [ "${thermal_service_zidl}/include" ]
 }
 
 config("thermal_public_config") {
-  include_dirs = [ "${thermal_manager_path}/frameworks/include" ]
+  include_dirs = [ "../include" ]
 }
 
 ohos_shared_library("thermal") {
@@ -32,15 +30,14 @@ ohos_shared_library("thermal") {
   public_configs = [ ":thermal_public_config" ]
 
   sources = [
-    "${thermal_manager_path}/frameworks/napi/common/thermal_manager_native_event.cpp",
-    "${thermal_manager_path}/frameworks/napi/common/thermal_napi_context.cpp",
-    "${thermal_manager_path}/frameworks/napi/thermal/thermal_manager_napi.cpp",
+    "common/thermal_manager_native_event.cpp",
+    "common/thermal_napi_context.cpp",
+    "thermal/thermal_manager_napi.cpp",
   ]
 
   deps = [
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
-    "//base/powermgr/thermal_manager/services/zidl:thermalmgr_proxy",
-    "//foundation/arkui/napi:ace_napi",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_proxy",
   ]
 
   external_deps = [
@@ -52,6 +49,7 @@ ohos_shared_library("thermal") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "napi:ace_napi",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "thermal_manager:thermalmgr_listener",
