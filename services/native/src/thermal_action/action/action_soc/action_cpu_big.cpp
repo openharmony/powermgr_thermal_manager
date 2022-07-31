@@ -15,6 +15,7 @@
 
 #include "action_cpu_big.h"
 
+#include <map>
 #include <unistd.h>
 #include "socperf_client.h"
 #include "thermal_hisysevent.h"
@@ -26,6 +27,7 @@ namespace {
 constexpr int32_t LIM_CPU_BIG_ID = 1005;
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+std::map<std::string, std::string> g_sceneMap;
 }
 ActionCpuBig::ActionCpuBig(const std::string& actionName)
 {
@@ -44,6 +46,21 @@ void ActionCpuBig::SetStrict(bool flag)
 void ActionCpuBig::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
+}
+
+void ActionCpuBig::SetXmlScene(const std::string& scene, const std::string& value)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
+        if (iter->first == scene) {
+            if (iter->second != value) {
+                iter->second = value;
+            }
+            return;
+        }
+    }
+
+    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionCpuBig::AddActionValue(std::string value)

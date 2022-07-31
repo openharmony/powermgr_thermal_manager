@@ -23,28 +23,14 @@ namespace OHOS {
 namespace PowerMgr {
 class SceneStateCollection : public IStateCollection {
 public:
-    enum {
-        INVAILD = 0,
-        CAMERA,
-        GAME,
-        CALL,
-    };
     bool Init() override;
     bool InitParam(std::string &params) override;
     std::string GetState() override;
-    void SceneDecision(uint32_t mode);
-    void SetRandomScene();
     virtual void SetState() override;
     virtual bool DecideState(const std::string &value) override;
 public:
     SceneStateCollection() = default;
     ~SceneStateCollection() = default;
-private:
-    std::string state_;
-    std::string mockState_;
-    std::vector<std::string> sceneList_;
-    std::vector<std::string> paramList_;
-    std::unique_ptr<ThermalTimerUtils> timer_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

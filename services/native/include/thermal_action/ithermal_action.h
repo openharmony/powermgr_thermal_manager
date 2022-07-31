@@ -31,6 +31,7 @@ public:
     virtual void InitParams(const std::string& params) = 0;
     virtual void SetStrict(bool flag) = 0;
     virtual void SetEnableEvent(bool enable) = 0;
+    virtual void SetXmlScene(const std::string& scene, const std::string& value) = 0;
     virtual void AddActionValue(std::string value) = 0;
     virtual void Execute() = 0;
 protected:

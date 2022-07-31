@@ -161,6 +161,8 @@ void ThermalMgrPolicyTest::TearDown(void)
     std::string sceneState = "0";
     ret = WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("");
 }
 
 namespace {
@@ -1345,13 +1347,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
     EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1359,9 +1360,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string chargeState = "1";
     ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string sceneState = "cam";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(vendorConfig.c_str(), 0) != 0) {
@@ -1377,9 +1375,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 1991800) << "ThermalMgrPolicyTest027 failed";
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest027: end.");
 }
@@ -1397,12 +1392,9 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 40100;
@@ -1412,9 +1404,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Lev
     std::string chargeState = "0";
     ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    std::string sceneState = "cam";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
@@ -1429,9 +1420,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 1991600) << "ThermalMgrPolicyTest028 failed";
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest028: end.");
 }
@@ -1492,13 +1480,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
     EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
@@ -1506,9 +1493,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string chargeState = "1";
     ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string sceneState = "cam";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(vendorConfig.c_str(), 0) != 0) {
@@ -1524,9 +1508,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 1990800) << "ThermalMgrPolicyTest030 failed";
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest030: end.");
 }
@@ -1544,12 +1525,9 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 43100;
@@ -1559,9 +1537,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Lev
     std::string chargeState = "0";
     ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    std::string sceneState = "cam";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
@@ -1576,9 +1553,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 1990600) << "ThermalMgrPolicyTest031 failed";
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest031: end.");
 }
@@ -1639,12 +1613,9 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 46100;
@@ -1654,9 +1625,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
     std::string chargeState = "1";
     ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    std::string sceneState = "cam";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
@@ -1671,9 +1641,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 1989800) << "ThermalMgrPolicyTest033 failed";
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest033: end.");
 }
@@ -1691,12 +1658,9 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Lev
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
     char stateChargeBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
     int32_t batteryTemp = 46100;
@@ -1706,9 +1670,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Lev
     std::string chargeState = "0";
     ret = ThermalMgrPolicyTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    std::string sceneState = "cam";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
@@ -1723,9 +1686,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(freq);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 1989600) << "ThermalMgrPolicyTest034 failed";
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest034: end.");
 }
@@ -1770,7 +1730,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest035, Function|MediumTest|Lev
  * @tc.name: ThermalMgrPolicyTest036
  * @tc.desc: test get charge currentby setting temp
  * @tc.type: FEATURE
- * @tc.cond: Set BATTERY temp, state: scene = "cam,call"
+ * @tc.cond: Set BATTERY temp, state: scene = "cam"
  * @tc.result level 1, current 1200
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Level2)
@@ -1778,19 +1738,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest036: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 40100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-
-    std::string sceneState = "cam,call";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
@@ -1805,10 +1760,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 1200) << "ThermalMgrPolicyTest036 failed";
-
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest036: end.");
 }
@@ -1853,7 +1804,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest037, Function|MediumTest|Lev
  * @tc.name: ThermalMgrPolicyTest038
  * @tc.desc: test get charge currentby setting temp
  * @tc.type: FEATURE
- * @tc.cond: Set BATTERY temp, state: scene = "cam,call"
+ * @tc.cond: Set BATTERY temp, state: scene = "cam"
  * @tc.result level 2, current 1000
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Level2)
@@ -1861,19 +1812,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest038: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 43100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-
-    std::string sceneState = "cam,call";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
@@ -1888,10 +1834,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 1000) << "ThermalMgrPolicyTest038 failed";
-
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest038: end.");
 }
@@ -1936,7 +1878,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest039, Function|MediumTest|Lev
  * @tc.name: ThermalMgrPolicyTest040
  * @tc.desc: test get charge currentby setting temp
  * @tc.type: FEATURE
- * @tc.cond: Set BATTERY temp, state: scene = "cam,call"
+ * @tc.cond: Set BATTERY temp, state: scene = "cam"
  * @tc.result level 3, current 800
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Level2)
@@ -1944,19 +1886,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest040: start.");
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
     EXPECT_EQ(true, ret >= EOK);
     int32_t batteryTemp = 46100;
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-
-    std::string sceneState = "cam,call";
-    ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
 
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
@@ -1971,10 +1908,6 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Lev
         int32_t value = ThermalMgrPolicyTest::ConvertInt(current);
         THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
         EXPECT_EQ(true, value == 800) << "ThermalMgrPolicyTest040 failed";
-
-        sceneState = "null";
-        ret = ThermalMgrPolicyTest::WriteFile(stateSceneBuf, sceneState, sceneState.length());
-        EXPECT_EQ(true, ret == ERR_OK);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest040: end.");
 }
@@ -2092,7 +2025,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest043, Function|MediumTest|Lev
  * @tc.desc: test get brightness configured level by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
- * @tc.result level 1 brightness 188
+ * @tc.result level 1 brightness factor is 1.0
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Level2)
 {
@@ -2116,9 +2049,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Lev
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
-        int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
-        THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-        EXPECT_EQ(true, value == 188) << "ThermalMgrPolicyTest044 failed";
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 3) == "1.0") << "ThermalMgrPolicyTest044 failed";
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest044: end.");
 }
@@ -2128,7 +2060,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Lev
  * @tc.desc: test get brightness configured level by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
- * @tc.result level 2 brightness 155
+ * @tc.result level 2 brightness factor is 0.9
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Level2)
 {
@@ -2152,9 +2084,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Lev
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
-        int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
-        THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-        EXPECT_EQ(true, value == 155) << "ThermalMgrPolicyTest045 failed";
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 3) == "0.9") << "ThermalMgrPolicyTest045 failed";
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest045: end.");
 }
@@ -2164,7 +2095,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Lev
  * @tc.desc: test get brightness configured level by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
- * @tc.result level 3 brightness 120
+ * @tc.result level 3 brightness factor is 0.8
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Level2)
 {
@@ -2188,9 +2119,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Lev
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
-        int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
-        THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-        EXPECT_EQ(true, value == 120) << "ThermalMgrPolicyTest046 failed";
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 3) == "0.8") << "ThermalMgrPolicyTest046 failed";
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest046: end.");
 }
@@ -2200,7 +2130,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Lev
  * @tc.desc: test level asc logic by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set PA temp, High Temp With Aux sensor
- * @tc.result level 1 brightness 130
+ * @tc.result level 1 brightness factor is 0.7
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Level2)
 {
@@ -2232,9 +2162,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Lev
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
-        int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
-        THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-        EXPECT_EQ(true, value == 130) << "ThermalMgrPolicyTest047 failed";
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 3) == "0.7") << "ThermalMgrPolicyTest047 failed";
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest047: end.");
 }
@@ -2244,7 +2173,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Lev
  * @tc.desc: test level asc logic by setting temp
  * @tc.type: FEATURE
  * @tc.cond: Set PA temp, High Temp With Aux sensor
- * @tc.result level 2 brightness 100
+ * @tc.result level 2 brightness factor is 0.6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Level2)
 {
@@ -2276,9 +2205,8 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Lev
         ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
         EXPECT_EQ(true, ret == ERR_OK);
         std::string lcd = lcdValue;
-        int32_t value = ThermalMgrPolicyTest::ConvertInt(lcd);
-        THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-        EXPECT_EQ(true, value == 100) << "ThermalMgrPolicyTest048 failed";
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 3) == "0.6") << "ThermalMgrPolicyTest048 failed";
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest048: end.");
 }
@@ -2942,5 +2870,604 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest065, Function|MediumTest|Lev
         EXPECT_EQ(true, value == 524288) << "ThermalMgrPolicyTest065 failed";
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest065: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest066
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1, scene cam, brightness factor is 0.99
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest066, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest066: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.99") << "ThermalMgrPolicyTest066 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest066: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest067
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 2, scene cam, brightness factor is 0.98
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest067, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest067: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.89") << "ThermalMgrPolicyTest067 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest067: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest068
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 3, scene cam, brightness factor is 0.97
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest068, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest068: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.79") << "ThermalMgrPolicyTest068 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest068: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest069
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1, scene call, brightness factor is 0.98
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest069, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest069: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("call");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.98") << "ThermalMgrPolicyTest069 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest069: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest070
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 2, scene call, brightness factor is 0.88
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest070, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest070: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("call");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.88") << "ThermalMgrPolicyTest070 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest070: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest071
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 3, scene call, brightness factor is 0.78
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest071, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest071: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("call");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.78") << "ThermalMgrPolicyTest071 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest071: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest072
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1, scene game, brightness factor is 0.97
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest072, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest072: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("game");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.97") << "ThermalMgrPolicyTest072 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest072: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest073
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 2, scene game, brightness factor is 0.87
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest073, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest073: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("game");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.87") << "ThermalMgrPolicyTest073 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest073: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest074
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 3, scene game, brightness factor is 0.77
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest074, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest074: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("game");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.77") << "ThermalMgrPolicyTest074 failed";
+    }
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest074: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest075
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1, scene test, brightness factor is 0.91
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest075, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest075: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("test");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.91") << "ThermalMgrPolicyTest075 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest075: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest076
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1, brightness factor is 1.0; scene game, brightness factor is 0.97
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest076, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest076: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 3) == "1.0") << "ThermalMgrPolicyTest076 failed";
+    }
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("game");
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.97") << "ThermalMgrPolicyTest076 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest076: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest077
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result level 1, scene call, brightness factor is 0.98; scene empty, brightness factor is 1.0
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest077, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest077: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("call");
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.98") << "ThermalMgrPolicyTest077 failed";
+    }
+
+    thermalMgrClient.SetScene("");
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 3) == "1.0") << "ThermalMgrPolicyTest077 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest077: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest078
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result scene cam, level 1, brightness factor is 0.99
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest078, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest078: start.");
+    int32_t ret = -1;
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("cam");
+
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.99") << "ThermalMgrPolicyTest078 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest078: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest079
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result scene call, level 2, brightness factor is 0.88
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest079, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest079: start.");
+    int32_t ret = -1;
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("call");
+
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.88") << "ThermalMgrPolicyTest079 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest079: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest080
+ * @tc.desc: test set brightness according to the scene
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp, Lower Temp
+ * @tc.result scene game, level 3, brightness factor is 0.77
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest080, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest080: start.");
+    int32_t ret = -1;
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("game");
+
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+
+        char lcdBuf[MAX_PATH] = {0};
+        char lcdValue[MAX_PATH]= {0};
+        ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(lcdBuf, lcdValue, sizeof(lcdValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string lcd = lcdValue;
+        THERMAL_HILOGD(LABEL_TEST, "lcd value: %{public}s", lcd.c_str());
+        EXPECT_EQ(true, lcd.substr(0, 4) == "0.77") << "ThermalMgrPolicyTest080 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest080: end.");
 }
 }

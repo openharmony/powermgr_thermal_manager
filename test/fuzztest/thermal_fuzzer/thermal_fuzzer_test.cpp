@@ -118,6 +118,17 @@ void ThermalFuzzerTest::TestGetLevel()
     cout << "Thermal level is: " << static_cast<int32_t>(level)  << endl;
 }
 
+void ThermalFuzzerTest::TestSetScene(const uint8_t* data)
+{
+    int32_t type[1];
+    int32_t idSize = 4;
+    if (memcpy_s(type, sizeof(type), data, idSize) != EOK) {
+        return;
+    }
+
+    g_thermalMgrClient.SetScene(to_string(type[0]));
+}
+
 void ThermalFuzzerTest::TestGetSensorTemp(const uint8_t* data)
 {
     int32_t type[1];
@@ -162,6 +173,9 @@ bool ThermalFuzzerTest::DoSomethingInterestingWithMyAPI(const uint8_t* data, siz
                 break;
             case ApiNumber::NUM_FOUR:
                 TestSubscribeAction(data);
+                break;
+            case ApiNumber::NUM_FIVE:
+                TestSetScene(data);
                 break;
             default:
                 break;

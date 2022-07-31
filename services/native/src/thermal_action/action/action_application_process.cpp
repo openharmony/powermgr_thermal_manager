@@ -16,6 +16,7 @@
 #include "action_application_process.h"
 
 #include <csignal>
+#include <map>
 #include <sys/types.h>
 
 #include "file_operation.h"
@@ -38,6 +39,7 @@ const int32_t SIGNAL_KILL = 9;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* processPath = "/data/service/el0/thermal/config/process_ctrl";
 const int MAX_PATH = 256;
+std::map<std::string, std::string> g_sceneMap;
 }
 ActionApplicationProcess::ActionApplicationProcess(const std::string& actionName)
 {
@@ -65,6 +67,21 @@ void ActionApplicationProcess::SetStrict(bool flag)
 void ActionApplicationProcess::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
+}
+
+void ActionApplicationProcess::SetXmlScene(const std::string& scene, const std::string& value)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
+        if (iter->first == scene) {
+            if (iter->second != value) {
+                iter->second = value;
+            }
+            return;
+        }
+    }
+
+    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionApplicationProcess::AddActionValue(std::string value)

@@ -39,6 +39,7 @@ public:
     void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback);
     int32_t GetThermalSensorTemp(const SensorType type);
     ThermalLevel GetThermalLevel();
+    void SetScene(const std::string& scene);
     std::string Dump(const std::vector<std::string>& args);
 private:
     class ThermalMgrDeathRecipient : public IRemoteObject::DeathRecipient {
