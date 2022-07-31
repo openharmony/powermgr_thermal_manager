@@ -64,6 +64,7 @@ public:
     void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) override;
     bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo) override;
     void GetThermalLevel(ThermalLevel& level) override;
+    void SetScene(const std::string& scene) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
     void HandleEvent(int event);
@@ -139,6 +140,11 @@ public:
     {
         return isSimulation_;
     }
+
+    std::string GetScene()
+    {
+        return scene_;
+    }
 private:
     bool Init();
     bool InitThermalDriver();
@@ -172,6 +178,7 @@ private:
     sptr<IServiceManager> hdiServiceMgr_ {nullptr};
     sptr<HdiServiceStatusListener::IServStatListener> hdiServStatListener_ {nullptr};
     std::shared_ptr<ActionPopup> popup_;
+    std::string scene_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

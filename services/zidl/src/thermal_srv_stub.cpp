@@ -77,6 +77,9 @@ int32_t ThermalSrvStub::CheckRequestCode(const uint32_t code, MessageParcel& dat
         case static_cast<int>(IThermalSrv::GET_TEMP_LEVEL): {
             return GetThermalevelStub(reply);
         }
+        case static_cast<int>(IThermalSrv::SET_SCENE): {
+            return SetSceneStub(data);
+        }
         case static_cast<int>(IThermalSrv::SHELL_DUMP): {
             return ShellDumpStub(data, reply);
         }
@@ -191,6 +194,16 @@ int32_t ThermalSrvStub::GetThermalevelStub(MessageParcel& reply)
     ThermalLevel level;
     GetThermalLevel(level);
     THERMAL_WRITE_PARCEL_WITH_RET(reply, Uint32, static_cast<uint32_t>(level), ERR_OK);
+    return ERR_OK;
+}
+
+int32_t ThermalSrvStub::SetSceneStub(MessageParcel& data)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    std::string scene;
+
+    THERMAL_READ_PARCEL_WITH_RET(data, String, scene, E_READ_PARCEL_ERROR_THERMAL);
+    SetScene(scene);
     return ERR_OK;
 }
 

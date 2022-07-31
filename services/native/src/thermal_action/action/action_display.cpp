@@ -15,6 +15,7 @@
 
 #include "action_display.h"
 
+#include <map>
 #include "display_power_mgr_client.h"
 #include "file_operation.h"
 #include "thermal_hisysevent.h"
@@ -28,6 +29,7 @@ namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* lcdPath = "/data/service/el0/thermal/config/lcd";
 const int MAX_PATH = 256;
+std::map<std::string, std::string> g_sceneMap;
 }
 ActionDisplay::ActionDisplay(const std::string& actionName)
 {
@@ -48,18 +50,51 @@ void ActionDisplay::SetEnableEvent(bool enable)
     enableEvent_ = enable;
 }
 
+void ActionDisplay::SetXmlScene(const std::string& scene, const std::string& value)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
+        if (iter->first == scene) {
+            if (iter->second != value) {
+                iter->second = value;
+            }
+            return;
+        }
+    }
+
+    g_sceneMap.insert(std::make_pair(scene, value));
+}
+
 void ActionDisplay::AddActionValue(std::string value)
 {
     THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
-    valueList_.push_back(atoi(value.c_str()));
+    valueList_.push_back(atof(value.c_str()));
 }
 
 void ActionDisplay::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
+    float value;
+    uint32_t brightness;
 
-    uint32_t value;
+    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
+        if (g_service->GetScene() == iter->first) {
+            value = atof(iter->second.c_str());
+            if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
+                DisplayRequest(value);
+            } else if (value != lastValue_) {
+                DisplayExecution(value);
+            } else {
+                THERMAL_HILOGD(COMP_SVC, "value is not change");
+            }
+            brightness = DisplayPowerMgrClient::GetInstance().GetBrightness();
+            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, brightness);
+            lastValue_ = value;
+            return;
+        }
+    }
+
     if (valueList_.empty()) {
         value = 0;
     } else {
@@ -72,28 +107,24 @@ void ActionDisplay::Execute()
     }
 
     if (value != lastValue_) {
-        if (!g_service->GetFlag()) {
-            DisplayExecution(value);
-        } else {
+        if (!g_service->GetSimulationXml()) {
             DisplayRequest(value);
+        } else {
+            DisplayExecution(value);
         }
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        brightness = DisplayPowerMgrClient::GetInstance().GetBrightness();
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, brightness);
         lastValue_ = value;
     }
 }
 
-uint32_t ActionDisplay::DisplayRequest(uint32_t brightness)
+uint32_t ActionDisplay::DisplayRequest(float brightness)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    uint32_t id = 0;
-    if (!DisplayPowerMgrClient::GetInstance().SetBrightness(brightness, id)) {
-        THERMAL_HILOGE(COMP_SVC, "failed to set brightness");
-        return ERR_INVALID_VALUE;
-    }
     return ERR_OK;
 }
 
-uint32_t ActionDisplay::DisplayExecution(uint32_t brightness)
+uint32_t ActionDisplay::DisplayExecution(float brightness)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;

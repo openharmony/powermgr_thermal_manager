@@ -333,6 +333,11 @@ void ThermalService::GetThermalLevel(ThermalLevel& level)
     level = static_cast<ThermalLevel>(levelValue);
 }
 
+void ThermalService::SetScene(const std::string& scene)
+{
+    scene_ = scene;
+}
+
 void ThermalService::SendEvent(int32_t event, int64_t delayTime)
 {
     THERMAL_RETURN_IF_WITH_LOG(handler_ == nullptr, "handler is nullptr");

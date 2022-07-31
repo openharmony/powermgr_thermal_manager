@@ -149,6 +149,7 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
                 THERMAL_HILOGD(COMP_SVC, "start state decision");
                 if (StateMachineDecision(action->mActionProp)) {
                     actionIter->second->AddActionValue(action->actionValue);
+                    actionIter->second->SetXmlScene(action->mActionProp.begin()->second, action->actionValue);
                 } else {
                     THERMAL_HILOGW(COMP_SVC, "failed to decide state");
                 }

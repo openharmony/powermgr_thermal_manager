@@ -15,6 +15,7 @@
 
 #include "action_voltage.h"
 
+#include <map>
 #include "v1_1/battery_interface_proxy.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
@@ -29,6 +30,7 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* SC_VOLTAGE_PATH = "/data/service/el0/thermal/config/sc_voltage";
 constexpr const char* BUCK_VOLTAGE_PATH = "/data/service/el0/thermal/config/buck_voltage";
 const int32_t MAX_PATH = 256;
+std::map<std::string, std::string> g_sceneMap;
 }
 
 std::vector<ChargingLimit> ActionVoltage::chargeLimitList_;
@@ -51,6 +53,21 @@ void ActionVoltage::SetStrict(bool flag)
 void ActionVoltage::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
+}
+
+void ActionVoltage::SetXmlScene(const std::string& scene, const std::string& value)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
+        if (iter->first == scene) {
+            if (iter->second != value) {
+                iter->second = value;
+            }
+            return;
+        }
+    }
+
+    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionVoltage::AddActionValue(std::string value)
