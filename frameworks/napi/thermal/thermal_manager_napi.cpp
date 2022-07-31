@@ -91,6 +91,7 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
 {
     THERMAL_HILOGI(MODULE_THERMAL_JS_NAPI, "%{public}s: enter", __func__);
     napi_value cool;
+    napi_value normal;
     napi_value warm;
     napi_value hot;
     napi_value overheated;
@@ -99,6 +100,7 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
     int32_t refCount = 1;
 
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::COOL), &cool);
+    napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::NORMAL), &normal);
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::WARM), &warm);
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::HOT), &hot);
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::OVERHEATED), &overheated);
@@ -107,6 +109,7 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
 
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_STATIC_PROPERTY("COOL", cool),
+        DECLARE_NAPI_STATIC_PROPERTY("NORMAL", normal),
         DECLARE_NAPI_STATIC_PROPERTY("WARM", warm),
         DECLARE_NAPI_STATIC_PROPERTY("HOT", hot),
         DECLARE_NAPI_STATIC_PROPERTY("OVERHEATED", overheated),
