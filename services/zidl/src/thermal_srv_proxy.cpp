@@ -233,6 +233,32 @@ void ThermalSrvProxy::GetThermalLevel(ThermalLevel& level)
     return;
 }
 
+void ThermalSrvProxy::SetScene(const std::string& scene)
+{
+    THERMAL_HILOGD(COMP_FWK, "Enter");
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        return;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
+        return;
+    }
+
+    THERMAL_WRITE_PARCEL_NO_RET(data, String, scene);
+
+    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::SET_SCENE), data, reply, option);
+    if (ret != ERR_OK) {
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
+        return;
+    }
+}
+
 std::string ThermalSrvProxy::ShellDump(const std::vector<std::string>& args, uint32_t argc)
 {
     sptr<IRemoteObject> remote = Remote();

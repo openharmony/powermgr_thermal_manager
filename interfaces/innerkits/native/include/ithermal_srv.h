@@ -36,6 +36,7 @@ public:
         UNREG_THERMAL_ACTION_CALLBACK,
         GET_SENSOR_INFO,
         GET_TEMP_LEVEL,
+        SET_SCENE,
         SHELL_DUMP
     };
 
@@ -49,6 +50,7 @@ public:
     virtual void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) = 0;
     virtual bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) = 0;
     virtual void GetThermalLevel(ThermalLevel& level) = 0;
+    virtual void SetScene(const std::string& scene) = 0;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) = 0;
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalSrv");
 };

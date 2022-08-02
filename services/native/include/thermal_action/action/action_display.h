@@ -28,15 +28,16 @@ public:
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void SetEnableEvent(bool enable) override;
+    virtual void SetXmlScene(const std::string& scene, const std::string& value) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    uint32_t DisplayRequest(uint32_t brightness);
-    uint32_t DisplayExecution(uint32_t brightness);
+    uint32_t DisplayRequest(float brightness);
+    uint32_t DisplayExecution(float brightness);
 private:
-    std::vector<uint32_t> valueList_;
+    std::vector<float> valueList_;
     bool flag_;
     bool enableEvent_ = false;
-    uint32_t lastValue_;
+    float lastValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
