@@ -48,7 +48,8 @@ enum class ApiNumber : int32_t {
     NUM_ONE,
     NUM_TWO,
     NUM_THREE,
-    NUM_FOUR
+    NUM_FOUR,
+    NUM_FIVE
 };
 
 class ThermalFuzzerTest {
@@ -61,6 +62,7 @@ public:
     static void TestSubscribeAction(const uint8_t* data);
     static void TestUnSubscribeAction();
     static void TestGetLevel();
+    static void TestSetScene(const uint8_t* data);
     static void TestGetSensorTemp(const uint8_t* data);
 
     class ThermalTempTestCallback : public ThermalTempCallbackStub {

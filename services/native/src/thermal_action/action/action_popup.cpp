@@ -15,6 +15,7 @@
 
 #include "action_popup.h"
 
+#include <map>
 #include <ipc_skeleton.h>
 #include "display_manager.h"
 #include "ui_service_mgr_client.h"
@@ -28,6 +29,7 @@ namespace PowerMgr {
 namespace {
 constexpr int UI_DIALOG_POWER_WIDTH_NARROW = 400;
 constexpr int UI_DIALOG_POWER_HEIGHT_NARROW = 240;
+std::map<std::string, std::string> g_sceneMap;
 }
 ActionPopup::ActionPopup(const std::string& actionName)
 {
@@ -46,6 +48,21 @@ void ActionPopup::SetStrict(bool flag)
 void ActionPopup::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
+}
+
+void ActionPopup::SetXmlScene(const std::string& scene, const std::string& value)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
+        if (iter->first == scene) {
+            if (iter->second != value) {
+                iter->second = value;
+            }
+            return;
+        }
+    }
+
+    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionPopup::AddActionValue(std::string value)

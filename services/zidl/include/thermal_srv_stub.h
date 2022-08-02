@@ -38,6 +38,7 @@ private:
     int32_t UnSubscribeThermalActionCallbackStub(MessageParcel &data);
     int32_t GetThermalSrvSensorInfoStub(MessageParcel &data, MessageParcel& reply);
     int32_t GetThermalevelStub(MessageParcel& reply);
+    int32_t SetSceneStub(MessageParcel& data);
     int32_t ShellDumpStub(MessageParcel& data, MessageParcel& reply);
     int32_t CheckRequestCode(const uint32_t code, MessageParcel& data, MessageParcel& reply,
         MessageOption& option);
