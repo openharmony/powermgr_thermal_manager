@@ -20,6 +20,7 @@ import { describe, beforeAll, beforeEach, afterEach, afterAll, it, expect } from
 
 describe('ThermalMgrInterfaceTest', function () {
     console.log("*************Thermal API Test Begin*************");
+    test0();
     test1();
     test2();
     test3();
@@ -34,8 +35,29 @@ describe('ThermalMgrInterfaceTest', function () {
     test12();
     test13();
     test14();
+    test15();
     console.log("*************Thermal API Test End*************");
 })
+
+function test0() {
+    const MSEC_1000 = 1000;
+
+    /* @tc.number thermal_manager_js_000
+     * @tc.name Thermal_000
+     * @tc.desc Thermal acquisition kit
+     */
+    it('Thermal_000', 0, async function (done) {
+        console.info("enter");
+        await new Promise((resolve, reject) => {
+            setTimeout(() => {
+                let cold = thermal.getThermalLevel();
+                console.info("cold level is: " + cold);
+                resolve();
+                done();
+            }, MSEC_1000 * 1);
+        })
+    })
+}
 
 function test1() {
     const MSEC_1000 = 1000;
@@ -48,8 +70,8 @@ function test1() {
         console.info("enter");
         await new Promise((resolve, reject) => {
             setTimeout(() => {
-                let cold = thermal.getThermalLevel();
-                console.info("cold level is: " + cold);
+                let normal = thermal.getThermalLevel();
+                console.info("normal level is: " + normal);
                 resolve();
                 done();
             }, MSEC_1000 * 1);
@@ -299,6 +321,29 @@ function test13() {
      * @tc.desc Thermal acquisition kit
      */
     it('Thermal_013', 0, async function (done) {
+        thermal.subscribeThermalLevel((normal) => {
+            console.info("normal level is: " + normal);
+            done();
+        })
+        await new Promise((resolve, reject) => {
+            setTimeout(() => {
+                thermal.unsubscribeThermalLevel(() => {
+                    console.info("unsubscribe successfully!");
+                });
+                resolve();
+            }, MSEC_1000 * 4);
+        })
+    })
+}
+
+function test14() {
+    const MSEC_1000 = 1000;
+
+    /* @tc.number thermal_manager_js_014
+     * @tc.name Thermal_014
+     * @tc.desc Thermal acquisition kit
+     */
+    it('Thermal_013', 0, async function (done) {
         thermal.subscribeThermalLevel((cool) => {
             console.info("cool level is: " + cool);
             done();
@@ -314,13 +359,13 @@ function test13() {
     })
 }
 
-function test14() {
+function test15() {
 
-    /* @tc.number thermal_manager_js_014
-     * @tc.name Thermal_014
+    /* @tc.number thermal_manager_js_015
+     * @tc.name Thermal_015
      * @tc.desc Thermal acquisition kit
      */
-    it('Thermal_014', 0, async function (done) {
+    it('Thermal_015', 0, async function (done) {
         thermal.subscribeThermalLevel((level) => {
             console.info("level is: " + level);
             expect(level >= thermal.ThermalLevel.COOL && level <= thermal.ThermalLevel.EMERGENCY).assertTrue();
