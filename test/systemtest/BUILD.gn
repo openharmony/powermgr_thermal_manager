@@ -24,7 +24,7 @@ deps_ex = [
   "ipc:ipc_core",
   "hiviewdfx_hilog_native:libhilog",
   "safwk:system_ability_fwk",
-  "samgr_standard:samgr_proxy",
+  "samgr:samgr_proxy",
   "appspawn:appspawn_socket_client",
   "drivers_interface_thermal:libthermal_proxy_1.0",
   "c_utils:utils",

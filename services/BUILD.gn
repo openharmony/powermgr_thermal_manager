@@ -105,7 +105,7 @@ ohos_shared_library("thermalservice") {
     "multimedia_image_standard:image_native",
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
     "time_service:time_service",
     "window_manager:libdm",
     "window_manager:libwm",

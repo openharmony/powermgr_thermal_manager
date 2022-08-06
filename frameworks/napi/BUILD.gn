@@ -51,7 +51,7 @@ ohos_shared_library("thermal") {
     "ipc:ipc_core",
     "napi:ace_napi",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
     "thermal_manager:thermalmgr_listener",
   ]
 
