@@ -169,6 +169,7 @@ bool ThermalSrvConfigParser::ParseAuxSensorSubnodeInfoTrigerRange(const xmlNode 
             StringOperation::SplitString(auxTriggerRange, auxTempranges, ",");
             if (auxsensors.size() > auxTempranges.size()) {
                 THERMAL_HILOGI(COMP_SVC, "The auxiliary sensor does not match the threshold range");
+                xmlFree(xmlTriggerRange);
                 return false;
             }
             tempRanges = auxTempranges[i];
@@ -360,6 +361,7 @@ void ThermalSrvConfigParser::ParsePolicyNode(xmlNodePtr node)
             policyConfig.level = level;
             THERMAL_HILOGD(COMP_SVC, "policyConfig.name: %{public}s, policyConfig.level:%{public}d",
                 clusterName.c_str(), level);
+            xmlFree(xmlLevel);
         }
 
         ParsePolicySubnode(cur, policyConfig);
