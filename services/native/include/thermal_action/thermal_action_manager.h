@@ -29,6 +29,7 @@ namespace PowerMgr {
 struct ActionItem {
     std::string name;
     std::string params;
+    std::string uid;
     std::string protocol;
     bool strict = false;
     bool enableEvent = false;
@@ -44,6 +45,10 @@ public:
     void SetActionItem(std::vector<ActionItem> vActionItem)
     {
         vActionItem_ = vActionItem;
+    }
+    std::vector<ActionItem> GetActionItem()
+    {
+        return vActionItem_;
     }
     ThermalActionMap GetActionMap()
     {

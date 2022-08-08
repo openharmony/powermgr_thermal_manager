@@ -26,6 +26,7 @@ namespace PowerMgr {
     constexpr const char* CPU_LIT_ACTION_NAME = "cpu_lit";
     constexpr const char* GPU_ACTION_NAME = "gpu";
     constexpr const char* LCD_ACTION_NAME = "lcd";
+    constexpr const char* VOLUME_ACTION_NAME = "volume";
     constexpr const char* SHUTDOWN_ACTION_NAME = "shut_down";
     constexpr const char* PROCESS_ACTION_NAME = "process_ctrl";
     constexpr const char* THERMAL_LEVEL_NAME = "thermallevel";
