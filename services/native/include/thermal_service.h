@@ -53,6 +53,7 @@ class ThermalService final : public SystemAbility, public ThermalSrvStub {
 public:
     virtual void OnStart() override;
     virtual void OnStop() override;
+    virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     virtual int32_t Dump(int fd, const std::vector<std::u16string>& args) override;
     void SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
         const sptr<IThermalTempCallback>& callback) override;
