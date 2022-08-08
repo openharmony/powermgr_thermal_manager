@@ -61,12 +61,22 @@ void ThermalService::OnStart()
         return;
     }
 
+    AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
     if (!Publish(DelayedSpSingleton<ThermalService>::GetInstance())) {
         THERMAL_HILOGE(COMP_SVC, "OnStart register to system ability manager failed.");
         return;
     }
     ready_ = true;
     THERMAL_HILOGD(COMP_SVC, "OnStart and add system ability success");
+}
+
+void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    THERMAL_HILOGI(COMP_SVC, "systemAbilityId=%{public}d, deviceId=%{private}s", systemAbilityId,
+        deviceId.c_str());
+    if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
+        InitStateMachine();
+    }
 }
 
 bool ThermalService::Init()
@@ -253,6 +263,7 @@ void ThermalService::OnStop()
     eventRunner_.reset();
     handler_.reset();
     ready_ = false;
+    RemoveSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
     if (thermalInterface_) {
         thermalInterface_->Unregister();
         thermalInterface_ = nullptr;
