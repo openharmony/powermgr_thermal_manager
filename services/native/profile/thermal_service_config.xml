@@ -60,6 +60,7 @@
         <item name="cpu_lit" param="1.101,3.107" event=""/>
         <item name="gpu" param="1.015,3.026"/>
         <item name="lcd" strict="1" event="0"/>
+        <item name="volume" uid="2001,2002"/>
         <item name="current" protocol="sc,buck" event="1"/>
         <item name="voltage" protocol="sc,buck" event="1"/>
         <item name="process_ctrl" param="32,64,128,256" event=""/>
@@ -91,6 +92,7 @@
             <current_buck>1200</current_buck>
             <voltage_sc>4000</voltage_sc>
             <voltage_buck>3000</voltage_buck>
+            <volume>1.0</volume>
         </config>
         <config name="base_safe" level="2">
             <lcd>0.9</lcd>
@@ -111,6 +113,7 @@
             <current_buck>1000</current_buck>
             <voltage_sc>3000</voltage_sc>
             <voltage_buck>2000</voltage_buck>
+            <volume>0.8</volume>
         </config>
         <config name="base_safe" level="3">
             <lcd>0.8</lcd>
@@ -131,6 +134,7 @@
             <current_buck>800</current_buck>
             <voltage_sc>2000</voltage_sc>
             <voltage_buck>1000</voltage_buck>
+            <volume>0.7</volume>
             <shut_down>1</shut_down>
         </config>
         <config name="warm_5G" level="1">
