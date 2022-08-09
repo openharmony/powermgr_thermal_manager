@@ -3470,4 +3470,106 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest080, Function|MediumTest|Lev
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest080: end.");
 }
+
+/**
+ * @tc.name: ThermalMgrPolicyTest081
+ * @tc.desc: get the config volume by setting battery temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp
+ * @tc.result level 1, volume 1.0
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest081, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest081: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+        char volumeCurrentBuf[MAX_PATH] = {0};
+        char volumeCurrentValue[MAX_PATH] = {0};
+        ret = snprintf_s(volumeCurrentBuf, MAX_PATH, sizeof(volumeCurrentBuf) - 1, volumePath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(volumeCurrentBuf, volumeCurrentValue, sizeof(volumeCurrentValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string value = volumeCurrentValue;
+        THERMAL_HILOGD(LABEL_TEST, "value: %{public}s", value.c_str());
+        EXPECT_EQ(true, value.substr(0, 3) == "1.0") << "ThermalMgrPolicyTest081 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest081: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest082
+ * @tc.desc: get the config current by setting battery temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp
+ * @tc.result level 2, volume 0.8
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest082, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest082: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 43100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+        char volumeCurrentBuf[MAX_PATH] = {0};
+        char volumeCurrentValue[MAX_PATH] = {0};
+        ret = snprintf_s(volumeCurrentBuf, MAX_PATH, sizeof(volumeCurrentBuf) - 1, volumePath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(volumeCurrentBuf, volumeCurrentValue, sizeof(volumeCurrentValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string value = volumeCurrentValue;
+        THERMAL_HILOGD(LABEL_TEST, "value: %{public}s", value.c_str());
+        EXPECT_EQ(true, value.substr(0, 3) == "0.8") << "ThermalMgrPolicyTest082 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest082: end.");
+}
+
+/**
+ * @tc.name: ThermalMgrPolicyTest083
+ * @tc.desc: get the config current by setting battery temp
+ * @tc.type: FEATURE
+ * @tc.cond: Set Battery temp
+ * @tc.result level 3, volume 0.7
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest083, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest083: start.");
+    int32_t ret = -1;
+    char batteryTempBuf[MAX_PATH] = {0};
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    int32_t batteryTemp = 46100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalMgrPolicyTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    if (access(vendorConfig.c_str(), 0) != 0) {
+        sleep(WAIT_TIME_5_SEC);
+        char volumeCurrentBuf[MAX_PATH] = {0};
+        char volumeCurrentValue[MAX_PATH] = {0};
+        ret = snprintf_s(volumeCurrentBuf, MAX_PATH, sizeof(volumeCurrentBuf) - 1, volumePath.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        ret = ThermalMgrPolicyTest::ReadFile(volumeCurrentBuf, volumeCurrentValue, sizeof(volumeCurrentValue));
+        EXPECT_EQ(true, ret == ERR_OK);
+        std::string value = volumeCurrentValue;
+        THERMAL_HILOGD(LABEL_TEST, "value: %{public}s", value.c_str());
+        EXPECT_EQ(true, value.substr(0, 3) == "0.7") << "ThermalMgrPolicyTest083 failed";
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest083: end.");
+}
 }

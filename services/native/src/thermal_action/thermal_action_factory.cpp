@@ -22,6 +22,7 @@
 #include "action_cpu_lit.h"
 #include "action_gpu.h"
 #include "action_display.h"
+#include "action_volume.h"
 #include "action_shutdown.h"
 #include "action_thermal_level.h"
 #include "action_popup.h"
@@ -43,6 +44,7 @@ void ThermalActionFactory::InitFactory()
     g_actionMap.insert(std::make_pair(CPU_LIT_ACTION_NAME, std::make_shared<ActionCpuLit>(CPU_LIT_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(GPU_ACTION_NAME, std::make_shared<ActionGpu>(GPU_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(LCD_ACTION_NAME, std::make_shared<ActionDisplay>(LCD_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(VOLUME_ACTION_NAME, std::make_shared<ActionVolume>(VOLUME_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(SHUTDOWN_ACTION_NAME, std::make_shared<ActionShutdown>(SHUTDOWN_ACTION_NAME)));
     g_actionMap.insert(
         std::make_pair(PROCESS_ACTION_NAME, std::make_shared<ActionApplicationProcess>(PROCESS_ACTION_NAME)));
