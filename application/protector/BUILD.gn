@@ -47,7 +47,7 @@ ohos_executable("thermal_protector") {
   external_deps = [
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 
   install_enable = true

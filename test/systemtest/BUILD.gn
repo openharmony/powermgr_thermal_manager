@@ -21,7 +21,7 @@ deps_ex = [
   "ability_base:want",
   "eventhandler:libeventhandler",
   "bundle_framework:appexecfwk_base",
-  "ipc:ipc_core",
+  "ipc:ipc_single",
   "hiviewdfx_hilog_native:libhilog",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
