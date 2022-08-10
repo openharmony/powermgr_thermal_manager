@@ -63,9 +63,9 @@ void ThermalTimerInfo::SetWantAgent(std::shared_ptr<OHOS::AbilityRuntime::WantAg
     wantAgent = _wantAgent;
 }
 
-uint64_t ThermalTimer::CreateTimer(std::shared_ptr<ThermalTimerInfo> &timerInfo)
+int64_t ThermalTimer::CreateTimer(std::shared_ptr<ThermalTimerInfo>& timerInfo)
 {
-    uint64_t timerId = -1;
+    int64_t timerId = -1;
     timerId = TimeServiceClient::GetInstance()->CreateTimer(timerInfo);
     if (timerId <= 0) {
         THERMAL_HILOGE(COMP_SVC, "failed to create timer id");
