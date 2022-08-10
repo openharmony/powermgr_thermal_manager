@@ -34,7 +34,7 @@ public:
     uint32_t ShutdownRequest(bool isShutdown);
     uint32_t DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr);
     /* the api is used to test */
-    uint32_t ShutdownExecution(bool isShutdown);
+    int32_t ShutdownExecution(bool isShutdown);
 private:
     bool flag_;
     bool enableEvent_ = false;
