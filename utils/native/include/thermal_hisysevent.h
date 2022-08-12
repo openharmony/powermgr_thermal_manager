@@ -22,6 +22,7 @@ namespace OHOS {
 namespace PowerMgr {
 void WriteLevelChangedHiSysEvent(bool enableEvent, int32_t level);
 void WriteActionTriggeredHiSysEvent(bool enableEvent, const std::string& actionName, int32_t value);
+void WriteActionTriggeredHiSysEventWithRatio(bool enableEvent, const std::string& actionName, float value);
 } // namespace PowerMgr
 } // namespace OHOS
 #endif // THERMAL_HISYSEVENT_H

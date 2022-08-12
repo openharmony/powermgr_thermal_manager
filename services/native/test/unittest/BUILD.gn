@@ -131,10 +131,39 @@ ohos_unittest("ThermalActionHubTest") {
 
   external_deps = deps_ex
 }
+
+# thermal action report test
+ohos_unittest("ThermalActionReportTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "src/thermal_action_report_test.cpp",
+    "src/thermal_config_file_parser.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "//base/powermgr/battery_statistics/interfaces/innerkits:batterystats_client",
+    "//base/powermgr/battery_statistics/utils:batterystats_utils",
+    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
 group("unittest") {
   testonly = true
   deps = [
     ":ThermalActionHubTest",
+    ":ThermalActionReportTest",
     ":ThermalClientApiTest",
     ":ThermalLevelEventTest",
     ":ThermalPolicyTest",

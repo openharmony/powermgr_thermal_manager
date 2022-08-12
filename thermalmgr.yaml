@@ -26,3 +26,4 @@ THERMAL_ACTION_TRIGGERED:
   __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: thermal action triggered}
   ACTION: {type: STRING, desc: action name}
   VALUE: {type: INT32, desc: action value}
+  RATIO: {type: FLOAT, desc: action ration value}

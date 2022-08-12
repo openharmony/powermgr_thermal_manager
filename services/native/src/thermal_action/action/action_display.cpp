@@ -76,7 +76,6 @@ void ActionDisplay::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     float value;
-    uint32_t brightness;
 
     for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
         if (g_service->GetScene() == iter->first) {
@@ -88,8 +87,7 @@ void ActionDisplay::Execute()
             } else {
                 THERMAL_HILOGD(COMP_SVC, "value is not change");
             }
-            brightness = DisplayPowerMgrClient::GetInstance().GetBrightness();
-            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, brightness);
+            WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
             lastValue_ = value;
             return;
         }
@@ -112,8 +110,7 @@ void ActionDisplay::Execute()
         } else {
             DisplayExecution(value);
         }
-        brightness = DisplayPowerMgrClient::GetInstance().GetBrightness();
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, brightness);
+        WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }
