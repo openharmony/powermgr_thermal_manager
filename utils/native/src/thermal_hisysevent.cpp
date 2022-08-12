@@ -42,5 +42,12 @@ void WriteActionTriggeredHiSysEvent(bool enableEvent, const std::string& actionN
         WriteEvent("THERMAL_ACTION_TRIGGERED", "ACTION", actionName, "VALUE", value);
     }
 }
+
+void WriteActionTriggeredHiSysEventWithRatio(bool enableEvent, const std::string& actionName, float value)
+{
+    if (enableEvent) {
+        WriteEvent("THERMAL_ACTION_TRIGGERED", "ACTION", actionName, "RATIO", value);
+    }
+}
 } // namespace PowerMgr
 } // namespace OHOS
