@@ -113,7 +113,7 @@ uint32_t ActionShutdown::ShutdownRequest(bool isShutdown)
     return ERR_OK;
 }
 
-uint32_t ActionShutdown::ShutdownExecution(bool isShutdown)
+int32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;

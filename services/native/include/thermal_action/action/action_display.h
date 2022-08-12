@@ -32,7 +32,7 @@ public:
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     uint32_t DisplayRequest(float brightness);
-    uint32_t DisplayExecution(float brightness);
+    int32_t DisplayExecution(float brightness);
 private:
     std::vector<float> valueList_;
     bool flag_;

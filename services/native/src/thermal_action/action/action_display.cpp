@@ -124,7 +124,7 @@ uint32_t ActionDisplay::DisplayRequest(float brightness)
     return ERR_OK;
 }
 
-uint32_t ActionDisplay::DisplayExecution(float brightness)
+int32_t ActionDisplay::DisplayExecution(float brightness)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
