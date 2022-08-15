@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,10 +24,10 @@ namespace PowerMgr {
 class SceneStateCollection : public IStateCollection {
 public:
     bool Init() override;
-    bool InitParam(std::string &params) override;
+    bool InitParam(std::string& params) override;
     std::string GetState() override;
     virtual void SetState() override;
-    virtual bool DecideState(const std::string &value) override;
+    virtual bool DecideState(const std::string& value) override;
 public:
     SceneStateCollection() = default;
     ~SceneStateCollection() = default;

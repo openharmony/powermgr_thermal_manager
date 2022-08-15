@@ -30,10 +30,12 @@ config("module_private_config") {
 deps_ex = [
   "ability_base:base",
   "ability_base:want",
+  "battery_manager:batterysrv_client",
   "bundle_framework:appexecfwk_base",
   "eventhandler:libeventhandler",
   "ipc:ipc_core",
   "hiviewdfx_hilog_native:libhilog",
+  "power_manager:powermgr_client",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
   "common_event_service:cesfwk_innerkits",

@@ -72,6 +72,11 @@ bool ThermalConfigFileParser::GetActionPolicy(const std::string& name, uint32_t 
     return false;
 }
 
+std::vector<StateItem> ThermalConfigFileParser::GetStateItem()
+{
+    return stateItem_;
+}
+
 bool ThermalConfigFileParser::LoadThermalSrvConfigXml(const std::string& path)
 {
     if (!ParseXmlFile(path)) {
