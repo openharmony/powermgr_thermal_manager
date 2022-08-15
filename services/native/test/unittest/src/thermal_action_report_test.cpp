@@ -16,6 +16,7 @@
 
 #include "thermal_action_report_test.h"
 
+#include <fcntl.h>
 #include <string>
 #include <unistd.h>
 #include "securec.h"
