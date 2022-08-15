@@ -116,7 +116,7 @@ void ThermalSrvProxy::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCa
 
     THERMAL_WRITE_PARCEL_NO_RET(data, RemoteObject, callback->AsObject());
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::UNREG_THERMAL_TEMP_CALLBACK), data, reply, option);
+    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::UNREG_THERMAL_LEVEL_CALLBACK), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return;
