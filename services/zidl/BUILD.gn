@@ -32,7 +32,7 @@ deps_ex = [
   "eventhandler:libeventhandler",
   "hiviewdfx_hilog_native:libhilog",
   "hicollie_native:libhicollie",
-  "ipc:ipc_core",
+  "ipc:ipc_single",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
   "c_utils:utils",
