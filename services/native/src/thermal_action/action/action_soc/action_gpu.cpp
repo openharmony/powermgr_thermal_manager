@@ -70,7 +70,21 @@ void ActionGpu::AddActionValue(std::string value)
 
 void ActionGpu::Execute()
 {
+    THERMAL_RETURN_IF (g_service == nullptr);
     uint32_t value = lastValue_;
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
+        if (value != lastValue_) {
+            GpuRequest(value);
+            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+            lastValue_ = value;
+            valueList_.clear();
+        }
+        return;
+    }
+
     if (valueList_.empty()) {
         value = 0;
     } else {

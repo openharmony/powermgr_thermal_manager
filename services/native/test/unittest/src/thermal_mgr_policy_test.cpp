@@ -1711,7 +1711,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest035, Function|MediumTest|Lev
 
     if (access(vendorConfig.c_str(), 0) != 0) {
         sleep(WAIT_TIME_5_SEC);
-
+        sleep(WAIT_TIME_5_SEC);
         char currentBuf[MAX_PATH] = {0};
         char currentValue[MAX_PATH] = {0};
         ret = snprintf_s(currentBuf, MAX_PATH, sizeof(currentBuf) - 1, BATTERY_CHARGER_CURRENT_PATH);

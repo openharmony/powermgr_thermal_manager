@@ -81,6 +81,24 @@ void ActionShutdown::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t value;
+    THERMAL_RETURN_IF (g_service == nullptr);
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        value = static_cast<int32_t>(atoi(iter->second.c_str()));
+        if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
+            ShutdownRequest(static_cast<bool>(value));
+        } else if (value != lastValue_) {
+            ShutdownExecution(static_cast<bool>(value));
+        } else {
+            THERMAL_HILOGD(COMP_SVC, "value is not change");
+        }
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        lastValue_ = value;
+        valuesList_.clear();
+        return;
+    }
+
     if (valuesList_.empty()) {
         value = 0;
     } else {
