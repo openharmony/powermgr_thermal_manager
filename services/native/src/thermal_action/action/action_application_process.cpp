@@ -95,6 +95,24 @@ void ActionApplicationProcess::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value;
+    THERMAL_RETURN_IF (g_service == nullptr);
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
+        if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
+            ProcessAppActionRequest(value);
+        } else if (value != lastValue_) {
+            ProcessAppActionExecution(value);
+        } else {
+            THERMAL_HILOGD(COMP_SVC, "value is not change");
+        }
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        lastValue_ = value;
+        valueList_.clear();
+        return;
+    }
+
     if (valueList_.empty()) {
         value = 0;
     } else {

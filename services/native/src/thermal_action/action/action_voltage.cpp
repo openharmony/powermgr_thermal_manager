@@ -82,7 +82,22 @@ void ActionVoltage::AddActionValue(std::string value)
 void ActionVoltage::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
+    THERMAL_RETURN_IF (g_service == nullptr);
     uint32_t value;
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
+        if (value != lastValue_) {
+            SetVoltage(value);
+            WriteMockNode(value);
+            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+            lastValue_ = value;
+            valueList_.clear();
+        }
+        return;
+    }
+
     if (valueList_.empty()) {
         value = 0;
     } else {
