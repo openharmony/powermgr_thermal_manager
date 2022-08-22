@@ -31,7 +31,7 @@ namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 TypeTempMap typeTempMap;
-constexpr const char* levelPath = "/data/service/el0/thermal/config/configLevel";
+constexpr const char* LEVEL_PATH = "/data/service/el0/thermal/config/configLevel";
 const int MAX_PATH = 256;
 std::map<std::string, int32_t> g_xmlActionMap;
 }
@@ -86,7 +86,7 @@ void ThermalPolicy::WriteLevel()
     }
     auto level = *max_element(levelList.begin(), levelList.end());
 
-    ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, levelPath);
+    ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, LEVEL_PATH);
     if (ret < EOK) {
         return;
     }
