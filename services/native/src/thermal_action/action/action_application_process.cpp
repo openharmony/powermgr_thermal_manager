@@ -37,7 +37,7 @@ namespace PowerMgr {
 namespace {
 const int32_t SIGNAL_KILL = 9;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-constexpr const char* processPath = "/data/service/el0/thermal/config/process_ctrl";
+constexpr const char* PROCESS_PATH = "/data/service/el0/thermal/config/process_ctrl";
 const int MAX_PATH = 256;
 std::map<std::string, std::string> g_sceneMap;
 }
@@ -246,7 +246,7 @@ void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t &value)
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char processBuf[MAX_PATH] = {0};
-    ret = snprintf_s(processBuf, MAX_PATH, sizeof(processBuf) - 1, processPath);
+    ret = snprintf_s(processBuf, MAX_PATH, sizeof(processBuf) - 1, PROCESS_PATH);
     if (ret < EOK) {
         return;
     }
