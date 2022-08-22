@@ -33,7 +33,7 @@ namespace PowerMgr {
 namespace {
 constexpr const char* SHUTDOWN_REASON = "DeviceTempTooHigh";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-constexpr const char* shutdownPath = "/data/service/el0/thermal/config/shut_down";
+constexpr const char* SHUTDOWN_PATH = "/data/service/el0/thermal/config/shut_down";
 const int MAX_PATH = 256;
 std::map<std::string, std::string> g_sceneMap;
 }
@@ -118,7 +118,7 @@ int32_t ActionShutdown::ShutdownExecution(bool isShutdown)
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char shutdownBuf[MAX_PATH] = {0};
-    ret = snprintf_s(shutdownBuf, MAX_PATH, sizeof(shutdownBuf) - 1, shutdownPath);
+    ret = snprintf_s(shutdownBuf, MAX_PATH, sizeof(shutdownBuf) - 1, SHUTDOWN_PATH);
     if (ret < EOK) {
         return ret;
     }
