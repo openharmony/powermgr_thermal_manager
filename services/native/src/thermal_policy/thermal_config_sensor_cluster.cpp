@@ -42,13 +42,13 @@ void ThermalConfigSensorCluster::UpdateThermalLevel(TypeTempMap &typeTempInfo)
     std::vector<uint32_t> levelList;
     if (auxFlag_) {
         if (!IsAuxSensorTrigger(typeTempInfo, level)) {
-            THERMAL_HILOGW(COMP_SVC, "all auxiliary sensor not satisfied");
+            THERMAL_HILOGD(COMP_SVC, "all auxiliary sensor not satisfied");
         }
     }
 
     if (rateFlag_) {
         if (!IsTempRateTrigger(typeTempInfo, level)) {
-            THERMAL_HILOGW(COMP_SVC, "all sensors not satisfied");
+            THERMAL_HILOGD(COMP_SVC, "all sensors not satisfied");
         }
     }
 
@@ -58,7 +58,7 @@ void ThermalConfigSensorCluster::UpdateThermalLevel(TypeTempMap &typeTempInfo)
 
     auto max = std::max_element(levelList.begin(), levelList.end());
     latestLevel_ = *max;
-    THERMAL_HILOGI(COMP_SVC, "final latestLevel =  %{public}d", latestLevel_);
+    THERMAL_HILOGD(COMP_SVC, "final latestLevel =  %{public}d", latestLevel_);
     isRateMap_.clear();
 }
 
