@@ -80,6 +80,22 @@ void ActionCharger::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value;
+    THERMAL_RETURN_IF (g_service == nullptr);
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        THERMAL_HILOGD(COMP_SVC, "g_service->GetScene()=%{public}s", g_service->GetScene().c_str());
+        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
+        if (value != lastValue_) {
+            ChargerRequest(value);
+            WriteSimValue(value);
+            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+            lastValue_ = value;
+            valueList_.clear();
+        }
+        return;
+    }
+
     if (valueList_.empty()) {
         value = 0;
     } else {
