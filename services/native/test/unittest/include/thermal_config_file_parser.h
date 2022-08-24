@@ -40,6 +40,7 @@ public:
     bool GetActionEnableEvent(const std::string& actionName);
     bool GetActionStrict(const std::string& actionName);
     bool GetActionPolicy(const std::string& name, uint32_t level, std::vector<PolicyAction>& policy);
+    std::vector<StateItem> GetStateItem();
 private:
     bool LoadThermalSrvConfigXml(const std::string& path);
     bool ParseXmlFile(const std::string& path);

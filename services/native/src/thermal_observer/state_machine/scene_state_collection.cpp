@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,7 @@ bool SceneStateCollection::Init()
     return true;
 }
 
-bool SceneStateCollection::InitParam(std::string &params)
+bool SceneStateCollection::InitParam(std::string& params)
 {
     return true;
 }
@@ -48,10 +48,10 @@ void SceneStateCollection::SetState()
 {
 }
 
-bool SceneStateCollection::DecideState(const std::string &value)
+bool SceneStateCollection::DecideState(const std::string& value)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (g_service->GetScene() != "") {
+    if ((!g_service->GetScene().empty()) && (g_service->GetScene() == value)) {
         std::string scene = g_service->GetScene();
         THERMAL_HILOGD(COMP_SVC, "scene = %{public}s", scene.c_str());
         return true;
