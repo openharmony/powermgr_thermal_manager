@@ -33,7 +33,7 @@ deps_ex = [
   "battery_manager:batterysrv_client",
   "bundle_framework:appexecfwk_base",
   "eventhandler:libeventhandler",
-  "ipc:ipc_single",
+  "ipc:ipc_core",
   "hiviewdfx_hilog_native:libhilog",
   "power_manager:powermgr_client",
   "safwk:system_ability_fwk",
