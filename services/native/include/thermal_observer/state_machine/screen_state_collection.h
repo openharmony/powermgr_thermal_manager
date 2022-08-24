@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,13 +27,12 @@ public:
     ScreenStateCollection() = default;
     ~ScreenStateCollection() = default;
     bool Init() override;
-    bool InitParam(std::string &params) override;
+    bool InitParam(std::string& params) override;
     std::string GetState() override;
-    virtual bool DecideState(const std::string &value) override;
-    void HandleScreenOnCompleted(const EventFwk::CommonEventData &data);
-    void HandleScreenOffCompleted(const EventFwk::CommonEventData &data);
+    virtual bool DecideState(const std::string& value) override;
+    void HandleScreenOnCompleted(const EventFwk::CommonEventData& data);
+    void HandleScreenOffCompleted(const EventFwk::CommonEventData& data);
     bool RegisterEvent();
-    /* Test */
     virtual void SetState() override;
 private:
     std::string params_;

@@ -21,7 +21,9 @@
 #include <unistd.h>
 #include "securec.h"
 
+#include "battery_srv_client.h"
 #include "battery_stats_client.h"
+#include "power_mgr_client.h"
 #include "thermal_config_file_parser.h"
 #include "thermal_mgr_client.h"
 
@@ -35,15 +37,12 @@ static std::shared_ptr<ThermalConfigFileParser> g_configParser = nullptr;
 static std::vector<std::string> g_dumpArgs;
 static std::string g_sceneState;
 static const std::string policyCfgName = "base_safe";
-static const std::string propSceneName = "scene";
-static const std::string propChargeName = "charge";
-static const std::string propScreenName = "screen";
 constexpr int32_t NUM_ZERO = 0;
 constexpr uint32_t MAX_PATH = 256;
 constexpr uint32_t WAIT_TIME_5_SEC = 5;
+constexpr int32_t THERMAL_RATIO_BEGIN = 0;
+constexpr int32_t THERMAL_RATIO_LENGTH = 4;
 constexpr const char* BATTERY_TEMP_PATH = "/data/service/el0/thermal/sensor/battery/temp";
-constexpr const char* CHARGE_STATE_PATH = "/data/service/el0/thermal/state/charge";
-constexpr const char* SCREEN_STATE_PATH = "/data/service/el0/thermal/state/screen";
 constexpr const char* CONFIG_LEVEL_PATH = "/data/service/el0/thermal/config/configLevel";
 constexpr const char* VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
@@ -155,38 +154,24 @@ int32_t ThermalActionReportTest::InitNode()
     return ERR_OK;
 }
 
-void ThermalActionReportTest::SetScreenState(const std::string& scene)
+void ThermalActionReportTest::SetScene(const std::string& scene)
 {
     g_sceneState = scene;
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     thermalMgrClient.SetScene(g_sceneState);
 }
 
-int32_t ThermalActionReportTest::SetCondition(int32_t value, const std::string& scene, int32_t charge, int32_t screen)
+int32_t ThermalActionReportTest::SetCondition(int32_t value, const std::string& scene)
 {
-    THERMAL_HILOGD(LABEL_TEST, "battery = %{public}d, scene = %{public}s, charge = %{public}d, screen = %{public}d",
-        value, scene.c_str(), charge, screen);
+    THERMAL_HILOGD(LABEL_TEST, "battery = %{public}d, scene = %{public}s", value, scene.c_str());
     int32_t ret = -1;
     char batteryTempBuf[MAX_PATH] = {0};
-    char stateChargeBuf[MAX_PATH] = {0};
-    char stateScreenBuf[MAX_PATH] = {0};
     ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_TEMP_PATH);
     EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, CHARGE_STATE_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateScreenBuf, MAX_PATH, sizeof(stateScreenBuf) - 1, SCREEN_STATE_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-
     std::string strTemp = to_string(value) + "\n";
     ret = WriteFile(batteryTempBuf, strTemp, strTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    strTemp = to_string(charge);
-    ret = WriteFile(stateChargeBuf, strTemp, strTemp.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-    strTemp = to_string(screen);
-    ret = WriteFile(stateScreenBuf, strTemp, strTemp.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-    SetScreenState(scene);
+    SetScene(scene);
     return ret;
 }
 
@@ -296,7 +281,7 @@ std::string ThermalActionReportTest::LcdValueDecision(const std::string& actionN
             value = *min_element(valueList.begin(), valueList.end());
         }
     }
-    std::string strValue = to_string(value);
+    std::string strValue = to_string(value).substr(THERMAL_RATIO_BEGIN, THERMAL_RATIO_LENGTH);
     return strValue;
 }
 
@@ -323,29 +308,47 @@ bool ThermalActionReportTest::StateDecision(std::map<std::string, std::string>& 
     return ret;
 }
 
-int32_t ThermalActionReportTest::GetStateMap(std::map<std::string, std::string>& stateMap)
+std::string ThermalActionReportTest::GetScreenState()
 {
-    int32_t ret = -1;
-    char stateChargeBuf[MAX_PATH] = {0};
-    char stateScreenBuf[MAX_PATH] = {0};
-    char chargeValue[MAX_PATH] = {0};
-    char screenValue[MAX_PATH] = {0};
-    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, CHARGE_STATE_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateScreenBuf, MAX_PATH, sizeof(stateScreenBuf) - 1, SCREEN_STATE_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-    ret = ReadFile(stateChargeBuf, chargeValue, sizeof(chargeValue));
-    EXPECT_EQ(true, ret == ERR_OK);
-    ret = ReadFile(stateScreenBuf, screenValue, sizeof(screenValue));
-    EXPECT_EQ(true, ret == ERR_OK);
-    stateMap.emplace(std::pair(propSceneName, g_sceneState));
-    stateMap.emplace(std::pair(propChargeName, chargeValue));
-    stateMap.emplace(std::pair(propScreenName, screenValue));
-    for (auto stateIter : stateMap) {
-        THERMAL_HILOGD(LABEL_TEST, "stateMap name = %{public}s, value = %{public}s",
-            stateIter.first.c_str(), stateIter.second.c_str());
+    std::string state = "0";
+    auto& powerMgrClient = PowerMgrClient::GetInstance();
+    if (powerMgrClient.IsScreenOn()) {
+        state = "1";
     }
-    return ret;
+    return state;
+}
+
+std::string ThermalActionReportTest::GetChargeState()
+{
+    std::string state = "";
+    auto& batterySrvClient = BatterySrvClient::GetInstance();
+    BatteryChargeState chargeState = batterySrvClient.GetChargingStatus();
+    if (chargeState == BatteryChargeState::CHARGE_STATE_ENABLE) {
+        state = "1";
+    } else if (chargeState == BatteryChargeState::CHARGE_STATE_NONE) {
+        state = "0";
+    }
+    return state;
+}
+
+void ThermalActionReportTest::GetStateMap(std::map<std::string, std::string>& stateMap)
+{
+    std::vector<StateItem> stateItem = g_configParser->GetStateItem();
+    for (auto stateIter : stateItem) {
+        std::string state = "";
+        if (stateIter.name == "scene") {
+            state = g_sceneState;
+        } else if (stateIter.name == "screen") {
+            state = GetScreenState();
+        } else if (stateIter.name == "charge") {
+            state = GetChargeState();
+        }
+        stateMap.emplace(std::pair(stateIter.name, state));
+    }
+    for (auto iter : stateMap) {
+        THERMAL_HILOGD(LABEL_TEST, "stateMap name = %{public}s, value = %{public}s",
+            iter.first.c_str(), iter.second.c_str());
+    }
 }
 
 void ThermalActionReportTest::ThermalActionTriggered(const std::string& actionName, int32_t level,
@@ -394,19 +397,6 @@ void ThermalActionReportTest::SetUp(void)
 
 void ThermalActionReportTest::TearDown(void)
 {
-    int32_t ret = -1;
-    char stateChargeBuf[MAX_PATH] = {0};
-    char stateScreenBuf[MAX_PATH] = {0};
-    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, CHARGE_STATE_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateScreenBuf, MAX_PATH, sizeof(stateScreenBuf) - 1, SCREEN_STATE_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-    std::string chargeState = "0";
-    ret = WriteFile(stateChargeBuf, chargeState, chargeState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string screenState = "0";
-    ret = WriteFile(stateChargeBuf, screenState, screenState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     thermalMgrClient.SetScene("");
     sleep(WAIT_TIME_5_SEC);
@@ -417,7 +407,7 @@ namespace {
  * @tc.name: ThermalActionReportTest001
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 40100, scence = cam, charge = 0, screen = 1
+ * @tc.cond: Set battery temp = 40100, scence = cam
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
@@ -429,10 +419,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
     int32_t ret = -1;
     int32_t batteryTemp = 40100;
     std::string sceneState = "cam";
-    int32_t chargeState = 0;
-    int32_t screenState = 1;
     int32_t expectLevel = 1;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -459,7 +447,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
  * @tc.name: ThermalActionReportTest002
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 40100, scence = cam, charge = 1, screen = 0
+ * @tc.cond: Set battery temp = 40100, scence = call
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
@@ -470,11 +458,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 40100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "call";
     int32_t expectLevel = 1;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -501,7 +487,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
  * @tc.name: ThermalActionReportTest003
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 40100, scence = "", charge = 0, screen = 0
+ * @tc.cond: Set battery temp = 40100, scence = game
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
@@ -512,11 +498,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 40100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "game";
     int32_t expectLevel = 1;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -543,7 +527,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
  * @tc.name: ThermalActionReportTest004
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 40100, scence = "game", charge = 1, screen = 0
+ * @tc.cond: Set battery temp = 40100, scence = ""
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
@@ -554,11 +538,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 40100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "";
     int32_t expectLevel = 1;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -585,7 +567,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
  * @tc.name: ThermalActionReportTest005
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 43100, scence = cam, charge = 0, screen = 1
+ * @tc.cond: Set battery temp = 43100, scence = cam
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
@@ -597,10 +579,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
     int32_t ret = -1;
     int32_t batteryTemp = 43100;
     std::string sceneState = "cam";
-    int32_t chargeState = 0;
-    int32_t screenState = 1;
     int32_t expectLevel = 2;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -627,7 +607,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
  * @tc.name: ThermalActionReportTest006
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 43100, scence = cam, charge = 1, screen = 0
+ * @tc.cond: Set battery temp = 43100, scence = call
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
@@ -638,11 +618,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 43100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "call";
     int32_t expectLevel = 2;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -669,7 +647,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
  * @tc.name: ThermalActionReportTest007
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 43100, scence = "", charge = 0, screen = 0
+ * @tc.cond: Set battery temp = 43100, scence = game
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
@@ -680,11 +658,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 43100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "game";
     int32_t expectLevel = 2;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -711,7 +687,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
  * @tc.name: ThermalActionReportTest008
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 43100, scence = "game", charge = 1, screen = 0
+ * @tc.cond: Set battery temp = 43100, scence = ""
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
@@ -722,11 +698,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 43100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "";
     int32_t expectLevel = 2;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -753,7 +727,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
  * @tc.name: ThermalActionReportTest009
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 46100, scence = cam, charge = 0, screen = 1
+ * @tc.cond: Set battery temp = 46100, scence = cam
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
@@ -765,10 +739,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
     int32_t ret = -1;
     int32_t batteryTemp = 46100;
     std::string sceneState = "cam";
-    int32_t chargeState = 0;
-    int32_t screenState = 1;
     int32_t expectLevel = 3;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -796,7 +768,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
  * @tc.name: ThermalActionReportTest010
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 46100, scence = cam, charge = 1, screen = 0
+ * @tc.cond: Set battery temp = 46100, scence = call
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
@@ -807,11 +779,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 46100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "call";
     int32_t expectLevel = 3;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -839,7 +809,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
  * @tc.name: ThermalActionReportTest011
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 46100, scence = "", charge = 0, screen = 0
+ * @tc.cond: Set battery temp = 46100, scence = game
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
@@ -850,11 +820,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 46100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "game";
     int32_t expectLevel = 3;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
@@ -882,7 +850,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
  * @tc.name: ThermalActionReportTest012
  * @tc.desc: test dump info when thermal action is triggered
  * @tc.type: FEATURE
- * @tc.cond: Set battery temp = 46100, scence = "game", charge = 1, screen = 0
+ * @tc.cond: Set battery temp = 46100, scence = ""
  * @tc.result battery stats dump info
  */
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
@@ -893,11 +861,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
 
     int32_t ret = -1;
     int32_t batteryTemp = 46100;
-    std::string sceneState = "cam";
-    int32_t chargeState = 1;
-    int32_t screenState = 0;
+    std::string sceneState = "";
     int32_t expectLevel = 3;
-    ret = SetCondition(batteryTemp, sceneState, chargeState, screenState);
+    ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
