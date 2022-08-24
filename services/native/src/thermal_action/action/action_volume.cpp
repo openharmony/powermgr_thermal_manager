@@ -78,7 +78,24 @@ void ActionVolume::AddActionValue(std::string value)
 void ActionVolume::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
+    THERMAL_RETURN_IF (g_service == nullptr);
     float value;
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        value = static_cast<float>(atoi(iter->second.c_str()));
+        if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
+            VolumeRequest(value);
+        } else if (value != lastValue_) {
+            VolumeExecution(value);
+        } else {
+            THERMAL_HILOGD(COMP_SVC, "value is not change");
+        }
+        WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
+        lastValue_ = value;
+        return;
+    }
+
     if (valueList_.empty()) {
         value = 0.0;
     } else {
@@ -95,6 +112,7 @@ void ActionVolume::Execute()
         } else {
             VolumeExecution(value);
         }
+        WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }

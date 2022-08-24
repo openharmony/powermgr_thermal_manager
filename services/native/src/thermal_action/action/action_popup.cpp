@@ -23,10 +23,12 @@
 #include "constants.h"
 #include "thermal_common.h"
 #include "thermal_hisysevent.h"
+#include "thermal_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
+auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr int UI_DIALOG_POWER_WIDTH_NARROW = 400;
 constexpr int UI_DIALOG_POWER_HEIGHT_NARROW = 240;
 std::map<std::string, std::string> g_sceneMap;
@@ -76,6 +78,20 @@ void ActionPopup::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value;
+    THERMAL_RETURN_IF (g_service == nullptr);
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
+        if (value != lastValue_) {
+            HandlePopupEvent(value);
+            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+            lastValue_ = value;
+            valueList_.clear();
+        }
+        return;
+    }
+
     if (valueList_.empty()) {
         value = 0;
     } else {
