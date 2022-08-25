@@ -52,7 +52,7 @@ class ThermalTimer {
 public:
     ThermalTimer() = default;
     ~ThermalTimer() = default;
-    int64_t CreateTimer(std::shared_ptr<ThermalTimerInfo>& timerInfo);
+    uint64_t CreateTimer(std::shared_ptr<ThermalTimerInfo>& timerInfo);
     bool StartTimer(uint64_t timerId, uint64_t triggerTime);
     bool StopTimer(uint64_t timerId);
     bool DestroyTimer(uint64_t timerId);
