@@ -108,7 +108,7 @@ void ActionCpuMed::Execute()
 int32_t ActionCpuMed::CpuRuquest(uint32_t freq)
 {
     std::vector<int32_t> tags;
-    std::vector<int32_t> configs;
+    std::vector<int64_t> configs;
 
     if (!g_service->GetSimulationXml()) {
         tags.push_back(LIM_CPU_MED_ID);
