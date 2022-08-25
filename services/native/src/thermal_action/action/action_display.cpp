@@ -76,21 +76,21 @@ void ActionDisplay::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     float value;
-
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (g_service->GetScene() == iter->first) {
-            value = atof(iter->second.c_str());
-            if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
-                DisplayRequest(value);
-            } else if (value != lastValue_) {
-                DisplayExecution(value);
-            } else {
-                THERMAL_HILOGD(COMP_SVC, "value is not change");
-            }
-            WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
-            lastValue_ = value;
-            return;
+    THERMAL_RETURN_IF (g_service == nullptr);
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        value = static_cast<float>(atof(iter->second.c_str()));
+        if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
+            DisplayRequest(value);
+        } else if (value != lastValue_) {
+            DisplayExecution(value);
+        } else {
+            THERMAL_HILOGD(COMP_SVC, "value is not change");
         }
+        WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
+        lastValue_ = value;
+        return;
     }
 
     if (valueList_.empty()) {
@@ -118,6 +118,10 @@ void ActionDisplay::Execute()
 uint32_t ActionDisplay::DisplayRequest(float brightness)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
+    if (!DisplayPowerMgrClient::GetInstance().DiscountBrightness(brightness)) {
+        THERMAL_HILOGE(COMP_SVC, "failed to discount brightness");
+        return ERR_INVALID_VALUE;
+    }
     return ERR_OK;
 }
 
