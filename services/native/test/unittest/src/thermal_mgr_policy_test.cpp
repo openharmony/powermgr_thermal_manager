@@ -1340,6 +1340,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
  * @tc.result level 1, freq 1991800
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Level2)
 {
@@ -1385,6 +1386,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
  * @tc.result level 1, freq 1991600
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Level2)
 {
@@ -1473,6 +1475,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
  * @tc.result level 2, freq 1990800
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Level2)
 {
@@ -1518,6 +1521,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
  * @tc.result level 2, freq 1990600
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Level2)
 {
@@ -1606,6 +1610,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 1, scene = "cam"
  * @tc.result level 3, freq 1989800
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Level2)
 {
@@ -1651,6 +1656,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: charge = 0, scene = "cam"
  * @tc.result level 3, freq 1989600
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Level2)
 {
@@ -1732,6 +1738,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest035, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: scene = "cam"
  * @tc.result level 1, current 1200
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Level2)
 {
@@ -1806,6 +1813,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest037, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: scene = "cam"
  * @tc.result level 2, current 1000
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Level2)
 {
@@ -1880,6 +1888,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest039, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set BATTERY temp, state: scene = "cam"
  * @tc.result level 3, current 800
+ * @tc.require: issueI5HWGZ
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Level2)
 {
@@ -2026,6 +2035,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest043, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 1 brightness factor is 1.0
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Level2)
 {
@@ -2061,6 +2071,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 2 brightness factor is 0.9
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Level2)
 {
@@ -2096,6 +2107,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 3 brightness factor is 0.8
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Level2)
 {
@@ -2131,6 +2143,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set PA temp, High Temp With Aux sensor
  * @tc.result level 1 brightness factor is 0.7
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Level2)
 {
@@ -2174,6 +2187,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set PA temp, High Temp With Aux sensor
  * @tc.result level 2 brightness factor is 0.6
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Level2)
 {
@@ -2878,6 +2892,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest065, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 1, scene cam, brightness factor is 0.99
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest066, Function|MediumTest|Level2)
 {
@@ -2916,6 +2931,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest066, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 2, scene cam, brightness factor is 0.98
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest067, Function|MediumTest|Level2)
 {
@@ -2954,6 +2970,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest067, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 3, scene cam, brightness factor is 0.97
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest068, Function|MediumTest|Level2)
 {
@@ -2992,6 +3009,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest068, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 1, scene call, brightness factor is 0.98
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest069, Function|MediumTest|Level2)
 {
@@ -3030,6 +3048,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest069, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 2, scene call, brightness factor is 0.88
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest070, Function|MediumTest|Level2)
 {
@@ -3068,6 +3087,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest070, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 3, scene call, brightness factor is 0.78
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest071, Function|MediumTest|Level2)
 {
@@ -3106,6 +3126,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest071, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 1, scene game, brightness factor is 0.97
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest072, Function|MediumTest|Level2)
 {
@@ -3144,6 +3165,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest072, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 2, scene game, brightness factor is 0.87
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest073, Function|MediumTest|Level2)
 {
@@ -3182,6 +3204,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest073, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 3, scene game, brightness factor is 0.77
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest074, Function|MediumTest|Level2)
 {
@@ -3221,6 +3244,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest074, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 1, scene test, brightness factor is 0.91
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest075, Function|MediumTest|Level2)
 {
@@ -3259,6 +3283,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest075, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 1, brightness factor is 1.0; scene game, brightness factor is 0.97
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest076, Function|MediumTest|Level2)
 {
@@ -3310,6 +3335,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest076, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result level 1, scene call, brightness factor is 0.98; scene empty, brightness factor is 1.0
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest077, Function|MediumTest|Level2)
 {
@@ -3363,6 +3389,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest077, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result scene cam, level 1, brightness factor is 0.99
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest078, Function|MediumTest|Level2)
 {
@@ -3401,6 +3428,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest078, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result scene call, level 2, brightness factor is 0.88
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest079, Function|MediumTest|Level2)
 {
@@ -3439,6 +3467,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest079, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp, Lower Temp
  * @tc.result scene game, level 3, brightness factor is 0.77
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest080, Function|MediumTest|Level2)
 {
@@ -3477,6 +3506,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest080, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp
  * @tc.result level 1, volume 1.0
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest081, Function|MediumTest|Level2)
 {
@@ -3511,6 +3541,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest081, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp
  * @tc.result level 2, volume 0.8
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest082, Function|MediumTest|Level2)
 {
@@ -3545,6 +3576,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest082, Function|MediumTest|Lev
  * @tc.type: FEATURE
  * @tc.cond: Set Battery temp
  * @tc.result level 3, volume 0.7
+ * @tc.require: issueI5HWH6
  */
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest083, Function|MediumTest|Level2)
 {
