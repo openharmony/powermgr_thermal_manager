@@ -176,11 +176,6 @@ bool ThermalService::InitModules()
         return false;
     }
 
-    if (!InitStateMachine()) {
-        THERMAL_HILOGE(COMP_SVC, "state machine init fail");
-        return false;
-    }
-
     if (!InitActionManager()) {
         THERMAL_HILOGE(COMP_SVC, "action manager init fail");
         return false;
