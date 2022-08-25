@@ -27,7 +27,7 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-constexpr const char* lcdPath = "/data/service/el0/thermal/config/lcd";
+constexpr const char* LCD_PATH = "/data/service/el0/thermal/config/lcd";
 const int MAX_PATH = 256;
 std::map<std::string, std::string> g_sceneMap;
 }
@@ -130,7 +130,7 @@ int32_t ActionDisplay::DisplayExecution(float brightness)
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char lcdBuf[MAX_PATH] = {0};
-    ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, lcdPath);
+    ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, LCD_PATH);
     if (ret < EOK) {
         return ret;
     }
