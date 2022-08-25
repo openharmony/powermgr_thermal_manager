@@ -79,11 +79,6 @@ int32_t ThermalSensorProvision::ReadSysfsFile(const char* path, char* buf, size_
         THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to open %{private}s", path);
         return ERR_INVALID_OPERATION;
     }
-    if (size <= 0) {
-        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to buffsize %{private}d", size);
-        close(fd);
-        return ERR_INVALID_OPERATION;
-    }
     readSize = read(fd, buf, size - 1);
     if (readSize < NUM_ZERO) {
         THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to read %{private}s", path);
