@@ -13,7 +13,7 @@
      limitations under the License.
 -->
 <info>
-    <process>thermal</process>
+    <process>foundation</process>
     <systemability>
         <name>3303</name>
         <libpath>libthermalservice.z.so</libpath>
