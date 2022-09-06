@@ -25,6 +25,6 @@ class StateCollectionFactory {
 public:
     static std::shared_ptr<IStateCollection> Create(std::string &stateName);
 };
-} // namespaace PowerMgr
+} // namespace PowerMgr
 } // namespace OHOS
 #endif // STATE_COLLECTION_FACTORY_H
