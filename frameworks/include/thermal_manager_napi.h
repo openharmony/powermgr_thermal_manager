@@ -16,6 +16,7 @@
 #ifndef THERMAL_MANAGER_NAPI_H
 #define THERMAL_MANAGER_NAPI_H
 
+#include <mutex>
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "thermal_mgr_client.h"
@@ -27,22 +28,24 @@ namespace OHOS {
 namespace PowerMgr {
 class ThermalLevelCallback : public ThermalLevelCallbackStub {
 public:
-    explicit ThermalLevelCallback() : level_(ThermalLevel::COOL) {};
-    virtual ~ThermalLevelCallback() {};
+    ThermalLevelCallback() = default;
+    virtual ~ThermalLevelCallback();
+    void UpdateCallback(napi_env env, napi_value jsCallback);
+    void ReleaseCallback();
     void GetThermalLevel(ThermalLevel level) override;
-    uint32_t GetLevel()
-    {
-        return static_cast<uint32_t>(level_);
-    }
+    void OnThermalLevel();
 
 private:
-    ThermalLevel level_;
+    ThermalLevel level_ {ThermalLevel::COOL};
+    napi_ref callbackRef_ {nullptr};
+    napi_env env_ {nullptr};
+    std::mutex mutex_;
 };
 
-class ThermalManagerNapi : public ThermalManagerNativeEvent {
+class ThermalManagerNapi {
 public:
-    explicit ThermalManagerNapi(napi_env env, napi_value thisVar);
-    virtual ~ThermalManagerNapi();
+    ThermalManagerNapi() = default;
+    virtual ~ThermalManagerNapi() = default;
 
     static napi_value Init(napi_env env, napi_value exports);
     static napi_value InitThermalLevel(napi_env env, napi_value exports);
@@ -50,16 +53,10 @@ public:
     static napi_value UnSubscribeThermalLevel(napi_env env, napi_callback_info info);
     static napi_value GetThermalLevel(napi_env env, napi_callback_info info);
 
-    static void RegisterCallback(const std::string &eventType);
     static napi_value EnumThermalLevelConstructor(napi_env env, napi_callback_info info);
-    void OnThermalLevelSucceed(const ThermalLevel &level);
-    static ThermalManagerNapi *GetThermalManagerNapi();
-    static sptr<IThermalLevelCallback> callback_;
-    static napi_ref thermalLevelConstructor_;
 
 private:
-    napi_ref callbackRef_;
-    napi_env env_;
+    static napi_ref thermalLevelConstructor_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
