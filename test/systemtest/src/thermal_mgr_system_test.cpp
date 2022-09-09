@@ -1272,67 +1272,6 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Lev
 }
 
 /**
- * @tc.name: ThermalMgrSystemTest049
- * @tc.desc: get process and shutdown value
- * @tc.type: FEATURE
- * @tc.cond: Set AP temp, High Temp With Aux sensor
- * @tc.result level 1, process 0, shutdown 0
- */
-HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest049, Function|MediumTest|Level2)
-{
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest049: start.");
-    int32_t ret = -1;
-    char apTempBuf[MAX_PATH] = {0};
-    char amTempBuf[MAX_PATH] = {0};
-    char shellTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(apTempBuf, MAX_PATH, sizeof(apTempBuf) - 1, apPath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(amTempBuf, MAX_PATH, sizeof(amTempBuf) - 1, ambientPath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(shellTempBuf, MAX_PATH, sizeof(shellTempBuf) - 1, shellPath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-
-    int32_t apTemp = 78000;
-    std::string sTemp = to_string(apTemp) + "\n";
-    ret = ThermalMgrSystemTest::WriteFile(apTempBuf, sTemp, sTemp.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-
-    int32_t amTemp = 1000;
-    sTemp = to_string(amTemp) + "\n";
-    ret = ThermalMgrSystemTest::WriteFile(amTempBuf, sTemp, sTemp.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-
-    int32_t shellTemp = 3000;
-    sTemp = to_string(shellTemp) + "\n";
-    ret = ThermalMgrSystemTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-
-    sleep(SLEEP_INTERVAL_SEC);
-    char procsessBuf[MAX_PATH] = {0};
-    char procsesValue[MAX_PATH] = {0};
-    ret = snprintf_s(procsessBuf, MAX_PATH, sizeof(procsessBuf) - 1, processPath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = ThermalMgrSystemTest::ReadFile(procsessBuf, procsesValue, sizeof(procsesValue));
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string process = procsesValue;
-    int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest049 failed";
-
-    char shutdownBuf[MAX_PATH] = {0};
-    char shutdownValue[MAX_PATH] = {0};
-    ret = snprintf_s(shutdownBuf, MAX_PATH, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = ThermalMgrSystemTest::ReadFile(shutdownBuf, shutdownValue, sizeof(shutdownValue));
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string shutdown = shutdownValue;
-    value = ThermalMgrSystemTest::ConvertInt(shutdown);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest049 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest049: end.");
-}
-
-/**
  * @tc.name: ThermalMgrSystemTest050
  * @tc.desc: test get process value by setting temp
  * @tc.type: FEATURE
