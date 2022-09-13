@@ -21,7 +21,7 @@
 #include "securec.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
-#include "v1_1/battery_interface_proxy.h"
+#include "v1_1/ibattery_interface.h"
 
 namespace OHOS {
 namespace PowerMgr {
