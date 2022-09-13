@@ -39,7 +39,7 @@
 #include "thermal_callback.h"
 #include "hdi_service_status_listener.h"
 #include "v1_0/thermal_types.h"
-#include "v1_0/thermal_interface_proxy.h"
+#include "v1_0/ithermal_interface.h"
 
 
 namespace OHOS {
