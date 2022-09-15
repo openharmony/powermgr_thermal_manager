@@ -16,7 +16,7 @@
 #include "action_voltage.h"
 
 #include <map>
-#include "v1_1/battery_interface_proxy.h"
+#include "v1_1/ibattery_interface.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "file_operation.h"

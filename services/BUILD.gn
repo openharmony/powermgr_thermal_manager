@@ -99,6 +99,7 @@ ohos_shared_library("thermalservice") {
     "drivers_interface_battery:libbattery_proxy_1.1",
     "drivers_interface_thermal:libthermal_proxy_1.0",
     "eventhandler:libeventhandler",
+    "hdf_core:libhdi",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
