@@ -74,7 +74,6 @@ ohos_shared_library("thermalservice") {
   public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_frameworks}:thermal_dialog",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -85,13 +84,11 @@ ohos_shared_library("thermalservice") {
   ]
 
   external_deps = [
-    "ability_base:base",
     "ability_base:want",
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "appspawn:appspawn_socket_client",
     "battery_manager:batterysrv_client",
-    "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
@@ -108,10 +105,8 @@ ohos_shared_library("thermalservice") {
     "multimedia_image_standard:image_native",
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
     "time_service:time_service",
     "window_manager:libdm",
-    "window_manager:libwm",
   ]
 
   subsystem_name = "powermgr"
