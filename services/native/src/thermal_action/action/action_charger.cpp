@@ -138,12 +138,12 @@ int32_t ActionCharger::ChargerRequest(int32_t current)
 void ActionCharger::ExecuteCurrentLimit()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
+    if (chargeLimitList_.empty()) {
+        return;
+    }
     sptr<IBatteryInterface> iBatteryInterface = IBatteryInterface::Get();
     if (iBatteryInterface == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "iBatteryInterface_ is nullptr");
-        return;
-    }
-    if (chargeLimitList_.empty()) {
         return;
     }
     int32_t result = iBatteryInterface->SetChargingLimit(chargeLimitList_);
