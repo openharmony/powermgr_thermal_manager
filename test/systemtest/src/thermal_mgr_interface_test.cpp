@@ -92,11 +92,11 @@ int32_t ThermalMgrInterfaceTest::ConvertInt(const std::string &value)
     return std::stoi(value);
 }
 
-void ThermalMgrInterfaceTest::SetUpTestCase(void)
+void ThermalMgrInterfaceTest::SetUpTestCase()
 {
 }
 
-void ThermalMgrInterfaceTest::TearDownTestCase(void)
+void ThermalMgrInterfaceTest::TearDownTestCase()
 {
 }
 

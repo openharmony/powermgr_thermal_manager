@@ -297,7 +297,7 @@ static napi_module g_module = {
 /*
  * Module registration
  */
-extern "C" __attribute__((constructor)) void RegisterModule(void)
+extern "C" __attribute__((constructor)) void RegisterModule()
 {
     napi_module_register(&g_module);
 }

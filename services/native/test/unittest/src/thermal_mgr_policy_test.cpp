@@ -135,20 +135,20 @@ int32_t ThermalMgrPolicyTest::InitNode()
     return ERR_OK;
 }
 
-void ThermalMgrPolicyTest::SetUpTestCase(void)
+void ThermalMgrPolicyTest::SetUpTestCase()
 {
 }
 
-void ThermalMgrPolicyTest::TearDownTestCase(void)
+void ThermalMgrPolicyTest::TearDownTestCase()
 {
 }
 
-void ThermalMgrPolicyTest::SetUp(void)
+void ThermalMgrPolicyTest::SetUp()
 {
     InitNode();
 }
 
-void ThermalMgrPolicyTest::TearDown(void)
+void ThermalMgrPolicyTest::TearDown()
 {
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     thermalMgrClient.SetScene("");
