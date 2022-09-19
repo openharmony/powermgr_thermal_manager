@@ -41,8 +41,8 @@ std::string apPath = "/data/service/el0/thermal/sensor/ap/temp";
 
 class ThermalMgrInterfaceTest : public testing::Test {
 public:
-    static void SetUpTestCase(void);
-    static void TearDownTestCase(void);
+    static void SetUpTestCase();
+    static void TearDownTestCase();
     void SetUp();
     void TearDown();
     static int32_t WriteFile(std::string path, std::string buf, size_t size);

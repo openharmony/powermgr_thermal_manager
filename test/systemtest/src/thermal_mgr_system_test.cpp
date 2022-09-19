@@ -170,20 +170,20 @@ int32_t ThermalMgrSystemTest::ConvertInt(const std::string &value)
     return std::stoi(value);
 }
 
-void ThermalMgrSystemTest::SetUpTestCase(void)
+void ThermalMgrSystemTest::SetUpTestCase()
 {
 }
 
-void ThermalMgrSystemTest::TearDownTestCase(void)
+void ThermalMgrSystemTest::TearDownTestCase()
 {
 }
 
-void ThermalMgrSystemTest::SetUp(void)
+void ThermalMgrSystemTest::SetUp()
 {
     InitNode();
 }
 
-void ThermalMgrSystemTest::TearDown(void)
+void ThermalMgrSystemTest::TearDown()
 {
     int32_t ret = -1;
     char stateChargeBuf[MAX_PATH] = {0};
