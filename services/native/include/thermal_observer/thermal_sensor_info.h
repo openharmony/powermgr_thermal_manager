@@ -40,4 +40,4 @@ private:
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // THERMAL_SENSOR_INFO_Hnamespace
+#endif // THERMAL_SENSOR_INFO_H
