@@ -41,18 +41,11 @@ ohos_shared_library("thermal") {
   ]
 
   external_deps = [
-    "ability_base:base",
-    "ability_base:want",
     "bundle_framework:appexecfwk_base",
     "c_utils:utils",
-    "common_event_service:cesfwk_innerkits",
-    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
-    "thermal_manager:thermalmgr_listener",
   ]
 
   relative_install_dir = "module"
