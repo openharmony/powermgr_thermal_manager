@@ -61,12 +61,9 @@ ohos_executable("thermal-shell") {
   ]
 
   external_deps = [
-    "ability_base:base",
-    "ability_base:want",
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "samgr:samgr_proxy",
   ]
 
   install_enable = true
