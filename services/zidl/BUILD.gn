@@ -25,16 +25,10 @@ config("thermalmgr_ipc_public_config") {
 }
 
 deps_ex = [
-  "ability_base:base",
-  "ability_base:want",
   "bundle_framework:appexecfwk_base",
-  "common_event_service:cesfwk_innerkits",
-  "eventhandler:libeventhandler",
   "hiviewdfx_hilog_native:libhilog",
   "hicollie_native:libhicollie",
   "ipc:ipc_core",
-  "safwk:system_ability_fwk",
-  "samgr:samgr_proxy",
   "c_utils:utils",
 ]
 
