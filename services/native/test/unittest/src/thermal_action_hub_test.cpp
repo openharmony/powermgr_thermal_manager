@@ -92,11 +92,11 @@ int32_t ThermalActionHubTest::ConvertInt(const std::string &value)
     return std::stoi(value);
 }
 
-void ThermalActionHubTest::SetUpTestCase(void)
+void ThermalActionHubTest::SetUpTestCase()
 {
 }
 
-void ThermalActionHubTest::TearDownTestCase(void)
+void ThermalActionHubTest::TearDownTestCase()
 {
 }
 

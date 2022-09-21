@@ -379,23 +379,23 @@ void ThermalActionReportTest::ThermalActionTriggered(const std::string& actionNa
         << " action name = " << actionName;
 }
 
-void ThermalActionReportTest::SetUpTestCase(void)
+void ThermalActionReportTest::SetUpTestCase()
 {
     ParserThermalSrvConfigFile();
     g_dumpArgs.push_back("-batterystats");
 }
 
-void ThermalActionReportTest::TearDownTestCase(void)
+void ThermalActionReportTest::TearDownTestCase()
 {
 }
 
-void ThermalActionReportTest::SetUp(void)
+void ThermalActionReportTest::SetUp()
 {
     InitNode();
     sleep(WAIT_TIME_5_SEC);
 }
 
-void ThermalActionReportTest::TearDown(void)
+void ThermalActionReportTest::TearDown()
 {
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     thermalMgrClient.SetScene("");
