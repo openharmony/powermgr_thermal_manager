@@ -34,13 +34,13 @@ using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
 
+namespace {
 static sptr<ThermalService> service;
 static std::mutex g_mtx;
 
 using namespace OHOS::HiviewDFX;
 
 static constexpr HiLogLabel LABEL = {LOG_CORE, 0, "ThermalMST"};
-
 
 static bool StartThermalProtector()
 {
@@ -95,6 +95,7 @@ static bool CheckThermalProtectorPID()
 
     return true;
     THERMAL_HILOGD(LABEL_TEST, "return");
+}
 }
 
 int32_t ThermalMgrSystemTest::WriteFile(std::string path, std::string buf, size_t size)

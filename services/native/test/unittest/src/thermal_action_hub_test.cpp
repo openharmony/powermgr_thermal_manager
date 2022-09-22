@@ -40,8 +40,10 @@ using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
 
+namespace {
 static std::mutex g_mtx;
 std::vector<std::string> typeList;
+}
 
 int32_t ThermalActionHubTest::WriteFile(std::string path, std::string buf, size_t size)
 {
