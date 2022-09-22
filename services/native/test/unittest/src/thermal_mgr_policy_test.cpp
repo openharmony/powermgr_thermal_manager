@@ -35,9 +35,11 @@ using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
 
+namespace {
 const int NUM_ZERO = 0;
 static sptr<ThermalService> service;
 static std::mutex g_mtx;
+}
 
 int32_t ThermalMgrPolicyTest::WriteFile(std::string path, std::string buf, size_t size)
 {
