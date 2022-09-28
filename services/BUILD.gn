@@ -120,7 +120,6 @@ ohos_shared_library("thermalservice") {
 group("service") {
   deps = [
     ":thermalservice",
-    "${thermal_manager_path}/etc/init:thermal.cfg",
     "${thermal_manager_path}/sa_profile:thermalmgr_sa_profile",
     "native/profile:thermal_service_config",
   ]
