@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,25 +24,28 @@ namespace PowerMgr {
 const int32_t BUFFER_SIZE = 512;
 const uint32_t MAX_PATH = 256;
 const uint32_t SLEEP_INTERVAL_SEC = 5;
-std::string batteryPath = "/data/service/el0/thermal/sensor/battery/temp";
-std::string shellPath = "/data/service/el0/thermal/sensor/shell/temp";
-std::string chargerPath = "/data/service/el0/thermal/sensor/charger/temp";
-std::string socPath = "/data/service/el0/thermal/sensor/soc/temp";
-std::string ambientPath = "/data/service/el0/thermal/sensor/ambient/temp";
-std::string cpuPath = "/data/service/el0/thermal/sensor/cpu/temp";
-std::string paPath = "/data/service/el0/thermal/sensor/pa/temp";
-std::string apPath = "/data/service/el0/thermal/sensor/ap/temp";
-std::string configLevelPath = "/data/service/el0/thermal/config/configLevel";
-std::string lcdPath = "/data/service/el0/thermal/config/lcd";
-std::string processPath = "/data/service/el0/thermal/config/process_ctrl";
-std::string shutdownPath = "/data/service/el0/thermal/config/shut_down";
-std::string stateScreenPath = "/data/service/el0/thermal/state/screen";
-std::string stateScenePath = "/data/service/el0/thermal/state/scene";
-std::string stateChargePath = "/data/service/el0/thermal/state/charge";
-constexpr const char* CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
-constexpr const char* GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
-constexpr const char* BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
-constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
+const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
+const std::string SHELL_PATH = "/data/service/el0/thermal/sensor/shell/temp";
+const std::string CHARGER_PATH = "/data/service/el0/thermal/sensor/charger/temp";
+const std::string SOC_PATH = "/data/service/el0/thermal/sensor/soc/temp";
+const std::string AMBIENT_PATH = "/data/service/el0/thermal/sensor/ambient/temp";
+const std::string CPU_PATH = "/data/service/el0/thermal/sensor/cpu/temp";
+const std::string PA_PATH = "/data/service/el0/thermal/sensor/pa/temp";
+const std::string AP_PATH = "/data/service/el0/thermal/sensor/ap/temp";
+const std::string CONFIG_LEVEL_PATH = "/data/service/el0/thermal/config/configLevel";
+const std::string LCD_PATH = "/data/service/el0/thermal/config/lcd";
+const std::string PROCESS_PATH = "/data/service/el0/thermal/config/process_ctrl";
+const std::string SHUTDOWN_PATH = "/data/service/el0/thermal/config/shut_down";
+const std::string STATE_SCREEN_PATH = "/data/service/el0/thermal/state/screen";
+const std::string STATE_SCENE_PATH = "/data/service/el0/thermal/state/scene";
+const std::string STATE_CHARGE_PATH = "/data/service/el0/thermal/state/charge";
+const std::string VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
+const std::string SIMUL_CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
+const std::string REAL_CPU_FREQ_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq";
+const std::string GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
+const std::string SIMUL_BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
+const std::string REAL_BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/battery/current_limit";
+const std::string SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
 class ThermalMgrSystemTest : public testing::Test {
 public:
     static void SetUpTestCase();

@@ -22,8 +22,8 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "mock",
-    "${thermal_service_zidl}/include",
     "${ability_runtime_services_path}/appmgr/include",
+    "${thermal_service_zidl}/include",
   ]
 }
 
@@ -58,12 +58,15 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "${thermal_manager_path}/services/native/include/thermal_policy",
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
+    "${thermal_manager_path}/services/native/test/mock_client/include",
+    "${thermal_manager_path}/services/native/test/unittest/include",
     "${thermal_manager_path}/services/zidl/include",
   ]
 
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
@@ -74,9 +77,15 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
 }
 
 ohos_systemtest("ThermalMgrSystemTest") {
+  resource_config_file =
+      "//base/powermgr/thermal_manager/test/resource/system_test/ohos_test.xml"
+
   module_out_path = "${module_output_path}"
 
-  sources = [ "src/thermal_mgr_system_test.cpp" ]
+  sources = [
+    "${thermal_manager_path}/services/native/test/unittest/src/thermal_config_file_parser.cpp",
+    "src/thermal_mgr_system_test.cpp",
+  ]
 
   configs = [ "${utils_path}:utils_config" ]
 
@@ -89,14 +98,18 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "${thermal_manager_path}/services/native/include/thermal_policy",
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
+    "${thermal_manager_path}/services/native/test/mock_client/include",
+    "${thermal_manager_path}/services/native/test/unittest/include",
   ]
 
   deps = [
     "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/services:thermalservice",
+    "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/libxml2:xml2",
   ]
   external_deps = deps_ex
 }
