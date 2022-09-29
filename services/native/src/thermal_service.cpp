@@ -157,7 +157,7 @@ bool ThermalService::CreateConfigModule()
     return true;
 }
 
-bool ThermalService::InitModules()
+bool ThermalService::InitConfigFile()
 {
     if (!ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(VENDOR_CONFIG)) {
         THERMAL_HILOGE(COMP_SVC, "thermal service config init fail:VENDOR_CONFIG");
@@ -166,6 +166,29 @@ bool ThermalService::InitModules()
             return false;
         }
         isSimulation_ = true;
+    }
+    return true;
+}
+
+
+bool ThermalService::InitConfigModule()
+{
+    THERMAL_HILOGD(COMP_SVC, "InitVendor Enter");
+    if (!CreateConfigModule()) {
+        THERMAL_HILOGD(COMP_SVC, "CreateConfigModule fail");
+    }
+
+    if (!InitConfigFile()) {
+        return false;
+    }
+
+    return true;
+}
+
+bool ThermalService::InitModules()
+{
+    if (!InitConfigFile()) {
+        return false;
     }
 
     if (popup_ == nullptr) {

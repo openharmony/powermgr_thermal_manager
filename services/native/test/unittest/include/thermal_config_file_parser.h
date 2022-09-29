@@ -41,9 +41,13 @@ public:
     bool GetActionStrict(const std::string& actionName);
     bool GetActionPolicy(const std::string& name, uint32_t level, std::vector<PolicyAction>& policy);
     std::vector<StateItem> GetStateItem();
+    bool ParseXmlFile(const std::string& path);
+    std::map<std::string, SensorInfoMap> GetSensorInfoMap()
+    {
+        return sensorInfoMap_;
+    }
 private:
     bool LoadThermalSrvConfigXml(const std::string& path);
-    bool ParseXmlFile(const std::string& path);
     void ParseBaseNode(xmlNodePtr node);
     void ParseLevelNode(xmlNodePtr node);
     void ParseStateNode(xmlNodePtr node);
@@ -51,7 +55,7 @@ private:
     void ParsePolicyNode(xmlNodePtr node);
     void ParseIdleNode(xmlNodePtr node);
     void ParseAuxSensorInfo(const xmlNode* cur, std::shared_ptr<ThermalConfigSensorCluster>& sc);
-    void ParseSensorInfo(const xmlNode* cur, std::shared_ptr<ThermalConfigSensorCluster>& sc);
+    void ParseSensorInfo(const std::string& name, const xmlNode* cur, std::shared_ptr<ThermalConfigSensorCluster>& sc);
     std::vector<AuxLevelItem> ParseAuxSensorSubnodeInfo(const xmlNode* cur,
         std::vector<std::string>& auxSensorList, const uint32_t i);
     bool ParseAuxSensorSubnodeInfoTrigerRange(const xmlNode* subNode, std::vector<std::string>& auxSensorList,
@@ -64,6 +68,7 @@ private:
     std::vector<ActionItem> actionItem_;
     ThermalPolicy::PolicyConfigMap policyConfigMap_;
     std::map<std::string, std::shared_ptr<ThermalConfigSensorCluster>> sensorClusterMap_;
+    std::map<std::string, SensorInfoMap> sensorInfoMap_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
