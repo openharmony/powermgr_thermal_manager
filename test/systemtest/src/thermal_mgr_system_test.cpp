@@ -186,19 +186,6 @@ void ThermalMgrSystemTest::SetUp()
 
 void ThermalMgrSystemTest::TearDown()
 {
-    int32_t ret = -1;
-    char stateChargeBuf[MAX_PATH] = {0};
-    char stateSceneBuf[MAX_PATH] = {0};
-    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateSceneBuf, MAX_PATH, sizeof(stateSceneBuf) - 1, stateScenePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    std::string chargeState = "0";
-    ret = WriteFile(stateChargeBuf, chargeState, chargeState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string sceneState = "0";
-    ret = WriteFile(stateSceneBuf, sceneState, sceneState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
 }
 
 namespace {
@@ -1230,46 +1217,6 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest025, Function|MediumTest|Lev
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1990000 || value == 1989500 || value == 1989200) << "ThermalMgrSystemTest025 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest025: end.");
-}
-
-/**
- * @tc.name: ThermalMgrSystemTest026
- * @tc.desc: test get cpu freq by setting temp
- * @tc.type: FEATURE
- * @tc.cond: Set BATTERY temp, state: charge = 1, no scene
- * @tc.result level 1, freq 1992000
- */
-HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest026, Function|MediumTest|Level2)
-{
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest026: start.");
-    int32_t ret = -1;
-    char batteryTempBuf[MAX_PATH] = {0};
-    char stateChargeBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    ret = snprintf_s(stateChargeBuf, MAX_PATH, sizeof(stateChargeBuf) - 1, stateChargePath.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-
-    int32_t batteryTemp = 40100;
-    std::string sTemp = to_string(batteryTemp) + "\n";
-    ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string chargeState = "1";
-    ret = ThermalMgrSystemTest::WriteFile(stateChargeBuf, chargeState, chargeState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
-    sleep(SLEEP_INTERVAL_SEC);
-
-    char cpuBuf[MAX_PATH] = {0};
-    char freqValue[MAX_PATH] = {0};
-    ret = snprintf_s(cpuBuf, MAX_PATH, sizeof(cpuBuf) - 1, CPU_FREQ_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-    ret = ThermalMgrSystemTest::ReadFile(cpuBuf, freqValue, sizeof(freqValue));
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string freq = freqValue;
-    int32_t value = ThermalMgrSystemTest::ConvertInt(freq);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == 1992000 || value == 1991500 || value == 1991200) << "ThermalMgrSystemTest026 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest026: end.");
 }
 
 /**
