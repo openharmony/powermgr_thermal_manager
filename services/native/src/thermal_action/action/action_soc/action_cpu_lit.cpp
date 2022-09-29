@@ -27,7 +27,6 @@ namespace {
 constexpr int32_t LIM_CPU_LIT_ID = 1001;
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-std::map<std::string, std::string> g_sceneMap;
 }
 ActionCpuLit::ActionCpuLit(const std::string& actionName)
 {
@@ -46,21 +45,6 @@ void ActionCpuLit::SetStrict(bool flag)
 void ActionCpuLit::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
-}
-
-void ActionCpuLit::SetXmlScene(const std::string& scene, const std::string& value)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (iter->first == scene) {
-            if (iter->second != value) {
-                iter->second = value;
-            }
-            return;
-        }
-    }
-
-    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionCpuLit::AddActionValue(std::string value)

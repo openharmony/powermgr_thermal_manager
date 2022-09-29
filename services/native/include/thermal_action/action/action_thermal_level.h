@@ -35,17 +35,16 @@ class ActionThermalLevel : public IThermalAction {
 public:
     ActionThermalLevel(const std::string& actionName);
     ~ActionThermalLevel();
-    explicit ActionThermalLevel(const wptr<ThermalService> &tms);
+    explicit ActionThermalLevel(const wptr<ThermalService>& tms);
 
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void SetEnableEvent(bool enable) override;
-    virtual void SetXmlScene(const std::string& scene, const std::string& value) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     bool Init();
-    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback);
-    void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback);
+    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
+    void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     int32_t GetThermalLevel();
     uint32_t LevelRequest(int32_t level);
 
@@ -55,12 +54,12 @@ public:
     class ThermalLevelCallbackDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
         ThermalLevelCallbackDeathRecipient() = default;
-        virtual void OnRemoteDied(const wptr<IRemoteObject> &remote);
+        virtual void OnRemoteDied(const wptr<IRemoteObject>& remote);
         virtual ~ThermalLevelCallbackDeathRecipient() = default;
     };
 private:
     struct classcomp {
-        bool operator()(const sptr<IThermalLevelCallback> &l, const sptr<IThermalLevelCallback> &r) const
+        bool operator()(const sptr<IThermalLevelCallback>& l, const sptr<IThermalLevelCallback>& r) const
         {
             return l->AsObject() < r->AsObject();
         }

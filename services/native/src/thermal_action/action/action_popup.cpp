@@ -30,8 +30,8 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-std::map<std::string, std::string> g_sceneMap;
-} // namespace
+}
+
 ActionPopup::ActionPopup(const std::string& actionName)
 {
     actionName_ = actionName;
@@ -47,21 +47,6 @@ void ActionPopup::SetStrict(bool flag)
 void ActionPopup::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
-}
-
-void ActionPopup::SetXmlScene(const std::string& scene, const std::string& value)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (iter->first == scene) {
-            if (iter->second != value) {
-                iter->second = value;
-            }
-            return;
-        }
-    }
-
-    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionPopup::AddActionValue(std::string value)
