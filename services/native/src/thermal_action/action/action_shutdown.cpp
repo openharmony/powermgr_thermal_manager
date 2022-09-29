@@ -35,7 +35,6 @@ constexpr const char* SHUTDOWN_REASON = "DeviceTempTooHigh";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* SHUTDOWN_PATH = "/data/service/el0/thermal/config/shut_down";
 const int MAX_PATH = 256;
-std::map<std::string, std::string> g_sceneMap;
 }
 ActionShutdown::ActionShutdown(const std::string& actionName)
 {
@@ -54,21 +53,6 @@ void ActionShutdown::SetStrict(bool flag)
 void ActionShutdown::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
-}
-
-void ActionShutdown::SetXmlScene(const std::string& scene, const std::string& value)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (iter->first == scene) {
-            if (iter->second != value) {
-                iter->second = value;
-            }
-            return;
-        }
-    }
-
-    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionShutdown::AddActionValue(std::string value)

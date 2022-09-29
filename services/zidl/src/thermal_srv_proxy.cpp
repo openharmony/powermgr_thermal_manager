@@ -15,16 +15,16 @@
 
 #include "thermal_srv_proxy.h"
 
-#include <message_option.h>
-#include <message_parcel.h>
 #include "errors.h"
 #include "ithermal_temp_callback.h"
-#include "thermal_log.h"
 #include "thermal_common.h"
+#include "thermal_log.h"
+#include <message_option.h>
+#include <message_parcel.h>
 
 namespace OHOS {
 namespace PowerMgr {
-void ThermalSrvProxy::SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
+void ThermalSrvProxy::SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
     const sptr<IThermalTempCallback>& callback)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
@@ -122,7 +122,7 @@ void ThermalSrvProxy::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCa
     }
 }
 
-void ThermalSrvProxy::SubscribeThermalActionCallback(const std::vector<std::string> &actionList,
+void ThermalSrvProxy::SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
     const std::string& desc, const sptr<IThermalActionCallback>& callback)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
@@ -173,7 +173,7 @@ void ThermalSrvProxy::UnSubscribeThermalActionCallback(const sptr<IThermalAction
     }
 }
 
-bool ThermalSrvProxy::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
+bool ThermalSrvProxy::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
     sptr<IRemoteObject> remote = Remote();
@@ -231,6 +231,34 @@ void ThermalSrvProxy::GetThermalLevel(ThermalLevel& level)
     THERMAL_READ_PARCEL_NO_RET(reply, Uint32, thermalLevel);
     level = static_cast<ThermalLevel>(thermalLevel);
     return;
+}
+
+bool ThermalSrvProxy::GetThermalInfo()
+{
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        return false;
+    }
+
+    bool result = false;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
+        return result;
+    }
+
+    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::GET_THERMAL_INFO), data, reply, option);
+    if (ret != ERR_OK) {
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
+        return result;
+    }
+    if (!reply.ReadBool(result)) {
+        THERMAL_HILOGE(COMP_FWK, "ReadBool fail");
+    }
+    return true;
 }
 
 void ThermalSrvProxy::SetScene(const std::string& scene)

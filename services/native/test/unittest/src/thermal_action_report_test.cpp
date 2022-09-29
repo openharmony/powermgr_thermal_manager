@@ -16,13 +16,14 @@
 
 #include "thermal_action_report_test.h"
 
+#include "securec.h"
 #include <fcntl.h>
 #include <string>
 #include <unistd.h>
-#include "securec.h"
 
 #include "battery_srv_client.h"
 #include "battery_stats_client.h"
+#include "mock_thermal_mgr_client.h"
 #include "power_mgr_client.h"
 #include "thermal_config_file_parser.h"
 #include "thermal_mgr_client.h"
@@ -39,7 +40,6 @@ static std::string g_sceneState;
 static const std::string policyCfgName = "base_safe";
 constexpr int32_t NUM_ZERO = 0;
 constexpr uint32_t MAX_PATH = 256;
-constexpr uint32_t WAIT_TIME_5_SEC = 5;
 constexpr int32_t THERMAL_RATIO_BEGIN = 0;
 constexpr int32_t THERMAL_RATIO_LENGTH = 4;
 constexpr const char* BATTERY_TEMP_PATH = "/data/service/el0/thermal/sensor/battery/temp";
@@ -60,7 +60,7 @@ void ThermalActionReportTest::ParserThermalSrvConfigFile()
 
 int32_t ThermalActionReportTest::WriteFile(const std::string& path, const std::string& buf, size_t size)
 {
-    FILE *stream = fopen(path.c_str(), "w+");
+    FILE* stream = fopen(path.c_str(), "w+");
     if (stream == nullptr) {
         return ERR_INVALID_VALUE;
     }
@@ -392,14 +392,14 @@ void ThermalActionReportTest::TearDownTestCase()
 void ThermalActionReportTest::SetUp()
 {
     InitNode();
-    sleep(WAIT_TIME_5_SEC);
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
 }
 
 void ThermalActionReportTest::TearDown()
 {
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     thermalMgrClient.SetScene("");
-    sleep(WAIT_TIME_5_SEC);
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
 }
 
 namespace {
@@ -424,7 +424,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -464,7 +464,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -504,7 +504,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -544,7 +544,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -584,7 +584,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -624,7 +624,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -664,7 +664,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -704,7 +704,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -744,7 +744,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -785,7 +785,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -826,7 +826,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -867,7 +867,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
     if (access(VENDOR_CONFIG, 0) != 0) {
-        sleep(WAIT_TIME_5_SEC);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
         int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
         std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
         GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;

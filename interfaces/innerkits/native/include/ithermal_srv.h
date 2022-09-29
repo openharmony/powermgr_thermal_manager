@@ -36,20 +36,22 @@ public:
         UNREG_THERMAL_ACTION_CALLBACK,
         GET_SENSOR_INFO,
         GET_TEMP_LEVEL,
+        GET_THERMAL_INFO,
         SET_SCENE,
         SHELL_DUMP
     };
 
-    virtual void SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
+    virtual void SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
         const sptr<IThermalTempCallback>& callback) = 0;
     virtual void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) = 0;
     virtual void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
     virtual void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
-    virtual void SubscribeThermalActionCallback(const std::vector<std::string> &actionList,
+    virtual void SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
         const std::string& desc, const sptr<IThermalActionCallback>& callback) = 0;
     virtual void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) = 0;
-    virtual bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) = 0;
+    virtual bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo) = 0;
     virtual void GetThermalLevel(ThermalLevel& level) = 0;
+    virtual bool GetThermalInfo() = 0;
     virtual void SetScene(const std::string& scene) = 0;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) = 0;
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalSrv");

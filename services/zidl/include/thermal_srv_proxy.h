@@ -40,16 +40,17 @@ public:
     ~ThermalSrvProxy() = default;
     DISALLOW_COPY_AND_MOVE(ThermalSrvProxy);
 
-    virtual void SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
-        const sptr<IThermalTempCallback> &callback) override;
-    virtual void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback> &callback) override;
+    virtual void SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
+        const sptr<IThermalTempCallback>& callback) override;
+    virtual void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) override;
     virtual void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
     virtual void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
-    virtual void SubscribeThermalActionCallback(const std::vector<std::string> &actionList,
+    virtual void SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
         const std::string& desc, const sptr<IThermalActionCallback>& callback) override;
-    virtual void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback> &callback) override;
-    virtual bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo) override;
+    virtual void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) override;
+    virtual bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo) override;
     virtual void GetThermalLevel(ThermalLevel& level) override;
+    virtual bool GetThermalInfo() override;
     virtual void SetScene(const std::string& scene) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 private:
