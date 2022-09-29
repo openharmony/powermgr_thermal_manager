@@ -27,7 +27,6 @@ namespace {
 constexpr int32_t LIM_GPU_ID = 2001;
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-std::map<std::string, std::string> g_sceneMap;
 }
 ActionGpu::ActionGpu(const std::string& actionName)
 {
@@ -46,21 +45,6 @@ void ActionGpu::SetStrict(bool flag)
 void ActionGpu::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
-}
-
-void ActionGpu::SetXmlScene(const std::string& scene, const std::string& value)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (iter->first == scene) {
-            if (iter->second != value) {
-                iter->second = value;
-            }
-            return;
-        }
-    }
-
-    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionGpu::AddActionValue(std::string value)

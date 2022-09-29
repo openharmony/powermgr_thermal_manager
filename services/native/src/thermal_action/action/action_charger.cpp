@@ -30,7 +30,6 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
 constexpr const char* BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
 const int MAX_PATH = 256;
-std::map<std::string, std::string> g_sceneMap;
 }
 ActionCharger::ActionCharger(const std::string& actionName)
 {
@@ -52,21 +51,6 @@ void ActionCharger::SetStrict(bool flag)
 void ActionCharger::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
-}
-
-void ActionCharger::SetXmlScene(const std::string& scene, const std::string& value)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (iter->first == scene) {
-            if (iter->second != value) {
-                iter->second = value;
-            }
-            return;
-        }
-    }
-
-    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionCharger::AddActionValue(std::string value)

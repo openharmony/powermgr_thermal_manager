@@ -23,15 +23,12 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 const uint32_t MAX_PATH = 256;
-const uint32_t WAIT_TIME_5_SEC = 5;
-std::string batteryPath = "/data/service/el0/thermal/sensor/battery/temp";
-std::string shellPath = "/data/service/el0/thermal/sensor/shell/temp";
-std::string chargerPath = "/data/service/el0/thermal/sensor/charger/temp";
-std::string socPath = "/data/service/el0/thermal/sensor/soc/temp";
-std::string ambientPath = "/data/service/el0/thermal/sensor/ambient/temp";
-std::string cpuPath = "/data/service/el0/thermal/sensor/cpu/temp";
-std::string paPath = "/data/service/el0/thermal/sensor/pa/temp";
-std::string apPath = "/data/service/el0/thermal/sensor/ap/temp";
+const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
+const std::string SHELL_PATH = "/data/service/el0/thermal/sensor/shell/temp";
+const std::string SOC_PATH = "/data/service/el0/thermal/sensor/soc/temp";
+const std::string AMBIENT_PATH = "/data/service/el0/thermal/sensor/ambient/temp";
+const std::string PA_PATH = "/data/service/el0/thermal/sensor/pa/temp";
+const std::string AP_PATH = "/data/service/el0/thermal/sensor/ap/temp";
 constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
 }
 class ThermalLevelEventTest : public testing::Test {

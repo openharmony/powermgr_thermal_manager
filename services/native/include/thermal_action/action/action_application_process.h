@@ -39,23 +39,22 @@ public:
     void InitParams(const std::string& params) override;
     virtual void SetStrict(bool flag) override;
     virtual void SetEnableEvent(bool enable) override;
-    virtual void SetXmlScene(const std::string& scene, const std::string& value) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     bool Init();
-    ErrCode KillApplicationAction(const std::string &bundleName);
-    ErrCode GetRunningProcessInfo(std::vector<AppExecFwk::RunningProcessInfo> &info);
-    AppExecFwk::RunningProcessInfo GetAppProcessInfoByName(const std::string &processName);
+    ErrCode KillApplicationAction(const std::string& bundleName);
+    ErrCode GetRunningProcessInfo(std::vector<AppExecFwk::RunningProcessInfo>& info);
+    AppExecFwk::RunningProcessInfo GetAppProcessInfoByName(const std::string& processName);
     ErrCode KillProcess(const pid_t pid);
     void GetAllRunnningAppProcess();
     void KillFgAppProcess();
     void KillBgAppProcess();
     void KillAllAppProcess();
-    void KillService(const std::string &serviceName);
-    void ProcessAppActionRequest(const uint32_t &value);
+    void KillService(const std::string& serviceName);
+    void ProcessAppActionRequest(const uint32_t& value);
 
     /* The api is used to UT, MT, ST */
-    void ProcessAppActionExecution(const uint32_t &value);
+    void ProcessAppActionExecution(const uint32_t& value);
 private:
     std::vector<uint32_t> valueList_;
     bool flag_;

@@ -41,7 +41,6 @@
 #include "v1_0/thermal_types.h"
 #include "v1_0/ithermal_interface.h"
 
-
 namespace OHOS {
 namespace PowerMgr {
 using TypeTempMap = std::map<std::string, int32_t>;
@@ -65,6 +64,7 @@ public:
     void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) override;
     bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo) override;
     void GetThermalLevel(ThermalLevel& level) override;
+    bool GetThermalInfo() override;
     void SetScene(const std::string& scene) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
