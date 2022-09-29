@@ -42,7 +42,7 @@
         "input",
         "ipc",
         "libxml2",
-        "multimedia_image_standard",
+        "multimedia_image_framework",
         "napi",
         "power_manager",
         "safwk",
