@@ -39,7 +39,6 @@ bool ThermalServiceSubscriber::Init()
 
 void ThermalServiceSubscriber::OnTemperatureChanged(TypeTempMap typeTempMap)
 {
-    std::string type;
     if (typeTempMap.empty()) {
         THERMAL_HILOGE(COMP_SVC, "failed to get sensor info: %{public}zu", typeTempMap.size());
         return;
@@ -89,12 +88,11 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
     int sec = static_cast<int>(difftime(endTime_, startTime_)) / magnification_;
     THERMAL_HILOGI(COMP_SVC, "SetHistoryTypeTempMap: sec=%{public}d", sec);
     for (auto history : typeHistoryMap_) {
-        double sum = 0;
-        double rate = 0;
-        for (auto iter : history.second) {
-            sum += iter;
-        }
+        const auto& item = history.second;
+        // The initial value of the sum is 0
+        double sum = std::accumulate(item.begin(), item.end(), 0);
 
+        double rate = 0;
         if (sec == SEC_MIN_NUM) {
             rate = (sum / THOUSAND_UNIT / sec) * SEC_MIN_NUM;
         }

@@ -122,16 +122,16 @@ int32_t ActionVolume::VolumeRequest(float volume)
     THERMAL_HILOGD(COMP_SVC, "Enter");
     std::string uid;
     std::vector<std::string> uidList;
-    int32_t ret = -1;
     g_actionInfo = g_service->GetActionManagerObj()->GetActionItem();
-    for (auto aInfo : g_actionInfo) {
-        if (aInfo.name == "volume") {
-            uid = aInfo.uid;
-        }
-    }
+    const auto& item = std::find_if(g_actionInfo.begin(), g_actionInfo.end(), [](auto& info) {
+        return info.name == "volume";
+    });
+    uid = (item != g_actionInfo.end()) ? item->uid : uid;
+
     StringOperation::SplitString(uid, uidList, ",");
     std::vector<std::unique_ptr<AudioRendererChangeInfo>> audioInfos;
     auto instance = AudioStreamManager::GetInstance();
+    int32_t ret = -1;
     if (instance == nullptr) {
         THERMAL_HILOGW(COMP_SVC, "instance is nullptr");
         return ret;
