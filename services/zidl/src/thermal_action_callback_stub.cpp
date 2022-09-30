@@ -48,7 +48,7 @@ int ThermalActionCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
             break;
     }
     HiviewDFX::XCollie::GetInstance().CancelTimer(id);
-    return ERR_OK;
+    return ret;
 }
 
 int32_t ThermalActionCallbackStub::OnThermalActionChangedStub(MessageParcel& data)

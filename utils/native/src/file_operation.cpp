@@ -47,13 +47,13 @@ int32_t FileOperation::CreateNodeDir(std::string dir)
 
 int32_t FileOperation::CreateNodeFile(std::string filePath)
 {
-    int32_t fd = -1;
     if (access(filePath.c_str(), 0) != 0) {
-        fd = open(filePath.c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP| S_IROTH);
+        int32_t fd = open(filePath.c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP| S_IROTH);
         if (fd < ERR_OK) {
             THERMAL_HILOGE(COMP_SVC, "open failed to file.");
             return fd;
         }
+        close(fd);
     } else {
         THERMAL_HILOGI(COMP_SVC, "the file already exists.");
     }

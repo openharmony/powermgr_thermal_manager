@@ -193,7 +193,7 @@ int32_t ThermalSensorProvision::ParseThermalZoneInfo()
     std::map<std::string, std::string> tzPathMap;
     if (!lTzSysPathInfo_.empty()) {
         for (auto iter = lTzSysPathInfo_.begin(); iter != lTzSysPathInfo_.end(); iter++) {
-            int32_t ret = ReadThermalSysfsToBuff(iter->typePath, bufType, sizeof(bufType));
+            ret = ReadThermalSysfsToBuff(iter->typePath, bufType, sizeof(bufType));
             if (ret != NUM_ZERO) {
                 THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to read thermal zone type");
                 return ret;

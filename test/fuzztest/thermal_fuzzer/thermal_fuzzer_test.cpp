@@ -144,7 +144,7 @@ void ThermalFuzzerTest::TestGetSensorTemp(const uint8_t* data)
 
 bool ThermalFuzzerTest::DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
 {
-    int32_t idSize = 8;
+    int32_t idSize = 4;
     int32_t cond[1];
     if (static_cast<int32_t>(size) > idSize) {
         if (memcpy_s(cond, sizeof(cond), data, idSize) != EOK) {

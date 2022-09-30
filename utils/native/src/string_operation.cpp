@@ -32,9 +32,8 @@ void StringOperation::SplitString(const std::string &str, std::vector<std::strin
 
     std::string temp;
     std::string::size_type begin = str.find_first_not_of(sep);
-    std::string::size_type pos = 0;
     while (begin != std::string::npos) {
-        pos = str.find(sep, begin);
+        std::string::size_type pos = str.find(sep, begin);
         if (pos != std::string::npos) {
             temp = str.substr(begin, pos - begin);
             begin = pos + sep.length();
