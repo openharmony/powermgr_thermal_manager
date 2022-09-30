@@ -57,7 +57,6 @@ int32_t CurrentAction::BatteryCurrentActionRequest(uint32_t current)
     }
     std::string currentStr = std::to_string(current);
     return ThermalProtectorUtil::WriteFile(currentBuf, currentStr, currentStr.length());
-    return ERR_OK;
 }
 } // namespace PowerMgr
 } // namespace OHOS

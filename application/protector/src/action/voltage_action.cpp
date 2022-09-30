@@ -56,7 +56,6 @@ int32_t VoltageAction::BatteryVoltageActionRequest(uint32_t voltage)
     }
     std::string voltageStr = std::to_string(voltage);
     return ThermalProtectorUtil::WriteFile(voltageBuf, voltageStr, voltageStr.length());
-    return ERR_OK;
 }
 } // namespace PowerMgr
 } // namespace OHOS
