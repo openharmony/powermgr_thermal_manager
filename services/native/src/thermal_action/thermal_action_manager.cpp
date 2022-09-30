@@ -103,12 +103,10 @@ int32_t ThermalActionManager::CreateActionMockFile()
     std::string stateDir = "/data/service/el0/thermal/state/%s";
     char fileBuf[MAX_PATH] = {0};
     char stateFileBuf[MAX_PATH] = {0};
-    std::string action = "config";
-    std::string state = "state";
     std::vector<std::string> actionValueList = {"lcd", "process_ctrl", "configLevel", "shut_down", "sc_current",
         "buck_current", "sc_voltage", "buck_voltage"};
     std::vector<std::string> stateValueList = {"scene", "screen", "charge"};
-    int32_t ret = -1;
+    int32_t ret;
     for (auto iter : actionValueList) {
         THERMAL_HILOGD(COMP_SVC, "start create file");
         ret = snprintf_s(fileBuf, MAX_PATH, sizeof(fileBuf) - ARG_1, configDir.c_str(), iter.c_str());

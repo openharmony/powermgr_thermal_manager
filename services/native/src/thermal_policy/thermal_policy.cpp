@@ -237,7 +237,7 @@ bool ThermalPolicy::ActionFallbackDecision()
     if (!preExecuteList_.empty()) {
         for (auto preAction = preExecuteList_.begin(); preAction != preExecuteList_.end(); preAction++) {
             auto currentAction = actionFallbackSet_.find(*preAction);
-            if (currentAction == actionFallbackSet_.end()) {
+            if (currentAction != actionFallbackSet_.end()) {
                 (*currentAction)->AddActionValue(FALLBACK_ACTION_VALUE);
                 (*currentAction)->Execute();
                 preExecuteList_.erase(preAction);

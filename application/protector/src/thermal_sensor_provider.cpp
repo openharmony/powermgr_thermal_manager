@@ -196,12 +196,11 @@ int32_t ThermalSensorProvider::RegisterCallback(const int fd, const EventType et
 
 int32_t ThermalSensorProvider::LoopingThreadEntry(void *arg, int32_t epfd)
 {
-    int nevents = 0;
     size_t eventct = callbackHandler_.size();
     struct epoll_event events[eventct];
     THERMAL_HILOGD(FEATURE_PROTECTOR, "epfd: %{public}d, eventct: %{public}zu", epfd, eventct);
     while (true) {
-        nevents = epoll_wait(epfd, events, eventct, -1);
+        int32_t nevents = epoll_wait(epfd, events, eventct, -1);
         if (nevents == -1) {
             continue;
         }

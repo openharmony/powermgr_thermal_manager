@@ -72,7 +72,7 @@ void ActionCpuMed::AddActionValue(std::string value)
 void ActionCpuMed::Execute()
 {
     THERMAL_RETURN_IF (g_service == nullptr);
-    uint32_t value = lastValue_;
+    uint32_t value;
     std::string scene = g_service->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {

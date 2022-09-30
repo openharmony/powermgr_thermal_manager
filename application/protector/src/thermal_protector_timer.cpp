@@ -140,7 +140,6 @@ int32_t ThermalProtectorTimer::InitProvisionTimer()
 
 int32_t ThermalProtectorTimer::LoopingThreadEntry(void *arg, int32_t epfd)
 {
-    int32_t nevents = 0;
     size_t eventct = callbackHandler_.size();
     struct epoll_event events[eventct];
     THERMAL_HILOGI(FEATURE_PROTECTOR, "%{public}d, %{public}zu", epfd, eventct);
@@ -148,7 +147,7 @@ int32_t ThermalProtectorTimer::LoopingThreadEntry(void *arg, int32_t epfd)
         if (timeCount_ == END_TIME) {
             return ERR_OK;
         }
-        nevents = epoll_wait(epfd, events, eventct, -1);
+        int32_t nevents = epoll_wait(epfd, events, eventct, -1);
         if (nevents == -1) {
             continue;
         }
