@@ -18,6 +18,7 @@
 #include "constants.h"
 #include "thermal_common.h"
 #include "thermal_service.h"
+#include "action_popup.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -43,7 +44,7 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
     }
 
     if (args[0] == ARGS_DIALOG) {
-        tms->GetActionPopup()->ShowDialog(THERMAL_HIGH_TEMP_PARAMS);
+        tms->GetActionPopup()->ShowThermalDialog(ActionPopup::TempStatus::HIGHER_TEMP);
         return true;
     }
 
