@@ -17,20 +17,19 @@ import("//build/test.gni")
 module_output_path = "thermal_manager/thermal_native"
 
 deps_ex = [
+  "appspawn:appspawn_socket_client",
   "ability_base:base",
   "ability_base:want",
-  "eventhandler:libeventhandler",
   "bundle_framework:appexecfwk_base",
-  "ipc:ipc_core",
+  "common_event_service:cesfwk_innerkits",
+  "c_utils:utils",
+  "drivers_interface_thermal:libthermal_proxy_1.0",
+  "eventhandler:libeventhandler",
   "hiviewdfx_hilog_native:libhilog",
+  "ipc:ipc_core",
+  "power_manager:powermgr_client",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
-  "appspawn:appspawn_socket_client",
-  "drivers_interface_thermal:libthermal_proxy_1.0",
-  "c_utils:utils",
-  "power_manager:powermgr_client",
-  "window_manager:libwm",
-  "common_event_service:cesfwk_innerkits",
 ]
 
 ohos_systemtest("ThermalMgrInterfaceTest") {
@@ -91,10 +90,42 @@ ohos_systemtest("ThermalMgrSystemTest") {
   external_deps = deps_ex
 }
 
+ohos_systemtest("ThermalMgrDialogTest") {
+  module_out_path = "${module_output_path}"
+
+  sources = [ "src/thermal_mgr_dialog_test.cpp" ]
+
+  configs = [ "${utils_path}:utils_config" ]
+
+  include_dirs = [
+    "include",
+    "${thermal_manager_path}/services/zidl/include",
+    "${thermal_manager_path}/services/native/include",
+    "${thermal_manager_path}/services/native/include/thermal_action",
+    "${thermal_manager_path}/services/native/include/thermal_observer",
+    "${thermal_manager_path}/services/native/include/thermal_policy",
+    "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
+    "${thermal_manager_path}/services/native/include/thermal_action/action",
+  ]
+
+  deps = [
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "${utils_path}:thermal_utils",
+    "//base/powermgr/thermal_manager/services:thermalservice",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//third_party/libxml2:xml2",
+  ]
+  external_deps = deps_ex
+}
+
 group("systemtest") {
   testonly = true
 
   deps = [
+    ":ThermalMgrDialogTest",
     ":ThermalMgrInterfaceTest",
     ":ThermalMgrSystemTest",
   ]
