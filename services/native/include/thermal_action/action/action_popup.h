@@ -16,7 +16,6 @@
 #define ACTION_POPUP_H
 
 #include "ithermal_action.h"
-#include "window_manager.h"
 #include "refbase.h"
 
 namespace OHOS {
@@ -25,7 +24,7 @@ class ActionPopup : public IThermalAction {
 public:
     ActionPopup(const std::string& actionName);
     ~ActionPopup() = default;
-    enum {
+    enum TempStatus {
         LOWER_TEMP = 1,
         HIGHER_TEMP = 2
     };
@@ -35,15 +34,13 @@ public:
     virtual void SetXmlScene(const std::string& scene, const std::string& value) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
-    bool ShowDialog(const std::string &params);
     void HandlePopupEvent(const int32_t value);
-    void GetDisplayPosition(int32_t& width, int32_t& height);
+    bool ShowThermalDialog(TempStatus value);
 private:
     std::vector<uint32_t> valueList_;
     bool flag_;
     bool enableEvent_ = false;
     uint32_t lastValue_;
-    int32_t dialogId_ {-1};
 };
 } // namespace PowerMgr
 } // namespace OHOS
