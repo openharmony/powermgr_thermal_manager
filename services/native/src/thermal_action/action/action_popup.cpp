@@ -17,30 +17,27 @@
 
 #include <map>
 #include <ipc_skeleton.h>
-#include "display_manager.h"
-#include "ui_service_mgr_client.h"
-#include "wm_common.h"
+#include "ability_manager_client.h"
 #include "constants.h"
 #include "thermal_common.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
 
+using namespace OHOS::AppExecFwk;
+using namespace OHOS::AAFwk;
+
 namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-constexpr int UI_DIALOG_POWER_WIDTH_NARROW = 400;
-constexpr int UI_DIALOG_POWER_HEIGHT_NARROW = 240;
 std::map<std::string, std::string> g_sceneMap;
-}
+} // namespace
 ActionPopup::ActionPopup(const std::string& actionName)
 {
     actionName_ = actionName;
 }
 
-void ActionPopup::InitParams(const std::string& params)
-{
-}
+void ActionPopup::InitParams(const std::string& params) {}
 
 void ActionPopup::SetStrict(bool flag)
 {
@@ -70,7 +67,9 @@ void ActionPopup::SetXmlScene(const std::string& scene, const std::string& value
 void ActionPopup::AddActionValue(std::string value)
 {
     THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
-    if (value.empty()) return;
+    if (value.empty()) {
+        return;
+    }
     valueList_.push_back(atoi(value.c_str()));
 }
 
@@ -78,7 +77,7 @@ void ActionPopup::Execute()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value;
-    THERMAL_RETURN_IF (g_service == nullptr);
+    THERMAL_RETURN_IF(g_service == nullptr);
     std::string scene = g_service->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {
@@ -112,84 +111,38 @@ void ActionPopup::Execute()
 
 void ActionPopup::HandlePopupEvent(const int32_t value)
 {
-    if (dialogId_ >= 0) {
-        return;
-    }
-    bool ret = false;
     switch (value) {
         case LOWER_TEMP:
-            ret = ShowDialog(THERMAL_LOWER_TEMP_PARAMS);
-            if (!ret) {
-                THERMAL_HILOGE(COMP_SVC, "failed to popup");
-                return;
-            }
+            ShowThermalDialog(ActionPopup::TempStatus::LOWER_TEMP);
             break;
         case HIGHER_TEMP:
-            ret = ShowDialog(THERMAL_HIGH_TEMP_PARAMS);
-            if (!ret) {
-                THERMAL_HILOGE(COMP_SVC, "failed to popup");
-                return;
-            }
+            ShowThermalDialog(ActionPopup::TempStatus::HIGHER_TEMP);
             break;
         default:
             break;
     }
 }
 
-bool ActionPopup::ShowDialog(const std::string &params)
+bool ActionPopup::ShowThermalDialog(TempStatus value)
 {
-    // show dialog
-    int width;
-    int height;
-
-    GetDisplayPosition(width, height);
-
-    if (params.empty()) {
+    THERMAL_HILOGD(COMP_SVC, "ShowThermalDialog start.");
+    auto client = AbilityManagerClient::GetInstance();
+    if (client == nullptr) {
         return false;
     }
-
-    int32_t errCode = Ace::UIServiceMgrClient::GetInstance()->ShowDialog(
-        "thermal_dialog",
-        params,
-        OHOS::Rosen::WindowType::WINDOW_TYPE_SYSTEM_ALARM_WINDOW,
-        0,
-        0,
-        width,
-        height,
-        [this](int32_t id, const std::string& event, const std::string& params) {
-            THERMAL_HILOGI(COMP_SVC, "Dialog callback: %{public}s, %{public}s",
-                event.c_str(), params.c_str());
-            if (event == "EVENT_CANCEL") {
-                Ace::UIServiceMgrClient::GetInstance()->CancelDialog(id);
-                dialogId_ = -1;
-            }
-        },
-        &dialogId_);
-    THERMAL_HILOGI(COMP_SVC, "Show dialog errCode %{public}d, dialogId=%{public}d", errCode, dialogId_);
-    return true;
-}
-
-void ActionPopup::GetDisplayPosition(int32_t& width, int32_t& height)
-{
-    std::string identity = IPCSkeleton::ResetCallingIdentity();
-    auto display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
-    if (display == nullptr) {
-        THERMAL_HILOGE(COMP_SVC, "dialog GetDefaultDisplay fail, try again.");
-        display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
-    }
-    IPCSkeleton::SetCallingIdentity(identity);
-
-    if (display != nullptr) {
-        THERMAL_HILOGI(COMP_SVC, "display size: %{public}d x %{public}d",
-            display->GetWidth(), display->GetHeight());
-        width = display->GetWidth();
-        height = display->GetHeight();
+    AAFwk::Want want;
+    if (value == TempStatus::LOWER_TEMP) {
+        want.SetElementName("com.ohos.powerdialog", "ThermalServiceExtAbility_low");
     } else {
-        THERMAL_HILOGI(COMP_SVC, "dialog get display fail, use default wide.");
-        width = UI_DIALOG_POWER_WIDTH_NARROW;
-        height = UI_DIALOG_POWER_HEIGHT_NARROW;
+        want.SetElementName("com.ohos.powerdialog", "ThermalServiceExtAbility_high");
     }
-    THERMAL_HILOGI(COMP_SVC, "GetDisplayPosition: :w:%{public}d x h:%{public}d)", width, height);
+    int32_t result = client->StartAbility(want);
+    if (result != 0) {
+        THERMAL_HILOGE(COMP_SVC, "ShowThermalDialog failed, result = %{public}d", result);
+        return false;
+    }
+    THERMAL_HILOGD(COMP_SVC, "ShowThermalDialog success.");
+    return true;
 }
 } // namespace PowerMgr
 } // namespace OHOS
