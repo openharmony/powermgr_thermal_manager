@@ -13,10 +13,6 @@
 
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 
-group("thermal_dialog") {
-  deps = [ "dialog/dialog_ui/js:dialog_js_files_etc" ]
-}
-
 group("thermal_napi") {
   deps = [ "napi:thermal" ]
 }

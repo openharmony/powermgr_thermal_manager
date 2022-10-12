@@ -74,7 +74,6 @@ ohos_shared_library("thermalservice") {
   public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
-    "${thermal_frameworks}:thermal_dialog",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
@@ -85,6 +84,7 @@ ohos_shared_library("thermalservice") {
 
   external_deps = [
     "ability_base:want",
+    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "appspawn:appspawn_socket_client",
