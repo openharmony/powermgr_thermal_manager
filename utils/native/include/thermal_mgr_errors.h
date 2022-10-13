@@ -43,6 +43,13 @@ enum {
     E_INNER_ERR_THERMAL,
     E_EXCEED_PARAM_LIMIT,
 };
+
+enum class ThermalErrors : int32_t {
+    ERR_OK = 0,
+    ERR_PERMISSION_DENIED = 201,
+    ERR_PARAM_INVALID = 401,
+    ERR_CONNECTION_FAIL = 4800101
+};
 } // namespace ThermalMgr
 } // namespace OHOS
 
