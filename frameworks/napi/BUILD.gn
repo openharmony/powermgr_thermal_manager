@@ -17,22 +17,16 @@ config("thermal_private_config") {
   include_dirs = [ "${thermal_service_zidl}/include" ]
 }
 
-config("thermal_public_config") {
-  include_dirs = [ "../include" ]
-}
-
 ohos_shared_library("thermal") {
   configs = [
     "${utils_path}:utils_config",
     ":thermal_private_config",
   ]
 
-  public_configs = [ ":thermal_public_config" ]
-
   sources = [
-    "common/thermal_manager_native_event.cpp",
-    "common/thermal_napi_context.cpp",
-    "thermal/thermal_manager_napi.cpp",
+    "napi_errors.cpp",
+    "napi_utils.cpp",
+    "thermal_manager_napi.cpp",
   ]
 
   deps = [
