@@ -14,7 +14,11 @@
  */
 
 #include "thermal_manager_napi.h"
+
 #include <uv.h>
+
+#include "napi_utils.h"
+#include "napi_errors.h"
 #include "thermal_common.h"
 #include "thermal_level_info.h"
 
@@ -24,11 +28,10 @@ using namespace OHOS;
 namespace {
 const uint8_t ARG_0 = 0;
 const uint8_t ARG_1 = 1;
-thread_local auto &g_thermalMgrClient = ThermalMgrClient::GetInstance();
+constexpr uint32_t MAX_ARGC = 1;
+thread_local auto& g_thermalMgrClient = ThermalMgrClient::GetInstance();
 thread_local sptr<ThermalLevelCallback> g_thermalLevelCallback = new (std::nothrow) ThermalLevelCallback();
-}
-
-napi_ref ThermalManagerNapi::thermalLevelConstructor_ = nullptr;
+} // namespace
 
 ThermalLevelCallback::~ThermalLevelCallback()
 {
@@ -65,16 +68,18 @@ void ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
     THERMAL_RETURN_IF_WITH_LOG(loop == nullptr, "napi_get_uv_event_loop loop is null");
     uv_work_t* work = new (std::nothrow) uv_work_t;
     THERMAL_RETURN_IF_WITH_LOG(work == nullptr, "uv_work_t work is null");
-    work->data = reinterpret_cast<void *>(this);
+    work->data = reinterpret_cast<void*>(this);
 
-    int32_t ret = uv_queue_work(loop, work, [] (uv_work_t *work) {}, [] (uv_work_t *work, int status) {
-        ThermalLevelCallback* callback = reinterpret_cast<ThermalLevelCallback*>(work->data);
-        if (callback != nullptr) {
-            callback->OnThermalLevel();
-        }
-        delete work;
-        work = nullptr;
-    });
+    int32_t ret = uv_queue_work(
+        loop, work, [](uv_work_t* work) {},
+        [](uv_work_t* work, int status) {
+            ThermalLevelCallback* callback = reinterpret_cast<ThermalLevelCallback*>(work->data);
+            if (callback != nullptr) {
+                callback->OnThermalLevel();
+            }
+            delete work;
+            work = nullptr;
+        });
     if (ret != ERR_OK) {
         delete work;
         work = nullptr;
@@ -117,22 +122,24 @@ void ThermalLevelCallback::OnThermalLevel()
 
 napi_value ThermalManagerNapi::Init(napi_env env, napi_value exports)
 {
-    THERMAL_HILOGD(COMP_FWK, "Enter");
     napi_property_descriptor desc[] = {
+        // Old Interface
         DECLARE_NAPI_STATIC_FUNCTION("subscribeThermalLevel", SubscribeThermalLevel),
         DECLARE_NAPI_STATIC_FUNCTION("unsubscribeThermalLevel", UnSubscribeThermalLevel),
         DECLARE_NAPI_STATIC_FUNCTION("getThermalLevel", GetThermalLevel),
+        // New Interface
+        DECLARE_NAPI_STATIC_FUNCTION("registerThermalLevelCallback", SubscribeThermalLevel),
+        DECLARE_NAPI_STATIC_FUNCTION("unregisterThermalLevelCallback", UnSubscribeThermalLevel),
+        DECLARE_NAPI_STATIC_FUNCTION("getLevel", GetThermalLevel),
     };
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
     InitThermalLevel(env, exports);
 
-    THERMAL_HILOGD(COMP_FWK, "Exit");
     return exports;
 }
 
 napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports)
 {
-    THERMAL_HILOGD(COMP_FWK, "Enter");
     napi_value cool;
     napi_value normal;
     napi_value warm;
@@ -140,7 +147,6 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
     napi_value overheated;
     napi_value warning;
     napi_value emergency;
-    int32_t refCount = 1;
 
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::COOL), &cool);
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::NORMAL), &normal);
@@ -161,65 +167,56 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
     };
 
     napi_value result = nullptr;
-    napi_define_class(env, "ThermalLevel", NAPI_AUTO_LENGTH, EnumThermalLevelConstructor,
-        nullptr, sizeof(desc) / sizeof(*desc), desc, &result);
-    napi_create_reference(env, result, refCount, &thermalLevelConstructor_);
+    napi_define_class(env, "ThermalLevel", NAPI_AUTO_LENGTH, EnumThermalLevelConstructor, nullptr,
+        sizeof(desc) / sizeof(*desc), desc, &result);
     napi_set_named_property(env, exports, "ThermalLevel", result);
-    THERMAL_HILOGD(COMP_FWK, "Exit");
     return exports;
 }
 
 napi_value ThermalManagerNapi::EnumThermalLevelConstructor(napi_env env, napi_callback_info info)
 {
-    THERMAL_HILOGD(COMP_FWK, "Enter");
     size_t argc = 0;
-    napi_value args[ARG_1] = { 0 };
+    napi_value argv[ARG_1] = {0};
     napi_value jsthis = nullptr;
-    void *data = nullptr;
+    void* data = nullptr;
 
-    napi_status status = napi_get_cb_info(env, info, &argc, args, &jsthis, &data);
+    napi_status status = napi_get_cb_info(env, info, &argc, argv, &jsthis, &data);
 
     THERMAL_HILOGI(COMP_FWK, "EnumThermalLevelConstructor %{public}d", status);
     if (status != napi_ok) {
         return nullptr;
     }
-    THERMAL_HILOGD(COMP_FWK, "Exit");
     return jsthis;
 }
 
 napi_value ThermalManagerNapi::GetThermalLevel(napi_env env, napi_callback_info info)
 {
-    THERMAL_HILOGD(COMP_FWK, "Enter");
-    napi_value napiValue = nullptr;
     ThermalLevel level = g_thermalMgrClient.GetThermalLevel();
     int32_t levelValue = static_cast<int32_t>(level);
+    napi_value napiValue;
     NAPI_CALL(env, napi_create_int32(env, levelValue, &napiValue));
 
     THERMAL_HILOGI(COMP_FWK, "level is %{public}d", levelValue);
-    THERMAL_HILOGD(COMP_FWK, "Exit");
     return napiValue;
 }
 
 napi_value ThermalManagerNapi::SubscribeThermalLevel(napi_env env, napi_callback_info info)
 {
-    size_t argc = ARG_1;
-    napi_value args[ARG_1] = {0};
-    napi_value jsthis;
-    void *data = nullptr;
+    size_t argc = MAX_ARGC;
+    napi_value argv[argc];
+    NapiUtils::GetCallbackInfo(env, info, argc, argv);
 
-    napi_status status = napi_get_cb_info(env, info, &argc, args, &jsthis, &data);
-    NAPI_ASSERT(env, (status == napi_ok) && (argc > 0), "Bad parameters");
+    NapiErrors error;
+    if (argc != MAX_ARGC || !NapiUtils::CheckValueType(env, argv[ARG_0], napi_function)) {
+        return error.ThrowError(env, ThermalErrors::ERR_PARAM_INVALID);
+    }
 
-    napi_valuetype valueType = napi_undefined;
-    napi_typeof(env, args[ARG_0], &valueType);
-    NAPI_ASSERT(env, valueType == napi_function, "type mismatch for parameter 1");
-
-    napi_value result = nullptr;
+    napi_value result;
     napi_get_undefined(env, &result);
 
     THERMAL_RETURN_IF_WITH_RET(g_thermalLevelCallback == nullptr, result);
     g_thermalLevelCallback->ReleaseCallback();
-    g_thermalLevelCallback->UpdateCallback(env, args[ARG_0]);
+    g_thermalLevelCallback->UpdateCallback(env, argv[ARG_0]);
     g_thermalMgrClient.SubscribeThermalLevelCallback(g_thermalLevelCallback);
 
     return result;
@@ -227,26 +224,23 @@ napi_value ThermalManagerNapi::SubscribeThermalLevel(napi_env env, napi_callback
 
 napi_value ThermalManagerNapi::UnSubscribeThermalLevel(napi_env env, napi_callback_info info)
 {
-    size_t argc = ARG_1;
-    napi_value args[ARG_1] = { 0 };
-    napi_value jsthis;
-    void *data = nullptr;
-
-    napi_status status = napi_get_cb_info(env, info, &argc, args, &jsthis, &data);
-    NAPI_ASSERT(env, (status == napi_ok) && (argc >= 0), "Bad parameters");
+    size_t argc = MAX_ARGC;
+    napi_value argv[argc];
+    NapiUtils::GetCallbackInfo(env, info, argc, argv);
 
     THERMAL_RETURN_IF_WITH_RET(g_thermalLevelCallback == nullptr, nullptr);
     g_thermalLevelCallback->ReleaseCallback();
     g_thermalMgrClient.UnSubscribeThermalLevelCallback(g_thermalLevelCallback);
-    
-    THERMAL_RETURN_IF_WITH_RET(argc == 0, nullptr);
-    napi_valuetype valueType = napi_undefined;
-    napi_typeof(env, args[ARG_0], &valueType);
-    NAPI_ASSERT(env, valueType == napi_function, "type mismatch for parameter 1");
+
+    THERMAL_RETURN_IF_WITH_RET(argc == ARG_0, nullptr);
+    NapiErrors error;
+    if (argc > MAX_ARGC || !NapiUtils::CheckValueType(env, argv[ARG_0], napi_function)) {
+        return error.ThrowError(env, ThermalErrors::ERR_PARAM_INVALID);
+    }
 
     napi_value handler = nullptr;
     napi_ref handlerRef = nullptr;
-    napi_create_reference(env, args[ARG_0], 1, &handlerRef);
+    napi_create_reference(env, argv[ARG_0], 1, &handlerRef);
     napi_get_reference_value(env, handlerRef, &handler);
     napi_delete_reference(env, handlerRef);
 
@@ -257,7 +251,7 @@ napi_value ThermalManagerNapi::UnSubscribeThermalLevel(napi_env env, napi_callba
     }
 
     napi_get_undefined(env, &result);
-    status = napi_call_function(env, nullptr, handler, ARG_0, nullptr, &result);
+    napi_status status = napi_call_function(env, nullptr, handler, ARG_0, nullptr, &result);
     if (status != napi_ok) {
         THERMAL_HILOGW(COMP_FWK, "status=%{public}d", status);
         return result;
@@ -284,15 +278,13 @@ EXTERN_C_END
 /*
  * Module definition
  */
-static napi_module g_module = {
-    .nm_version = 1,
+static napi_module g_module = {.nm_version = 1,
     .nm_flags = 0,
     .nm_filename = "thermal",
     .nm_register_func = ThermalInit,
     .nm_modname = "thermal",
-    .nm_priv = ((void *)0),
-    .reserved = {0}
-};
+    .nm_priv = ((void*)0),
+    .reserved = {0}};
 
 /*
  * Module registration
