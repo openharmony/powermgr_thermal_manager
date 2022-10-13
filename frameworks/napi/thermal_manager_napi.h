@@ -17,12 +17,13 @@
 #define THERMAL_MANAGER_NAPI_H
 
 #include <mutex>
+
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include "thermal_mgr_client.h"
-#include "thermal_level_callback_stub.h"
+
 #include "ithermal_level_callback.h"
-#include "thermal_manager_native_event.h"
+#include "thermal_level_callback_stub.h"
+#include "thermal_mgr_client.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -52,11 +53,7 @@ public:
     static napi_value SubscribeThermalLevel(napi_env env, napi_callback_info info);
     static napi_value UnSubscribeThermalLevel(napi_env env, napi_callback_info info);
     static napi_value GetThermalLevel(napi_env env, napi_callback_info info);
-
     static napi_value EnumThermalLevelConstructor(napi_env env, napi_callback_info info);
-
-private:
-    static napi_ref thermalLevelConstructor_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
