@@ -81,9 +81,6 @@ namespace PowerMgr {
     const uint32_t ARG_7 = 7;
     const uint32_t ARG_8 = 8;
     const uint32_t ARG_9 = 9;
-    // dialog
-    constexpr const char* THERMAL_LOWER_TEMP_PARAMS = "{\"cancelButton\":\"Cancel\", \"temperature\":\"LowerTemp\"}";
-    constexpr const char* THERMAL_HIGH_TEMP_PARAMS = "{\"cancelButton\":\"Cancel\", \"temperature\":\"HighTemp\"}";
 } // namespace PowerMgr
 } // namespace OHOS
 #endif // OHOS_THERMAL_CONSTANTS_H
