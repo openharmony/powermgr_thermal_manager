@@ -34,6 +34,11 @@ describe('ThermalMgrInterfaceTest', function () {
     test13();
     test14();
     test15();
+    test16();
+    test17();
+    test18();
+    test19();
+    test20();
     console.log("*************Thermal API Test End*************");
 })
 
@@ -395,6 +400,98 @@ function test15() {
                 resolve();
             }, MSEC_1000 * 4);
         })
+        done();
+    })
+}
+
+function test16() {
+    /* @tc.number thermal_manager_js_016
+     * @tc.name Thermal_016
+     * @tc.desc Thermal acquisition kit
+     */
+    it('Thermal_016', 0, async function (done) {
+        let level = thermal.getLevel();
+        console.info("thermal level is: " + level);
+        expect(level >= thermal.ThermalLevel.COOL && level <= thermal.ThermalLevel.EMERGENCY).assertTrue();
+        done();
+    })
+}
+
+function test17() {
+    /* @tc.number thermal_manager_js_017
+     * @tc.name Thermal_017
+     * @tc.desc Thermal acquisition kit
+     */
+    it('Thermal_017', 0, async function (done) {
+        try {
+            thermal.registerThermalLevelCallback((value) => {
+                console.info("Thermal_017 level is: " + value);
+                let level = thermal.getLevel();
+                expect(level === value).assertTrue();
+            })
+        } catch (error) {
+            console.info('Thermal_017:' + error);
+            expect().assertFail();
+        }
+        done();
+    })
+}
+
+function test18() {
+    /* @tc.number thermal_manager_js_018
+     * @tc.name Thermal_018
+     * @tc.desc Thermal acquisition kit
+     */
+    it('Thermal_018', 0, async function (done) {
+        try {
+            thermal.registerThermalLevelCallback('')
+        } catch (error) {
+            console.info('Thermal_018 code:' + error.code + "msg:" + error.message);
+            // 401: Invalid input parameter
+            expect(error.code === 401).assertTrue();
+        }
+        done();
+    })
+}
+
+function test19() {
+    /* @tc.number thermal_manager_js_019
+     * @tc.name Thermal_019
+     * @tc.desc Thermal acquisition kit
+     */
+    it('Thermal_019', 0, async function (done) {
+        try {
+            thermal.unregisterThermalLevelCallback('')
+        } catch (error) {
+            console.info('Thermal_019 code:' + error.code + "msg:" + error.message);
+            // 401: Invalid input parameter
+            expect(error.code === 401).assertTrue();
+        }
+        done();
+    })
+}
+
+function test20() {
+    /* @tc.number thermal_manager_js_019
+     * @tc.name Thermal_020
+     * @tc.desc Thermal acquisition kit
+     */
+    it('Thermal_020', 0, async function (done) {
+        try {
+            thermal.unregisterThermalLevelCallback()
+        } catch (error) {
+            console.info('Thermal_020:' + error);
+            expect().assertFail();
+        }
+
+        try {
+            thermal.unregisterThermalLevelCallback(() => {
+                expect(true).assertTrue();
+            })
+        } catch (error) {
+            console.info('Thermal_020:' + error);
+            expect().assertFail();
+        }
         done();
     })
 }
