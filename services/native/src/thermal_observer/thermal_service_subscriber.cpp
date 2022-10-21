@@ -85,7 +85,11 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
             typeHistoryMap_.insert(std::make_pair(itMap.first, historyTempList));
         }
     }
-    int sec = static_cast<int>(difftime(endTime_, startTime_)) / magnification_;
+
+    int32_t sec = 0;
+    if (magnification_ != 0) {
+        sec = static_cast<int32_t>(difftime(endTime_, startTime_)) / magnification_;
+    }
     THERMAL_HILOGI(COMP_SVC, "SetHistoryTypeTempMap: sec=%{public}d", sec);
     for (auto history : typeHistoryMap_) {
         const auto& item = history.second;
