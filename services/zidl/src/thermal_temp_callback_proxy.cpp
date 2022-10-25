@@ -22,7 +22,7 @@ namespace OHOS {
 namespace PowerMgr {
 void ThermalTempCallbackProxy::OnThermalTempChanged(TempCallbackMap &tempCbMap)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     sptr<IRemoteObject> remote = Remote();
     THERMAL_RETURN_IF(remote == nullptr);
 
@@ -31,15 +31,14 @@ void ThermalTempCallbackProxy::OnThermalTempChanged(TempCallbackMap &tempCbMap)
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalTempCallbackProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalTempCallbackProxy::%{public}s write descriptor failed!",
-            __func__);
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return;
     }
 
     THERMAL_WRITE_PARCEL_NO_RET(data, Uint32, tempCbMap.size());
     for (auto iter : tempCbMap) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s proxy type=%{public}s", __func__, iter.first.c_str());
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s proxy temp=%{public}d", __func__, iter.second);
+        THERMAL_HILOGD(COMP_SVC, "proxy type=%{public}s", iter.first.c_str());
+        THERMAL_HILOGD(COMP_SVC, "proxy temp=%{public}d", iter.second);
         THERMAL_WRITE_PARCEL_NO_RET(data, String, iter.first);
         THERMAL_WRITE_PARCEL_NO_RET(data, Int32, iter.second);
     }
@@ -47,9 +46,7 @@ void ThermalTempCallbackProxy::OnThermalTempChanged(TempCallbackMap &tempCbMap)
     int ret = remote->SendRequest(static_cast<int>(IThermalTempCallback::THERMAL_TEMPERATURE_CHANGD),
         data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "ThermalTempCallbackProxy::%{public}s SendRequest is failed, error code: %{public}d",
-            __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
     }
 }
 } // namespace PowerMgr

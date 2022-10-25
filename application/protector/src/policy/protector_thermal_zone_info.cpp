@@ -20,7 +20,7 @@ namespace OHOS {
 namespace PowerMgr {
 void ProtectorThermalZoneInfo::UpdateThermalLevel(int32_t curTemp)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     uint32_t level = 0;
     if (desc_) {
         DescJudgment(curTemp, level);
@@ -32,7 +32,7 @@ void ProtectorThermalZoneInfo::UpdateThermalLevel(int32_t curTemp)
 
 void ProtectorThermalZoneInfo::AscJudgment(int32_t curTemp, uint32_t &level)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "curTemp:%{public}d", curTemp);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "curTemp:%{public}d", curTemp);
     level = latestLevel_;
     if (level > 0 && level < tzItemList_.size()) {
         int32_t curDownTemp = tzItemList_.at(level - 1).thresholdClr;
@@ -43,7 +43,7 @@ void ProtectorThermalZoneInfo::AscJudgment(int32_t curTemp, uint32_t &level)
             HandleAscCurDownTemp(level, curTemp);
         } else {
             level = tzItemList_.at(level - 1).level;
-            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s third level = %{public}d", __func__, level);
+            THERMAL_HILOGI(FEATURE_PROTECTOR, "third level = %{public}d", level);
         }
     } else if (level == tzItemList_.size()) {
         HandleAscMaxSizeTemp(level, curTemp);
@@ -54,7 +54,7 @@ void ProtectorThermalZoneInfo::AscJudgment(int32_t curTemp, uint32_t &level)
 
 void ProtectorThermalZoneInfo::DescJudgment(int32_t curTemp, uint32_t &level)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "curTemp:%{public}d", curTemp);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "curTemp:%{public}d", curTemp);
     level = latestLevel_;
     if (level > 0 && level < tzItemList_.size()) {
         int32_t curDownTemp = tzItemList_.at(level - 1).thresholdClr;
@@ -65,14 +65,14 @@ void ProtectorThermalZoneInfo::DescJudgment(int32_t curTemp, uint32_t &level)
             HandleDescCurDownTemp(level, curTemp);
         } else {
             level = tzItemList_.at(level - 1).level;
-            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s third level = %{public}d", __func__, level);
+            THERMAL_HILOGI(FEATURE_PROTECTOR, "third level = %{public}d", level);
         }
     } else if (level == tzItemList_.size()) {
         HandleDescMaxSizeTemp(level, curTemp);
     } else if (level == 0) {
         HandleDescMinSizeTemp(level, curTemp);
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s return", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Exit");
 }
 
 void ProtectorThermalZoneInfo::HandleAscNextUpTemp(uint32_t &level, int32_t curTemp)
@@ -84,7 +84,7 @@ void ProtectorThermalZoneInfo::HandleAscNextUpTemp(uint32_t &level, int32_t curT
             break;
         }
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s first level = %{public}d", __func__, level);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "first level = %{public}d", level);
 }
 
 void ProtectorThermalZoneInfo::HandleAscCurDownTemp(uint32_t &level, int32_t curTemp)
@@ -96,7 +96,7 @@ void ProtectorThermalZoneInfo::HandleAscCurDownTemp(uint32_t &level, int32_t cur
             break;
         }
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s second level = %{public}d", __func__, level);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "second level = %{public}d", level);
 }
 
 void ProtectorThermalZoneInfo::HandleAscMaxSizeTemp(uint32_t &level, int32_t curTemp)
@@ -111,7 +111,7 @@ void ProtectorThermalZoneInfo::HandleAscMaxSizeTemp(uint32_t &level, int32_t cur
             }
         }
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s fourth level = %{public}d", __func__, level);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "fourth level = %{public}d", level);
 }
 
 void ProtectorThermalZoneInfo::HandleAscMinSizeTemp(uint32_t &level, int32_t curTemp)
@@ -128,7 +128,7 @@ void ProtectorThermalZoneInfo::HandleAscMinSizeTemp(uint32_t &level, int32_t cur
     } else {
         level = 0;
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s fifth level = %{public}d", __func__, level);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "fifth level = %{public}d", level);
 }
 
 void ProtectorThermalZoneInfo::HandleDescNextUpTemp(uint32_t &level, int32_t curTemp)
@@ -140,7 +140,7 @@ void ProtectorThermalZoneInfo::HandleDescNextUpTemp(uint32_t &level, int32_t cur
             break;
         }
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s first level = %{public}d", __func__, level);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "first level = %{public}d", level);
 }
 
 void ProtectorThermalZoneInfo::HandleDescCurDownTemp(uint32_t &level, int32_t curTemp)
@@ -152,7 +152,7 @@ void ProtectorThermalZoneInfo::HandleDescCurDownTemp(uint32_t &level, int32_t cu
             break;
         }
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s second level = %{public}d", __func__, level);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "second level = %{public}d", level);
 }
 
 void ProtectorThermalZoneInfo::HandleDescMaxSizeTemp(uint32_t &level, int32_t curTemp)
@@ -167,7 +167,7 @@ void ProtectorThermalZoneInfo::HandleDescMaxSizeTemp(uint32_t &level, int32_t cu
             }
         }
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s fourth level = %{public}d", __func__, level);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "fourth level = %{public}d", level);
 }
 
 void ProtectorThermalZoneInfo::HandleDescMinSizeTemp(uint32_t &level, int32_t curTemp)
@@ -184,7 +184,7 @@ void ProtectorThermalZoneInfo::HandleDescMinSizeTemp(uint32_t &level, int32_t cu
     } else {
         level = 0;
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s fifth level = %{public}d", __func__, level);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "fifth level = %{public}d", level);
 }
 
 void ProtectorThermalZoneInfo::SetThermalZoneItem(std::vector<ThermalZoneInfoItem> &tzItemList)
@@ -229,12 +229,12 @@ void ProtectorThermalZoneInfo::SetPath(const std::string &path)
 
 void ProtectorThermalZoneInfo::Dump()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "interval:%{public}d, desc:%{public}d, multiple:%{public}d",
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "interval:%{public}d, desc:%{public}d, multiple:%{public}d",
         interval_, desc_, multiple_);
     for (auto infoIter : tzItemList_) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR,
-            "%{public}s level: %{public}d, threshold:%{public}d, thresholdClr:%{public}d",
-            __func__, infoIter.level, infoIter.threshold, infoIter.thresholdClr);
+        THERMAL_HILOGI(FEATURE_PROTECTOR,
+            "level: %{public}d, threshold:%{public}d, thresholdClr:%{public}d",
+            infoIter.level, infoIter.threshold, infoIter.thresholdClr);
     }
 }
 } // namespace PowerMgr

@@ -46,36 +46,36 @@ ThermalService::~ThermalService() {}
 void ThermalService::OnStart()
 {
     int time = 100;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "OnStart Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (ready_) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "OnStart is ready, nothing to do");
+        THERMAL_HILOGE(COMP_SVC, "OnStart is ready, nothing to do");
         return;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(time));
 
     if (!(Init())) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "OnStart call init fail");
+        THERMAL_HILOGE(COMP_SVC, "OnStart call init fail");
         return;
     }
 
     if (!Publish(DelayedSpSingleton<ThermalService>::GetInstance())) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "OnStart register to system ability manager failed.");
+        THERMAL_HILOGE(COMP_SVC, "OnStart register to system ability manager failed.");
         return;
     }
     ready_ = true;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "OnStart and add system ability success");
+    THERMAL_HILOGI(COMP_SVC, "OnStart and add system ability success");
 }
 
 bool ThermalService::Init()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Init start");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::this_thread::sleep_for(std::chrono::milliseconds(TIME_TO_SLEEP));
 
     if (!eventRunner_) {
         eventRunner_ = AppExecFwk::EventRunner::Create(THMERMAL_SERVICE_NAME);
         if (eventRunner_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "Init failed due to create EventRunner");
+            THERMAL_HILOGE(COMP_SVC, "Init failed due to create EventRunner");
             return false;
         }
     }
@@ -83,7 +83,7 @@ bool ThermalService::Init()
     if (!handler_) {
         handler_ = std::make_shared<ThermalsrvEventHandler>(eventRunner_, g_service);
         if (handler_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "Init failed due to create handler error");
+            THERMAL_HILOGE(COMP_SVC, "Init failed due to create handler error");
             return false;
         }
     }
@@ -95,20 +95,20 @@ bool ThermalService::Init()
     if (thermalInterface_ == nullptr) {
         thermalInterface_ = IThermalInterface::Get();
         if (thermalInterface_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
+            THERMAL_HILOGE(COMP_SVC, "failed to get thermal hdf interface");
             return false;
         }
     }
 
     if (!RigisterHdfStatusListener()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "hdf status register fail");
+        THERMAL_HILOGE(COMP_SVC, "hdf status register fail");
         return false;
     }
 
     if (!InitModules()) {
         return false;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Init success");
+    THERMAL_HILOGI(COMP_SVC, "Init success");
     return true;
 }
 
@@ -117,7 +117,7 @@ bool ThermalService::CreateConfigModule()
         if (!baseInfo_) {
         baseInfo_ = std::make_shared<ThermalConfigBaseInfo>();
         if (baseInfo_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to create base info");
+            THERMAL_HILOGE(COMP_SVC, "failed to create base info");
             return false;
         }
     }
@@ -125,7 +125,7 @@ bool ThermalService::CreateConfigModule()
     if (!state_) {
         state_ = std::make_shared<StateMachine>();
         if (state_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to create state machine");
+            THERMAL_HILOGE(COMP_SVC, "failed to create state machine");
             return false;
         }
     }
@@ -133,7 +133,7 @@ bool ThermalService::CreateConfigModule()
     if (!actionMgr_) {
         actionMgr_ = std::make_shared<ThermalActionManager>();
         if (actionMgr_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to create action manager");
+            THERMAL_HILOGE(COMP_SVC, "failed to create action manager");
             return false;
         }
     }
@@ -141,7 +141,7 @@ bool ThermalService::CreateConfigModule()
     if (cluster_ == nullptr) {
         cluster_ = std::make_shared<ThermalConfigSensorCluster>();
         if (cluster_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to create cluster");
+            THERMAL_HILOGE(COMP_SVC, "failed to create cluster");
             return false;
         }
     }
@@ -149,7 +149,7 @@ bool ThermalService::CreateConfigModule()
     if (!policy_) {
         policy_ = std::make_shared<ThermalPolicy>();
         if (policy_ == nullptr) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to create thermal policy");
+            THERMAL_HILOGE(COMP_SVC, "failed to create thermal policy");
             return false;
         }
     }
@@ -159,7 +159,7 @@ bool ThermalService::CreateConfigModule()
 bool ThermalService::InitModules()
 {
     if (!ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(path)) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "thermal service config init fail");
+        THERMAL_HILOGE(COMP_SVC, "thermal service config init fail");
         return false;
     }
 
@@ -168,22 +168,22 @@ bool ThermalService::InitModules()
     }
 
     if (!InitThermalObserver()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "thermal observer start fail");
+        THERMAL_HILOGE(COMP_SVC, "thermal observer start fail");
         return false;
     }
 
     if (!InitStateMachine()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "state machine init fail");
+        THERMAL_HILOGE(COMP_SVC, "state machine init fail");
         return false;
     }
 
     if (!InitActionManager()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "actiom manager init fail");
+        THERMAL_HILOGE(COMP_SVC, "actiom manager init fail");
         return false;
     }
 
     if (!InitThermalPolicy()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "thermal policy start fail");
+        THERMAL_HILOGE(COMP_SVC, "thermal policy start fail");
         return false;
     }
     return true;
@@ -195,26 +195,26 @@ bool ThermalService::InitThermalObserver()
         return false;
     }
 
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "InitThermalObserver: Init Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (observer_ == nullptr) {
         observer_ = std::make_shared<ThermalObserver>(g_service);
         if (!(observer_->Init())) {
-            THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "InitThermalObserver: thermal observer start fail");
+            THERMAL_HILOGE(COMP_SVC, "InitThermalObserver: thermal observer start fail");
             return false;
         }
     }
     if (info_ == nullptr) {
         info_ = std::make_shared<ThermalSensorInfo>();
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "InitThermalObserver: Init Success");
+    THERMAL_HILOGI(COMP_SVC, "InitThermalObserver: Init Success");
     return true;
 }
 
 bool ThermalService::InitBaseInfo()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "InitBaseInfo: Init Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!baseInfo_->Init()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "InitBaseInfo: base info init failed");
+        THERMAL_HILOGE(COMP_SVC, "InitBaseInfo: base info init failed");
         return false;
     }
     return true;
@@ -222,9 +222,9 @@ bool ThermalService::InitBaseInfo()
 
 bool ThermalService::InitStateMachine()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "InitStateMachine: Init Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!state_->Init()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "InitStateMachine: state machine init failed");
+        THERMAL_HILOGE(COMP_SVC, "InitStateMachine: state machine init failed");
         return false;
     }
     return true;
@@ -232,9 +232,9 @@ bool ThermalService::InitStateMachine()
 
 bool ThermalService::InitActionManager()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "InitActionManager: Init Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!actionMgr_->Init()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "InitActionManager: action manager init failed");
+        THERMAL_HILOGE(COMP_SVC, "InitActionManager: action manager init failed");
         return false;
     }
     return true;
@@ -242,9 +242,9 @@ bool ThermalService::InitActionManager()
 
 bool ThermalService::InitThermalPolicy()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "InitThermalPolicy: Init Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!policy_->Init()) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "InitThermalPolicy: policy init failed");
+        THERMAL_HILOGE(COMP_SVC, "InitThermalPolicy: policy init failed");
         return false;
     }
     return true;
@@ -252,7 +252,7 @@ bool ThermalService::InitThermalPolicy()
 
 void ThermalService::OnStop()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "stop service");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!ready_) {
         return;
     }
@@ -266,27 +266,25 @@ void ThermalService::OnStop()
 void ThermalService::SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
     const sptr<IThermalTempCallback> &callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::SubscribeThermalTempCallback Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s uid %{public}d ",
-        __func__, uid);
+    THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     observer_->SubscribeThermalTempCallback(typeList, callback);
 }
 
 void ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback> &callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::UnSubscribeThermalTempCallback Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s uid %{public}d ",
-        __func__, uid);
+    THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     observer_->UnSubscribeThermalTempCallback(callback);
 }
 
 bool ThermalService::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::GetThermalSrvSensorInfo Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!(observer_->GetThermalSrvSensorInfo(type, sensorInfo))) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "failed to get temp for sensor type");
+            THERMAL_HILOGI(COMP_SVC, "failed to get temp for sensor type");
             return false;
     }
     return true;
@@ -294,19 +292,17 @@ bool ThermalService::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvS
 
 void ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::SubscribeThermalLevelCallback Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s uid %{public}d ",
-        __func__, uid);
+    THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     actionMgr_->SubscribeThermalLevelCallback(callback);
 }
 
 void ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalService::UnSubscribeThermalLevelCallback Enter");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s uid %{public}d ",
-        __func__, uid);
+    THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     actionMgr_->UnSubscribeThermalLevelCallback(callback);
 }
 
@@ -328,14 +324,14 @@ void ThermalService::RemoveEvent(int32_t event)
 
 void ThermalService::HandleEvent(int event)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     switch (event) {
         case ThermalsrvEventHandler::SEND_GET_THERMAL_HDF_SERVICE_MSG: {
             int32_t ret = -1;
             if (serviceSubscriber_ == nullptr) {
                 serviceSubscriber_ = std::make_shared<ThermalServiceSubscriber>();
                 if (!(serviceSubscriber_->Init())) {
-                    THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "thermal service suvscriber start fail");
+                    THERMAL_HILOGE(COMP_SVC, "thermal service suvscriber start fail");
                     return;
                 }
             }
@@ -345,7 +341,7 @@ void ThermalService::HandleEvent(int event)
             ThermalCallbackImpl::RegisterThermalEvent(eventCb);
             ret = thermalInterface_->Register(g_callback);
             if (ret != ERR_OK) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "set hdf callback failed");
+                THERMAL_HILOGE(COMP_SVC, "set hdf callback failed");
                 return;
             }
             break;
@@ -357,28 +353,29 @@ void ThermalService::HandleEvent(int event)
 
 bool ThermalService::RigisterHdfStatusListener()
 {
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     servmgr_  = IServiceManager::Get();
     if (servmgr_ == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "hdf service manager is nullptr");
+        THERMAL_HILOGE(COMP_SVC, "hdf service manager is nullptr");
         return false;
     }
 
     hdfListener_ = new HdfServiceStatusListener(HdfServiceStatusListener::StatusCallback(
         [&](const OHOS::HDI::ServiceManager::V1_0::ServiceStatus &status) {
             if (status.serviceName != std::string(HDF_SERVICE_NAME)) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "service name mismatch");
+                THERMAL_HILOGE(COMP_SVC, "service name mismatch");
                 return;
             }
 
             if (status.deviceClass != DEVICE_CLASS_DEFAULT) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "deviceClass mismatch");
+                THERMAL_HILOGE(COMP_SVC, "deviceClass mismatch");
                 return;
             }
 
             if (status.status == SERVIE_STATUS_START) {
                 thermalInterface_ = IThermalInterface::Get();
                 if (thermalInterface_ == nullptr) {
-                    THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "failed to get thermal hdf interface");
+                    THERMAL_HILOGE(COMP_SVC, "failed to get thermal hdf interface");
                     return;
                 }
                 RemoveEvent(ThermalsrvEventHandler::SEND_GET_THERMAL_HDF_SERVICE_MSG);
@@ -391,7 +388,7 @@ bool ThermalService::RigisterHdfStatusListener()
 
     int status = servmgr_->RegisterServiceStatusListener(hdfListener_, DEVICE_CLASS_DEFAULT);
     if (status != STATUS_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "register failed");
+        THERMAL_HILOGE(COMP_SVC, "register failed");
         return false;
     }
     return true;
@@ -402,8 +399,6 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
     TypeTempMap typeTempMap;
     if (!event.info.empty()) {
         for (auto iter = event.info.begin(); iter != event.info.end(); iter++) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: type: %{public}s", __func__, iter->type.c_str());
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: temp: %{public}d", __func__, iter->temp);
             typeTempMap.insert(std::make_pair(iter->type, iter->temp));
         }
     }
@@ -415,17 +410,17 @@ std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint
 {
     auto uid = IPCSkeleton::GetCallingUid();
     if (uid >= APP_FIRST_UID) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "%{public}s Request failed, %{public}d permission check failed", __func__, uid);
+        THERMAL_HILOGE(COMP_SVC, "Request failed, %{public}d permission check failed", uid);
         return nullptr;
     }
     std::lock_guard<std::mutex> lock(mutex_);
     pid_t pid = IPCSkeleton::GetCallingPid();
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "PID: %{public}d Call %{public}s !", pid, __func__);
+    THERMAL_HILOGI(COMP_SVC, "PID: %{public}d!", pid);
     std::string result;
     bool ret = ThermalMgrDumper::Dump(args, result);
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "ThermalMgrDumper :%{public}d", ret);
+    THERMAL_HILOGI(COMP_SVC, "ThermalMgrDumper :%{public}d", ret);
     return result;
 }
 } // namespace PowerMgr
 } // namespace OHOS
+

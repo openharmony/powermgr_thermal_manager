@@ -66,8 +66,7 @@ int32_t ThermalSensorProvision::ReadThermalSysfsToBuff(const char* path, char* b
 {
     int32_t ret = ReadSysfsFile(path, buf, size);
     if (ret != ERR_OK) {
-        THERMAL_HILOGW(MODULE_THERMAL_PROTECTOR,
-            "%{public}s: read path %{private}s failed, ret: %{public}d", __func__, path, ret);
+        THERMAL_HILOGW(FEATURE_PROTECTOR, "read path %{private}s failed, ret: %{public}d", path, ret);
         return ret;
     }
 
@@ -79,13 +78,13 @@ int32_t ThermalSensorProvision::ReadSysfsFile(const char* path, char* buf, size_
     int32_t readSize;
     int32_t fd = open(path, O_RDONLY);
     if (fd < NUM_ZERO) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to open %{public}s", __func__, path);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to open %{public}s", path);
         return ERR_INVALID_OPERATION;
     }
 
     readSize = read(fd, buf, size - 1);
     if (readSize < NUM_ZERO) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to read %{public}s", __func__, path);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to read %{public}s", path);
         close(fd);
         return ERR_INVALID_OPERATION;
     }
@@ -119,9 +118,8 @@ void ThermalSensorProvision::FormatThermalSysfsPaths(struct ThermalSysfsPathInfo
     FormatThermalPaths(tzSysPathInfo_.typePath, sizeof(tzSysPathInfo_.typePath),
         THEERMAL_TYPE_PATH.c_str(), pTSysPathInfo->name);
 
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR,
-        "%{public}s: temp path: %{public}s, type path: %{public}s ",
-        __func__, tzSysPathInfo_.tempPath, tzSysPathInfo_.typePath);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "temp path: %{public}s, type path: %{public}s ",
+        tzSysPathInfo_.tempPath, tzSysPathInfo_.typePath);
 
     tzSysPathInfo_.fd = pTSysPathInfo->fd;
     lTzSysPathInfo_.push_back(tzSysPathInfo_);
@@ -130,7 +128,7 @@ void ThermalSensorProvision::FormatThermalSysfsPaths(struct ThermalSysfsPathInfo
 void ThermalSensorProvision::FormatThermalPaths(char *path, size_t size, const char *format, const char* name)
 {
     if (snprintf_s(path, PATH_MAX, size - 1, format, name) < NUM_ZERO) {
-        THERMAL_HILOGW(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to format path of %{public}s", __func__, name);
+        THERMAL_HILOGW(FEATURE_PROTECTOR, "failed to format path of %{public}s", name);
     }
 }
 
@@ -143,8 +141,7 @@ int32_t ThermalSensorProvision::InitThermalZoneSysfs()
 
     dir = opendir(THERMAL_SYSFS.c_str());
     if (dir == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR,
-            "%{public}s: cannot open thermal zone path", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "cannot open thermal zone path");
         return ERR_INVALID_VALUE;
     }
 
@@ -165,19 +162,16 @@ int32_t ThermalSensorProvision::InitThermalZoneSysfs()
         if (entry->d_type == DT_DIR || entry->d_type == DT_LNK) {
             struct ThermalSysfsPathInfo sysfsInfo = {0};
             sysfsInfo.name = entry->d_name;
-            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR,
-                "%{public}s: init sysfs info of %{public}s", __func__, sysfsInfo.name);
+            THERMAL_HILOGI(FEATURE_PROTECTOR, "init sysfs info of %{public}s", sysfsInfo.name);
             int32_t ret = sscanf_s(sysfsInfo.name, THERMAL_ZONE_DIR_NAME.c_str(), &id);
             if (ret < ARG_0) {
                 return ret;
             }
 
-            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR,
-                "%{public}s: Sensor %{public}s found at tz: %{public}d", __func__, sysfsInfo.name, id);
+            THERMAL_HILOGI(FEATURE_PROTECTOR, "Sensor %{public}s found at tz: %{public}d", sysfsInfo.name, id);
             sysfsInfo.fd = id;
             if (index > MAX_SYSFS_SIZE) {
-                THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR,
-                    "%{public}s: too many plugged types", __func__);
+                THERMAL_HILOGE(FEATURE_PROTECTOR, "too many plugged types");
                 break;
             }
 
@@ -194,7 +188,7 @@ int32_t ThermalSensorProvision::ParseThermalZoneInfo()
     char bufType[MAX_BUFF_SIZE] = {0};
     int32_t ret = InitThermalZoneSysfs();
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to get path info.", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to get path info.");
         return false;
     }
 
@@ -203,7 +197,7 @@ int32_t ThermalSensorProvision::ParseThermalZoneInfo()
         for (auto iter = lTzSysPathInfo_.begin(); iter != lTzSysPathInfo_.end(); iter++) {
             int32_t ret = ReadThermalSysfsToBuff(iter->typePath, bufType, sizeof(bufType));
             if (ret != NUM_ZERO) {
-                THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: failed to read thermal zone type", __func__);
+                THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to read thermal zone type");
                 return ret;
             }
             std::string tzType = bufType;
@@ -248,12 +242,9 @@ void ThermalSensorProvision::ReportThermalZoneData(int32_t reportTime, std::vect
 
             int32_t ret = ReadThermalSysfsToBuff(sensorIter.second->GetPath().c_str(), tempBuf, sizeof(tempBuf));
             if (ret != NUM_ZERO) {
-                THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR,
-                    "%{public}s: failed to read thermal zone temp", __func__);
                 continue;
             }
             int32_t temp = std::stoi(tempBuf);
-            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: temp=%{public}d", __func__, temp);
             typeTempMap_.insert(std::make_pair(sensorIter.first, temp));
         }
     }

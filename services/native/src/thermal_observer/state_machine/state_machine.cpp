@@ -31,14 +31,13 @@ const int MAX_BUFF_SIZE = 128;
 }
 bool StateMachine::Init()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s StateMachine enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (receiver_ == nullptr) {
         receiver_ = std::make_shared<ThermalCommonEventReceiver>();
     }
 
     for (auto state = vState_.begin(); state != vState_.end(); state++) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s StateMachine name = %{public}s",
-            __func__, state->name.c_str());
+        THERMAL_HILOGI(COMP_SVC, "StateMachine name = %{public}s", state->name.c_str());
         std::shared_ptr<IStateCollection> stateCollection = StateCollectionFactory::Create(state->name);
         if (state->isExistParam) {
             stateCollection->InitParam(state->params);
@@ -96,13 +95,13 @@ template<typename T> T StateMachine::ReadFileNode(const std::string& path, T& va
 
     fd = open(path.c_str(), O_RDONLY);
     if (fd < 0) {
-        THERMAL_HILOGE(MODULE_THERMALHDI_SERVICE, "failed to open file");
+        THERMAL_HILOGE(COMP_SVC, "failed to open file");
         return value;
     }
 
     length = read(fd, bufNode, sizeof(bufNode));
     if (length < 0) {
-        THERMAL_HILOGE(MODULE_THERMALHDI_SERVICE, "failed to read file");
+        THERMAL_HILOGE(COMP_SVC, "failed to read file");
         return value;
     }
     value = static_cast<T>(bufNode);

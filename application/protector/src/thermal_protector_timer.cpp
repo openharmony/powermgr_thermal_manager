@@ -43,7 +43,7 @@ void ThermalProtectorTimer::RegisterTask(NotifyTask task)
 
 void ThermalProtectorTimer::NotifyPolicy()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     provision_->ReportThermalZoneData(reportTime_, multipleList_);
     auto tzMap = provision_->GetSensorData();
     notify_(tzMap);
@@ -53,7 +53,7 @@ int32_t ThermalProtectorTimer::CreateProvisionFd()
 {
     timerFd_ = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
     if (timerFd_ == ERR_INVALID_FD) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s epoll create failed, epFd_ is invalid", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "epoll create failed, epFd_ is invalid");
         return ERR_INVALID_VALUE;
     }
     int interval = provision_->GetMaxCd();
@@ -61,10 +61,10 @@ int32_t ThermalProtectorTimer::CreateProvisionFd()
     fcntl(timerFd_, F_SETFL, O_NONBLOCK);
     callbackHandler_.insert(std::make_pair(timerFd_, &ThermalProtectorTimer::TimerProvisionCallback));
     if (RegisterCallback(timerFd_, EVENT_TIMER_FD, epFd_)) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s register Timer event failed", __func__);
+        THERMAL_HILOGI(FEATURE_PROTECTOR, "register Timer event failed");
     }
 
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s return", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Exit");
     return ERR_OK;
 }
 
@@ -76,15 +76,14 @@ int32_t ThermalProtectorTimer::RegisterCallback(const int32_t fd, const EventTyp
     if (et == EVENT_TIMER_FD) {
         ev.events |= EPOLLWAKEUP;
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}d, %{public}d", epfd, fd);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "%{public}d, %{public}d", epfd, fd);
     ev.data.ptr = reinterpret_cast<void*>(this);
     ev.data.fd = fd;
     if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: epoll_ctl failed, error num =%{public}d",
-            __func__, errno);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "epoll_ctl failed, error num =%{public}d", errno);
         return -1;
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s return", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Exit");
     return ERR_OK;
 }
 
@@ -93,7 +92,7 @@ void ThermalProtectorTimer::TimerProvisionCallback(void *service)
     unsigned long long timers;
 
     if (read(timerFd_, &timers, sizeof(timers)) == -1) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s read timerFd_ failed", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "read timerFd_ failed");
         return;
     }
     reportTime_ = reportTime_ + 1;
@@ -121,9 +120,9 @@ void ThermalProtectorTimer::SetTimerInterval(int32_t interval, int32_t timerfd)
     itval.it_value.tv_sec = interval / MS_PER_SECOND;
     itval.it_value.tv_nsec = 0;
     if (timerfd_settime(timerfd, 0, &itval, nullptr) == -1) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s: timer failed\n", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "timer failed\n");
     }
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "return");
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Exit");
 }
 
 int32_t ThermalProtectorTimer::InitProvisionTimer()
@@ -133,7 +132,7 @@ int32_t ThermalProtectorTimer::InitProvisionTimer()
 
     ret = CreateProvisionFd();
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s failed to create polling fd", __func__);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to create polling fd");
         return ret;
     }
     return ERR_OK;
@@ -144,7 +143,7 @@ int32_t ThermalProtectorTimer::LoopingThreadEntry(void *arg, int32_t epfd)
     int32_t nevents = 0;
     size_t eventct = callbackHandler_.size();
     struct epoll_event events[eventct];
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: %{public}d, %{public}zu", __func__, epfd, eventct);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "%{public}d, %{public}zu", epfd, eventct);
     while (true) {
         if (timeCount_ == END_TIME) {
             return ERR_OK;
@@ -172,7 +171,7 @@ void ThermalProtectorTimer::StartThread(void *service)
 {
     int32_t ret = InitProvisionTimer();
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_PROTECTOR, "%{public}s init Timer failed, ret: %{public}d", __func__, ret);
+        THERMAL_HILOGE(FEATURE_PROTECTOR, "init Timer failed, ret: %{public}d", ret);
         return;
     }
     Run(service, epFd_);
@@ -186,12 +185,12 @@ int32_t ThermalProtectorTimer::Init()
 
 void ThermalProtectorTimer::ResetCount()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: multipleList_:%{public}zu", __func__, multipleList_.size());
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "multipleList_:%{public}zu", multipleList_.size());
     if (multipleList_.empty()) return;
 
     int32_t maxValue = *(std::max_element(multipleList_.begin(), multipleList_.end()));
     if (reportTime_ == maxValue) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: reportTime:%{public}d", __func__, reportTime_);
+        THERMAL_HILOGI(FEATURE_PROTECTOR, "reportTime:%{public}d", reportTime_);
         reportTime_ = 0;
     }
 }

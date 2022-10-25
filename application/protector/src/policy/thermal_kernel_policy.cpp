@@ -36,22 +36,22 @@ bool ThermalKernelPolicy::Init()
 
 void ThermalKernelPolicy::LevelDecision()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     for (auto tzIter = tzInfoMap_.begin(); tzIter != tzInfoMap_.end(); tzIter++) {
         auto typeIter = typeTempMap_.find(tzIter->first);
         if (typeIter != typeTempMap_.end()) {
-            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s start update thermal level", __func__);
+            THERMAL_HILOGD(FEATURE_PROTECTOR, "start update thermal level");
             tzIter->second->UpdateThermalLevel(typeIter->second);
             uint32_t level = tzIter->second->GetThermalLevel();
             levelMap_.emplace(std::pair(typeIter->first, level));
-            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s final level = %{public}d", __func__, level);
+            THERMAL_HILOGI(FEATURE_PROTECTOR, "final level = %{public}d", level);
         }
     }
 }
 
 void ThermalKernelPolicy::PolicyDecision()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     for (auto policy = levelAction_.begin(); policy != levelAction_.end(); policy++) {
         auto levelIter = levelMap_.find(policy->name);
         if (levelIter != levelMap_.end()) {
@@ -65,7 +65,7 @@ void ThermalKernelPolicy::PolicyDecision()
 
 void ThermalKernelPolicy::ActionDecision(std::vector<ActionItem> &vAction)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     for (auto actionIter = vAction.begin(); actionIter != vAction.end(); actionIter++) {
         ThermalDeviceControl::ThermalActionMap actionMap = g_service.GetControl()->GetThermalAction();
         auto nameIter = actionMap.find(actionIter->name);
@@ -81,15 +81,15 @@ void ThermalKernelPolicy::ActionDecision(std::vector<ActionItem> &vAction)
 
 void ThermalKernelPolicy::ActionExecution()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
 
     if (executeActionList_.empty()) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s executeActionList_ is empty", __func__);
+        THERMAL_HILOGI(FEATURE_PROTECTOR, "executeActionList_ is empty");
         return;
     }
 
     ThermalDeviceControl::ThermalActionMap actionMap = g_service.GetControl()->GetThermalAction();
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "size: %{public}zu", actionMap.size());
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "size: %{public}zu", actionMap.size());
     for (auto name : executeActionList_) {
         auto executeIter = actionMap.find(name);
         if (executeIter != actionMap.end()) {
@@ -110,7 +110,7 @@ void ThermalKernelPolicy::SetCallback()
 
 void ThermalKernelPolicy::OnReceivedSensorsInfo(SensorsMap typeTempMap)
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     typeTempMap_ = typeTempMap;
     LevelDecision();
     PolicyDecision();
@@ -159,14 +159,14 @@ void ThermalKernelPolicy::CalculateMaxCd()
 {
     std::vector<int32_t> intervalList;
     if (tzInfoMap_.empty()) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: info list is null", __func__);
+        THERMAL_HILOGI(FEATURE_PROTECTOR, "info list is null");
     }
     for (auto &tzIter : tzInfoMap_) {
         int32_t interval = tzIter.second->GetInterval();
         intervalList.push_back(interval);
     }
     maxCd_ = GetIntervalCommonDivisor(intervalList);
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s: maxCd_ %{public}d", __func__, maxCd_);
+    THERMAL_HILOGI(FEATURE_PROTECTOR, "maxCd_ %{public}d", maxCd_);
 }
 
 void ThermalKernelPolicy::SetThermalZoneMap(ThermalZoneMap &tzInfoMap)
@@ -196,16 +196,16 @@ int32_t ThermalKernelPolicy::GetMaxCd()
 
 void ThermalKernelPolicy::Dump()
 {
-    THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s enter", __func__);
+    THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
     for (auto &tzIter : tzInfoMap_) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "%{public}s type = %{public}s", __func__, tzIter.first.c_str());
+        THERMAL_HILOGI(FEATURE_PROTECTOR, "type = %{public}s", tzIter.first.c_str());
         tzIter.second->Dump();
     }
     for (auto &actionIter : levelAction_) {
-        THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "name:%{public}s, level:%{public}d",
+        THERMAL_HILOGI(FEATURE_PROTECTOR, "name:%{public}s, level:%{public}d",
             actionIter.name.c_str(), actionIter.level);
         for (auto &item : actionIter.vAction) {
-            THERMAL_HILOGI(MODULE_THERMAL_PROTECTOR, "actionName:%{public}s, actionValue:%{public}d",
+            THERMAL_HILOGI(FEATURE_PROTECTOR, "actionName:%{public}s, actionValue:%{public}d",
                 item.name.c_str(), item.value);
         }
     }

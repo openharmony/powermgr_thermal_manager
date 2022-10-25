@@ -30,12 +30,12 @@ ThermalTimerInfo::~ThermalTimerInfo()
 
 void ThermalTimerInfo::OnTrigger()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (callback_ != nullptr) {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s call back", __func__);
+        THERMAL_HILOGI(COMP_SVC, "call back");
         callback_();
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s end", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Exit");
 }
 
 void ThermalTimerInfo::SetCallbackInfo(const TimerInfoCallback &callBack)
@@ -68,7 +68,7 @@ uint64_t ThermalTimer::CreateTimer(std::shared_ptr<ThermalTimerInfo> &timerInfo)
     uint64_t timerId = -1;
     timerId = TimeServiceClient::GetInstance()->CreateTimer(timerInfo);
     if (timerId <= 0) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s failed to create timer id", __func__);
+        THERMAL_HILOGE(COMP_SVC, "failed to create timer id");
         return timerId;
     }
     return timerId;
@@ -80,7 +80,7 @@ bool ThermalTimer::StartTimer(uint64_t timerId, uint64_t triggerTime)
     auto ret = TimeServiceClient::GetInstance()->StartTimer(timerId, triggerTime);
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
     if (!ret) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s failed to start timer", __func__);
+        THERMAL_HILOGE(COMP_SVC, "failed to start timer");
         return ret;
     }
     return true;
@@ -90,7 +90,7 @@ bool ThermalTimer::StopTimer(uint64_t timerId)
 {
     auto ret = TimeServiceClient::GetInstance()->StopTimer(timerId);
     if (!ret) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s failed to stop timer", __func__);
+        THERMAL_HILOGE(COMP_SVC, "failed to stop timer");
         return ret;
     }
     return true;
@@ -100,7 +100,7 @@ bool ThermalTimer::DestroyTimer(uint64_t timerId)
 {
     auto ret = TimeServiceClient::GetInstance()->DestroyTimer(timerId);
     if (!ret) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s failed to destroy timer", __func__);
+        THERMAL_HILOGE(COMP_SVC, "failed to destroy timer");
         return ret;
     }
     return true;

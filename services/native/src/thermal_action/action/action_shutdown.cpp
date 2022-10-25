@@ -46,13 +46,13 @@ void ActionShutdown::SetStrict(bool flag)
 
 void ActionShutdown::AddActionValue(std::string value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s value=%{public}s", __func__, value.c_str());
+    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     valuesList_.push_back(atoi(value.c_str()));
 }
 
 void ActionShutdown::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t value = lastValue_;
     if (valuesList_.empty()) {
         value = 0;
@@ -77,17 +77,17 @@ void ActionShutdown::Execute()
 
 uint32_t ActionShutdown::ShutdownRequest(bool isShutdown)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (isShutdown) {
         PowerMgrClient::GetInstance().ShutDownDevice(SHUTDOWN_REASON);
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s device start shutdown", __func__);
+        THERMAL_HILOGI(COMP_SVC, "device start shutdown");
     }
     return ERR_OK;
 }
 
 uint32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start to shutdown", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char shutdownBuf[MAX_PATH] = {0};
     ret = snprintf_s(shutdownBuf, PATH_MAX, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
@@ -104,7 +104,7 @@ uint32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 
 uint32_t ActionShutdown::DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t delay = 50000;
     auto handler = g_service->GetHandler();
     if (handler == nullptr) {
@@ -115,7 +115,7 @@ uint32_t ActionShutdown::DelayShutdown(bool isShutdown, int32_t temp, int32_t th
         return ERR_INVALID_VALUE;
     }
     auto shutDownTask = [&]() {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s: shutdown run", __func__);
+        THERMAL_HILOGI(COMP_SVC, "shutdown run");
         ShutdownRequest(isShutdown);
         runner->Stop();
     };
@@ -129,7 +129,7 @@ uint32_t ActionShutdown::DelayShutdown(bool isShutdown, int32_t temp, int32_t th
         if (temp < thresholdClr) {
             auto runResult = runner->Stop();
             if (!runResult) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "HandleShutdownActionHUb: success to cancell");
+                THERMAL_HILOGE(COMP_SVC, "HandleShutdownActionHUb: success to cancell");
             }
         }
     };

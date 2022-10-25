@@ -51,7 +51,7 @@ int32_t ThermalMgrInterfaceTest::WriteFile(std::string path, std::string buf, si
     }
     size_t ret = fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
     if (ret == ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "ret=%{public}zu", ret);
+        THERMAL_HILOGE(COMP_SVC, "ret=%{public}zu", ret);
     }
     int32_t state = fseek(stream, 0, SEEK_SET);
     if (state != ERR_OK) {

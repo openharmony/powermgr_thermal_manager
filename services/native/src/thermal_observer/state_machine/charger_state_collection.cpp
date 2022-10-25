@@ -43,14 +43,14 @@ bool ChargerStateCollection::Init()
 
 bool ChargerStateCollection::InitParam(std::string &params)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     params_ = params;
     return true;
 }
 
 std::string ChargerStateCollection::GetState()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s charger state = %{public}s", __func__, mockState_.c_str());
+    THERMAL_HILOGD(COMP_SVC, "charger state = %{public}s", mockState_.c_str());
     if (!g_service->GetFlag()) {
         return mockState_;
     } else {
@@ -60,16 +60,16 @@ std::string ChargerStateCollection::GetState()
 
 bool ChargerStateCollection::RegisterEvent()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (g_service == nullptr) return false;
     auto receiver = g_service->GetStateMachineObj()->GetCommonEventReceiver();
     if (receiver == nullptr) return false;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start register charger state change event", __func__);
+    THERMAL_HILOGI(COMP_SVC, "start register charger state change event");
     EventHandle handler = std::bind(&ChargerStateCollection::HandleChangerStatusCompleted, this, std::placeholders::_1);
     
     bool ret = receiver->Start(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED, handler);
     if (!ret) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s fail to COMMON_EVENT_BATTERY_CHANGED", __func__);
+        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_BATTERY_CHANGED");
         return false;
     }
     return true;
@@ -77,7 +77,7 @@ bool ChargerStateCollection::RegisterEvent()
 
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData &data __attribute__((__unused__)))
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     int defaultChargeStatus = -1;
     int chargerStatus = data.GetWant().GetIntParam(
         ToString(BatteryInfo::COMMON_EVENT_CODE_CHARGE_STATE), defaultChargeStatus);
@@ -109,28 +109,27 @@ void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData 
 
 void ChargerStateCollection::SetState()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     char chargerBuf[MAX_PATH] = {0};
     char chagerValue[MAX_PATH] = {0};
     int32_t ret = -1;
     if (snprintf_s(chargerBuf, PATH_MAX, sizeof(chargerBuf) - 1, chargePath.c_str()) < ERR_OK) {
         return;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s read charge state", __func__);
+    THERMAL_HILOGD(COMP_SVC, "read charge state");
     ret = FileOperation::ReadFile(chargerBuf, chagerValue, sizeof(chagerValue));
     if (ret != ERR_OK) {
         return;
     }
     mockState_ = chagerValue;
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s mockState_=%{public}s", __func__, mockState_.c_str());
+    THERMAL_HILOGI(COMP_SVC, "mockState_=%{public}s", mockState_.c_str());
 }
 
 bool ChargerStateCollection::DecideState(const std::string &value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     SetState();
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s mockState_=%{public}s, value=%{public}s",
-        __func__, mockState_.c_str(), value.c_str());
+    THERMAL_HILOGI(COMP_SVC, "mockState_=%{public}s, value=%{public}s", mockState_.c_str(), value.c_str());
     return StringOperation::Compare(value, mockState_);
 }
 } // namespace PowerMgr
