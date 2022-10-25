@@ -44,14 +44,14 @@ void ActionPopup::SetStrict(bool flag)
 
 void ActionPopup::AddActionValue(std::string value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s value=%{public}s", __func__, value.c_str());
+    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionPopup::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
@@ -77,14 +77,14 @@ void ActionPopup::HandlePopupEvent(const int32_t value)
         case LOWER_TEMP:
             ret = ShowDialog(THERMAL_LOWER_TEMP_PARAMS);
             if (!ret) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s to failed to popup", __func__);
+                THERMAL_HILOGE(COMP_SVC, "failed to popup");
                 return;
             }
             break;
         case HIGHER_TEMP:
             ret = ShowDialog(THERMAL_HIGH_TEMP_PARAMS);
             if (!ret) {
-                THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s to failed to popup", __func__);
+                THERMAL_HILOGE(COMP_SVC, "failed to popup");
                 return;
             }
             break;
@@ -95,7 +95,7 @@ void ActionPopup::HandlePopupEvent(const int32_t value)
 
 bool ActionPopup::ShowDialog(const std::string &params)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Handle thermal level is too higher or too lower");
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     // show dialog
     int pos_x;
     int pos_y;
@@ -118,7 +118,7 @@ bool ActionPopup::ShowDialog(const std::string &params)
         width,
         height,
         [this](int32_t id, const std::string& event, const std::string& params) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "Dialog callback: %{public}s, %{public}s",
+            THERMAL_HILOGI(COMP_SVC, "Dialog callback: %{public}s, %{public}s",
                 event.c_str(), params.c_str());
             if (event == "EVENT_CANCEL") {
                 Ace::UIServiceMgrClient::GetInstance()->CancelDialog(id);
@@ -133,15 +133,15 @@ void ActionPopup::GetDisplayPosition(
     wideScreen = true;
     auto display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
     if (display == nullptr) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "dialog GetDefaultDisplay fail, try again.");
+        THERMAL_HILOGE(COMP_SVC, "dialog GetDefaultDisplay fail, try again.");
         display = Rosen::DisplayManager::GetInstance().GetDefaultDisplay();
     }
 
     if (display != nullptr) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "display size: %{public}d x %{public}d",
+        THERMAL_HILOGI(COMP_SVC, "display size: %{public}d x %{public}d",
             display->GetWidth(), display->GetHeight());
         if (display->GetWidth() < display->GetHeight()) {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "share dialog narrow.");
+            THERMAL_HILOGI(COMP_SVC, "share dialog narrow.");
             const int NARROW_WIDTH_N = 3;
             const int NARROW_WIDTH_D = 4;
             const int NARROW_HEIGHT_RATE = 8;
@@ -149,7 +149,7 @@ void ActionPopup::GetDisplayPosition(
             width = display->GetWidth() * NARROW_WIDTH_N / NARROW_WIDTH_D;
             height = display->GetHeight() / NARROW_HEIGHT_RATE;
         } else {
-            THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "share dialog wide.");
+            THERMAL_HILOGI(COMP_SVC, "share dialog wide.");
             const int NARROW_WIDTH_N = 1;
             const int NARROW_WIDTH_D = 3;
             const int NARROW_HEIGHT_RATE = 6;
@@ -160,14 +160,14 @@ void ActionPopup::GetDisplayPosition(
         offsetX = (display->GetWidth() - width) / UI_HALF;
         offsetY = display->GetHeight() - height - UI_DEFAULT_BUTTOM_CLIP;
     } else {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "dialog get display fail, use default wide.");
+        THERMAL_HILOGI(COMP_SVC, "dialog get display fail, use default wide.");
         wideScreen = false;
         width = UI_DIALOG_POWER_WIDTH_NARROW;
         height = UI_DIALOG_POWER_HEIGHT_NARROW;
         offsetX = (UI_DEFAULT_WIDTH - width) / UI_HALF;
         offsetY = UI_DEFAULT_HEIGHT - height - UI_DEFAULT_BUTTOM_CLIP;
     }
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "GetDisplayPosition: %{public}d, %{public}d (%{public}d x %{public}d)",
+    THERMAL_HILOGI(COMP_SVC, "GetDisplayPosition: %{public}d, %{public}d (%{public}d x %{public}d)",
         offsetX, offsetY, width, height);
 }
 } // namespace PowerMgr

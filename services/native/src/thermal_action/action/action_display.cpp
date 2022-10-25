@@ -41,14 +41,14 @@ void ActionDisplay::SetStrict(bool flag)
 
 void ActionDisplay::AddActionValue(std::string value)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s value=%{public}s", __func__, value.c_str());
+    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionDisplay::Execute()
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, " %{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
 
     uint32_t value = lastValue_;
     if (valueList_.empty()) {
@@ -74,10 +74,10 @@ void ActionDisplay::Execute()
 
 uint32_t ActionDisplay::DisplayRequest(uint32_t brightness)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s enter", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t id = 0;
     if (!DisplayPowerMgrClient::GetInstance().SetBrightness(brightness, id)) {
-        THERMAL_HILOGE(MODULE_THERMALMGR_SERVICE, "%{public}s failed to set brightness", __func__);
+        THERMAL_HILOGE(COMP_SVC, "failed to set brightness");
         return ERR_INVALID_VALUE;
     }
     return ERR_OK;
@@ -85,7 +85,7 @@ uint32_t ActionDisplay::DisplayRequest(uint32_t brightness)
 
 uint32_t ActionDisplay::DisplayExecution(uint32_t brightness)
 {
-    THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s start to set brightness", __func__);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char lcdBuf[MAX_PATH] = {0};
     ret = snprintf_s(lcdBuf, PATH_MAX, sizeof(lcdBuf) - 1, lcdPath.c_str());

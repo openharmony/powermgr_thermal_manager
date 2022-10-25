@@ -46,10 +46,10 @@ void ThermalConfigBaseInfo::SetHistoryTempCount()
 
 void ThermalConfigBaseInfo::Dump()
 {
-    THERMAL_HILOGD(MODULE_THERMALMGR_SERVICE, "type: %{public}s, count: %{public}d.",
+    THERMAL_HILOGD(COMP_SVC, "type: %{public}s, count: %{public}d.",
         sensorType_.c_str(), historyTempCount_);
     for (auto type : sensorsType_) {
-        THERMAL_HILOGI(MODULE_THERMALMGR_SERVICE, "%{public}s sensorType = %{public}s", __func__, type.c_str());
+        THERMAL_HILOGI(COMP_SVC, "sensorType = %{public}s", type.c_str());
     }
 }
 } // namespace PowerMgr

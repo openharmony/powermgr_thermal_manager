@@ -28,7 +28,7 @@ namespace PowerMgr {
 void ThermalSrvProxy::SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
     const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::SubscribeThermalTempCallback Enter");
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     sptr<IRemoteObject> remote = Remote();
     THERMAL_RETURN_IF((remote == nullptr) || (callback == nullptr));
 
@@ -37,7 +37,7 @@ void ThermalSrvProxy::SubscribeThermalTempCallback(const std::vector<std::string
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::%{public}s write descriptor failed!", __func__);
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return;
     }
 
@@ -46,16 +46,14 @@ void ThermalSrvProxy::SubscribeThermalTempCallback(const std::vector<std::string
 
     int ret = remote->SendRequest(static_cast<int>(IThermalSrv::REG_THERMAL_TEMP_CALLBACK), data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "ThermalSrvProxy::%{public}s SendRequest is failed, error code: %{public}d",
-            __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return;
     }
 }
 
 void ThermalSrvProxy::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::UnSubscribeThermalTempCallback Enter");
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     sptr<IRemoteObject> remote = Remote();
     THERMAL_RETURN_IF((remote == nullptr) || (callback == nullptr));
 
@@ -64,7 +62,7 @@ void ThermalSrvProxy::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::%{public}s write descriptor failed!", __func__);
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return;
     }
 
@@ -72,16 +70,14 @@ void ThermalSrvProxy::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
 
     int ret = remote->SendRequest(static_cast<int>(IThermalSrv::UNREG_THERMAL_TEMP_CALLBACK), data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "ThermalSrvProxy::%{public}s SendRequest is failed, error code: %{public}d",
-            __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return;
     }
 }
 
 void ThermalSrvProxy::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::SubscribeThermalLevelCallback Enter");
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     sptr<IRemoteObject> remote = Remote();
     THERMAL_RETURN_IF((remote == nullptr) || (callback == nullptr));
 
@@ -90,7 +86,7 @@ void ThermalSrvProxy::SubscribeThermalLevelCallback(const sptr<IThermalLevelCall
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::%{public}s write descriptor failed!", __func__);
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return;
     }
 
@@ -98,16 +94,14 @@ void ThermalSrvProxy::SubscribeThermalLevelCallback(const sptr<IThermalLevelCall
 
     int ret = remote->SendRequest(static_cast<int>(IThermalSrv::REG_THERMAL_LEVEL_CALLBACK), data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "ThermalSrvProxy::%{public}s SendRequest is failed, error code: %{public}d",
-            __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return;
     }
 }
 
 void ThermalSrvProxy::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::UnSubscribeThermalLevelCallback Enter");
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     sptr<IRemoteObject> remote = Remote();
     THERMAL_RETURN_IF((remote == nullptr) || (callback == nullptr));
 
@@ -116,7 +110,7 @@ void ThermalSrvProxy::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCa
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::%{public}s write descriptor failed!", __func__);
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return;
     }
 
@@ -124,16 +118,14 @@ void ThermalSrvProxy::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCa
 
     int ret = remote->SendRequest(static_cast<int>(IThermalSrv::UNREG_THERMAL_LEVEL_CALLBACK), data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "ThermalSrvProxy::%{public}s SendRequest is failed, error code: %{public}d",
-            __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return;
     }
 }
 
 bool ThermalSrvProxy::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::GetThermalSrvSensorInfo Enter");
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         return false;
@@ -143,7 +135,7 @@ bool ThermalSrvProxy::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrv
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::%{public}s write descriptor failed!", __func__);
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return false;
     }
 
@@ -151,9 +143,7 @@ bool ThermalSrvProxy::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrv
 
     int ret = remote->SendRequest(static_cast<int>(IThermalSrv::GET_SENSOR_INFO), data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "ThermalSrvProxy::%{public}s SendRequest is failed, error code: %{public}d",
-            __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
     }
 
@@ -167,7 +157,7 @@ bool ThermalSrvProxy::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrv
 
 void ThermalSrvProxy::GetThermalLevel(ThermalLevel& level)
 {
-    THERMAL_HILOGD(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::GetThermalLevel Enter");
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         return;
@@ -178,15 +168,13 @@ void ThermalSrvProxy::GetThermalLevel(ThermalLevel& level)
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::%{public}s write descriptor failed!", __func__);
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return;
     }
 
     int ret = remote->SendRequest(static_cast<int>(IThermalSrv::GET_TEMP_LEVEL), data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "ThermalSrvProxy::%{public}s SendRequest is failed, error code: %{public}d",
-            __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return;
     }
     uint32_t thermalLevel;
@@ -206,7 +194,7 @@ std::string ThermalSrvProxy::ShellDump(const std::vector<std::string>& args, uin
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor())) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT, "ThermalSrvProxy::%{public}s write descriptor failed!", __func__);
+        THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return 0;
     }
 
@@ -217,8 +205,7 @@ std::string ThermalSrvProxy::ShellDump(const std::vector<std::string>& args, uin
     int ret = remote->SendRequest(static_cast<int>(IThermalSrv::SHELL_DUMP),
         data, reply, option);
     if (ret != ERR_OK) {
-        THERMAL_HILOGE(MODULE_THERMAL_INNERKIT,
-            "ThermalSrvProxy::%{public}s SendRequest is failed, error code: %{public}d", __func__, ret);
+        THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return result;
     }
     result = reply.ReadString();
