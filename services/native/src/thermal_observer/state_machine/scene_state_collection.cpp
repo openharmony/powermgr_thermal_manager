@@ -49,14 +49,12 @@ void SceneStateCollection::SetRandomScene()
 
 bool SceneStateCollection::InitParam(std::string &params)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     StringOperation::SplitString(params, paramList_, ",");
     return true;
 }
 
 std::string SceneStateCollection::GetState()
 {
-    THERMAL_HILOGD(COMP_SVC, "scene state = %{public}s", mockState_.c_str());
     if (!g_service->GetFlag()) {
         return mockState_;
     } else {
@@ -66,7 +64,6 @@ std::string SceneStateCollection::GetState()
 
 void SceneStateCollection::SceneDecision(uint32_t mode)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     switch (mode) {
         case CAMERA: {
             auto iter = find(paramList_.begin(), paramList_.end(), SCENE_CAMERA);
@@ -96,7 +93,6 @@ void SceneStateCollection::SceneDecision(uint32_t mode)
 
 void SceneStateCollection::SetState()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     char sceneBuf[MAX_PATH] = {0};
     char sceneValue[MAX_PATH] = {0};
     std::string separator = ",";
@@ -104,7 +100,6 @@ void SceneStateCollection::SetState()
     if (snprintf_s(sceneBuf, PATH_MAX, sizeof(sceneBuf) - 1, scenePath.c_str()) < ERR_OK) {
         return;
     }
-    THERMAL_HILOGD(COMP_SVC, "read scene state");
     result = FileOperation::ReadFile(sceneBuf, sceneValue, sizeof(sceneValue));
     if (result != ERR_OK) {
         return;
@@ -114,12 +109,10 @@ void SceneStateCollection::SetState()
     if (postion != std::string::npos) {
         StringOperation::SplitString(mockState_, sceneList_, separator);
     }
-    THERMAL_HILOGI(COMP_SVC, "mockState_=%{public}s", mockState_.c_str());
 }
 
 bool SceneStateCollection::DecideState(const std::string &value)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     bool ret = false;
     bool allRet = false;
     std::string separator = ",";
@@ -128,7 +121,6 @@ bool SceneStateCollection::DecideState(const std::string &value)
 
     std::string::size_type postion = value.find(separator);
     if (postion == std::string::npos) {
-        THERMAL_HILOGI(COMP_SVC, "not found separator");
         return StringOperation::Compare(value, mockState_);
     } else {
         std::vector<std::string> sceneList;
@@ -136,8 +128,6 @@ bool SceneStateCollection::DecideState(const std::string &value)
         for (auto iter = sceneList.begin(); iter != sceneList.end(); iter++) {
             if (sceneList_.empty()) return false;
             auto result = find(sceneList_.begin(), sceneList_.end(), *iter);
-                THERMAL_HILOGI(COMP_SVC, "result=%{public}s, iter=%{public}s",
-                    (*result).c_str(), (*iter).c_str());
             if (result != sceneList_.end()) {
                 ret = true;
             } else {

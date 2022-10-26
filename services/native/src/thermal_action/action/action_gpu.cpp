@@ -34,13 +34,11 @@ void ActionGpu::SetStrict(bool flag)
 
 void ActionGpu::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionGpu::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
@@ -61,7 +59,6 @@ void ActionGpu::Execute()
 
 int32_t ActionGpu::GpuRequest(uint32_t freq)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto thermalInterface = g_service->GetThermalInterface();
     if (thermalInterface != nullptr) {
         int32_t ret = thermalInterface->SetGpuFreq(freq);

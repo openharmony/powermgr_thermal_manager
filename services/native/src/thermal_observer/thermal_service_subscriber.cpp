@@ -73,8 +73,6 @@ void ThermalServiceSubscriber::OnTemperatureChanged(TypeTempMap typeTempMap)
 
 void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
 {
-    THERMAL_HILOGD(COMP_SVC, "SetHistoryTypeTempMap: historyCount_=%{public}d", historyCount_);
-
     for (auto itMap : typeTempMap) {
         auto iter = typeHistoryMap_.find(itMap.first);
         if (iter != typeHistoryMap_.end()) {
@@ -87,7 +85,6 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
         }
     }
     int sec = static_cast<int>(difftime(endTime_, startTime_)) / magnification_;
-    THERMAL_HILOGI(COMP_SVC, "SetHistoryTypeTempMap: sec=%{public}d", sec);
     for (auto history : typeHistoryMap_) {
         double sum = 0;
         double rate = 0;
