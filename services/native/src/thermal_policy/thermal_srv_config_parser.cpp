@@ -112,7 +112,7 @@ void ThermalSrvConfigParser::ParseAuxSensorInfo(const xmlNode *cur, std::shared_
                     std::vector<std::string> auxTempranges;
                     StringOperation::SplitString(auxTriggerRange, auxTempranges, ",");
                     if (auxsensors.size() > auxTempranges.size()) {
-                        THERMAL_HILOGI(COMP_SVC, "The auxiliary sensor does not match the threshold range");
+                        THERMAL_HILOGD(COMP_SVC, "The auxiliary sensor does not match the threshold range");
                         break;
                     }
                     tempRanges = auxTempranges[i];
@@ -210,7 +210,7 @@ void ThermalSrvConfigParser::ParseStateNode(xmlNodePtr node)
             si.isExistParam = true;
         }
         vstateItem.push_back(si);
-        THERMAL_HILOGI(COMP_SVC, "si.name: %{public}s, si.params %{public}s",
+        THERMAL_HILOGD(COMP_SVC, "si.name: %{public}s, si.params %{public}s",
             si.name.c_str(), si.params.c_str());
         cur = cur->next;
     }
@@ -236,7 +236,7 @@ void ThermalSrvConfigParser::ParseActionNode(xmlNodePtr node)
                     ai.strict = true;
                 }
             }
-            THERMAL_HILOGI(COMP_SVC,
+            THERMAL_HILOGD(COMP_SVC,
                 "ai.name: %{public}s, ai.strict: %{public}d, ai.params: %{public}s",
                 ai.name.c_str(), ai.strict, ai.params.c_str());
             vActionItem.push_back(ai);
@@ -270,7 +270,7 @@ void ThermalSrvConfigParser::ParsePolicyNode(xmlNodePtr node)
                 "policyAction.actionNodeName: %{public}s, policyAction.value:%{public}s",
                 policyAction.actionName.c_str(), policyAction.actionValue.c_str());
             if (subNode->properties == nullptr) {
-                THERMAL_HILOGI(COMP_SVC, "action prop is nullptr");
+                THERMAL_HILOGD(COMP_SVC, "action prop is nullptr");
                 policyAction.isProp = false;
             } else {
                 for (auto actionProp = subNode->properties; actionProp != nullptr; actionProp = actionProp->next) {

@@ -44,14 +44,12 @@ void ActionPopup::SetStrict(bool flag)
 
 void ActionPopup::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionPopup::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
@@ -95,7 +93,6 @@ void ActionPopup::HandlePopupEvent(const int32_t value)
 
 bool ActionPopup::ShowDialog(const std::string &params)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     // show dialog
     int pos_x;
     int pos_y;
@@ -118,7 +115,7 @@ bool ActionPopup::ShowDialog(const std::string &params)
         width,
         height,
         [this](int32_t id, const std::string& event, const std::string& params) {
-            THERMAL_HILOGI(COMP_SVC, "Dialog callback: %{public}s, %{public}s",
+            THERMAL_HILOGD(COMP_SVC, "Dialog callback: %{public}s, %{public}s",
                 event.c_str(), params.c_str());
             if (event == "EVENT_CANCEL") {
                 Ace::UIServiceMgrClient::GetInstance()->CancelDialog(id);
@@ -138,10 +135,10 @@ void ActionPopup::GetDisplayPosition(
     }
 
     if (display != nullptr) {
-        THERMAL_HILOGI(COMP_SVC, "display size: %{public}d x %{public}d",
+        THERMAL_HILOGD(COMP_SVC, "display size: %{public}d x %{public}d",
             display->GetWidth(), display->GetHeight());
         if (display->GetWidth() < display->GetHeight()) {
-            THERMAL_HILOGI(COMP_SVC, "share dialog narrow.");
+            THERMAL_HILOGD(COMP_SVC, "share dialog narrow.");
             const int NARROW_WIDTH_N = 3;
             const int NARROW_WIDTH_D = 4;
             const int NARROW_HEIGHT_RATE = 8;
@@ -149,7 +146,7 @@ void ActionPopup::GetDisplayPosition(
             width = display->GetWidth() * NARROW_WIDTH_N / NARROW_WIDTH_D;
             height = display->GetHeight() / NARROW_HEIGHT_RATE;
         } else {
-            THERMAL_HILOGI(COMP_SVC, "share dialog wide.");
+            THERMAL_HILOGD(COMP_SVC, "share dialog wide.");
             const int NARROW_WIDTH_N = 1;
             const int NARROW_WIDTH_D = 3;
             const int NARROW_HEIGHT_RATE = 6;
@@ -160,14 +157,14 @@ void ActionPopup::GetDisplayPosition(
         offsetX = (display->GetWidth() - width) / UI_HALF;
         offsetY = display->GetHeight() - height - UI_DEFAULT_BUTTOM_CLIP;
     } else {
-        THERMAL_HILOGI(COMP_SVC, "dialog get display fail, use default wide.");
+        THERMAL_HILOGD(COMP_SVC, "dialog get display fail, use default wide.");
         wideScreen = false;
         width = UI_DIALOG_POWER_WIDTH_NARROW;
         height = UI_DIALOG_POWER_HEIGHT_NARROW;
         offsetX = (UI_DEFAULT_WIDTH - width) / UI_HALF;
         offsetY = UI_DEFAULT_HEIGHT - height - UI_DEFAULT_BUTTOM_CLIP;
     }
-    THERMAL_HILOGI(COMP_SVC, "GetDisplayPosition: %{public}d, %{public}d (%{public}d x %{public}d)",
+    THERMAL_HILOGD(COMP_SVC, "GetDisplayPosition: %{public}d, %{public}d (%{public}d x %{public}d)",
         offsetX, offsetY, width, height);
 }
 } // namespace PowerMgr

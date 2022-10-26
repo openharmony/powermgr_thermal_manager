@@ -50,18 +50,12 @@ void ActionThermalLevel::SetStrict(bool flag)
 
 void ActionThermalLevel::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
-    for (auto iter : valueList_) {
-        THERMAL_HILOGD(COMP_SVC, "thermallevel=%{public}d", iter);
-    }
 }
 
 void ActionThermalLevel::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "valueList_.size=%{public}zu", valueList_.size());
-
     uint32_t value = laststValue_;
     if (valueList_.empty()) {
         value = 0;
@@ -82,26 +76,22 @@ void ActionThermalLevel::Execute()
 
 bool ActionThermalLevel::Init()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (thermalLevelCBDeathRecipient_ == nullptr) {
         thermalLevelCBDeathRecipient_ = new ThermalLevelCallbackDeathRecipient();
     }
 
-    THERMAL_HILOGD(COMP_SVC, "Exit");
     return true;
 }
 
 int32_t ActionThermalLevel::GetThermalLevel()
 {
-    THERMAL_HILOGD(COMP_SVC, "level = %{public}d", level_);
     return level_;
 }
 
 uint32_t ActionThermalLevel::LevelRequest(int32_t level)
 {
-    THERMAL_HILOGD(COMP_SVC, "level = %{public}d", level);
     if (level_ != level) {
-        THERMAL_HILOGI(COMP_SVC, "level changed, notify");
+        THERMAL_HILOGD(COMP_SVC, "level changed, notify");
         NotifyThermalLevelChanged(level);
     }
     return ERR_OK;
@@ -114,7 +104,6 @@ uint32_t ActionThermalLevel::LevelRequest(int32_t level)
  */
 void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lock(mutex_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -126,7 +115,7 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
     for (auto& listener : thermalLevelListeners_) {
         listener->GetThermalLevel(static_cast<ThermalLevel>(level_));
     }
-    THERMAL_HILOGI(COMP_SVC,
+    THERMAL_HILOGD(COMP_SVC,
         "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, insertOk=%{public}d",
         object.GetRefPtr(), callback.GetRefPtr(),
         static_cast<unsigned int>(thermalLevelListeners_.size()), retIt.second);
@@ -134,7 +123,6 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
 
 void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lock(mutex_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -143,7 +131,7 @@ void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLeve
     if (eraseNum != 0) {
         object->RemoveDeathRecipient(thermalLevelCBDeathRecipient_);
     }
-    THERMAL_HILOGI(COMP_SVC,
+    THERMAL_HILOGD(COMP_SVC,
         "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, eraseNum=%{public}zu",
         object.GetRefPtr(), callback.GetRefPtr(),
         static_cast<unsigned int>(thermalLevelListeners_.size()), eraseNum);
@@ -151,11 +139,10 @@ void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLeve
 
 void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
-    THERMAL_HILOGI(COMP_SVC, "remote = %{public}p", remote.promote().GetRefPtr());
+    THERMAL_HILOGD(COMP_SVC, "remote = %{public}p", remote.promote().GetRefPtr());
     auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (tms == nullptr) {
         return;
@@ -176,11 +163,8 @@ void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const 
  */
 void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
 {
-    THERMAL_HILOGD(COMP_SVC, "level = %{public}d, listeners.size = %{public}d",
-        level, static_cast<unsigned int>(thermalLevelListeners_.size()));
     // Get Thermal Level
     level_ = level;
-    THERMAL_HILOGI(COMP_SVC, "level = %{public}d", level_);
     // Send Notification event
     SendThermalLevelEvents(level_);
 
@@ -199,8 +183,6 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
  */
 bool ActionThermalLevel::PublishEvent(const std::string &eventAction, const int &code, const std::string &data)
 {
-    THERMAL_HILOGI(COMP_SVC, "publish event: %{public}s, code: %{public}d, data:%{public}s",
-        eventAction.c_str(), code, data.c_str());
     Want want;
     want.SetParam(data, code);
     want.SetAction(eventAction);
@@ -219,7 +201,6 @@ bool ActionThermalLevel::PublishEvent(const std::string &eventAction, const int 
 
 bool ActionThermalLevel::PushlishLevelChangedEvents(const int &code, const std::string &data)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     bool ret = PublishEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, code, data);
     if (!ret) {
         THERMAL_HILOGE(COMP_SVC, "publish level event");
@@ -230,7 +211,6 @@ bool ActionThermalLevel::PushlishLevelChangedEvents(const int &code, const std::
 
 void ActionThermalLevel::SendThermalLevelEvents(int32_t level)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     switch (static_cast<ThermalLevel>(level)) {
         case ThermalLevel::COOL: {
             PushlishLevelChangedEvents(level, THERMAL_LEVEL_COOL);

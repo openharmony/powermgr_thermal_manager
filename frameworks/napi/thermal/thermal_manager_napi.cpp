@@ -34,7 +34,7 @@ napi_ref ThermalManagerNapi::thermalLevelConstructor_ = nullptr;
 
 void ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
 {
-    THERMAL_HILOGI(COMP_FWK, "Enter");
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     ThermalManagerNapi *thermalManagerNapi = ThermalManagerNapi::GetThermalManagerNapi();
     if (thermalManagerNapi == nullptr) {
         return;
@@ -65,7 +65,7 @@ ThermalManagerNapi::~ThermalManagerNapi()
 
 void ThermalManagerNapi::OnThermalLevelSucceed(const ThermalLevel &level)
 {
-    THERMAL_HILOGI(COMP_FWK, "level is: %{public}d", static_cast<int32_t>(level));
+    THERMAL_HILOGD(COMP_FWK, "level is: %{public}d", static_cast<int32_t>(level));
     napi_value levelValue;
     NAPI_CALL_RETURN_VOID(env_, napi_create_int32(env_, static_cast<int32_t>(level), &levelValue));
     OnEvent(THERMAL_NAPI_LEVEL_CHANGED, ARG_1, &levelValue);
@@ -122,7 +122,7 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
         nullptr, sizeof(desc) / sizeof(*desc), desc, &result);
     napi_create_reference(env, result, refCount, &thermalLevelConstructor_);
     napi_set_named_property(env, exports, "ThermalLevel", result);
-    THERMAL_HILOGI(COMP_FWK, "Exit");
+    THERMAL_HILOGD(COMP_FWK, "Exit");
     return exports;
 }
 
@@ -136,7 +136,7 @@ napi_value ThermalManagerNapi::EnumThermalLevelConstructor(napi_env env, napi_ca
 
     napi_status status = napi_get_cb_info(env, info, &argc, args, &jsthis, &data);
 
-    THERMAL_HILOGI(COMP_FWK, "EnumThermalLevelConstructor %{public}d", status);
+    THERMAL_HILOGD(COMP_FWK, "EnumThermalLevelConstructor %{public}d", status);
     if (status != napi_ok) {
         return nullptr;
     }
@@ -152,7 +152,7 @@ napi_value ThermalManagerNapi::GetThermalLevel(napi_env env, napi_callback_info 
     int32_t levelValue = static_cast<int32_t>(level);
     NAPI_CALL(env, napi_create_int32(env, levelValue, &napiValue));
 
-    THERMAL_HILOGI(COMP_FWK, "level is %{public}d", levelValue);
+    THERMAL_HILOGD(COMP_FWK, "level is %{public}d", levelValue);
     THERMAL_HILOGD(COMP_FWK, "Exit");
     return napiValue;
 }
@@ -229,13 +229,13 @@ napi_value ThermalManagerNapi::UnSubscribeThermalLevel(napi_env env, napi_callba
         THERMAL_HILOGI(COMP_FWK, "status=%{public}d", status);
         return result;
     }
-    THERMAL_HILOGI(COMP_FWK, "Exit");
+    THERMAL_HILOGD(COMP_FWK, "Exit");
     return result;
 }
 
 void ThermalManagerNapi::RegisterCallback(const std::string &eventType)
 {
-    THERMAL_HILOGI(COMP_FWK, "Enter");
+    THERMAL_HILOGD(COMP_FWK, "Enter");
     if (eventType == THERMAL_NAPI_LEVEL_CHANGED) {
         if (callback_ == nullptr) {
             callback_ = new ThermalLevelCallback();
@@ -245,7 +245,7 @@ void ThermalManagerNapi::RegisterCallback(const std::string &eventType)
             g_thermalMgrClient.SubscribeThermalLevelCallback(callback_);
         }
     }
-    THERMAL_HILOGI(COMP_FWK, "Exit");
+    THERMAL_HILOGD(COMP_FWK, "Exit");
 }
 
 EXTERN_C_START

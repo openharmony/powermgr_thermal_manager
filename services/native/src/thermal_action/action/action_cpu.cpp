@@ -35,14 +35,12 @@ void ActionCpu::SetStrict(bool flag)
 
 void ActionCpu::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionCpu::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
@@ -63,7 +61,6 @@ void ActionCpu::Execute()
 
 int32_t ActionCpu::CpuRuquest(uint32_t freq)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto thermalInterface = g_service->GetThermalInterface();
     if (thermalInterface != nullptr) {
         int32_t ret = thermalInterface->SetCpuFreq(freq);
