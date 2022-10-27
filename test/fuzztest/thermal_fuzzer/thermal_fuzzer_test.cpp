@@ -24,8 +24,6 @@ using namespace OHOS;
 using namespace OHOS::PowerMgr;
 namespace {
 auto &g_thermalMgrClient = ThermalMgrClient::GetInstance();
-constexpr int32_t MIN = 0;
-constexpr int32_t MAX = 3;
 constexpr int32_t WAIT_TIME = 1000;
 }
 
@@ -104,7 +102,7 @@ void ThermalFuzzerTest::TestSubscribeLevel(const uint8_t* data)
 {
     g_thermalMgrClient.SubscribeThermalLevelCallback(levelCb_);
     std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_TIME));
-    TestUnSubscribeTemp();
+    TestUnSubscribeLevel();
 }
 
 void ThermalFuzzerTest::TestUnSubscribeLevel()
@@ -155,7 +153,8 @@ bool ThermalFuzzerTest::DoSomethingInterestingWithMyAPI(const uint8_t* data, siz
         levelCb_ = new ThermalLevelTestCallback();
         std::random_device rd;
         std::default_random_engine engine(rd());
-        std::uniform_int_distribution<int32_t> randomNum(MIN, MAX);
+        std::uniform_int_distribution<int32_t> randomNum(static_cast<int32_t>(ApiNumber::NUM_ZERO),
+            static_cast<int32_t>(ApiNumber::NUM_END) - 1);
         cond[0] = randomNum(engine);
 
         switch (static_cast<ApiNumber>(cond[0])) {
