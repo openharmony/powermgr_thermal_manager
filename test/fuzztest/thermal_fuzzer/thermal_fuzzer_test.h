@@ -49,7 +49,8 @@ enum class ApiNumber : int32_t {
     NUM_TWO,
     NUM_THREE,
     NUM_FOUR,
-    NUM_FIVE
+    NUM_FIVE,
+    NUM_END
 };
 
 class ThermalFuzzerTest {
