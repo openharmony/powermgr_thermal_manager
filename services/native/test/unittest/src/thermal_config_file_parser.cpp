@@ -128,13 +128,13 @@ void ThermalConfigFileParser::ParseBaseNode(xmlNodePtr node)
         BaseItem item;
         xmlChar* xmlTag = xmlGetProp(curNode, BAD_CAST"tag");
         if (xmlTag != nullptr) {
-            item.tag = (char *)xmlTag;
+            item.tag = reinterpret_cast<char*>(xmlTag);
             xmlFree(xmlTag);
         }
 
         xmlChar* xmlValue = xmlGetProp(curNode, BAD_CAST"value");
         if (xmlValue != nullptr) {
-            item.value = (char *)xmlValue;
+            item.value = reinterpret_cast<char*>(xmlValue);
             xmlFree(xmlValue);
         }
         baseInfoMap_.emplace(item.tag, item.value);
@@ -152,14 +152,14 @@ void ThermalConfigFileParser::ParseLevelNode(xmlNodePtr node)
         std::shared_ptr<ThermalConfigSensorCluster> sc = std::make_shared<ThermalConfigSensorCluster>();
         xmlChar* xmlName = xmlGetProp(curNode, BAD_CAST"name");
         if (xmlName != nullptr) {
-            name = (char *)xmlName;
+            name = reinterpret_cast<char*>(xmlName);
             xmlFree(xmlName);
         }
         ParseAuxSensorInfo(curNode, sc);
         ParseSensorInfo(curNode, sc);
         xmlChar* desc = xmlGetProp(curNode, BAD_CAST("desc"));
         if (desc != nullptr) {
-            std::string descValue = (char *)desc;
+            std::string descValue = reinterpret_cast<char*>(desc);
             if (atoi(descValue.c_str()) == 1) {
                 sc->SetDescFlag(true);
             }
@@ -177,13 +177,13 @@ void ThermalConfigFileParser::ParseStateNode(xmlNodePtr node)
         StateItem si;
         xmlChar* xmlName = xmlGetProp(curNode, BAD_CAST"name");
         if (xmlName != nullptr) {
-            si.name = (char *)xmlName;
+            si.name = reinterpret_cast<char*>(xmlName);
             xmlFree(xmlName);
         }
 
         xmlChar* param = xmlGetProp(curNode, BAD_CAST("param"));
         if (param != nullptr) {
-            si.params =(char *)param;
+            si.params = reinterpret_cast<char*>(param);
             si.isExistParam = true;
             xmlFree(param);
         }
@@ -202,28 +202,28 @@ void ThermalConfigFileParser::ParseActionNode(xmlNodePtr node)
             ActionItem ai;
             xmlChar* xmlName = xmlGetProp(curNode, BAD_CAST"name");
             if (xmlName != nullptr) {
-                ai.name = (char *)xmlName;
+                ai.name = reinterpret_cast<char*>(xmlName);
                 xmlFree(xmlName);
             }
             xmlChar* param = xmlGetProp(curNode, BAD_CAST("param"));
             if (param != nullptr) {
-                ai.params = (char *) param;
+                ai.params = reinterpret_cast<char*>(param);
                 xmlFree(param);
             }
             xmlChar* protocol = xmlGetProp(curNode, BAD_CAST("protocol"));
             if (protocol != nullptr) {
-                ai.protocol = (char *) protocol;
+                ai.protocol = reinterpret_cast<char*>(protocol);
                 xmlFree(protocol);
             }
             xmlChar* strict = xmlGetProp(curNode, BAD_CAST("strict"));
             if (strict != nullptr) {
-                std::string strictValue = (char *)strict;
+                std::string strictValue = reinterpret_cast<char*>(strict);
                 ai.strict = atoi(strictValue.c_str()) == 1 ? true : false;
                 xmlFree(strict);
             }
             xmlChar* event = xmlGetProp(curNode, BAD_CAST("event"));
             if (event != nullptr) {
-                std::string eventValue = (char *)event;
+                std::string eventValue = reinterpret_cast<char*>(event);
                 ai.enableEvent = atoi(eventValue.c_str()) == 1 ? true : false;
                 xmlFree(event);
             }
@@ -246,13 +246,13 @@ void ThermalConfigFileParser::ParsePolicyNode(xmlNodePtr node)
         std::string clusterName;
         xmlChar* xmlName = xmlGetProp(curNode, BAD_CAST"name");
         if (xmlName != nullptr) {
-            clusterName = (char *)xmlName;
+            clusterName = reinterpret_cast<char*>(xmlName);
             xmlFree(xmlName);
         }
 
         xmlChar* xmlLevel = xmlGetProp(curNode, BAD_CAST"level");
         if (xmlLevel != nullptr) {
-            uint32_t level = static_cast<uint32_t>(atoi((char *)xmlLevel));
+            uint32_t level = static_cast<uint32_t>(atoi(reinterpret_cast<char*>(xmlLevel)));
             policyConfig.level = level;
             THERMAL_HILOGD(LABEL_TEST, "policyConfig.name: %{public}s, policyConfig.level:%{public}d",
                 clusterName.c_str(), level);
@@ -281,25 +281,25 @@ void ThermalConfigFileParser::ParseIdleNode(xmlNodePtr node)
         if (!xmlStrcmp(subNode->name, BAD_CAST"thermallevel")) {
             xmlChar* value = xmlNodeGetContent(subNode);
             if (value != nullptr) {
-                idleState.level = atoi((char *)value);
+                idleState.level = atoi(reinterpret_cast<char*>(value));
                 xmlFree(value);
             }
         } else if (!xmlStrcmp(subNode->name, BAD_CAST"soc")) {
             xmlChar* value = xmlNodeGetContent(subNode);
             if (value != nullptr) {
-                idleState.soc = atoi((char *)value);
+                idleState.soc = atoi(reinterpret_cast<char*>(value));
                 xmlFree(value);
             }
         } else if (!xmlStrcmp(subNode->name, BAD_CAST"charging")) {
             xmlChar* value = xmlNodeGetContent(subNode);
             if (value != nullptr) {
-                idleState.charging = atoi((char *)value);
+                idleState.charging = atoi(reinterpret_cast<char*>(value));
                 xmlFree(value);
             }
         } else if (!xmlStrcmp(subNode->name, BAD_CAST"current")) {
             xmlChar* value = xmlNodeGetContent(subNode);
             if (value != nullptr) {
-                idleState.current = atoi((char *)value);
+                idleState.current = atoi(reinterpret_cast<char*>(value));
                 xmlFree(value);
             }
         } else {
@@ -316,7 +316,7 @@ void ThermalConfigFileParser::ParseAuxSensorInfo(const xmlNode* cur, std::shared
     if (auxSensorInfo != nullptr) {
         std::vector<std::string> auxSensorList;
         AuxSensorInfoMap auxSensorLevelInfo;
-        std::string auxSensor = (char *)auxSensorInfo;
+        std::string auxSensor = reinterpret_cast<char*>(auxSensorInfo);
         sc->SetAuxFlag(true);
         StringOperation::SplitString(auxSensor, auxSensorList, ",");
         for (uint32_t i = 0; i < auxSensorList.size(); i++) {
@@ -338,7 +338,7 @@ void ThermalConfigFileParser::ParseSensorInfo(const xmlNode* cur, std::shared_pt
     std::vector<std::string> sensors;
     xmlChar* xmlSensor = xmlGetProp(cur, BAD_CAST"sensor");
     if (xmlSensor != nullptr) {
-        StringOperation::SplitString((char *)xmlSensor, sensors, ",");
+        StringOperation::SplitString(reinterpret_cast<char*>(xmlSensor), sensors, ",");
         for (uint32_t i = 0; i < sensors.size(); i++) {
             std::string sensorType = sensors.at(i);
             std::vector<LevelItem> vItem;
@@ -355,9 +355,6 @@ std::vector<AuxLevelItem> ThermalConfigFileParser::ParseAuxSensorSubnodeInfo(con
 {
     std::vector<AuxLevelItem> auxItems;
     for (auto subNode = cur->children; subNode != nullptr; subNode = subNode->next) {
-        if (subNode == nullptr) {
-            continue;
-        }
         std::string tempRanges;
         AuxLevelItem auxlevelItem;
         if (ParseAuxSensorSubnodeInfoTrigerRange(subNode, auxSensorList, tempRanges, i) == false) {
@@ -370,7 +367,7 @@ std::vector<AuxLevelItem> ThermalConfigFileParser::ParseAuxSensorSubnodeInfo(con
         auxlevelItem.upperTemp = atoi(tempRiseRanges[1].c_str());
         xmlChar* xmlLevel = xmlGetProp(subNode, BAD_CAST("level"));
         if (xmlLevel != nullptr) {
-            auxlevelItem.level = atoi((char *)xmlLevel);
+            auxlevelItem.level = atoi(reinterpret_cast<char*>(xmlLevel));
             xmlFree(xmlLevel);
         }
         THERMAL_HILOGD(LABEL_TEST, "aux_trigger_range: %{public}s",
@@ -387,7 +384,7 @@ bool ThermalConfigFileParser::ParseAuxSensorSubnodeInfoTrigerRange(const xmlNode
 {
     xmlChar* xmlTriggerRange = xmlGetProp(subNode, BAD_CAST("aux_trigger_range"));
     if (xmlTriggerRange != nullptr) {
-        std::string auxTriggerRange = (char *)xmlTriggerRange;
+        std::string auxTriggerRange = reinterpret_cast<char*>(xmlTriggerRange);
         if (!auxTriggerRange.empty()) {
             std::vector<std::string> auxTempranges;
             StringOperation::SplitString(auxTriggerRange, auxTempranges, ",");
@@ -413,15 +410,14 @@ void ThermalConfigFileParser::ParseSensorSubnodeInfo(const xmlNode* cur, std::ve
         LevelItem levelItem;
         std::vector<std::string> thresholds;
         std::vector<std::string> thresholdClrs;
-        std::vector<std::string> rates;
         xmlChar* xmlThreshold = xmlGetProp(subNode, BAD_CAST("threshold"));
         if (xmlThreshold != nullptr) {
-            StringOperation::SplitString((char *)xmlThreshold, thresholds, ",");
+            StringOperation::SplitString(reinterpret_cast<char*>(xmlThreshold), thresholds, ",");
             xmlFree(xmlThreshold);
         }
         xmlChar* xmlThresholdClr = xmlGetProp(subNode, BAD_CAST("threshold_clr"));
         if (xmlThresholdClr != nullptr) {
-            StringOperation::SplitString((char *)xmlThresholdClr, thresholdClrs, ",");
+            StringOperation::SplitString(reinterpret_cast<char*>(xmlThresholdClr), thresholdClrs, ",");
             xmlFree(xmlThresholdClr);
         }
         if (sensors.size() > thresholds.size() || sensors.size() > thresholdClrs.size()) {
@@ -430,7 +426,7 @@ void ThermalConfigFileParser::ParseSensorSubnodeInfo(const xmlNode* cur, std::ve
         }
         xmlChar* xmlLevel = xmlGetProp(subNode, BAD_CAST("level"));
         if (xmlLevel != nullptr) {
-            levelItem.level = static_cast<uint32_t>(atoi(((char *)xmlLevel)));
+            levelItem.level = static_cast<uint32_t>(atoi(reinterpret_cast<char*>(xmlLevel)));
             xmlFree(xmlLevel);
         }
 
@@ -438,8 +434,9 @@ void ThermalConfigFileParser::ParseSensorSubnodeInfo(const xmlNode* cur, std::ve
         levelItem.thresholdClr = atoi(thresholdClrs.at(i).c_str());
         xmlChar* tempRiseRates = xmlGetProp(subNode, BAD_CAST("temp_rise_rate"));
         if (tempRiseRates != nullptr) {
+            std::vector<std::string> rates;
             sc->SetRateFlag(true);
-            StringOperation::SplitString((char *)tempRiseRates, rates, ",");
+            StringOperation::SplitString(reinterpret_cast<char*>(tempRiseRates), rates, ",");
             if (sensors.size() > rates.size()) {
                 break;
             }
@@ -453,14 +450,11 @@ void ThermalConfigFileParser::ParseSensorSubnodeInfo(const xmlNode* cur, std::ve
 void ThermalConfigFileParser::ParsePolicySubnode(const xmlNode* cur, PolicyConfig& policyConfig)
 {
     for (auto subNode = cur->children; subNode != nullptr; subNode = subNode->next) {
-        if (subNode == nullptr) {
-            continue;
-        }
         PolicyAction policyAction;
-        policyAction.actionName = (char *)subNode->name;
+        policyAction.actionName = reinterpret_cast<const char*>(subNode->name);
         xmlChar* xmlActionValue = xmlNodeGetContent(subNode);
         if (xmlActionValue != nullptr) {
-            policyAction.actionValue = (char *)xmlActionValue;
+            policyAction.actionValue = reinterpret_cast<char*>(xmlActionValue);
             THERMAL_HILOGD(LABEL_TEST,
                 "policyAction.actionNodeName: %{public}s, policyAction.value:%{public}s",
                 policyAction.actionName.c_str(), policyAction.actionValue.c_str());
@@ -474,10 +468,10 @@ void ThermalConfigFileParser::ParsePolicySubnode(const xmlNode* cur, PolicyConfi
             continue;
         }
         for (auto actionProp = subNode->properties; actionProp != nullptr; actionProp = actionProp->next) {
-            std::string propName = (char *)actionProp->name;
+            std::string propName = reinterpret_cast<const char*>(actionProp->name);
             xmlChar* xmlPropValue = xmlGetProp(subNode, actionProp->name);
             if (xmlPropValue != nullptr) {
-                std::string propValue = (char *)xmlPropValue;
+                std::string propValue = reinterpret_cast<char*>(xmlPropValue);
                 THERMAL_HILOGD(LABEL_TEST, "propName.name: %{public}s, propValue:%{public}s",
                     propName.c_str(), propValue.c_str());
                 policyAction.mActionProp.emplace(std::pair(propName, propValue));
