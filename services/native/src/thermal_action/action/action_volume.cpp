@@ -123,7 +123,7 @@ int32_t ActionVolume::VolumeRequest(float volume)
     std::string uid;
     std::vector<std::string> uidList;
     g_actionInfo = g_service->GetActionManagerObj()->GetActionItem();
-    const auto& item = std::find_if(g_actionInfo.begin(), g_actionInfo.end(), [](auto& info) {
+    const auto& item = std::find_if(g_actionInfo.begin(), g_actionInfo.end(), [](const auto& info) {
         return info.name == "volume";
     });
     uid = (item != g_actionInfo.end()) ? item->uid : uid;

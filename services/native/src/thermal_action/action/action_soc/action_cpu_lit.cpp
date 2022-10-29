@@ -107,10 +107,9 @@ void ActionCpuLit::Execute()
 
 int32_t ActionCpuLit::CpuRuquest(uint32_t freq)
 {
-    std::vector<int32_t> tags;
-    std::vector<int64_t> configs;
-
     if (!g_service->GetSimulationXml()) {
+        std::vector<int32_t> tags;
+        std::vector<int64_t> configs;
         tags.push_back(LIM_CPU_LIT_ID);
         configs.push_back(freq);
         OHOS::SOCPERF::SocPerfClient::GetInstance().LimitRequest(ACTION_TYPE_THERMAL_ID, tags, configs, "");
