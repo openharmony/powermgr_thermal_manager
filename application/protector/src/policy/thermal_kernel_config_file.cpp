@@ -70,11 +70,11 @@ void ThermalKernelConfigFile::ParserBaseNode(xmlNodePtr node)
         xmlChar* xmlTag = xmlGetProp(cur, BAD_CAST"tag");
         xmlChar* xmlValue = xmlGetProp(cur, BAD_CAST"value");
         if (xmlTag != nullptr) {
-            baseItem.tag = (char *)xmlTag;
+            baseItem.tag = reinterpret_cast<char*>(xmlTag);
             xmlFree(xmlTag);
         }
         if (xmlValue != nullptr) {
-            baseItem.value = (char *)xmlValue;
+            baseItem.value = reinterpret_cast<char*>(xmlValue);
             xmlFree(xmlValue);
         }
         vBase.push_back(baseItem);
@@ -93,19 +93,19 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
         std::shared_ptr<ProtectorThermalZoneInfo> tzinfo = std::make_shared<ProtectorThermalZoneInfo>();
         xmlChar* xmlType = xmlGetProp(cur, BAD_CAST"type");
         if (xmlType != nullptr) {
-            type = (char *)xmlType;
+            type = reinterpret_cast<char*>(xmlType);
             xmlFree(xmlType);
         }
         xmlChar* xmlInterval = xmlGetProp(cur, BAD_CAST"interval");
         if (xmlInterval != nullptr) {
-            int32_t interval = atoi((char *)xmlInterval);
+            int32_t interval = atoi(reinterpret_cast<char*>(xmlInterval));
             tzinfo->SetInterval(interval);
             xmlFree(xmlInterval);
         }
 
         xmlChar* desc = xmlGetProp(cur, BAD_CAST"desc");
         if (desc != nullptr) {
-            std::string value = (char *)desc;
+            std::string value = reinterpret_cast<char*>(desc);
             if (atoi(value.c_str()) == 1) {
                 tzinfo->SetDesc(true);
             }
@@ -141,26 +141,26 @@ void ThermalKernelConfigFile::ParseSubNode(xmlNodePtr cur, std::vector<ThermalZo
         ThermalZoneInfoItem tziItem;
         xmlChar* xmlThreshold = xmlGetProp(subNode, BAD_CAST"threshold");
         if (xmlThreshold != nullptr) {
-            tziItem.threshold= atoi((char*)xmlThreshold);
+            tziItem.threshold= atoi(reinterpret_cast<char*>(xmlThreshold));
             xmlFree(xmlThreshold);
         }
         xmlChar* xmlThresholdClr = xmlGetProp(subNode, BAD_CAST"threshold_clr");
         if (xmlThresholdClr != nullptr) {
-            tziItem.thresholdClr = atoi((char*)xmlThresholdClr);
+            tziItem.thresholdClr = atoi(reinterpret_cast<char*>(xmlThresholdClr));
             xmlFree(xmlThresholdClr);
         }
         xmlChar* xmlLevel = xmlGetProp(subNode, BAD_CAST"level");
         if (xmlLevel != nullptr) {
-            tziItem.level = static_cast<uint32_t>(atoi((char*)xmlLevel));
+            tziItem.level = static_cast<uint32_t>(atoi(reinterpret_cast<char*>(xmlLevel)));
             levelAction.level = tziItem.level;
             xmlFree(xmlLevel);
         }
         for (auto subActionNode = subNode->children; subActionNode; subActionNode = subActionNode->next) {
             ActionItem action;
-            action.name = (char *)subActionNode->name;
+            action.name = reinterpret_cast<const char*>(subActionNode->name);
             xmlChar* xmlValue = xmlNodeGetContent(subActionNode);
             if (xmlValue != nullptr) {
-                action.value = static_cast<uint32_t>(atoi((char *)xmlValue));
+                action.value = static_cast<uint32_t>(atoi(reinterpret_cast<char*>(xmlValue)));
                 xmlFree(xmlValue);
             }
             levelAction.vAction.push_back(action);

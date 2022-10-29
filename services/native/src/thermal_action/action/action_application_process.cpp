@@ -181,7 +181,7 @@ RunningProcessInfo ActionApplicationProcess::GetAppProcessInfoByName(const std::
     RunningProcessInfo appProcessInfo;
     appProcessInfo.pid_ = 0;
     if (ERR_OK == GetRunningProcessInfo(allAppProcessInfos_)) {
-        const auto& it = std::find_if(allAppProcessInfos_.begin(), allAppProcessInfos_.end(), [&](auto& info) {
+        const auto& it = std::find_if(allAppProcessInfos_.begin(), allAppProcessInfos_.end(), [&](const auto& info) {
             return processName == info.processName_;
         });
         appProcessInfo = (it != allAppProcessInfos_.end()) ? *it : appProcessInfo;
