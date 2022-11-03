@@ -46,13 +46,11 @@ void ActionShutdown::SetStrict(bool flag)
 
 void ActionShutdown::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     valuesList_.push_back(atoi(value.c_str()));
 }
 
 void ActionShutdown::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t value = lastValue_;
     if (valuesList_.empty()) {
         value = 0;
@@ -77,17 +75,15 @@ void ActionShutdown::Execute()
 
 uint32_t ActionShutdown::ShutdownRequest(bool isShutdown)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (isShutdown) {
         PowerMgrClient::GetInstance().ShutDownDevice(SHUTDOWN_REASON);
-        THERMAL_HILOGI(COMP_SVC, "device start shutdown");
+        THERMAL_HILOGD(COMP_SVC, "device start shutdown");
     }
     return ERR_OK;
 }
 
 uint32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char shutdownBuf[MAX_PATH] = {0};
     ret = snprintf_s(shutdownBuf, PATH_MAX, sizeof(shutdownBuf) - 1, shutdownPath.c_str());
@@ -104,7 +100,6 @@ uint32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 
 uint32_t ActionShutdown::DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t delay = 50000;
     auto handler = g_service->GetHandler();
     if (handler == nullptr) {
@@ -115,7 +110,7 @@ uint32_t ActionShutdown::DelayShutdown(bool isShutdown, int32_t temp, int32_t th
         return ERR_INVALID_VALUE;
     }
     auto shutDownTask = [&]() {
-        THERMAL_HILOGI(COMP_SVC, "shutdown run");
+        THERMAL_HILOGD(COMP_SVC, "shutdown run");
         ShutdownRequest(isShutdown);
         runner->Stop();
     };

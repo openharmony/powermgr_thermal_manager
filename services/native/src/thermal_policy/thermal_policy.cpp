@@ -96,8 +96,6 @@ void ThermalPolicy::WriteLevel()
 
 void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevelMap)
 {
-    THERMAL_HILOGD(COMP_SVC, "policySize = %{public}zu, clusterSize = %{public}zu",
-        clusterPolicyMap_.size(), clusterLevelMap.size());
     for (auto clusterPolicy = clusterPolicyMap_.begin(); clusterPolicy != clusterPolicyMap_.end(); clusterPolicy++) {
         if (clusterPolicy->first.empty() && clusterPolicy->second.empty()) {
             continue;
@@ -182,7 +180,6 @@ bool ThermalPolicy::StateMachineDecision(std::map<std::string, std::string> &sta
 
 bool ThermalPolicy::ActionExecution()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     auto actionMgr = g_service->GetActionManagerObj();
     if (actionMgr == nullptr) {
         return false;
