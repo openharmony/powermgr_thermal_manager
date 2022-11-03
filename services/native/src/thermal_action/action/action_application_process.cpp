@@ -40,7 +40,6 @@ const int MAX_PATH = 256;
 }
 bool ActionApplicationProcess::Init()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppMgrClient>();
     }
@@ -60,14 +59,12 @@ void ActionApplicationProcess::SetStrict(bool flag)
 
 void ActionApplicationProcess::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) return;
     valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionApplicationProcess::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t value = lastValue_;
     if (valueList_.empty()) {
         value = 0;
@@ -104,11 +101,10 @@ ErrCode ActionApplicationProcess::KillApplicationAction(const std::string &bundl
 
 ErrCode ActionApplicationProcess::GetRunningProcessInfo(std::vector<RunningProcessInfo> &info)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     ErrCode result = ERR_OK;
     result = appMgrClient_->GetAllRunningProcesses(info);
     if (result == ERR_OK) {
-        THERMAL_HILOGI(COMP_SVC, "get running process info successfully.");
+        THERMAL_HILOGD(COMP_SVC, "get running process info successfully.");
     } else {
         THERMAL_HILOGE(COMP_SVC, "failed to get running process info.");
     }
@@ -117,13 +113,12 @@ ErrCode ActionApplicationProcess::GetRunningProcessInfo(std::vector<RunningProce
 
 ErrCode ActionApplicationProcess::KillProcess(const pid_t pid)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     if (pid > 0) {
-        THERMAL_HILOGI(COMP_SVC, "KillProcess: kill pid %{public}d", pid);
+        THERMAL_HILOGD(COMP_SVC, "KillProcess: kill pid %{public}d", pid);
         ret = kill(pid, SIGNAL_KILL);
         if (ret == ERR_OK) {
-            THERMAL_HILOGI(COMP_SVC, "KillProcess: success kill");
+            THERMAL_HILOGD(COMP_SVC, "KillProcess: success kill");
         } else {
             THERMAL_HILOGE(COMP_SVC, "KillProcess: failed to kill");
         }
@@ -216,7 +211,6 @@ void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t &value)
 
 void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t &value)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char processBuf[MAX_PATH] = {0};
     ret = snprintf_s(processBuf, PATH_MAX, sizeof(processBuf) - 1, processPath.c_str());

@@ -64,7 +64,7 @@ void ThermalService::OnStart()
         return;
     }
     ready_ = true;
-    THERMAL_HILOGI(COMP_SVC, "OnStart and add system ability success");
+    THERMAL_HILOGD(COMP_SVC, "OnStart and add system ability success");
 }
 
 bool ThermalService::Init()
@@ -108,7 +108,7 @@ bool ThermalService::Init()
     if (!InitModules()) {
         return false;
     }
-    THERMAL_HILOGI(COMP_SVC, "Init success");
+    THERMAL_HILOGD(COMP_SVC, "Init success");
     return true;
 }
 
@@ -206,7 +206,7 @@ bool ThermalService::InitThermalObserver()
     if (info_ == nullptr) {
         info_ = std::make_shared<ThermalSensorInfo>();
     }
-    THERMAL_HILOGI(COMP_SVC, "InitThermalObserver: Init Success");
+    THERMAL_HILOGD(COMP_SVC, "InitThermalObserver: Init Success");
     return true;
 }
 
@@ -268,7 +268,7 @@ void ThermalService::SubscribeThermalTempCallback(const std::vector<std::string>
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
+    THERMAL_HILOGD(COMP_SVC, "uid %{public}d", uid);
     observer_->SubscribeThermalTempCallback(typeList, callback);
 }
 
@@ -276,7 +276,7 @@ void ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallb
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
+    THERMAL_HILOGD(COMP_SVC, "uid %{public}d", uid);
     observer_->UnSubscribeThermalTempCallback(callback);
 }
 
@@ -284,7 +284,7 @@ bool ThermalService::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvS
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!(observer_->GetThermalSrvSensorInfo(type, sensorInfo))) {
-            THERMAL_HILOGI(COMP_SVC, "failed to get temp for sensor type");
+            THERMAL_HILOGD(COMP_SVC, "failed to get temp for sensor type");
             return false;
     }
     return true;
@@ -294,7 +294,7 @@ void ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallb
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
+    THERMAL_HILOGD(COMP_SVC, "uid %{public}d", uid);
     actionMgr_->SubscribeThermalLevelCallback(callback);
 }
 
@@ -302,7 +302,7 @@ void ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCal
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
+    THERMAL_HILOGD(COMP_SVC, "uid %{public}d", uid);
     actionMgr_->UnSubscribeThermalLevelCallback(callback);
 }
 
@@ -415,10 +415,10 @@ std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint
     }
     std::lock_guard<std::mutex> lock(mutex_);
     pid_t pid = IPCSkeleton::GetCallingPid();
-    THERMAL_HILOGI(COMP_SVC, "PID: %{public}d!", pid);
+    THERMAL_HILOGD(COMP_SVC, "PID: %{public}d!", pid);
     std::string result;
     bool ret = ThermalMgrDumper::Dump(args, result);
-    THERMAL_HILOGI(COMP_SVC, "ThermalMgrDumper :%{public}d", ret);
+    THERMAL_HILOGD(COMP_SVC, "ThermalMgrDumper :%{public}d", ret);
     return result;
 }
 } // namespace PowerMgr
