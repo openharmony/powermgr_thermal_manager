@@ -30,7 +30,6 @@ public:
     void InitParams(const std::string& protocol) override;
     virtual void SetStrict(bool flag) override;
     virtual void SetEnableEvent(bool enable) override;
-    virtual void SetXmlScene(const std::string& scene, const std::string& value) override;
     virtual void AddActionValue(std::string value) override;
     virtual void Execute() override;
     int32_t SetVoltage(int32_t voltage);

@@ -30,7 +30,7 @@ namespace PowerMgr {
 namespace {
 constexpr int PARAM_MAX_NUM = 10;
 }
-int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
+int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
     THERMAL_HILOGD(COMP_SVC,
         "ThermalSrvStub::OnRemoteRequest, cmd = %{public}d, flags = %{public}d",
@@ -77,6 +77,9 @@ int32_t ThermalSrvStub::CheckRequestCode(const uint32_t code, MessageParcel& dat
         case static_cast<int>(IThermalSrv::GET_TEMP_LEVEL): {
             return GetThermalevelStub(reply);
         }
+        case static_cast<int>(IThermalSrv::GET_THERMAL_INFO): {
+            return GetThermalInfoStub(reply);
+        }
         case static_cast<int>(IThermalSrv::SET_SCENE): {
             return SetSceneStub(data);
         }
@@ -116,7 +119,7 @@ int32_t ThermalSrvStub::UnSubscribeThermalTempCallbackStub(MessageParcel& data)
     return ERR_OK;
 }
 
-int32_t ThermalSrvStub::SubscribeThermalLevelCallbackStub(MessageParcel &data)
+int32_t ThermalSrvStub::SubscribeThermalLevelCallbackStub(MessageParcel& data)
 {
     THERMAL_HILOGD(COMP_SVC, "SubscribeThermalLevelCallbackStub Enter");
     sptr<IRemoteObject> obj = data.ReadRemoteObject();
@@ -127,7 +130,7 @@ int32_t ThermalSrvStub::SubscribeThermalLevelCallbackStub(MessageParcel &data)
     return ERR_OK;
 }
 
-int32_t ThermalSrvStub::UnSubscribeThermalLevelCallbackStub(MessageParcel &data)
+int32_t ThermalSrvStub::UnSubscribeThermalLevelCallbackStub(MessageParcel& data)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     sptr<IRemoteObject> obj = data.ReadRemoteObject();
@@ -138,7 +141,7 @@ int32_t ThermalSrvStub::UnSubscribeThermalLevelCallbackStub(MessageParcel &data)
     return ERR_OK;
 }
 
-int32_t ThermalSrvStub::SubscribeThermalActionCallbackStub(MessageParcel &data)
+int32_t ThermalSrvStub::SubscribeThermalActionCallbackStub(MessageParcel& data)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     sptr<IRemoteObject> obj = data.ReadRemoteObject();
@@ -170,7 +173,7 @@ int32_t ThermalSrvStub::UnSubscribeThermalActionCallbackStub(MessageParcel& data
     return ERR_OK;
 }
 
-int32_t ThermalSrvStub::GetThermalSrvSensorInfoStub(MessageParcel &data, MessageParcel &reply)
+int32_t ThermalSrvStub::GetThermalSrvSensorInfoStub(MessageParcel& data, MessageParcel& reply)
 {
     ThermalSrvSensorInfo sensorInfo;
     uint32_t type = 0;
@@ -194,6 +197,18 @@ int32_t ThermalSrvStub::GetThermalevelStub(MessageParcel& reply)
     ThermalLevel level;
     GetThermalLevel(level);
     THERMAL_WRITE_PARCEL_WITH_RET(reply, Uint32, static_cast<uint32_t>(level), ERR_OK);
+    return ERR_OK;
+}
+
+int32_t ThermalSrvStub::GetThermalInfoStub(MessageParcel& reply)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    bool ret = false;
+    ret = GetThermalInfo();
+    if (!reply.WriteBool(ret)) {
+        THERMAL_HILOGE(COMP_FWK, "WriteBool fail");
+        return E_READ_PARCEL_ERROR_THERMAL;
+    }
     return ERR_OK;
 }
 

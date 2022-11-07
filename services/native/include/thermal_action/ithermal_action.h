@@ -16,6 +16,7 @@
 #ifndef ITHERMAL_ACTION_H
 #define ITHERMAL_ACTION_H
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -31,11 +32,25 @@ public:
     virtual void InitParams(const std::string& params) = 0;
     virtual void SetStrict(bool flag) = 0;
     virtual void SetEnableEvent(bool enable) = 0;
-    virtual void SetXmlScene(const std::string& scene, const std::string& value) = 0;
+    virtual void SetXmlScene(const std::string& scene, const std::string& value)
+    {
+        for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
+            if (iter->first == scene) {
+                if (iter->second != value) {
+                    iter->second = value;
+                }
+                return;
+            }
+        }
+        g_sceneMap.insert(std::make_pair(scene, value));
+    }
+
     virtual void AddActionValue(std::string value) = 0;
     virtual void Execute() = 0;
+
 protected:
     std::string actionName_ = "";
+    std::map<std::string, std::string> g_sceneMap;
 };
 } // namespace PowerMgr
 } // namespace OHOS
