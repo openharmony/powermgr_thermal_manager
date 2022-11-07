@@ -34,7 +34,6 @@ namespace PowerMgr {
 namespace {
 constexpr const char* TASK_UNREG_THERMAL_LEVEL_CALLBACK = "ThermalLevel_UnRegThermalLevelpCB";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-std::map<std::string, std::string> g_sceneMap;
 }
 int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::COOL);
 std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> ActionThermalLevel::thermalLevelListeners_;
@@ -59,21 +58,6 @@ void ActionThermalLevel::SetStrict(bool flag)
 void ActionThermalLevel::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
-}
-
-void ActionThermalLevel::SetXmlScene(const std::string& scene, const std::string& value)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (iter->first == scene) {
-            if (iter->second != value) {
-                iter->second = value;
-            }
-            return;
-        }
-    }
-
-    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionThermalLevel::AddActionValue(std::string value)

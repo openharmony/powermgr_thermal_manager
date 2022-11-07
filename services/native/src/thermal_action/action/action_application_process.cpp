@@ -39,7 +39,6 @@ const int32_t SIGNAL_KILL = 9;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* PROCESS_PATH = "/data/service/el0/thermal/config/process_ctrl";
 const int MAX_PATH = 256;
-std::map<std::string, std::string> g_sceneMap;
 }
 ActionApplicationProcess::ActionApplicationProcess(const std::string& actionName)
 {
@@ -67,21 +66,6 @@ void ActionApplicationProcess::SetStrict(bool flag)
 void ActionApplicationProcess::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
-}
-
-void ActionApplicationProcess::SetXmlScene(const std::string& scene, const std::string& value)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (iter->first == scene) {
-            if (iter->second != value) {
-                iter->second = value;
-            }
-            return;
-        }
-    }
-
-    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionApplicationProcess::AddActionValue(std::string value)
@@ -135,7 +119,7 @@ void ActionApplicationProcess::Execute()
     }
 }
 
-ErrCode ActionApplicationProcess::KillApplicationAction(const std::string &bundleName)
+ErrCode ActionApplicationProcess::KillApplicationAction(const std::string& bundleName)
 {
     int result = ERR_OK;
     result = appMgrClient_->KillApplication(bundleName);
@@ -147,7 +131,7 @@ ErrCode ActionApplicationProcess::KillApplicationAction(const std::string &bundl
     return result;
 }
 
-ErrCode ActionApplicationProcess::GetRunningProcessInfo(std::vector<RunningProcessInfo> &info)
+ErrCode ActionApplicationProcess::GetRunningProcessInfo(std::vector<RunningProcessInfo>& info)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     ErrCode result = ERR_OK;
@@ -176,7 +160,7 @@ ErrCode ActionApplicationProcess::KillProcess(const pid_t pid)
     return ret;
 }
 
-RunningProcessInfo ActionApplicationProcess::GetAppProcessInfoByName(const std::string &processName)
+RunningProcessInfo ActionApplicationProcess::GetAppProcessInfoByName(const std::string& processName)
 {
     RunningProcessInfo appProcessInfo;
     appProcessInfo.pid_ = 0;
@@ -193,7 +177,7 @@ RunningProcessInfo ActionApplicationProcess::GetAppProcessInfoByName(const std::
 void ActionApplicationProcess::GetAllRunnningAppProcess()
 {
     if (ERR_OK == GetRunningProcessInfo(allAppProcessInfos_)) {
-        for (const auto &info : allAppProcessInfos_) {
+        for (const auto& info : allAppProcessInfos_) {
             if (info.state_ ==  AppProcessState::APP_STATE_BACKGROUND) {
                 bgAppProcessInfos_.push_back(info);
             } else if (info.state_ == AppProcessState::APP_STATE_FOREGROUND) {
@@ -230,12 +214,12 @@ void ActionApplicationProcess::KillAllAppProcess()
     }
 }
 
-void ActionApplicationProcess::KillService(const std::string &serviceName)
+void ActionApplicationProcess::KillService(const std::string& serviceName)
 {
     system(("kill -9 $(pidof " + serviceName + ") > /dev/null 2>&1").c_str());
 }
 
-void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t &value)
+void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t& value)
 {
     THERMAL_HILOGD(COMP_SVC, "value: %{public}d", value);
     GetAllRunnningAppProcess();
@@ -258,7 +242,7 @@ void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t &value)
     }
 }
 
-void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t &value)
+void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t& value)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
