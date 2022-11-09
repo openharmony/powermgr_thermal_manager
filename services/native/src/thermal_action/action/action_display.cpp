@@ -73,6 +73,7 @@ void ActionDisplay::Execute()
             THERMAL_HILOGD(COMP_SVC, "value is not change");
         }
         WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
         lastValue_ = value;
         return;
     }
@@ -95,6 +96,7 @@ void ActionDisplay::Execute()
             DisplayExecution(value);
         }
         WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
     }
 }
