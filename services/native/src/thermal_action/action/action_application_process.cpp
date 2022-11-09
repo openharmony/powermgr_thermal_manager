@@ -108,6 +108,7 @@ void ActionApplicationProcess::Execute()
             THERMAL_HILOGD(COMP_SVC, "value is not change");
         }
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
         lastValue_ = value;
         valueList_.clear();
         return;
@@ -131,6 +132,7 @@ void ActionApplicationProcess::Execute()
             ProcessAppActionRequest(value);
         }
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
     }
 }

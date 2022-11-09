@@ -24,7 +24,7 @@ namespace OHOS {
 namespace PowerMgr {
 class IThermalActionCallback : public IRemoteBroker {
 public:
-    using ActionCallbackMap = std::map<std::string, int32_t>;
+    using ActionCallbackMap = std::map<std::string, float>;
     enum {
         THERMAL_ACTION_CHANGD = 0,
     };
