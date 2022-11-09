@@ -30,7 +30,8 @@ namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* TASK_UNREG_SENSOR_TEMP_CALLBACK = "SensorTemp_UnRegSensorTempCB";
 constexpr const char* TASK_UNREG_ACTION_CALLBACK = "Action_UnRegActionCB";
-std::map<sptr<IThermalActionCallback>, std::map<std::string, int32_t>> g_actionLastCbMap;
+std::map<sptr<IThermalActionCallback>, std::map<std::string, float>> g_actionLastCbMap;
+std::map<std::string, float> g_actionMap;
 }
 ThermalObserver::ThermalObserver(const wptr<ThermalService>& tms) : tms_(tms) {};
 ThermalObserver::~ThermalObserver() {};
@@ -168,7 +169,7 @@ void ThermalObserver::UnSubscribeThermalActionCallback(const sptr<IThermalAction
         object.GetRefPtr(), callback.GetRefPtr(), static_cast<uint32_t>(actionListeners_.size()), eraseNum);
 }
 
-void ThermalObserver::FindSubscribeActionValue(const std::map<std::string, int32_t>& xmlActionMap)
+void ThermalObserver::FindSubscribeActionValue()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     IThermalActionCallback::ActionCallbackMap newActionCbMap;
@@ -181,7 +182,7 @@ void ThermalObserver::FindSubscribeActionValue(const std::map<std::string, int32
         auto actionIter = callbackActionMap_.find(listener);
         if (actionIter != callbackActionMap_.end()) {
             THERMAL_HILOGD(COMP_SVC, "find callback.");
-            DecisionActionValue(actionIter->second, xmlActionMap, newActionCbMap);
+            DecisionActionValue(actionIter->second, newActionCbMap);
         }
 
         NotifyActionChanged(listener, newActionCbMap);
@@ -190,16 +191,28 @@ void ThermalObserver::FindSubscribeActionValue(const std::map<std::string, int32
 }
 
 void ThermalObserver::DecisionActionValue(const std::vector<std::string>& actionList,
-    const std::map<std::string, int32_t>& xmlActionMap, IThermalActionCallback::ActionCallbackMap& newActionCbMap)
+    IThermalActionCallback::ActionCallbackMap& newActionCbMap)
 {
     for (const auto& action : actionList) {
         THERMAL_HILOGD(COMP_SVC, "subscribe action is %{public}s.", action.c_str());
-        for (auto xmlIter = xmlActionMap.begin(); xmlIter != xmlActionMap.end(); ++xmlIter) {
+        for (auto xmlIter = g_actionMap.begin(); xmlIter != g_actionMap.end(); ++xmlIter) {
             THERMAL_HILOGD(COMP_SVC, "xml action is %{public}s.", xmlIter->first.c_str());
             if (action == xmlIter->first) {
                 newActionCbMap.insert(std::make_pair(action, xmlIter->second));
             }
         }
+    }
+    g_actionMap.clear();
+}
+
+void ThermalObserver::SetDecisionValue(const std::string& actionName, const std::string& actionValue)
+{
+    THERMAL_HILOGD(COMP_SVC, "actionName = %{public}s, actionValue = %{public}f", actionName.c_str(), std::stof(actionValue));
+    auto iter = g_actionMap.find(actionName);
+    if (iter != g_actionMap.end()) {
+        iter->second = std::stof(actionValue);
+    } else {
+        g_actionMap.insert(std::make_pair(actionName, std::stof(actionValue)));
     }
 }
 

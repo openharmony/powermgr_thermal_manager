@@ -44,7 +44,6 @@ public:
     void TearDown();
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
     static int32_t ReadFile(const char *path, char *buf, size_t size);
-    static int32_t ConvertInt(const std::string &value);
     void InitData();
 
     class ThermalActionTest1Callback : public ThermalActionCallbackStub {
@@ -65,6 +64,27 @@ public:
     public:
         ThermalActionTest3Callback() {};
         virtual ~ThermalActionTest3Callback() {};
+        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+    };
+
+    class ThermalActionTest4Callback : public ThermalActionCallbackStub {
+    public:
+        ThermalActionTest4Callback() {};
+        virtual ~ThermalActionTest4Callback() {};
+        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+    };
+
+    class ThermalActionTest5Callback : public ThermalActionCallbackStub {
+    public:
+        ThermalActionTest5Callback() {};
+        virtual ~ThermalActionTest5Callback() {};
+        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+    };
+
+    class ThermalActionTest6Callback : public ThermalActionCallbackStub {
+    public:
+        ThermalActionTest6Callback() {};
+        virtual ~ThermalActionTest6Callback() {};
         virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
     };
 };
