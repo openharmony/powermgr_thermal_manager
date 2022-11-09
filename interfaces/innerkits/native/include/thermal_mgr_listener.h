@@ -18,9 +18,9 @@
 
 #include <memory>
 
+#include "ithermal_level_callback.h"
 #include "thermal_level_callback_stub.h"
 #include "thermal_level_info.h"
-#include "ithermal_level_callback.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -38,7 +38,8 @@ public:
     public:
         explicit ThermalLevelCallback(std::shared_ptr<ThermalMgrListener> listener) : listener_(listener) {};
         virtual ~ThermalLevelCallback() {};
-        void GetThermalLevel(ThermalLevel level) override;
+        bool GetThermalLevel(ThermalLevel level) override;
+
     private:
         std::weak_ptr<ThermalMgrListener> listener_;
     };
@@ -47,6 +48,7 @@ public:
     int32_t UnSubscribeLevelEvent();
     ThermalLevel GetThermalLevel();
     friend class ThermalLevelCallback;
+
 private:
     void RegisterServiceEvent();
     void UnRegisterServiceEvent();
@@ -57,6 +59,6 @@ private:
 enum class ChargeIdleEventCode : uint32_t {
     EVENT_CODE_CHARGE_IDLE_STATE = 0,
 };
-} // namespace Msdp
+} // namespace PowerMgr
 } // namespace OHOS
 #endif // THERMAL_MGR_LISTENER_H

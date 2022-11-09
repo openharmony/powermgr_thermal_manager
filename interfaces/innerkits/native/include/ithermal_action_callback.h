@@ -16,9 +16,9 @@
 #ifndef ITHERMAL_ACTION_CALLBACK_H
 #define ITHERMAL_ACTION_CALLBACK_H
 
-#include <map>
 #include <iremote_broker.h>
 #include <iremote_object.h>
+#include <map>
 
 namespace OHOS {
 namespace PowerMgr {
@@ -29,10 +29,10 @@ public:
         THERMAL_ACTION_CHANGD = 0,
     };
 
-    virtual void OnThermalActionChanged(ActionCallbackMap& actionCbMap) = 0;
+    virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) = 0;
 
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalActionCallback");
 };
-} // PowerMgr
-} // OHOS
+} // namespace PowerMgr
+} // namespace OHOS
 #endif //  ITHERMAL_ACTION_CALLBACK_H

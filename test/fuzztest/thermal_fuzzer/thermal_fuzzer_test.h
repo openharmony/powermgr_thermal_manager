@@ -18,40 +18,32 @@
 #ifndef THERMAL_FUZZER_TEST_H
 #define THERMAL_FUZZER_TEST_H
 
-#include <cstdio>
-#include <ctime>
-#include <cstdlib>
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
 #include <fcntl.h>
 #include <iostream>
 #include <random>
+#include <securec.h>
 #include <string>
 #include <thread>
-#include <securec.h>
 
 #include "ithermal_action_callback.h"
 #include "ithermal_level_callback.h"
 #include "ithermal_temp_callback.h"
 #include "securec.h"
-#include "thermal_mgr_client.h"
 #include "thermal_action_callback_stub.h"
-#include "thermal_temp_callback_stub.h"
 #include "thermal_level_callback_stub.h"
+#include "thermal_mgr_client.h"
+#include "thermal_temp_callback_stub.h"
 
 #define FUZZ_PROJECT_NAME "fault_fuzzer"
 
 namespace OHOS {
 namespace PowerMgr {
-enum class ApiNumber : int32_t {
-    NUM_ZERO = 0,
-    NUM_ONE,
-    NUM_TWO,
-    NUM_THREE,
-    NUM_FOUR,
-    NUM_FIVE,
-    NUM_END
-};
+enum class ApiNumber : int32_t { NUM_ZERO = 0, NUM_ONE, NUM_TWO, NUM_THREE, NUM_FOUR, NUM_FIVE, NUM_END };
 
 class ThermalFuzzerTest {
 public:
@@ -70,21 +62,21 @@ public:
     public:
         ThermalTempTestCallback() {};
         virtual ~ThermalTempTestCallback() {};
-        virtual void OnThermalTempChanged(TempCallbackMap &tempCbMap) override;
+        virtual bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override;
     };
     class ThermalLevelTestCallback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTestCallback() {};
         virtual ~ThermalLevelTestCallback() {};
-        virtual void GetThermalLevel(ThermalLevel level) override;
+        virtual bool GetThermalLevel(ThermalLevel level) override;
     };
     class ThermalActionTestCallback : public ThermalActionCallbackStub {
     public:
         ThermalActionTestCallback() {};
         virtual ~ThermalActionTestCallback() {};
-        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 };
-}
-}
+} // namespace PowerMgr
+} // namespace OHOS
 #endif // THERMAL_FUZZER_TEST_H

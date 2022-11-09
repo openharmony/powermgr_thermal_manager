@@ -17,24 +17,24 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <datetime_ex.h>
+#include <fcntl.h>
+#include <gtest/gtest.h>
 #include <iostream>
+#include <ipc_skeleton.h>
 #include <list>
 #include <mutex>
 #include <string>
-#include <fcntl.h>
-#include <unistd.h>
-#include <datetime_ex.h>
-#include <gtest/gtest.h>
-#include <ipc_skeleton.h>
 #include <string_ex.h>
+#include <unistd.h>
 
+#include "constants.h"
 #include "ithermal_srv.h"
 #include "securec.h"
 #include "mock_thermal_mgr_client.h"
+#include "thermal_common.h"
 #include "thermal_mgr_client.h"
 #include "thermal_srv_sensor_info.h"
-#include "constants.h"
-#include "thermal_common.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -44,11 +44,11 @@ using namespace std;
 namespace {
 static std::mutex g_mtx;
 std::vector<std::string> typelist;
-}
+} // namespace
 
 int32_t ThermalMgrInterfaceTest::WriteFile(std::string path, std::string buf, size_t size)
 {
-    FILE *stream = fopen(path.c_str(), "w+");
+    FILE* stream = fopen(path.c_str(), "w+");
     if (stream == nullptr) {
         return ERR_INVALID_VALUE;
     }
@@ -68,7 +68,7 @@ int32_t ThermalMgrInterfaceTest::WriteFile(std::string path, std::string buf, si
     return ERR_OK;
 }
 
-int32_t ThermalMgrInterfaceTest::ReadFile(const char *path, char *buf, size_t size)
+int32_t ThermalMgrInterfaceTest::ReadFile(const char* path, char* buf, size_t size)
 {
     int32_t ret;
 
@@ -90,26 +90,18 @@ int32_t ThermalMgrInterfaceTest::ReadFile(const char *path, char *buf, size_t si
     return ERR_OK;
 }
 
-int32_t ThermalMgrInterfaceTest::ConvertInt(const std::string &value)
+int32_t ThermalMgrInterfaceTest::ConvertInt(const std::string& value)
 {
     return std::stoi(value);
 }
 
-void ThermalMgrInterfaceTest::SetUpTestCase()
-{
-}
+void ThermalMgrInterfaceTest::SetUpTestCase() {}
 
-void ThermalMgrInterfaceTest::TearDownTestCase()
-{
-}
+void ThermalMgrInterfaceTest::TearDownTestCase() {}
 
-void ThermalMgrInterfaceTest::SetUp()
-{
-}
+void ThermalMgrInterfaceTest::SetUp() {}
 
-void ThermalMgrInterfaceTest::TearDown()
-{
-}
+void ThermalMgrInterfaceTest::TearDown() {}
 
 void ThermalMgrInterfaceTest::InitData()
 {
@@ -117,49 +109,54 @@ void ThermalMgrInterfaceTest::InitData()
     typelist.push_back(SOC);
 }
 
-void ThermalMgrInterfaceTest::ThermalTempTest1Callback::OnThermalTempChanged(TempCallbackMap &tempCbMap)
+bool ThermalMgrInterfaceTest::ThermalTempTest1Callback::OnThermalTempChanged(TempCallbackMap& tempCbMap)
 {
     int assertValue = 0;
     for (auto iter : tempCbMap) {
         THERMAL_HILOGD(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first.c_str(), iter.second);
         EXPECT_EQ(true, iter.second >= assertValue) << "Test Failed";
     }
+    return true;
 }
 
-void ThermalMgrInterfaceTest::ThermalTempTest2Callback::OnThermalTempChanged(TempCallbackMap &tempCbMap)
+bool ThermalMgrInterfaceTest::ThermalTempTest2Callback::OnThermalTempChanged(TempCallbackMap& tempCbMap)
 {
     int assertValue = 0;
     for (auto iter : tempCbMap) {
         THERMAL_HILOGD(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first.c_str(), iter.second);
         EXPECT_EQ(true, iter.second >= assertValue) << "Test Failed";
     }
+    return true;
 }
 
-void ThermalMgrInterfaceTest::ThermalLevelTest1Callback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrInterfaceTest::ThermalLevelTest1Callback::GetThermalLevel(ThermalLevel level)
 {
     int assertMin = -1;
     int assertMax = 6;
     int32_t levelValue = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
+    return true;
 }
 
-void ThermalMgrInterfaceTest::ThermalLevelTest2Callback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrInterfaceTest::ThermalLevelTest2Callback::GetThermalLevel(ThermalLevel level)
 {
     int assertMin = -1;
     int assertMax = 6;
     int32_t levelValue = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
+    return true;
 }
 
-void ThermalMgrInterfaceTest::ThermalLevelTest3Callback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrInterfaceTest::ThermalLevelTest3Callback::GetThermalLevel(ThermalLevel level)
 {
     int assertMin = -1;
     int assertMax = 6;
     int32_t levelValue = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
+    return true;
 }
 
 namespace {
@@ -373,7 +370,6 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest007, TestSize.Level0)
     thermalMgrClient.UnSubscribeThermalTempCallback(cb1);
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest007 end.");
 }
-
 
 /**
  * @tc.name: ThermalMgrInterfaceTest008
@@ -617,13 +613,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest015, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_OK);
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
-    temp  = -10000;
+    temp = -10000;
     sTemp = to_string(temp) + "\n";
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
-    temp  = 46000;
+    temp = 46000;
     sTemp = to_string(temp) + "\n";
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
@@ -826,4 +822,4 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest024, TestSize.Level0)
     thermalMgrClient.UnSubscribeThermalLevelCallback(cb);
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest024 end.");
 }
-}
+} // namespace

@@ -16,30 +16,30 @@
 #ifndef THERMAL_SERVICE_H
 #define THERMAL_SERVICE_H
 
-#include <memory>
 #include "delayed_sp_singleton.h"
-#include "system_ability.h"
 #include "iremote_object.h"
+#include "system_ability.h"
+#include <memory>
 
 #include "action_popup.h"
-#include "thermal_srv_stub.h"
 #include "ithermal_level_callback.h"
 #include "ithermal_temp_callback.h"
 #include "thermal_srv_sensor_info.h"
+#include "thermal_srv_stub.h"
 #include "thermalsrv_event_handler.h"
 
-#include "thermal_observer.h"
-#include "thermal_sensor_info.h"
-#include "thermal_service_subscriber.h"
-#include "thermal_policy.h"
+#include "hdi_service_status_listener.h"
 #include "state_machine.h"
 #include "thermal_action_manager.h"
+#include "thermal_callback.h"
 #include "thermal_config_base_info.h"
 #include "thermal_config_sensor_cluster.h"
-#include "thermal_callback.h"
-#include "hdi_service_status_listener.h"
-#include "v1_0/thermal_types.h"
+#include "thermal_observer.h"
+#include "thermal_policy.h"
+#include "thermal_sensor_info.h"
+#include "thermal_service_subscriber.h"
 #include "v1_0/ithermal_interface.h"
+#include "v1_0/thermal_types.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -49,23 +49,24 @@ using namespace OHOS::HDI::ServiceManager::V1_0;
 class ThermalService final : public SystemAbility, public ThermalSrvStub {
     DECLARE_SYSTEM_ABILITY(ThermalService);
     DECLARE_DELAYED_SP_SINGLETON(ThermalService);
+
 public:
     virtual void OnStart() override;
     virtual void OnStop() override;
     virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     virtual int32_t Dump(int fd, const std::vector<std::u16string>& args) override;
-    void SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
-        const sptr<IThermalTempCallback>& callback) override;
-    void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) override;
-    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
-    void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
-    void SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
-       const std::string& desc, const sptr<IThermalActionCallback>& callback) override;
-    void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) override;
+    bool SubscribeThermalTempCallback(
+        const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback) override;
+    bool UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) override;
+    bool SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
+    bool UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
+    bool SubscribeThermalActionCallback(const std::vector<std::string>& actionList, const std::string& desc,
+        const sptr<IThermalActionCallback>& callback) override;
+    bool UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) override;
     bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo) override;
-    void GetThermalLevel(ThermalLevel& level) override;
+    bool GetThermalLevel(ThermalLevel& level) override;
     bool GetThermalInfo() override;
-    void SetScene(const std::string& scene) override;
+    bool SetScene(const std::string& scene) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
     void HandleEvent(int event);
@@ -174,7 +175,7 @@ private:
     std::shared_ptr<AppExecFwk::EventRunner> eventRunner_ {nullptr};
     std::shared_ptr<ThermalsrvEventHandler> handler_ {nullptr};
     std::shared_ptr<ThermalServiceSubscriber> serviceSubscriber_ {nullptr};
-    std::shared_ptr<ThermalObserver> observer_ {nullptr} ;
+    std::shared_ptr<ThermalObserver> observer_ {nullptr};
     std::shared_ptr<ThermalSensorInfo> info_ {nullptr};
     std::shared_ptr<ThermalPolicy> policy_ {nullptr};
     std::shared_ptr<ThermalConfigBaseInfo> baseInfo_ {nullptr};

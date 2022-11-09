@@ -14,15 +14,16 @@
  */
 
 #include "thermal_mgr_listener.h"
-#include "thermal_mgr_client.h"
 #include "thermal_common.h"
+#include "thermal_mgr_client.h"
 
 namespace OHOS {
 namespace PowerMgr {
-void ThermalMgrListener::ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrListener::ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
 {
     std::shared_ptr<ThermalMgrListener> listener = listener_.lock();
     listener->levelEvent_->OnThermalLevelResult(level);
+    return true;
 }
 
 void ThermalMgrListener::RegisterServiceEvent()
