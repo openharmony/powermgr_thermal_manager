@@ -16,9 +16,9 @@
 #ifndef THERMAL_ACTION_HUB_TEST_H
 #define THERMAL_ACTION_HUB_TEST_H
 
-#include <gtest/gtest.h>
 #include "ithermal_action_callback.h"
 #include "thermal_action_callback_stub.h"
+#include <gtest/gtest.h>
 
 namespace OHOS {
 namespace PowerMgr {
@@ -33,49 +33,49 @@ public:
     void SetUp();
     void TearDown();
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
-    static int32_t ReadFile(const char *path, char *buf, size_t size);
+    static int32_t ReadFile(const char* path, char* buf, size_t size);
     void InitData();
 
     class ThermalActionTest1Callback : public ThermalActionCallbackStub {
     public:
         ThermalActionTest1Callback() {};
         virtual ~ThermalActionTest1Callback() {};
-        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 
     class ThermalActionTest2Callback : public ThermalActionCallbackStub {
     public:
         ThermalActionTest2Callback() {};
         virtual ~ThermalActionTest2Callback() {};
-        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 
     class ThermalActionTest3Callback : public ThermalActionCallbackStub {
     public:
         ThermalActionTest3Callback() {};
         virtual ~ThermalActionTest3Callback() {};
-        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 
     class ThermalActionTest4Callback : public ThermalActionCallbackStub {
     public:
         ThermalActionTest4Callback() {};
         virtual ~ThermalActionTest4Callback() {};
-        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 
     class ThermalActionTest5Callback : public ThermalActionCallbackStub {
     public:
         ThermalActionTest5Callback() {};
         virtual ~ThermalActionTest5Callback() {};
-        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 
     class ThermalActionTest6Callback : public ThermalActionCallbackStub {
     public:
         ThermalActionTest6Callback() {};
         virtual ~ThermalActionTest6Callback() {};
-        virtual void OnThermalActionChanged(ActionCallbackMap &actionCbMap) override;
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 };
 } // namespace PowerMgr
