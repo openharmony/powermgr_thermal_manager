@@ -16,13 +16,13 @@
 #ifndef THERMAL_LEVEL_CALLBACK_STUB_H
 #define THERMAL_LEVEL_CALLBACK_STUB_H
 
+#include "ithermal_level_callback.h"
+#include "message_option.h"
+#include "refbase.h"
+#include "thermal_level_info.h"
 #include <cstdint>
 #include <iremote_stub.h>
 #include <nocopyable.h>
-#include "refbase.h"
-#include "message_option.h"
-#include "thermal_level_info.h"
-#include "ithermal_level_callback.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -31,8 +31,11 @@ public:
     DISALLOW_COPY_AND_MOVE(ThermalLevelCallbackStub);
     ThermalLevelCallbackStub() = default;
     virtual ~ThermalLevelCallbackStub() = default;
-    int OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
-    void GetThermalLevel(ThermalLevel __attribute__((unused))level) override {}
+    int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
+    bool GetThermalLevel(ThermalLevel __attribute__((unused)) level) override
+    {
+        return true;
+    }
 
 private:
     int32_t GetThermalLevelStub(MessageParcel& data);

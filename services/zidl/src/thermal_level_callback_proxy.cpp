@@ -14,16 +14,16 @@
  */
 
 #include "thermal_level_callback_proxy.h"
+#include "thermal_common.h"
 #include <ipc_types.h>
 #include <message_parcel.h>
-#include "thermal_common.h"
 
 namespace OHOS {
 namespace PowerMgr {
-void ThermalLevelCallbackProxy::GetThermalLevel(ThermalLevel level)
+bool ThermalLevelCallbackProxy::GetThermalLevel(ThermalLevel level)
 {
     sptr<IRemoteObject> remote = Remote();
-    THERMAL_RETURN_IF(remote == nullptr);
+    THERMAL_RETURN_IF_WITH_RET((remote == nullptr), false);
 
     MessageParcel data;
     MessageParcel reply;
@@ -31,15 +31,17 @@ void ThermalLevelCallbackProxy::GetThermalLevel(ThermalLevel level)
 
     if (!data.WriteInterfaceToken(ThermalLevelCallbackProxy::GetDescriptor())) {
         THERMAL_HILOGE(COMP_FWK, "ThermalLevelCallbackProxy::GetThermalLevel write descriptor failed!");
-        return;
+        return false;
     }
 
-    THERMAL_WRITE_PARCEL_NO_RET(data, Int32, static_cast<int32_t>(level));
+    THERMAL_WRITE_PARCEL_WITH_RET(data, Int32, static_cast<int32_t>(level), false);
 
     int ret = remote->SendRequest(static_cast<int>(IThermalLevelCallback::GET_THERMAL_LEVEL), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
+        return false;
     }
+    return true;
 }
 } // namespace PowerMgr
 } // namespace OHOS

@@ -58,16 +58,16 @@ void ThermalLevelCallback::ReleaseCallback()
     env_ = nullptr;
 }
 
-void ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
+bool ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
 {
     std::lock_guard lock(mutex_);
     level_ = level;
-    THERMAL_RETURN_IF_WITH_LOG(env_ == nullptr, "env is nullptr");
+    THERMAL_RETURN_IF_WITH_RET(env_ == nullptr, false);
     uv_loop_s* loop = nullptr;
     napi_get_uv_event_loop(env_, &loop);
-    THERMAL_RETURN_IF_WITH_LOG(loop == nullptr, "napi_get_uv_event_loop loop is null");
+    THERMAL_RETURN_IF_WITH_RET(loop == nullptr, false);
     uv_work_t* work = new (std::nothrow) uv_work_t;
-    THERMAL_RETURN_IF_WITH_LOG(work == nullptr, "uv_work_t work is null");
+    THERMAL_RETURN_IF_WITH_RET(work == nullptr, false);
     work->data = reinterpret_cast<void*>(this);
 
     int32_t ret = uv_queue_work(
@@ -84,7 +84,9 @@ void ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
         delete work;
         work = nullptr;
         THERMAL_HILOGW(COMP_FWK, "uv_queue_work is failed");
+        return false;
     }
+    return true;
 }
 
 void ThermalLevelCallback::OnThermalLevel()

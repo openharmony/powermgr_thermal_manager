@@ -22,6 +22,8 @@ config("module_private_config") {
   include_dirs = [
     "../mock_client/include",
     "include",
+    "mock/include",
+    "${utils_path}/native/include",
     "${thermal_service_zidl}/include",
     "${ability_runtime_services_path}/appmgr/include",
     "${thermal_innerkits}/native/include",
@@ -33,8 +35,10 @@ deps_ex = [
   "ability_base:want",
   "battery_manager:batterysrv_client",
   "bundle_framework:appexecfwk_base",
+  "c_utils:utils",
   "eventhandler:libeventhandler",
   "ipc:ipc_core",
+  "hdf_core:libhdi",
   "hiviewdfx_hilog_native:libhilog",
   "power_manager:powermgr_client",
   "safwk:system_ability_fwk",
@@ -168,13 +172,355 @@ ohos_unittest("ThermalActionReportTest") {
   external_deps = deps_ex
 }
 
+# thermal mock proxy test
+ohos_unittest("ThermalMockProxyTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_proxy_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal mock proxy remote test
+ohos_unittest("ThermalMockProxyRemoteTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_peer_holder.cpp",
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_proxy_remote_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal mock proxy writeinterfacetoken test
+ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_message_parcel.cpp",
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_proxy_writeinterfacetoken_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  defines = [ "MOCK_WRITE_INTERFACE_TOKEN_RETURN_FALSE" ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal mock proxy writeremoteobject test
+ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_message_parcel.cpp",
+    "mock/src/mock_parcel.cpp",
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_proxy_writeremoteobject_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  defines = [ "MOCK_WRITE_REMOTE_OBJECT_RETURN_FALSE" ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal mock proxy writevector test
+ohos_unittest("ThermalMockProxyWritevectorTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_message_parcel.cpp",
+    "mock/src/mock_parcel.cpp",
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_proxy_writevector_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  defines = [ "MOCK_WRITEVECTOR_RETURN_FALSE" ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal mock proxy sendrequest test
+ohos_unittest("ThermalMockProxySendrequestTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_message_parcel.cpp",
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_proxy_sendrequest_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  defines = [ "MOCK_SEND_REQUEST_RETURN_ONE" ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal utils test
+ohos_unittest("ThermalUtilsTest") {
+  module_out_path = module_output_path
+
+  sources = [ "src/thermal_utils_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal client test
+ohos_unittest("ThermalClientTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "${thermal_frameworks}/native/thermal_mgr_client.cpp",
+    "${utils_path}/native/src/thermal_hisysevent.cpp",
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_client_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalmgr_listener",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+    "//third_party/libxml2:libxml2",
+  ]
+
+  external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "appspawn:appspawn_socket_client",
+    "battery_manager:batterysrv_client",
+    "bundle_framework:appexecfwk_base",
+    "c_utils:utils",
+    "common_event_service:cesfwk_innerkits",
+    "drivers_interface_thermal:libthermal_proxy_1.0",
+    "eventhandler:libeventhandler",
+    "hdf_core:libhdi",
+    "hisysevent_native:libhisysevent",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "power_manager:powermgr_client",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+    "window_manager:libwm",
+  ]
+}
+
+# thermal mock stub test
+ohos_unittest("ThermalMockStubTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_stub_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal mock stub getdescriptor test
+ohos_unittest("ThermalMockStubGetdescriptorTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_message_parcel.cpp",
+    "mock/src/mock_parcel.cpp",
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_stub_getdescriptor_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal mock stub readstring test
+ohos_unittest("ThermalMockStubReadstringTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "mock/src/mock_message_parcel.cpp",
+    "mock/src/mock_parcel.cpp",
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_mock_stub_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  defines = [
+    "MOCK_READ_RETURN_ZERO",
+    "MOCK_READSTRING_RETURN_TRUE",
+    "MOCK_READSTRING16_RETURN_NULL",
+    "MOCK_WRITEVECTOR_RETURN_TRUE",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
 group("unittest") {
   testonly = true
   deps = [
     ":ThermalActionHubTest",
     ":ThermalActionReportTest",
     ":ThermalClientApiTest",
+    ":ThermalClientTest",
     ":ThermalLevelEventTest",
+    ":ThermalMockProxyRemoteTest",
+    ":ThermalMockProxySendrequestTest",
+    ":ThermalMockProxyTest",
+    ":ThermalMockProxyWriteinterfacetokenTest",
+    ":ThermalMockProxyWriteremoteobjectTest",
+    ":ThermalMockProxyWritevectorTest",
+    ":ThermalMockStubGetdescriptorTest",
+    ":ThermalMockStubReadstringTest",
+    ":ThermalMockStubTest",
     ":ThermalPolicyTest",
+    ":ThermalUtilsTest",
   ]
 }

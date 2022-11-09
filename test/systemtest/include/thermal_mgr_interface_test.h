@@ -16,11 +16,11 @@
 #ifndef THERMAL_MGR_INTERFACE_TEST_H
 #define THERMAL_MGR_INTERFACE_TEST_H
 
-#include <gtest/gtest.h>
-#include "ithermal_temp_callback.h"
 #include "ithermal_level_callback.h"
-#include "thermal_temp_callback_stub.h"
+#include "ithermal_temp_callback.h"
 #include "thermal_level_callback_stub.h"
+#include "thermal_temp_callback_stub.h"
+#include <gtest/gtest.h>
 
 namespace OHOS {
 namespace PowerMgr {
@@ -46,43 +46,43 @@ public:
     void SetUp();
     void TearDown();
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
-    static int32_t ReadFile(const char *path, char *buf, size_t size);
-    static int32_t ConvertInt(const std::string &value);
+    static int32_t ReadFile(const char* path, char* buf, size_t size);
+    static int32_t ConvertInt(const std::string& value);
     void InitData();
 
     class ThermalTempTest1Callback : public ThermalTempCallbackStub {
     public:
         ThermalTempTest1Callback() {};
         virtual ~ThermalTempTest1Callback() {};
-        virtual void OnThermalTempChanged(TempCallbackMap &tempCbMap) override;
+        virtual bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override;
     };
 
     class ThermalTempTest2Callback : public ThermalTempCallbackStub {
     public:
         ThermalTempTest2Callback() {};
         virtual ~ThermalTempTest2Callback() {};
-        virtual void OnThermalTempChanged(TempCallbackMap &tempCbMap) override;
+        virtual bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override;
     };
 
     class ThermalLevelTest1Callback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTest1Callback() {};
         virtual ~ThermalLevelTest1Callback() {};
-        virtual void GetThermalLevel(ThermalLevel level) override;
+        virtual bool GetThermalLevel(ThermalLevel level) override;
     };
 
     class ThermalLevelTest2Callback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTest2Callback() {};
         virtual ~ThermalLevelTest2Callback() {};
-        virtual void GetThermalLevel(ThermalLevel level) override;
+        virtual bool GetThermalLevel(ThermalLevel level) override;
     };
 
     class ThermalLevelTest3Callback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTest3Callback() {};
         virtual ~ThermalLevelTest3Callback() {};
-        virtual void GetThermalLevel(ThermalLevel level) override;
+        virtual bool GetThermalLevel(ThermalLevel level) override;
     };
 };
 } // namespace PowerMgr
