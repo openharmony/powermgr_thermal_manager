@@ -16,6 +16,17 @@ import("//build/test.gni")
 
 module_output_path = "thermal_manager/thermal_native"
 
+###############################################################################
+config("module_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "include",
+    "mock",
+    "${thermal_service_zidl}/include",
+    "${ability_runtime_services_path}/appmgr/include",
+  ]
+}
+
 deps_ex = [
   "appspawn:appspawn_socket_client",
   "ability_base:base",
@@ -121,10 +132,31 @@ ohos_systemtest("ThermalMgrDialogTest") {
   external_deps = deps_ex
 }
 
+ohos_systemtest("ThermalLevelEventSystemTest") {
+  module_out_path = module_output_path
+
+  sources = [ "src/thermal_level_event_system_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
+    "//third_party/googletest:gtest_main",
+  ]
+  external_deps = deps_ex
+}
+
 group("systemtest") {
   testonly = true
 
   deps = [
+    ":ThermalLevelEventSystemTest",
     ":ThermalMgrDialogTest",
     ":ThermalMgrInterfaceTest",
     ":ThermalMgrSystemTest",
