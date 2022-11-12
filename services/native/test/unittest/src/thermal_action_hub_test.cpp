@@ -86,17 +86,14 @@ int32_t ThermalActionHubTest::ReadFile(const char *path, char *buf, size_t size)
     return ERR_OK;
 }
 
-int32_t ThermalActionHubTest::ConvertInt(const std::string &value)
-{
-    return std::stoi(value);
-}
-
 void ThermalActionHubTest::SetUpTestCase()
 {
 }
 
 void ThermalActionHubTest::TearDownTestCase()
 {
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    thermalMgrClient.SetScene("");
 }
 
 void ThermalActionHubTest::SetUp()
@@ -117,6 +114,9 @@ void ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(Ac
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest1Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
+        if (iter.first == "cpu_big") {
+            EXPECT_EQ(iter.second, 1992000);
+        }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
 }
@@ -125,6 +125,9 @@ void ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest2Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
+        if (iter.first == "lcd") {
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 3), "0.9");
+        }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
 }
@@ -133,6 +136,45 @@ void ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(Ac
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
+        if (iter.first == "cpu_med") {
+            EXPECT_EQ(iter.second, 1989500);
+        }
+        if (iter.first == "lcd") {
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 3), "0.8");
+        }
+        GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
+    }
+}
+
+void ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest4Callback::OnThermalActionChanged Enter");
+    for (auto iter : actionCbMap) {
+        if (iter.first == "lcd") {
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), "0.99");
+        }
+        GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
+    }
+}
+
+void ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest5Callback::OnThermalActionChanged Enter");
+    for (auto iter : actionCbMap) {
+        if (iter.first == "lcd") {
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), "0.88");
+        }
+        GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
+    }
+}
+
+void ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest6Callback::OnThermalActionChanged Enter");
+    for (auto iter : actionCbMap) {
+        if (iter.first == "lcd") {
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), "0.77");
+        }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
 }
@@ -140,14 +182,14 @@ void ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(Ac
 namespace {
 /**
  * @tc.name: ThermalActionHubTest001
- * @tc.desc: register action is cpu test
+ * @tc.desc: register action is cpu_big test
  * @tc.type: FUNC
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start.");
     std::vector<std::string> actionList;
-    actionList.push_back(CPU);
+    actionList.push_back("cpu_big");
 
     std::string desc = "";
     char batteryTempBuf[MAX_PATH] = {0};
@@ -220,7 +262,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 
 /**
  * @tc.name: ThermalActionHubTest003
- * @tc.desc: register action is cpu and lcd test
+ * @tc.desc: register action is cpu_med and lcd test
  * @tc.type: FUNC
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
@@ -228,7 +270,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start.");
     const std::string LCD = "lcd";
     std::vector<std::string> actionList;
-    actionList.push_back(CPU);
+    actionList.push_back("cpu_med");
     actionList.push_back(LCD);
 
     std::string desc = "";
@@ -255,5 +297,137 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb3);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 end.");
+}
+
+/**
+ * @tc.name: ThermalActionHubTest004
+ * @tc.desc: register action is lcd test, scene cam, level 1
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start.");
+    const std::string LCD = "lcd";
+    std::vector<std::string> actionList;
+    actionList.push_back(LCD);
+
+    std::string desc = "";
+    char batteryTempBuf[MAX_PATH] = {0};
+    char socTempBuf[MAX_PATH] = {0};
+    int32_t ret = -1;
+    InitData();
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, SOC_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    const sptr<IThermalActionCallback> cb4 = new ThermalActionTest4Callback();
+
+    int32_t batteryTemp = 0;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start register");
+    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb4);
+
+    thermalMgrClient.SetScene("cam");
+    batteryTemp = 40100;
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    thermalMgrClient.UnSubscribeThermalActionCallback(cb4);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 end.");
+}
+
+/**
+ * @tc.name: ThermalActionHubTest005
+ * @tc.desc: register action is lcd test, scene call, level 2
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start.");
+    const std::string LCD = "lcd";
+    std::vector<std::string> actionList;
+    actionList.push_back(LCD);
+
+    std::string desc = "";
+    char batteryTempBuf[MAX_PATH] = {0};
+    char socTempBuf[MAX_PATH] = {0};
+    int32_t ret = -1;
+    InitData();
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, SOC_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    const sptr<IThermalActionCallback> cb5 = new ThermalActionTest5Callback();
+
+    int32_t batteryTemp = 0;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start register");
+    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb5);
+
+    thermalMgrClient.SetScene("call");
+    batteryTemp = 43100;
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    thermalMgrClient.UnSubscribeThermalActionCallback(cb5);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 end.");
+}
+
+/**
+ * @tc.name: ThermalActionHubTest006
+ * @tc.desc: register action is lcd test, scene game, level 3
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start.");
+    const std::string LCD = "lcd";
+    std::vector<std::string> actionList;
+    actionList.push_back(LCD);
+
+    std::string desc = "";
+    char batteryTempBuf[MAX_PATH] = {0};
+    char socTempBuf[MAX_PATH] = {0};
+    int32_t ret = -1;
+    InitData();
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, SOC_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    const sptr<IThermalActionCallback> cb6 = new ThermalActionTest6Callback();
+
+    int32_t batteryTemp = 0;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start register");
+    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb6);
+
+    thermalMgrClient.SetScene("game");
+    batteryTemp = 46100;
+    sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    thermalMgrClient.UnSubscribeThermalActionCallback(cb6);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 end.");
 }
 }

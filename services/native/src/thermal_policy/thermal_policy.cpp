@@ -33,7 +33,6 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 TypeTempMap typeTempMap;
 constexpr const char* LEVEL_PATH = "/data/service/el0/thermal/config/configLevel";
 const int MAX_PATH = 256;
-std::map<std::string, int32_t> g_xmlActionMap;
 }
 
 ThermalPolicy::ThermalPolicy() {};
@@ -132,11 +131,8 @@ void ThermalPolicy::PolicyDecision(std::map<std::string, uint32_t> &clusterLevel
 void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
 {
     THERMAL_HILOGD(COMP_SVC, "action.size=%{public}zu", vAction.size());
-    g_xmlActionMap.erase(g_xmlActionMap.begin(), g_xmlActionMap.end());
-
     for (auto action = vAction.begin(); action != vAction.end(); action++) {
         THERMAL_HILOGD(COMP_SVC, "actionName: %{public}s", action->actionName.c_str());
-        g_xmlActionMap.insert(std::make_pair(action->actionName, std::stoi(action->actionValue)));
         ThermalActionManager::ThermalActionMap actionMap = g_service->GetActionManagerObj()->GetActionMap();
         auto actionIter = actionMap.find(action->actionName);
         if (actionIter != actionMap.end()) {
@@ -162,8 +158,6 @@ void ThermalPolicy::ActionDecision(std::vector<PolicyAction> &vAction)
             continue;
         }
     }
-
-    handler_->SendEvent(ThermalsrvEventHandler::SEND_ACTION_HUB_LISTENER, 0, 0);
 }
 
 void ThermalPolicy::FindSubscribeActionValue()
@@ -179,7 +173,7 @@ void ThermalPolicy::FindSubscribeActionValue()
     }
 
     THERMAL_HILOGI(COMP_SVC, "g_service->GetObserver() is %{public}p", g_service->GetObserver().get());
-    g_service->GetObserver()->FindSubscribeActionValue(g_xmlActionMap);
+    g_service->GetObserver()->FindSubscribeActionValue();
 }
 
 bool ThermalPolicy::StateMachineDecision(std::map<std::string, std::string> &stateMap)
@@ -228,6 +222,7 @@ bool ThermalPolicy::ActionExecution()
         iter->second->Execute();
         actionFallbackSet_.insert(iter->second);
     }
+    handler_->SendEvent(ThermalsrvEventHandler::SEND_ACTION_HUB_LISTENER, 0, 0);
     return true;
 }
 

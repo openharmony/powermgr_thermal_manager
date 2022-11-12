@@ -41,9 +41,9 @@ void ThermalActionCallbackProxy::OnThermalActionChanged(ActionCallbackMap& actio
     THERMAL_WRITE_PARCEL_NO_RET(data, Uint32, actionCbMap.size());
     for (auto iter : actionCbMap) {
         THERMAL_HILOGD(COMP_SVC, "proxy type=%{public}s", iter.first.c_str());
-        THERMAL_HILOGD(COMP_SVC, "proxy temp=%{public}d", iter.second);
+        THERMAL_HILOGD(COMP_SVC, "proxy temp=%{public}f", iter.second);
         THERMAL_WRITE_PARCEL_NO_RET(data, String, iter.first);
-        THERMAL_WRITE_PARCEL_NO_RET(data, Int32, iter.second);
+        THERMAL_WRITE_PARCEL_NO_RET(data, Float, iter.second);
     }
 
     int ret = remote->SendRequest(static_cast<int>(IThermalActionCallback::THERMAL_ACTION_CHANGD),

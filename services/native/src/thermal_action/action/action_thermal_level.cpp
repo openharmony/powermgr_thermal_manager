@@ -82,6 +82,7 @@ void ActionThermalLevel::Execute()
         if (value != laststValue_) {
             LevelRequest(value);
             WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+            g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
             laststValue_ = value;
             valueList_.clear();
         }
@@ -102,6 +103,7 @@ void ActionThermalLevel::Execute()
     if (value != laststValue_) {
         LevelRequest(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         laststValue_ = value;
     }
 }

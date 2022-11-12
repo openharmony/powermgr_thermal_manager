@@ -64,6 +64,7 @@ void ActionCpuBig::Execute()
         if (value != lastValue_) {
             CpuRuquest(value);
             WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+            g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
             lastValue_ = value;
             valueList_.clear();
         }
@@ -85,6 +86,7 @@ void ActionCpuBig::Execute()
     if (value != lastValue_) {
         CpuRuquest(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
     }
 }
