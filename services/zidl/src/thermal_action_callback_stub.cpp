@@ -53,14 +53,14 @@ int ThermalActionCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
 
 int32_t ThermalActionCallbackStub::OnThermalActionChangedStub(MessageParcel& data)
 {
-    std::map<std::string, int32_t> actionMapCb;
+    std::map<std::string, float> actionMapCb;
     uint32_t size = 0;
     THERMAL_READ_PARCEL_WITH_RET(data, Uint32, size, E_READ_PARCEL_ERROR_THERMAL);
     for (uint32_t i = 0; i < size; i++) {
         std::string type;
-        int32_t action = INVALID_ACTION_VALUE;
+        float action = INVALID_ACTION_VALUE;
         THERMAL_READ_PARCEL_WITH_RET(data, String, type, E_READ_PARCEL_ERROR_THERMAL);
-        THERMAL_READ_PARCEL_WITH_RET(data, Int32, action, E_READ_PARCEL_ERROR_THERMAL);
+        THERMAL_READ_PARCEL_WITH_RET(data, Float, action, E_READ_PARCEL_ERROR_THERMAL);
         actionMapCb[type] = action;
     }
     OnThermalActionChanged(actionMapCb);

@@ -47,17 +47,18 @@ public:
     void SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
         const std::string& desc, const sptr<IThermalActionCallback>& callback);
     void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback);
-    void FindSubscribeActionValue(const std::map<std::string, int32_t>& xmlActionMap);
+    void FindSubscribeActionValue();
     void NotifyActionChanged(const sptr<IThermalActionCallback>& listener,
         IThermalActionCallback::ActionCallbackMap& newActionCbMap);
     void NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap& tempCbMap);
     bool CompareActionCallbackMap(const IThermalActionCallback::ActionCallbackMap& map1,
         const IThermalActionCallback::ActionCallbackMap& map2);
     void DecisionActionValue(const std::vector<std::string>& actionList,
-        const std::map<std::string, int32_t>& xmlActionMap, IThermalActionCallback::ActionCallbackMap& newActionCbMap);
+        IThermalActionCallback::ActionCallbackMap& newActionCbMap);
     bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo);
     void SetRegisterCallback(Callback& callback);
     void SetSensorTemp(const std::string& type, const int32_t& temp);
+    void SetDecisionValue(const std::string& actionName, const std::string& actionValue);
     /**
      * Get related function
      */
