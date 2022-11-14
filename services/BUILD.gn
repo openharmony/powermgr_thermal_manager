@@ -14,7 +14,10 @@
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 
 config("thermalsrv_private_config") {
-  include_dirs = [ "${ability_runtime_services_path}/appmgr/include" ]
+  include_dirs = [
+    "${ability_runtime_services_path}/appmgr/include",
+    "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
+  ]
 }
 
 config("thermalsrv_public_config") {
@@ -97,6 +100,7 @@ ohos_shared_library("thermalservice") {
     "drivers_interface_thermal:libthermal_proxy_1.0",
     "eventhandler:libeventhandler",
     "hdf_core:libhdi",
+    "hicollie_native:libhicollie",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
