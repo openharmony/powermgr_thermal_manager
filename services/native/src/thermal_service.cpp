@@ -29,6 +29,7 @@
 #include "thermal_mgr_dumper.h"
 #include "thermal_srv_config_parser.h"
 #include "thermal_common.h"
+#include "watchdog.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -98,6 +99,7 @@ bool ThermalService::Init()
             THERMAL_HILOGE(COMP_SVC, "Init failed due to create handler error");
             return false;
         }
+        HiviewDFX::Watchdog::GetInstance().AddThread("ThermalsrvEventHandler", handler_);
     }
 
     if (!CreateConfigModule()) {
