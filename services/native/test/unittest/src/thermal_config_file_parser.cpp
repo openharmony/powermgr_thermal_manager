@@ -156,7 +156,7 @@ void ThermalConfigFileParser::ParseLevelNode(xmlNodePtr node)
             xmlFree(xmlName);
         }
         ParseAuxSensorInfo(curNode, sc);
-        ParseSensorInfo(curNode, sc);
+        ParseSensorInfo(name, curNode, sc);
         xmlChar* desc = xmlGetProp(curNode, BAD_CAST("desc"));
         if (desc != nullptr) {
             std::string descValue = reinterpret_cast<char*>(desc);
@@ -332,7 +332,8 @@ void ThermalConfigFileParser::ParseAuxSensorInfo(const xmlNode* cur, std::shared
     }
 }
 
-void ThermalConfigFileParser::ParseSensorInfo(const xmlNode* cur, std::shared_ptr<ThermalConfigSensorCluster>& sc)
+void ThermalConfigFileParser::ParseSensorInfo(const std::string& name, const xmlNode* cur,
+    std::shared_ptr<ThermalConfigSensorCluster>& sc)
 {
     SensorInfoMap sensorLevelInfo;
     std::vector<std::string> sensors;
@@ -345,6 +346,7 @@ void ThermalConfigFileParser::ParseSensorInfo(const xmlNode* cur, std::shared_pt
             ParseSensorSubnodeInfo(cur, vItem, sensors, i, sc);
             sensorLevelInfo.emplace(std::pair(sensorType, vItem));
         }
+        sensorInfoMap_.insert(std::make_pair(name, sensorLevelInfo));
         sc->SetSensorLevelInfo(sensorLevelInfo);
         xmlFree(xmlSensor);
     }
