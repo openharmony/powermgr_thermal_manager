@@ -28,16 +28,16 @@ constexpr int SLEEP_WAIT_TIME_S = 1;
 constexpr int SLEEP_WAIT_TIME_LOOP_S = 3;
 const uint32_t MAX_PATH = 256;
 const uint32_t WAIT_TIME = 10;
-std::string batteryCurrentPath = "/data/service/el0/thermal/mitigation/charger/current";
-std::string cpuFreqPath = "/data/service/el0/thermal/mitigation/cpu/freq";
-std::string batteryPath = "/data/service/el0/thermal/sensor/battery/temp";
-std::string shellPath = "/data/service/el0/thermal/sensor/shell/temp";
-std::string chargerPath = "/data/service/el0/thermal/sensor/charger/temp";
-std::string socPath = "/data/service/el0/thermal/sensor/soc/temp";
-std::string ambientPath = "/data/service/el0/thermal/sensor/ambient/temp";
-std::string cpuPath = "/data/service/el0/thermal/sensor/cpu/temp";
-std::string paPath = "/data/service/el0/thermal/sensor/pa/temp";
-std::string apPath = "/data/service/el0/thermal/sensor/ap/temp";
+const std::string BATTERY_CURRENT_PATH = "/data/service/el0/thermal/mitigation/charger/current";
+const std::string CPU_FREQ_PATH = "/data/service/el0/thermal/mitigation/cpu/freq";
+const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
+const std::string SHELL_PATH = "/data/service/el0/thermal/sensor/shell/temp";
+const std::string CHARGER_PATH = "/data/service/el0/thermal/sensor/charger/temp";
+const std::string SOC_PATH = "/data/service/el0/thermal/sensor/soc/temp";
+const std::string AMBIENT_PATH = "/data/service/el0/thermal/sensor/ambient/temp";
+const std::string CPU_PATH = "/data/service/el0/thermal/sensor/cpu/temp";
+const std::string PA_PATH = "/data/service/el0/thermal/sensor/pa/temp";
+const std::string AP_PATH = "/data/service/el0/thermal/sensor/ap/temp";
 
 class ThermalMgrInterfaceTest : public testing::Test {
 public:

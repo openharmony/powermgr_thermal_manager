@@ -146,6 +146,11 @@ public:
     {
         return scene_;
     }
+
+    void InitSystemTestModules()
+    {
+        InitConfigModule();
+    }
 private:
     bool Init();
     bool InitThermalDriver();
@@ -157,6 +162,8 @@ private:
     bool InitActionManager();
     bool InitStateMachine();
     bool InitModules();
+    bool InitConfigFile();
+    bool InitConfigModule();
     bool CreateConfigModule();
     void RegisterHdiStatusListener();
     void RegisterThermalHdiCallback();
