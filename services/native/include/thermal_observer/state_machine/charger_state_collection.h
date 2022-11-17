@@ -71,7 +71,7 @@ public:
     virtual void SetState() override;
 private:
     static void HandleChargeIdleState();
-    static void PublishIdleEvent(bool isIdle);
+    static void PublishIdleEvent(bool isIdle, const std::string commonEventSupport);
     std::string state_;
     std::string params_;
     std::string mockState_;
