@@ -23,9 +23,9 @@ using namespace std;
 using namespace OHOS;
 using namespace OHOS::PowerMgr;
 namespace {
-auto &g_thermalMgrClient = ThermalMgrClient::GetInstance();
+auto& g_thermalMgrClient = ThermalMgrClient::GetInstance();
 constexpr int32_t WAIT_TIME = 1000;
-}
+} // namespace
 
 static sptr<IThermalActionCallback> actionCb_;
 static sptr<IThermalActionCallback> testActionCb_;
@@ -34,19 +34,22 @@ static sptr<IThermalTempCallback> testTempCb_;
 static sptr<IThermalLevelCallback> levelCb_;
 static sptr<IThermalLevelCallback> testLevelCb_;
 
-void ThermalFuzzerTest::ThermalActionTestCallback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+bool ThermalFuzzerTest::ThermalActionTestCallback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGI(COMP_SVC, "action callback");
+    return true;
 }
 
-void ThermalFuzzerTest::ThermalTempTestCallback::OnThermalTempChanged(TempCallbackMap &tempCbMap)
+bool ThermalFuzzerTest::ThermalTempTestCallback::OnThermalTempChanged(TempCallbackMap& tempCbMap)
 {
     THERMAL_HILOGI(COMP_SVC, "temp callback");
+    return true;
 }
 
-void ThermalFuzzerTest::ThermalLevelTestCallback::GetThermalLevel(ThermalLevel level)
+bool ThermalFuzzerTest::ThermalLevelTestCallback::GetThermalLevel(ThermalLevel level)
 {
     THERMAL_HILOGI(COMP_SVC, "level is: %{public}d", static_cast<int32_t>(level));
+    return true;
 }
 
 void ThermalFuzzerTest::TestSubscribeTemp(const uint8_t* data)
@@ -113,7 +116,7 @@ void ThermalFuzzerTest::TestUnSubscribeLevel()
 void ThermalFuzzerTest::TestGetLevel()
 {
     ThermalLevel level = g_thermalMgrClient.GetThermalLevel();
-    cout << "Thermal level is: " << static_cast<int32_t>(level)  << endl;
+    cout << "Thermal level is: " << static_cast<int32_t>(level) << endl;
 }
 
 void ThermalFuzzerTest::TestSetScene(const uint8_t* data)
@@ -153,8 +156,8 @@ bool ThermalFuzzerTest::DoSomethingInterestingWithMyAPI(const uint8_t* data, siz
         levelCb_ = new ThermalLevelTestCallback();
         std::random_device rd;
         std::default_random_engine engine(rd());
-        std::uniform_int_distribution<int32_t> randomNum(static_cast<int32_t>(ApiNumber::NUM_ZERO),
-            static_cast<int32_t>(ApiNumber::NUM_END) - 1);
+        std::uniform_int_distribution<int32_t> randomNum(
+            static_cast<int32_t>(ApiNumber::NUM_ZERO), static_cast<int32_t>(ApiNumber::NUM_END) - 1);
         cond[0] = randomNum(engine);
 
         switch (static_cast<ApiNumber>(cond[0])) {

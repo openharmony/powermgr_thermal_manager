@@ -16,19 +16,18 @@
 #ifndef THERMAL_LEVEL_CALLBACK_PROXY_H
 #define THERMAL_LEVEL_CALLBACK_PROXY_H
 
+#include "ithermal_level_callback.h"
 #include <iremote_proxy.h>
 #include <nocopyable.h>
-#include "ithermal_level_callback.h"
 
 namespace OHOS {
 namespace PowerMgr {
 class ThermalLevelCallbackProxy : public IRemoteProxy<IThermalLevelCallback> {
 public:
-    explicit ThermalLevelCallbackProxy(const sptr<IRemoteObject>& impl)
-        : IRemoteProxy<IThermalLevelCallback>(impl) {}
+    explicit ThermalLevelCallbackProxy(const sptr<IRemoteObject>& impl) : IRemoteProxy<IThermalLevelCallback>(impl) {}
     ~ThermalLevelCallbackProxy() = default;
     DISALLOW_COPY_AND_MOVE(ThermalLevelCallbackProxy);
-    virtual void GetThermalLevel(ThermalLevel level) override;
+    virtual bool GetThermalLevel(ThermalLevel level) override;
 
 private:
     static inline BrokerDelegator<ThermalLevelCallbackProxy> delegator_;
