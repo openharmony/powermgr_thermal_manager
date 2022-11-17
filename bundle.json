@@ -58,9 +58,6 @@
     },
     "build": {
       "group_type": {
-        "base_group": [
-          "//base/powermgr/thermal_manager/utils:thermal-shell"
-        ],
         "fwk_group": [
           "//base/powermgr/thermal_manager/application:thermal_application",
           "//base/powermgr/thermal_manager/frameworks:client",
