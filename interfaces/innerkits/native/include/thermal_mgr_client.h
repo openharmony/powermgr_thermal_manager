@@ -16,10 +16,10 @@
 #ifndef THERMAL_SERVICE_CLIENT_H
 #define THERMAL_SERVICE_CLIENT_H
 
-#include <string>
-#include <singleton.h>
 #include "ithermal_srv.h"
 #include "thermal_srv_sensor_info.h"
+#include <singleton.h>
+#include <string>
 
 namespace OHOS {
 namespace PowerMgr {
@@ -29,24 +29,26 @@ class ThermalMgrClient final : public DelayedRefSingleton<ThermalMgrClient> {
 public:
     DISALLOW_COPY_AND_MOVE(ThermalMgrClient);
 
-    void SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
-        const sptr<IThermalTempCallback>& callback);
-    void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback);
-    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
-    void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
-    void SubscribeThermalActionCallback(const std::vector<std::string> &actionList,
-        const std::string& desc, const sptr<IThermalActionCallback>& callback);
-    void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback);
+    bool SubscribeThermalTempCallback(
+        const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback);
+    bool UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback);
+    bool SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
+    bool UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
+    bool SubscribeThermalActionCallback(const std::vector<std::string>& actionList, const std::string& desc,
+        const sptr<IThermalActionCallback>& callback);
+    bool UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback);
     int32_t GetThermalSensorTemp(const SensorType type);
     ThermalLevel GetThermalLevel();
     void SetScene(const std::string& scene);
     std::string Dump(const std::vector<std::string>& args);
+
 private:
     class ThermalMgrDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
         ThermalMgrDeathRecipient() = default;
         ~ThermalMgrDeathRecipient() = default;
         void OnRemoteDied(const wptr<IRemoteObject>& remote);
+
     private:
         DISALLOW_COPY_AND_MOVE(ThermalMgrDeathRecipient);
     };
@@ -54,7 +56,8 @@ private:
 private:
     ErrCode Connect();
     void GetLevel(ThermalLevel& level);
-    bool GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo);
+    bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo);
+
 private:
     sptr<IThermalSrv> thermalSrv_ {nullptr};
     sptr<IRemoteObject::DeathRecipient> deathRecipient_ {nullptr};

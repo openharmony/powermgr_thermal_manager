@@ -16,12 +16,12 @@
 #ifndef THERMAL_TEMP_CALLBACK_STUB_H
 #define THERMAL_TEMP_CALLBACK_STUB_H
 
+#include "ithermal_temp_callback.h"
+#include "message_option.h"
+#include "refbase.h"
 #include <cstdint>
 #include <iremote_stub.h>
 #include <nocopyable.h>
-#include "refbase.h"
-#include "message_option.h"
-#include "ithermal_temp_callback.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -30,8 +30,11 @@ public:
     DISALLOW_COPY_AND_MOVE(ThermalTempCallbackStub);
     ThermalTempCallbackStub() = default;
     virtual ~ThermalTempCallbackStub() = default;
-    int OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
-    void OnThermalTempChanged(TempCallbackMap &tempCbMap) override {}
+    int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
+    bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override
+    {
+        return true;
+    }
 
 private:
     int32_t OnThermalTempChangedStub(MessageParcel& data);

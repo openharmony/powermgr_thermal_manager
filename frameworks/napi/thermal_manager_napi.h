@@ -33,7 +33,7 @@ public:
     virtual ~ThermalLevelCallback();
     void UpdateCallback(napi_env env, napi_value jsCallback);
     void ReleaseCallback();
-    void GetThermalLevel(ThermalLevel level) override;
+    bool GetThermalLevel(ThermalLevel level) override;
     void OnThermalLevel();
 
 private:

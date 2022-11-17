@@ -16,23 +16,23 @@
 #ifndef THERMAL_TEMP_CALLBACK_PROXY_H
 #define THERMAL_TEMP_CALLBACK_PROXY_H
 
-#include <functional>
-#include <iremote_proxy.h>
-#include <nocopyable.h>
-#include "refbase.h"
 #include "iremote_broker.h"
 #include "iremote_object.h"
 #include "ithermal_temp_callback.h"
+#include "refbase.h"
+#include <functional>
+#include <iremote_proxy.h>
+#include <nocopyable.h>
 
 namespace OHOS {
 namespace PowerMgr {
 class ThermalTempCallbackProxy : public IRemoteProxy<IThermalTempCallback> {
 public:
-    explicit ThermalTempCallbackProxy(const sptr<IRemoteObject>& impl)
-        : IRemoteProxy<IThermalTempCallback>(impl) {}
+    explicit ThermalTempCallbackProxy(const sptr<IRemoteObject>& impl) : IRemoteProxy<IThermalTempCallback>(impl) {}
     ~ThermalTempCallbackProxy() = default;
     DISALLOW_COPY_AND_MOVE(ThermalTempCallbackProxy);
-    virtual void OnThermalTempChanged(TempCallbackMap &tempCbMap) override;
+    virtual bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override;
+
 private:
     static inline BrokerDelegator<ThermalTempCallbackProxy> delegator_;
 };
