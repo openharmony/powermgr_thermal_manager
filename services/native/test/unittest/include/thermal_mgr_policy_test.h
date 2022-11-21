@@ -22,21 +22,17 @@
 namespace OHOS {
 namespace PowerMgr {
 const uint32_t MAX_PATH = 256;
-const uint32_t WAIT_TIME_5_SEC = 5;
-std::string volumePath = "/data/service/el0/thermal/config/volume";
-std::string batteryPath = "/data/service/el0/thermal/sensor/battery/temp";
-std::string shellPath = "/data/service/el0/thermal/sensor/shell/temp";
-std::string chargerPath = "/data/service/el0/thermal/sensor/charger/temp";
-std::string socPath = "/data/service/el0/thermal/sensor/soc/temp";
-std::string ambientPath = "/data/service/el0/thermal/sensor/ambient/temp";
-std::string cpuPath = "/data/service/el0/thermal/sensor/cpu/temp";
-std::string paPath = "/data/service/el0/thermal/sensor/pa/temp";
-std::string apPath = "/data/service/el0/thermal/sensor/ap/temp";
-std::string configLevelPath = "/data/service/el0/thermal/config/configLevel";
-std::string lcdPath = "/data/service/el0/thermal/config/lcd";
-std::string processPath = "/data/service/el0/thermal/config/process_ctrl";
-std::string shutdownPath = "/data/service/el0/thermal/config/shut_down";
-std::string vendorConfig = "/vendor/etc/thermal_config/thermal_service_config.xml";
+const std::string VOLUME_PATH = "/data/service/el0/thermal/config/volume";
+const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
+const std::string SHELL_PATH = "/data/service/el0/thermal/sensor/shell/temp";
+const std::string AMBIENT_PATH = "/data/service/el0/thermal/sensor/ambient/temp";
+const std::string PA_PATH = "/data/service/el0/thermal/sensor/pa/temp";
+const std::string AP_PATH = "/data/service/el0/thermal/sensor/ap/temp";
+const std::string CONFIG_LEVEL_PATH = "/data/service/el0/thermal/config/configLevel";
+const std::string LCD_PATH = "/data/service/el0/thermal/config/lcd";
+const std::string PROCESS_PATH = "/data/service/el0/thermal/config/process_ctrl";
+const std::string SHUTDOWN_PATH = "/data/service/el0/thermal/config/shut_down";
+const std::string VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* CPU_FREQ_PATH = "/data/service/el0/thermal/cooling/cpu/freq";
 constexpr const char* GPU_FREQ_PATH = "/data/service/el0/thermal/cooling/gpu/freq";
 constexpr const char* BATTERY_CHARGER_CURRENT_PATH = "/data/service/el0/thermal/cooling/battery/current";
@@ -51,9 +47,11 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    static std::string GetActionValue(const std::string& path);
+    static void SetSensorTemp(int32_t temperature, const std::string& path);
     static void Trim(char* str);
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
-    static int32_t ConvertInt(const std::string &value);
+    static int32_t ConvertInt(const std::string& value);
     static int32_t ReadFile(const char* path, char* buf, size_t size);
     static int32_t ReadSysfsFile(const char* path, char* buf, size_t size);
     static int32_t InitNode();
