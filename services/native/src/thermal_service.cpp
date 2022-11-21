@@ -15,20 +15,20 @@
 
 #include "thermal_service.h"
 
-#include <algorithm>
-#include <fcntl.h>
-#include <ipc_skeleton.h>
-#include <unistd.h>
 #include "file_ex.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
 #include "securec.h"
 #include "system_ability_definition.h"
+#include <algorithm>
+#include <fcntl.h>
+#include <ipc_skeleton.h>
+#include <unistd.h>
 
 #include "constants.h"
+#include "thermal_common.h"
 #include "thermal_mgr_dumper.h"
 #include "thermal_srv_config_parser.h"
-#include "thermal_common.h"
 #include "watchdog.h"
 
 namespace OHOS {
@@ -41,7 +41,7 @@ constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 constexpr uint32_t RETRY_TIME = 1000;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.GetRefPtr());
-}
+} // namespace
 ThermalService::ThermalService() : SystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, true) {}
 
 ThermalService::~ThermalService() {}
@@ -73,8 +73,7 @@ void ThermalService::OnStart()
 
 void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
-    THERMAL_HILOGI(COMP_SVC, "systemAbilityId=%{public}d, deviceId=%{private}s", systemAbilityId,
-        deviceId.c_str());
+    THERMAL_HILOGI(COMP_SVC, "systemAbilityId=%{public}d, deviceId=%{private}s", systemAbilityId, deviceId.c_str());
     if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
         InitStateMachine();
     }
@@ -271,8 +270,8 @@ void ThermalService::OnStop()
     }
 }
 
-void ThermalService::SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
-    const sptr<IThermalTempCallback>& callback)
+void ThermalService::SubscribeThermalTempCallback(
+    const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
@@ -314,8 +313,8 @@ void ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCal
     actionMgr_->UnSubscribeThermalLevelCallback(callback);
 }
 
-void ThermalService::SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
-    const std::string& desc, const sptr<IThermalActionCallback>& callback)
+void ThermalService::SubscribeThermalActionCallback(
+    const std::vector<std::string>& actionList, const std::string& desc, const sptr<IThermalActionCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto pid = IPCSkeleton::GetCallingPid();
@@ -337,8 +336,31 @@ void ThermalService::UnSubscribeThermalActionCallback(const sptr<IThermalActionC
 
 void ThermalService::GetThermalLevel(ThermalLevel& level)
 {
-    uint32_t levelValue =  actionMgr_->GetThermalLevel();
+    uint32_t levelValue = actionMgr_->GetThermalLevel();
     level = static_cast<ThermalLevel>(levelValue);
+}
+
+bool ThermalService::GetThermalInfo()
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    HdfThermalCallbackInfo thermalInfo;
+    bool ret = false;
+    if (thermalInterface_ == nullptr) {
+        thermalInterface_ = IThermalInterface::Get();
+        if (thermalInterface_ == nullptr) {
+            THERMAL_HILOGD(COMP_SVC, "thermalInterface_ is nullptr");
+            return ret;
+        }
+    }
+
+    if (thermalInterface_ != nullptr) {
+        int32_t res = thermalInterface_->GetThermalZoneInfo(thermalInfo);
+        HandleThermalCallbackEvent(thermalInfo);
+        if (!res) {
+            ret = true;
+        }
+    }
+    return ret;
 }
 
 void ThermalService::SetScene(const std::string& scene)
@@ -381,12 +403,13 @@ void ThermalService::RegisterHdiStatusListener()
     if (hdiServiceMgr_ == nullptr) {
         SendEvent(ThermalsrvEventHandler::SEND_RETRY_REGISTER_HDI_STATUS_LISTENER, RETRY_TIME);
         THERMAL_HILOGW(COMP_SVC, "hdi service manager is nullptr, \
-            Try again after %{public}u second", RETRY_TIME);
+            Try again after %{public}u second",
+            RETRY_TIME);
         return;
     }
 
-    hdiServStatListener_ = new HdiServiceStatusListener(HdiServiceStatusListener::StatusCallback(
-        [&](const OHOS::HDI::ServiceManager::V1_0::ServiceStatus& status) {
+    hdiServStatListener_ = new HdiServiceStatusListener(
+        HdiServiceStatusListener::StatusCallback([&](const OHOS::HDI::ServiceManager::V1_0::ServiceStatus& status) {
             THERMAL_RETURN_IF(status.serviceName != HDI_SERVICE_NAME || status.deviceClass != DEVICE_CLASS_DEFAULT)
 
             if (status.status == SERVIE_STATUS_START) {
@@ -397,13 +420,13 @@ void ThermalService::RegisterHdiStatusListener()
                 thermalInterface_ = nullptr;
                 THERMAL_HILOGW(COMP_SVC, "thermal interface service, unregister interface");
             }
-        }
-    ));
+        }));
 
     int32_t status = hdiServiceMgr_->RegisterServiceStatusListener(hdiServStatListener_, DEVICE_CLASS_DEFAULT);
     if (status != ERR_OK) {
         THERMAL_HILOGW(COMP_SVC, "Register hdi failed, \
-            Try again after %{public}u second", RETRY_TIME);
+            Try again after %{public}u second",
+            RETRY_TIME);
         SendEvent(ThermalsrvEventHandler::SEND_RETRY_REGISTER_HDI_STATUS_LISTENER, RETRY_TIME);
     }
 }
@@ -463,8 +486,7 @@ int32_t ThermalService::Dump(int fd, const std::vector<std::u16string>& args)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     std::vector<std::string> argsInStr;
-    std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
-        [](const std::u16string& arg) {
+    std::transform(args.begin(), args.end(), std::back_inserter(argsInStr), [](const std::u16string& arg) {
         std::string ret = Str16ToStr8(arg);
         THERMAL_HILOGI(COMP_SVC, "arg: %{public}s", ret.c_str());
         return ret;

@@ -29,7 +29,6 @@ namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* LCD_PATH = "/data/service/el0/thermal/config/lcd";
 const int MAX_PATH = 256;
-std::map<std::string, std::string> g_sceneMap;
 }
 ActionDisplay::ActionDisplay(const std::string& actionName)
 {
@@ -48,21 +47,6 @@ void ActionDisplay::SetStrict(bool flag)
 void ActionDisplay::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
-}
-
-void ActionDisplay::SetXmlScene(const std::string& scene, const std::string& value)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-        if (iter->first == scene) {
-            if (iter->second != value) {
-                iter->second = value;
-            }
-            return;
-        }
-    }
-
-    g_sceneMap.insert(std::make_pair(scene, value));
 }
 
 void ActionDisplay::AddActionValue(std::string value)

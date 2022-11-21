@@ -18,11 +18,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
-#include <list>
-#include <mutex>
 #include <string>
 #include <fcntl.h>
-#include <unistd.h>
 #include <datetime_ex.h>
 #include <gtest/gtest.h>
 #include <ipc_skeleton.h>
@@ -30,6 +27,7 @@
 
 #include "ithermal_srv.h"
 #include "securec.h"
+#include "mock_thermal_mgr_client.h"
 #include "thermal_mgr_client.h"
 #include "thermal_srv_sensor_info.h"
 #include "constants.h"
@@ -41,8 +39,7 @@ using namespace OHOS;
 using namespace std;
 
 namespace {
-static std::mutex g_mtx;
-std::vector<std::string> typeList;
+std::vector<std::string> g_typeList;
 }
 
 int32_t ThermalActionHubTest::WriteFile(std::string path, std::string buf, size_t size)
@@ -112,8 +109,8 @@ void ThermalActionHubTest::TearDown()
 
 void ThermalActionHubTest::InitData()
 {
-    typeList.push_back(BATTERY);
-    typeList.push_back(SOC);
+    g_typeList.push_back(BATTERY);
+    g_typeList.push_back(SOC);
 }
 
 void ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
@@ -157,10 +154,10 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     char socTempBuf[MAX_PATH] = {0};
     int32_t ret = -1;
     InitData();
-    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
-    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, socPath.c_str());
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, SOC_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb1 = new ThermalActionTest1Callback();
@@ -173,7 +170,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(5);
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb1);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end.");
 }
@@ -195,10 +192,10 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
     char socTempBuf[MAX_PATH] = {0};
     int32_t ret = -1;
     InitData();
-    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
-    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, socPath.c_str());
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, SOC_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb2 = new ThermalActionTest2Callback();
@@ -216,7 +213,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
     ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(5);
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb2);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 end.");
 }
@@ -239,10 +236,10 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     char socTempBuf[MAX_PATH] = {0};
     int32_t ret = -1;
     InitData();
-    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, batteryPath.c_str());
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
-    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, socPath.c_str());
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, SOC_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb3 = new ThermalActionTest3Callback();
@@ -255,7 +252,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    sleep(5);
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb3);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 end.");
 }
