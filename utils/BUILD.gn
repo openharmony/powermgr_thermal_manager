@@ -37,35 +37,3 @@ ohos_source_set("thermal_utils") {
 
   part_name = "thermal_manager"
 }
-
-ohos_executable("thermal-shell") {
-  include_dirs = [
-    "shell/include",
-    "${ability_runtime_services_path}/common/include",
-    "${ability_runtime_path}/tools/aa/include",
-  ]
-
-  sources = [
-    "shell/src/main.cpp",
-    "shell/src/thermal_shell_command.cpp",
-  ]
-
-  deps = [
-    "${ability_runtime_path}/tools/aa:tools_aa_source_set",
-    "${thermal_manager_path}/interfaces/innerkits:thermalsrv_client",
-  ]
-
-  configs = [
-    "${ability_runtime_path}/tools/aa:ability_command_config",
-    "${ability_runtime_services_path}/common:common_config",
-  ]
-
-  external_deps = [
-    "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-  ]
-
-  install_enable = true
-  part_name = "thermal_manager"
-}
