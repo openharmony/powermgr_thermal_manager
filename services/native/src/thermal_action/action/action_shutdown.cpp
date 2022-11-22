@@ -78,6 +78,7 @@ void ActionShutdown::Execute()
             THERMAL_HILOGD(COMP_SVC, "value is not change");
         }
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
         lastValue_ = value;
         valuesList_.clear();
         return;
@@ -101,6 +102,7 @@ void ActionShutdown::Execute()
             ShutdownRequest(static_cast<bool>(value));
         }
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
     }
 }

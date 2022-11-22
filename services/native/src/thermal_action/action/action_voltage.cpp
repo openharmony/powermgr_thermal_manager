@@ -76,6 +76,7 @@ void ActionVoltage::Execute()
             SetVoltage(value);
             WriteMockNode(value);
             WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+            g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
             lastValue_ = value;
             valueList_.clear();
         }
@@ -97,6 +98,7 @@ void ActionVoltage::Execute()
         SetVoltage(value);
         WriteMockNode(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
     }
 }
