@@ -156,16 +156,18 @@ void ChargerStateCollection::HandleChargeIdleState()
                    (g_cachedIdleState.level <= g_idleStateConfig.level));
     if (isIdle != g_isChargeIdle) {
         THERMAL_HILOGI(COMP_SVC, "idle state changed, start to broadcast event");
-        PublishIdleEvent(isIdle);
+        PublishIdleEvent(isIdle, CommonEventSupport::COMMON_EVENT_CHARGE_IDLE);
+        PublishIdleEvent(isIdle, CommonEventSupport::COMMON_EVENT_DEVICE_IDLE_MODE_CHANGED);
         g_isChargeIdle = isIdle;
     }
 }
-void ChargerStateCollection::PublishIdleEvent(bool isIdle)
+
+void ChargerStateCollection::PublishIdleEvent(bool isIdle, const std::string commonEventSupport)
 {
     Want want;
     auto code = static_cast<uint32_t>(ChargeIdleEventCode::EVENT_CODE_CHARGE_IDLE_STATE);
     want.SetParam(ToString(code), isIdle);
-    want.SetAction(CommonEventSupport::COMMON_EVENT_CHARGE_IDLE);
+    want.SetAction(commonEventSupport);
     CommonEventData commonData;
     commonData.SetWant(want);
     CommonEventPublishInfo publishInfo;
@@ -174,6 +176,7 @@ void ChargerStateCollection::PublishIdleEvent(bool isIdle)
         THERMAL_HILOGW(COMP_SVC, "failed to publish charge idle event");
     }
 }
+
 void ChargerStateCollection::HandleThermalLevelCompleted(const CommonEventData& data)
 {
     std::string key = ToString(static_cast<int32_t>(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED));
