@@ -113,9 +113,10 @@ void ThermalActionHubTest::InitData()
 void ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest1Callback::OnThermalActionChanged Enter");
+    int32_t cpuBigFreq = 1992000;
     for (auto iter : actionCbMap) {
         if (iter.first == "cpu_big") {
-            EXPECT_EQ(iter.second, 1992000);
+            EXPECT_EQ(iter.second, cpuBigFreq);
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
@@ -124,9 +125,11 @@ void ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(Ac
 void ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest2Callback::OnThermalActionChanged Enter");
+    std::string lcd = "0.9";
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 3), "0.9");
+            // 0： begin position; 3: end position
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 3), lcd);
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
@@ -135,12 +138,15 @@ void ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
 void ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
+    int32_t cpuMedFreq = 1989500;
+    std::string lcd = "0.8";
     for (auto iter : actionCbMap) {
         if (iter.first == "cpu_med") {
-            EXPECT_EQ(iter.second, 1989500);
+            EXPECT_EQ(iter.second, cpuMedFreq);
         }
         if (iter.first == "lcd") {
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 3), "0.8");
+            // 0： begin position; 3: end position
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 3), lcd);
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
@@ -149,9 +155,11 @@ void ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(Ac
 void ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest4Callback::OnThermalActionChanged Enter");
+    std::string lcd = "0.99";
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), "0.99");
+            // 0： begin position; 4: end position
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
@@ -160,9 +168,11 @@ void ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(Ac
 void ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest5Callback::OnThermalActionChanged Enter");
+    std::string lcd = "0.88";
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), "0.88");
+            // 0： begin position; 4: end position
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
@@ -171,9 +181,11 @@ void ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(Ac
 void ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest6Callback::OnThermalActionChanged Enter");
+    std::string lcd = "0.77";
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), "0.77");
+            // 0： begin position; 4: end position
+            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
