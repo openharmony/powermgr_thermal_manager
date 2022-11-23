@@ -93,7 +93,7 @@ int32_t ThermalActionReportTest::ReadFile(const char* path, char* buf, size_t si
 int32_t ThermalActionReportTest::ReadSysfsFile(const char* path, char* buf, size_t size)
 {
     int32_t readSize;
-    int fd = open(path, O_RDONLY);
+    int fd = open(path, O_RDONLY, S_IRUSR | S_IRGRP | S_IROTH);
     if (fd < NUM_ZERO) {
         THERMAL_HILOGE(LABEL_TEST, "failed to open file node");
         return ERR_INVALID_VALUE;
