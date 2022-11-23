@@ -71,7 +71,7 @@ int32_t ThermalMgrInterfaceTest::ReadFile(const char *path, char *buf, size_t si
 {
     int32_t ret;
 
-    int32_t fd = open(path, O_RDONLY);
+    int32_t fd = open(path, O_RDONLY, S_IRUSR | S_IRGRP | S_IROTH);
     if (fd < ERR_OK) {
         THERMAL_HILOGE(LABEL_TEST, "WriteFile: failed to open file, fd: %{public}d", fd);
         return ERR_INVALID_VALUE;

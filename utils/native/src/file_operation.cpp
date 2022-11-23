@@ -87,7 +87,7 @@ int32_t FileOperation::ReadFile(const char *path, char *buf, size_t size)
     std::lock_guard<std::mutex> lck(g_mutex);
     int32_t ret = -1;
 
-    int32_t fd = open(path, O_RDONLY);
+    int32_t fd = open(path, O_RDONLY, S_IRUSR | S_IRGRP | S_IROTH);
     if (fd < ERR_OK) {
         THERMAL_HILOGE(COMP_SVC, "open failed to file.");
         return fd;
