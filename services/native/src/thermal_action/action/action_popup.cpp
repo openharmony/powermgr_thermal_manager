@@ -22,6 +22,7 @@
 #include "thermal_common.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
+#include "power_mgr_client.h"
 
 using namespace OHOS::AppExecFwk;
 using namespace OHOS::AAFwk;
@@ -30,6 +31,7 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+static PowerMgrClient& g_powerMgrClient = PowerMgrClient::GetInstance();
 }
 
 ActionPopup::ActionPopup(const std::string& actionName)
@@ -101,9 +103,11 @@ void ActionPopup::HandlePopupEvent(const int32_t value)
     switch (value) {
         case LOWER_TEMP:
             ShowThermalDialog(ActionPopup::TempStatus::LOWER_TEMP);
+            g_powerMgrClient.RefreshActivity(UserActivityType::USER_ACTIVITY_TYPE_ATTENTION);
             break;
         case HIGHER_TEMP:
             ShowThermalDialog(ActionPopup::TempStatus::HIGHER_TEMP);
+            g_powerMgrClient.RefreshActivity(UserActivityType::USER_ACTIVITY_TYPE_ATTENTION);
             break;
         default:
             break;
