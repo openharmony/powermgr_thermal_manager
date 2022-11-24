@@ -270,21 +270,23 @@ void ThermalService::OnStop()
     }
 }
 
-void ThermalService::SubscribeThermalTempCallback(
+bool ThermalService::SubscribeThermalTempCallback(
     const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     observer_->SubscribeThermalTempCallback(typeList, callback);
+    return true;
 }
 
-void ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
+bool ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     observer_->UnSubscribeThermalTempCallback(callback);
+    return true;
 }
 
 bool ThermalService::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo)
@@ -297,23 +299,25 @@ bool ThermalService::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvS
     return true;
 }
 
-void ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+bool ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     actionMgr_->SubscribeThermalLevelCallback(callback);
+    return true;
 }
 
-void ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+bool ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     actionMgr_->UnSubscribeThermalLevelCallback(callback);
+    return true;
 }
 
-void ThermalService::SubscribeThermalActionCallback(
+bool ThermalService::SubscribeThermalActionCallback(
     const std::vector<std::string>& actionList, const std::string& desc, const sptr<IThermalActionCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
@@ -322,9 +326,10 @@ void ThermalService::SubscribeThermalActionCallback(
     THERMAL_HILOGI(COMP_SVC, "pid %{public}d", pid);
     THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     observer_->SubscribeThermalActionCallback(actionList, desc, callback);
+    return true;
 }
 
-void ThermalService::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
+bool ThermalService::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto pid = IPCSkeleton::GetCallingPid();
@@ -332,12 +337,14 @@ void ThermalService::UnSubscribeThermalActionCallback(const sptr<IThermalActionC
     THERMAL_HILOGI(COMP_SVC, "pid %{public}d", pid);
     THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
     observer_->UnSubscribeThermalActionCallback(callback);
+    return true;
 }
 
-void ThermalService::GetThermalLevel(ThermalLevel& level)
+bool ThermalService::GetThermalLevel(ThermalLevel& level)
 {
     uint32_t levelValue = actionMgr_->GetThermalLevel();
     level = static_cast<ThermalLevel>(levelValue);
+    return true;
 }
 
 bool ThermalService::GetThermalInfo()
@@ -363,9 +370,10 @@ bool ThermalService::GetThermalInfo()
     return ret;
 }
 
-void ThermalService::SetScene(const std::string& scene)
+bool ThermalService::SetScene(const std::string& scene)
 {
     scene_ = scene;
+    return true;
 }
 
 void ThermalService::SendEvent(int32_t event, int64_t delayTime)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,26 +13,14 @@
  * limitations under the License.
  */
 
-#ifndef PowerMgr_ITHERMAL_TEMPERATURE_CALLBACK_H
-#define PowerMgr_ITHERMAL_TEMPERATURE_CALLBACK_H
+#ifndef THERMAL_MOCK_PROXY_WRITEVECTOR_TEST_H
+#define THERMAL_MOCK_PROXY_WRITEVECTOR_TEST_H
 
-#include <iremote_broker.h>
-#include <iremote_object.h>
-#include <map>
+#include <gtest/gtest.h>
 
 namespace OHOS {
 namespace PowerMgr {
-class IThermalTempCallback : public IRemoteBroker {
-public:
-    using TempCallbackMap = std::map<std::string, int32_t>;
-    enum {
-        THERMAL_TEMPERATURE_CHANGD = 0,
-    };
-
-    virtual bool OnThermalTempChanged(TempCallbackMap& tempCbMap) = 0;
-
-    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalTempCallback");
-};
+class ThermalMockProxyWritevectorTest : public testing::Test {};
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // PowerMgr_ITHERMAL_TEMPERATURE_CALLBACK_H
+#endif // THERMAL_MOCK_PROXY_WRITEVECTOR_TEST_H

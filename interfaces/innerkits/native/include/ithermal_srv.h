@@ -19,8 +19,8 @@
 #include "iremote_broker.h"
 #include "iremote_object.h"
 #include "ithermal_action_callback.h"
-#include "ithermal_temp_callback.h"
 #include "ithermal_level_callback.h"
+#include "ithermal_temp_callback.h"
 #include "thermal_srv_sensor_info.h"
 
 namespace OHOS {
@@ -41,18 +41,18 @@ public:
         SHELL_DUMP
     };
 
-    virtual void SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
-        const sptr<IThermalTempCallback>& callback) = 0;
-    virtual void UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) = 0;
-    virtual void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
-    virtual void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
-    virtual void SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
-        const std::string& desc, const sptr<IThermalActionCallback>& callback) = 0;
-    virtual void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) = 0;
+    virtual bool SubscribeThermalTempCallback(
+        const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback) = 0;
+    virtual bool UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) = 0;
+    virtual bool SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
+    virtual bool UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) = 0;
+    virtual bool SubscribeThermalActionCallback(const std::vector<std::string>& actionList, const std::string& desc,
+        const sptr<IThermalActionCallback>& callback) = 0;
+    virtual bool UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) = 0;
     virtual bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo) = 0;
-    virtual void GetThermalLevel(ThermalLevel& level) = 0;
+    virtual bool GetThermalLevel(ThermalLevel& level) = 0;
     virtual bool GetThermalInfo() = 0;
-    virtual void SetScene(const std::string& scene) = 0;
+    virtual bool SetScene(const std::string& scene) = 0;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) = 0;
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalSrv");
 };

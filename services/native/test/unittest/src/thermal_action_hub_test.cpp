@@ -17,21 +17,21 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
-#include <string>
-#include <fcntl.h>
 #include <datetime_ex.h>
+#include <fcntl.h>
 #include <gtest/gtest.h>
+#include <iostream>
 #include <ipc_skeleton.h>
+#include <string>
 #include <string_ex.h>
 
+#include "constants.h"
 #include "ithermal_srv.h"
-#include "securec.h"
 #include "mock_thermal_mgr_client.h"
+#include "securec.h"
+#include "thermal_common.h"
 #include "thermal_mgr_client.h"
 #include "thermal_srv_sensor_info.h"
-#include "constants.h"
-#include "thermal_common.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -44,7 +44,7 @@ std::vector<std::string> g_typeList;
 
 int32_t ThermalActionHubTest::WriteFile(std::string path, std::string buf, size_t size)
 {
-    FILE *stream = fopen(path.c_str(), "w+");
+    FILE* stream = fopen(path.c_str(), "w+");
     if (stream == nullptr) {
         return ERR_INVALID_VALUE;
     }
@@ -64,7 +64,7 @@ int32_t ThermalActionHubTest::WriteFile(std::string path, std::string buf, size_
     return ERR_OK;
 }
 
-int32_t ThermalActionHubTest::ReadFile(const char *path, char *buf, size_t size)
+int32_t ThermalActionHubTest::ReadFile(const char* path, char* buf, size_t size)
 {
     int32_t ret;
 
@@ -86,9 +86,7 @@ int32_t ThermalActionHubTest::ReadFile(const char *path, char *buf, size_t size)
     return ERR_OK;
 }
 
-void ThermalActionHubTest::SetUpTestCase()
-{
-}
+void ThermalActionHubTest::SetUpTestCase() {}
 
 void ThermalActionHubTest::TearDownTestCase()
 {
@@ -96,13 +94,9 @@ void ThermalActionHubTest::TearDownTestCase()
     thermalMgrClient.SetScene("");
 }
 
-void ThermalActionHubTest::SetUp()
-{
-}
+void ThermalActionHubTest::SetUp() {}
 
-void ThermalActionHubTest::TearDown()
-{
-}
+void ThermalActionHubTest::TearDown() {}
 
 void ThermalActionHubTest::InitData()
 {
@@ -110,7 +104,7 @@ void ThermalActionHubTest::InitData()
     g_typeList.push_back(SOC);
 }
 
-void ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+bool ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest1Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
@@ -119,9 +113,10 @@ void ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(Ac
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    return true;
 }
 
-void ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+bool ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest2Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
@@ -130,9 +125,10 @@ void ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    return true;
 }
 
-void ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+bool ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
@@ -144,9 +140,10 @@ void ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(Ac
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    return true;
 }
 
-void ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+bool ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest4Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
@@ -155,9 +152,10 @@ void ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(Ac
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    return true;
 }
 
-void ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+bool ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest5Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
@@ -166,9 +164,10 @@ void ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(Ac
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    return true;
 }
 
-void ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(ActionCallbackMap &actionCbMap)
+bool ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest6Callback::OnThermalActionChanged Enter");
     for (auto iter : actionCbMap) {
@@ -177,6 +176,7 @@ void ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(Ac
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    return true;
 }
 
 namespace {
@@ -430,4 +430,4 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
     thermalMgrClient.UnSubscribeThermalActionCallback(cb6);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 end.");
 }
-}
+} // namespace

@@ -16,11 +16,11 @@
 #ifndef THERMAL_MGR_SRV_STUB_H
 #define THERMAL_MGR_SRV_STUB_H
 
-#include <nocopyable.h>
-#include <iremote_stub.h>
-#include "ithermal_srv.h"
 #include "ipc_object_stub.h"
-#
+#include "ithermal_srv.h"
+#include <iremote_stub.h>
+#include <nocopyable.h>
+
 namespace OHOS {
 namespace PowerMgr {
 class ThermalSrvStub : public IRemoteStub<IThermalSrv> {
@@ -29,6 +29,7 @@ public:
     ThermalSrvStub() = default;
     virtual ~ThermalSrvStub() = default;
     int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
+
 private:
     int32_t SubscribeThermalTempCallbackStub(MessageParcel& data);
     int32_t UnSubscribeThermalTempCallbackStub(MessageParcel& data);
@@ -41,8 +42,7 @@ private:
     int32_t GetThermalInfoStub(MessageParcel& reply);
     int32_t SetSceneStub(MessageParcel& data);
     int32_t ShellDumpStub(MessageParcel& data, MessageParcel& reply);
-    int32_t CheckRequestCode(const uint32_t code, MessageParcel& data, MessageParcel& reply,
-        MessageOption& option);
+    int32_t CheckRequestCode(const uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option);
 };
 } // namespace PowerMgr
 } // namespace OHOS
