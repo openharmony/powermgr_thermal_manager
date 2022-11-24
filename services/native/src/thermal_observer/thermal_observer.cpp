@@ -207,7 +207,8 @@ void ThermalObserver::DecisionActionValue(const std::vector<std::string>& action
 
 void ThermalObserver::SetDecisionValue(const std::string& actionName, const std::string& actionValue)
 {
-    THERMAL_HILOGD(COMP_SVC, "actionName = %{public}s, actionValue = %{public}f", actionName.c_str(), std::stof(actionValue));
+    THERMAL_HILOGD(
+        COMP_SVC, "actionName = %{public}s, actionValue = %{public}f", actionName.c_str(), std::stof(actionValue));
     auto iter = g_actionMap.find(actionName);
     if (iter != g_actionMap.end()) {
         iter->second = std::stof(actionValue);
