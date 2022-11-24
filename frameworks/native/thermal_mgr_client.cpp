@@ -14,13 +14,13 @@
  */
 
 #include "thermal_mgr_client.h"
+#include "thermal_common.h"
 #include <datetime_ex.h>
 #include <if_system_ability_manager.h>
 #include <ipc_skeleton.h>
 #include <iservice_registry.h>
 #include <string_ex.h>
 #include <system_ability_definition.h>
-#include "thermal_common.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -93,51 +93,57 @@ void ThermalMgrClient::ThermalMgrDeathRecipient::OnRemoteDied(const wptr<IRemote
     THERMAL_HILOGI(COMP_FWK, "ThermalMgrDeathRecipient::Recv death notice.");
 }
 
-void ThermalMgrClient::SubscribeThermalTempCallback(const std::vector<std::string> &typeList,
-    const sptr<IThermalTempCallback> &callback)
+bool ThermalMgrClient::SubscribeThermalTempCallback(
+    const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
+    THERMAL_RETURN_IF_WITH_RET((callback == nullptr) || (Connect() != ERR_OK), false);
     THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->SubscribeThermalTempCallback(typeList, callback);
+    return true;
 }
 
-void ThermalMgrClient::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback> &callback)
+bool ThermalMgrClient::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
+    THERMAL_RETURN_IF_WITH_RET((callback == nullptr) || (Connect() != ERR_OK), false);
     THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->UnSubscribeThermalTempCallback(callback);
+    return true;
 }
 
-void ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+bool ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
-    THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
+    THERMAL_RETURN_IF_WITH_RET((callback == nullptr) || (Connect() != ERR_OK), false);
     THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->SubscribeThermalLevelCallback(callback);
+    return true;
 }
 
-void ThermalMgrClient::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+bool ThermalMgrClient::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
-    THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
+    THERMAL_RETURN_IF_WITH_RET((callback == nullptr) || (Connect() != ERR_OK), false);
     THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->UnSubscribeThermalLevelCallback(callback);
+    return true;
 }
 
-void ThermalMgrClient::SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
-    const std::string& desc, const sptr<IThermalActionCallback>& callback)
+bool ThermalMgrClient::SubscribeThermalActionCallback(
+    const std::vector<std::string>& actionList, const std::string& desc, const sptr<IThermalActionCallback>& callback)
 {
-    THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
+    THERMAL_RETURN_IF_WITH_RET((callback == nullptr) || (Connect() != ERR_OK), false);
     THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->SubscribeThermalActionCallback(actionList, desc, callback);
+    return true;
 }
 
-void ThermalMgrClient::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
+bool ThermalMgrClient::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
 {
-    THERMAL_RETURN_IF((callback == nullptr) || (Connect() != ERR_OK));
+    THERMAL_RETURN_IF_WITH_RET((callback == nullptr) || (Connect() != ERR_OK), false);
     THERMAL_HILOGD(COMP_FWK, "Enter");
     thermalSrv_->UnSubscribeThermalActionCallback(callback);
+    return true;
 }
 
-bool ThermalMgrClient::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
+bool ThermalMgrClient::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo)
 {
     if (Connect() != ERR_OK) {
         return false;

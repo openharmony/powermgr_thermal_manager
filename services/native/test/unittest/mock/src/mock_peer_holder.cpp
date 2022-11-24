@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,24 +13,13 @@
  * limitations under the License.
  */
 
-#ifndef ITHERMAL_LEVEL_CALLBACK_H
-#define ITHERMAL_LEVEL_CALLBACK_H
-
-#include "thermal_level_info.h"
-#include <iremote_broker.h>
-#include <iremote_object.h>
+#include "peer_holder.h"
 
 namespace OHOS {
-namespace PowerMgr {
-class IThermalLevelCallback : public IRemoteBroker {
-public:
-    enum {
-        GET_THERMAL_LEVEL = 0,
-    };
+PeerHolder::PeerHolder(const sptr<IRemoteObject>& object) : remoteObject_(object) {}
 
-    virtual bool GetThermalLevel(ThermalLevel level) = 0;
-    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalLevelCallback");
-};
-} // namespace PowerMgr
+sptr<IRemoteObject> PeerHolder::Remote()
+{
+    return nullptr;
+}
 } // namespace OHOS
-#endif //  ITHERMAL_LEVEL_CALLBACK_H
