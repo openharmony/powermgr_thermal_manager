@@ -216,11 +216,6 @@ void ActionApplicationProcess::KillAllAppProcess()
     }
 }
 
-void ActionApplicationProcess::KillService(const std::string& serviceName)
-{
-    system(("kill -9 $(pidof " + serviceName + ") > /dev/null 2>&1").c_str());
-}
-
 void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t& value)
 {
     THERMAL_HILOGD(COMP_SVC, "value: %{public}d", value);
