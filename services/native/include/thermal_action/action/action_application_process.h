@@ -50,7 +50,6 @@ public:
     void KillFgAppProcess();
     void KillBgAppProcess();
     void KillAllAppProcess();
-    void KillService(const std::string& serviceName);
     void ProcessAppActionRequest(const uint32_t& value);
 
     /* The api is used to UT, MT, ST */
