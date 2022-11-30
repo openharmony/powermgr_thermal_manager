@@ -1917,4 +1917,24 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest083, Function|MediumTest|Lev
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest083: end.");
 }
+
+/**
+ * @tc.name: ThermalMgrPolicyTest084
+ * @tc.desc: test GetThermalSensorTemp function
+ * @tc.type: FUNC
+ * @tc.cond: Set Battery temp
+ * @tc.result: Function return value is equal to the set value
+ * @tc.require: issueI63SZ4
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest084, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrPolicyTest084: start");
+    int32_t temp = 40100;
+    SetSensorTemp(temp, BATTERY_PATH);
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
+    EXPECT_EQ(true, temp == out);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrPolicyTest084: end");
+}
 }
