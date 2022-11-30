@@ -42,7 +42,9 @@ public:
     void SetScene(const std::string& scene);
     std::string Dump(const std::vector<std::string>& args);
 
+#ifndef THERMAL_SERVICE_DEATH_UT
 private:
+#endif
     class ThermalMgrDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
         ThermalMgrDeathRecipient() = default;
@@ -53,12 +55,9 @@ private:
         DISALLOW_COPY_AND_MOVE(ThermalMgrDeathRecipient);
     };
 
-private:
     ErrCode Connect();
     void GetLevel(ThermalLevel& level);
     bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo);
-
-private:
     sptr<IThermalSrv> thermalSrv_ {nullptr};
     sptr<IRemoteObject::DeathRecipient> deathRecipient_ {nullptr};
     void ResetProxy(const wptr<IRemoteObject>& remote);
