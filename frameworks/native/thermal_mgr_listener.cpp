@@ -22,6 +22,10 @@ namespace PowerMgr {
 bool ThermalMgrListener::ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
 {
     std::shared_ptr<ThermalMgrListener> listener = listener_.lock();
+    if (listener == nullptr) {
+        THERMAL_HILOGI(COMP_FWK, "listener is nullptr");
+        return false;
+    }
     listener->levelEvent_->OnThermalLevelResult(level);
     return true;
 }
@@ -42,11 +46,11 @@ void ThermalMgrListener::UnRegisterServiceEvent()
 int32_t ThermalMgrListener::SubscribeLevelEvent(const std::shared_ptr<ThermalLevelEvent>& levelEvent)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
-    RegisterServiceEvent();
-    if (levelEvent_ == nullptr) {
+    if (levelEvent == nullptr) {
         return ERR_INVALID_VALUE;
     }
     levelEvent_ = levelEvent;
+    RegisterServiceEvent();
     return ERR_OK;
 }
 
