@@ -366,6 +366,56 @@ ohos_unittest("ThermalUtilsTest") {
   external_deps = deps_ex
 }
 
+# thermal service death test
+ohos_unittest("ThermalServiceDeathTest") {
+  module_out_path = module_output_path
+
+  sources = [ "src/thermal_service_death_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  defines = [ "THERMAL_SERVICE_DEATH_UT" ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal listener test
+ohos_unittest("ThermalListenerTest") {
+  module_out_path = module_output_path
+
+  sources = [ "src/thermal_listener_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${ability_runtime_services_path}/appmgr:libappms",
+    "${thermal_innerkits}:thermalmgr_listener",
+    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
 # thermal client test
 ohos_unittest("ThermalClientTest") {
   module_out_path = module_output_path
@@ -511,6 +561,7 @@ group("unittest") {
     ":ThermalClientApiTest",
     ":ThermalClientTest",
     ":ThermalLevelEventTest",
+    ":ThermalListenerTest",
     ":ThermalMockProxyRemoteTest",
     ":ThermalMockProxySendrequestTest",
     ":ThermalMockProxyTest",
@@ -521,6 +572,7 @@ group("unittest") {
     ":ThermalMockStubReadstringTest",
     ":ThermalMockStubTest",
     ":ThermalPolicyTest",
+    ":ThermalServiceDeathTest",
     ":ThermalUtilsTest",
   ]
 }
