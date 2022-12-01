@@ -38,7 +38,7 @@ public:
     public:
         explicit ThermalLevelCallback(std::shared_ptr<ThermalMgrListener> listener) : listener_(listener) {};
         virtual ~ThermalLevelCallback() {};
-        bool GetThermalLevel(ThermalLevel level) override;
+        virtual bool GetThermalLevel(ThermalLevel level) override;
 
     private:
         std::weak_ptr<ThermalMgrListener> listener_;
