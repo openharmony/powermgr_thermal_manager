@@ -39,7 +39,7 @@ public:
     bool UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback);
     int32_t GetThermalSensorTemp(const SensorType type);
     ThermalLevel GetThermalLevel();
-    void SetScene(const std::string& scene);
+    bool SetScene(const std::string& scene);
     std::string Dump(const std::vector<std::string>& args);
 
 #ifndef THERMAL_SERVICE_DEATH_UT
