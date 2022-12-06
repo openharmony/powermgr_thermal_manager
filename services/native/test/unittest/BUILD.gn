@@ -370,7 +370,10 @@ ohos_unittest("ThermalUtilsTest") {
 ohos_unittest("ThermalServiceDeathTest") {
   module_out_path = module_output_path
 
-  sources = [ "src/thermal_service_death_test.cpp" ]
+  sources = [
+    "mock/src/mock_thermal_remote_object.cpp",
+    "src/thermal_service_death_test.cpp",
+  ]
 
   configs = [
     "${utils_path}:utils_config",
@@ -421,8 +424,6 @@ ohos_unittest("ThermalClientTest") {
   module_out_path = module_output_path
 
   sources = [
-    "${thermal_frameworks}/native/thermal_mgr_client.cpp",
-    "${utils_path}/native/src/thermal_hisysevent.cpp",
     "mock/src/mock_thermal_remote_object.cpp",
     "src/thermal_client_test.cpp",
   ]
