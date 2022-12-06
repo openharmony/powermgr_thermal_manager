@@ -170,11 +170,11 @@ void ThermalMgrClient::GetLevel(ThermalLevel& level)
     thermalSrv_->GetThermalLevel(level);
 }
 
-void ThermalMgrClient::SetScene(const std::string& scene)
+bool ThermalMgrClient::SetScene(const std::string& scene)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
-    THERMAL_RETURN_IF(Connect() != ERR_OK);
-    thermalSrv_->SetScene(scene);
+    THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, false);
+    return thermalSrv_->SetScene(scene);
 }
 
 ThermalLevel ThermalMgrClient::GetThermalLevel()
