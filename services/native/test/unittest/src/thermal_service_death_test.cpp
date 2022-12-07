@@ -15,6 +15,7 @@
 
 #include "thermal_service_death_test.h"
 
+#include "mock_thermal_remote_object.h"
 #include "thermal_mgr_client.h"
 
 using namespace testing::ext;
@@ -39,6 +40,26 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_001, TestSize.Level0)
     wptr<IRemoteObject> remoteObj = nullptr;
     EXPECT_NE(deathRecipient, nullptr);
     deathRecipient->OnRemoteDied(remoteObj);
+    EXPECT_NE(thermalClient.thermalSrv_, nullptr);
+}
+
+/**
+ * @tc.name: ThermalServiceDeathTest_002
+ * @tc.desc: test OnRemoteDied function(Input remoteObj is not nullptr, function don't reset proxy)
+ * @tc.type: FUNC
+ * @tc.require: issueI64U2R
+ */
+HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_002, TestSize.Level0)
+{
+    auto& thermalClient = ThermalMgrClient::GetInstance();
+    EXPECT_EQ(thermalClient.Connect(), ERR_OK);
+
+    std::shared_ptr<IRemoteObject::DeathRecipient> deathRecipient =
+        std::make_shared<ThermalMgrClient::ThermalMgrDeathRecipient>();
+    EXPECT_NE(deathRecipient, nullptr);
+    sptr<IRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
+    EXPECT_FALSE(sptrRemoteObj == nullptr);
+    deathRecipient->OnRemoteDied(sptrRemoteObj);
     EXPECT_NE(thermalClient.thermalSrv_, nullptr);
 }
 }

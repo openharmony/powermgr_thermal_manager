@@ -19,6 +19,7 @@
 #include "thermal_action_callback_proxy.h"
 #include "thermal_level_callback_proxy.h"
 #include "thermal_log.h"
+#include "thermal_mgr_client.h"
 #include "thermal_srv_proxy.h"
 #include "thermal_temp_callback_proxy.h"
 
@@ -29,6 +30,65 @@ using namespace std;
 
 namespace {
 /**
+ * @tc.name: ThermalClientMockParcelTest001
+ * @tc.desc: Thermal client test by mock parcel
+ * @tc.type: FUNC
+ * @tc.require: issueI64U2R
+ */
+HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalClientMockParcelTest001, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientMockParcelTest001 start");
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+
+    sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
+    EXPECT_FALSE(sptrRemoteObj == nullptr);
+    std::shared_ptr<ThermalSrvProxy> srvProxy = std::make_shared<ThermalSrvProxy>(sptrRemoteObj);
+    EXPECT_FALSE(srvProxy == nullptr);
+    std::vector<std::string> typeList {};
+    std::string desc {};
+    sptr<IThermalTempCallback> tempCallback = new ThermalTempCallbackProxy(sptrRemoteObj);
+    EXPECT_FALSE(tempCallback == nullptr);
+    EXPECT_FALSE(thermalMgrClient.SubscribeThermalTempCallback(typeList, tempCallback));
+    EXPECT_FALSE(thermalMgrClient.UnSubscribeThermalTempCallback(tempCallback));
+    sptr<IThermalLevelCallback> levelCallback = new ThermalLevelCallbackProxy(sptrRemoteObj);
+    EXPECT_FALSE(levelCallback == nullptr);
+    EXPECT_FALSE(thermalMgrClient.SubscribeThermalLevelCallback(levelCallback));
+    EXPECT_FALSE(thermalMgrClient.UnSubscribeThermalLevelCallback(levelCallback));
+    sptr<IThermalActionCallback> actionCallback = new ThermalActionCallbackProxy(sptrRemoteObj);
+    EXPECT_FALSE(actionCallback == nullptr);
+    EXPECT_FALSE(thermalMgrClient.SubscribeThermalActionCallback(typeList, desc, actionCallback));
+    EXPECT_FALSE(thermalMgrClient.UnSubscribeThermalActionCallback(actionCallback));
+
+    SensorType sensorType = SensorType::SOC;
+    EXPECT_TRUE(thermalMgrClient.GetThermalSensorTemp(sensorType) == 0);
+    EXPECT_TRUE(thermalMgrClient.GetThermalLevel() == ThermalLevel::COOL);
+    std::string sence = "";
+    EXPECT_FALSE(thermalMgrClient.SetScene(sence));
+    std::vector<std::string> args {};
+    EXPECT_TRUE(thermalMgrClient.Dump(args) == "can't connect service");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientMockParcelTest001 end");
+}
+
+/**
+ * @tc.name: ThermalClientMockParcelTest002
+ * @tc.desc: ThermalSrvSensorInfo test by mock parcel
+ * @tc.type: FUNC
+ * @tc.require: issueI64U2R
+ */
+HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalClientMockParcelTest002, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientMockParcelTest002 start");
+    std::string type = "test";
+    int32_t temp = 100;
+    sptr<ThermalSrvSensorInfo> info = new ThermalSrvSensorInfo(type, temp);
+    EXPECT_TRUE(type == info->GetType());
+    EXPECT_TRUE(temp == info->GetTemp());
+    MessageParcel parcel {};
+    EXPECT_FALSE(info->Marshalling(parcel));
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientMockParcelTest002 end");
+}
+
+/**
  * @tc.name: ThermalMockProxyWriteremoteobjectTest001
  * @tc.desc: proxy test
  * @tc.type: FUNC
@@ -36,7 +96,7 @@ namespace {
  */
 HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalMockProxyWriteremoteobjectTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteremoteobjectTest001 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteremoteobjectTest001 start");
     std::string result = "a";
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
@@ -67,6 +127,6 @@ HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalMockProxyWriteremoteobjec
     EXPECT_FALSE(actionCallback == nullptr);
     EXPECT_FALSE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback));
     EXPECT_FALSE(srvProxy->UnSubscribeThermalActionCallback(actionCallback));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteremoteobjectTest001 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteremoteobjectTest001 end");
 }
 } // namespace
