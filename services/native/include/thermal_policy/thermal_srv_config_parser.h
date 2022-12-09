@@ -21,6 +21,7 @@
 #include <mutex>
 #include <memory>
 #include <libxml/tree.h>
+#include "thermal_action_manager.h"
 #include "thermal_config_sensor_cluster.h"
 #include "thermal_policy.h"
 
@@ -33,24 +34,28 @@ public:
     ~ThermalSrvConfigParser() = default;
     ThermalSrvConfigParser(const ThermalSrvConfigParser&) = delete;
     ThermalSrvConfigParser& operator=(const ThermalSrvConfigParser&) = delete;
-    bool ThermalSrvConfigInit(std::string &path);
-    bool ParseXMLFile(std::string &path);
+    bool ThermalSrvConfigInit(std::string& path);
+    bool ParseXmlFile(std::string& path);
 private:
-    void ParseBaseNode(xmlNodePtr node);
-    void ParseLevelNode(xmlNodePtr node);
-    void ParseStateNode(xmlNodePtr node);
-    void ParseActionNode(xmlNodePtr node);
-    void ParsePolicyNode(xmlNodePtr node);
-    void ParseIdleNode(xmlNodePtr node);
-    void ParseAuxSensorInfo(const xmlNode *cur, std::shared_ptr<ThermalConfigSensorCluster> &sc);
-    void ParseSensorInfo(const xmlNode *cur, std::shared_ptr<ThermalConfigSensorCluster> &sc);
-    std::vector<AuxLevelItem> ParseAuxSensorSubnodeInfo(const xmlNode *cur,
-        std::vector<std::string>& auxsensors, const uint32_t i);
-    bool ParseAuxSensorSubnodeInfoTrigerRange(const xmlNode *subNode, std::vector<std::string>& auxsensors,
-        std::string& tempRanges, const uint32_t i);
-    void ParseSensorSubnodeInfo(const xmlNode *cur, std::vector<LevelItem>& vItem, std::vector<std::string>& sensors,
-        const uint32_t i, std::shared_ptr<ThermalConfigSensorCluster> &sc);
-    void ParsePolicySubnode(const xmlNode *cur, PolicyConfig& policyConfig);
+    bool ParseRootNode(const xmlNodePtr& node);
+    bool ParseBaseNode(const xmlNodePtr& node);
+    bool ParseLevelNode(const xmlNodePtr& node);
+    bool ParseStateNode(const xmlNodePtr& node);
+    bool ParseActionNode(const xmlNodePtr& node);
+    bool ParsePolicyNode(const xmlNodePtr& node);
+    bool ParseIdleNode(const xmlNodePtr& node);
+    bool ParseAuxSensorInfo(const xmlNodePtr& cur, std::shared_ptr<ThermalConfigSensorCluster> &sc);
+    bool ParseSensorInfo(const xmlNodePtr& cur, std::shared_ptr<ThermalConfigSensorCluster> &sc);
+    bool ParseAuxSensorLevInfo(const xmlNodePtr& cur, std::vector<std::string>& auxsensors,
+        const uint32_t i, std::vector<AuxLevelItem>& auxLevelItem);
+    bool ParseAuxSensorTriggerRange(const xmlNodePtr& subNode, std::vector<std::string>& auxsensors,
+        std::string& tempRangeStr, const uint32_t i);
+    bool ParseSensorLevelInfo(const xmlNodePtr& cur, std::vector<LevelItem>& levelItems,
+        std::vector<std::string>& sensors, const uint32_t i, std::shared_ptr<ThermalConfigSensorCluster> &sc);
+    bool ParseLevelThreshold(const xmlNodePtr& subNode, LevelItem& levelItem, std::vector<std::string>& sensors,
+        const uint32_t i);
+    bool ParseActionInfo(const xmlNodePtr& cur, ActionItem& ai);
+    bool ParsePolicyActionInfo(const xmlNodePtr& cur, PolicyConfig& policyConfig);
     std::mutex mutex_;
 };
 } // namespace PowerMgr
