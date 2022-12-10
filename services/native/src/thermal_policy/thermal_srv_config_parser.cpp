@@ -127,14 +127,14 @@ bool ThermalSrvConfigParser::ParseBaseNode(const xmlNodePtr& node)
 bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
 {
     xmlNodePtr cur = node->xmlChildrenNode;
-    std::map<std::string, std::shared_ptr<ThermalConfigSensorCluster>> msc;
+    SensorClusterMap msc;
     while (cur != nullptr) {
         if (xmlStrcmp(cur->name, BAD_CAST"sensor_cluster")) {
             cur = cur->next;
             continue;
         }
         std::string name;
-        std::shared_ptr<ThermalConfigSensorCluster> sc = std::make_shared<ThermalConfigSensorCluster>();
+        SensorClusterPtr sc = std::make_shared<ThermalConfigSensorCluster>();
         xmlChar* xmlName = xmlGetProp(cur, BAD_CAST"name");
         if (xmlName != nullptr) {
             name = reinterpret_cast<char*>(xmlName);
@@ -143,11 +143,7 @@ bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
             THERMAL_HILOGE(COMP_SVC, "level cluster name is null");
             return false;
         }
-        if (!ParseAuxSensorInfo(cur, sc)) {
-            THERMAL_HILOGE(COMP_SVC, "parse aux sensor info failed, cluster name: %{public}s", name.c_str());
-            return false;
-        }
-        if (!ParseSensorInfo(cur, sc)) {
+        if (!ParseAuxSensorInfo(cur, sc) || !ParseSensorInfo(cur, sc)) {
             THERMAL_HILOGE(COMP_SVC, "parse sensor info failed, cluster name: %{public}s", name.c_str());
             return false;
         }
@@ -159,6 +155,10 @@ bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
             }
             xmlFree(desc);
         }
+        if (!sc->CheckStandard()) {
+            THERMAL_HILOGE(COMP_SVC, "cluster [%{public}s] some config error", name.c_str());
+            return false;
+        }
         msc.emplace(std::pair(name, sc));
         cur = cur->next;
     }
@@ -166,7 +166,7 @@ bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
     return true;
 }
 
-bool ThermalSrvConfigParser::ParseAuxSensorInfo(const xmlNodePtr& cur, std::shared_ptr<ThermalConfigSensorCluster>& sc)
+bool ThermalSrvConfigParser::ParseAuxSensorInfo(const xmlNodePtr& cur, SensorClusterPtr& sc)
 {
     xmlChar* auxSensor = xmlGetProp(cur, BAD_CAST"aux_sensor");
     if (auxSensor != nullptr) {
@@ -264,7 +264,7 @@ bool ThermalSrvConfigParser::ParseAuxSensorTriggerRange(const xmlNodePtr& subNod
     return true;
 }
 
-bool ThermalSrvConfigParser::ParseSensorInfo(const xmlNodePtr& cur, std::shared_ptr<ThermalConfigSensorCluster>& sc)
+bool ThermalSrvConfigParser::ParseSensorInfo(const xmlNodePtr& cur, SensorClusterPtr& sc)
 {
     SensorInfoMap sensorLevelInfo;
     std::vector<std::string> sensors;
@@ -298,7 +298,7 @@ bool ThermalSrvConfigParser::ParseSensorInfo(const xmlNodePtr& cur, std::shared_
 }
 
 bool ThermalSrvConfigParser::ParseSensorLevelInfo(const xmlNodePtr& cur, std::vector<LevelItem>& levelItems,
-    std::vector<std::string>& sensors, const uint32_t sensorIdx, std::shared_ptr<ThermalConfigSensorCluster>& sc)
+    std::vector<std::string>& sensors, const uint32_t sensorIdx, SensorClusterPtr& sc)
 {
     for (xmlNodePtr subNode = cur->xmlChildrenNode; subNode != nullptr; subNode = subNode->next) {
         if (xmlStrcmp(subNode->name, BAD_CAST"item")) {
