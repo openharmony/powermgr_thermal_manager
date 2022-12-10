@@ -139,14 +139,6 @@ bool ThermalService::CreateConfigModule()
         }
     }
 
-    if (cluster_ == nullptr) {
-        cluster_ = std::make_shared<ThermalConfigSensorCluster>();
-        if (cluster_ == nullptr) {
-            THERMAL_HILOGE(COMP_SVC, "failed to create cluster");
-            return false;
-        }
-    }
-
     if (!policy_) {
         policy_ = std::make_shared<ThermalPolicy>();
         if (policy_ == nullptr) {

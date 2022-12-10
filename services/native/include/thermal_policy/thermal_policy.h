@@ -54,7 +54,7 @@ public:
     void RegisterObserver();
     void GetSensorInfomation(TypeTempMap info);
     void SetPolicyMap(PolicyConfigMap &policyConfigMap);
-    void SetSensorClusterMap(std::map<std::string, std::shared_ptr<ThermalConfigSensorCluster>> &msc);
+    void SetSensorClusterMap(SensorClusterMap &msc);
     void DumpConfigInfo();
     void LevelDecision();
     void PolicyDecision(std::map<std::string, uint32_t> &clusterLevelMap);
@@ -83,7 +83,7 @@ private:
     std::set<const std::shared_ptr<IThermalAction>, classcomp> actionFallbackSet_;
     std::set<const std::shared_ptr<IThermalAction>, classcomp> preExecuteList_;
     std::shared_ptr<ThermalsrvEventHandler> handler_;
-    std::map<std::string, std::shared_ptr<ThermalConfigSensorCluster>> msc_;
+    SensorClusterMap msc_;
     std::map<std::string, uint32_t> clusterLevelMap_;
     PolicyConfigMap clusterPolicyMap_;
 };
