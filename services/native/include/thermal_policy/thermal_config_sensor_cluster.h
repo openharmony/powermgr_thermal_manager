@@ -39,8 +39,6 @@ struct AuxLevelItem {
 using TypeTempMap = std::map<std::string, int32_t>;
 using SensorInfoMap = std::map<std::string, std::vector<LevelItem>>;
 using AuxSensorInfoMap = std::map<std::string, std::vector<AuxLevelItem>>;
-using SensorClusterPtr = std::shared_ptr<ThermalConfigSensorCluster>;
-using SensorClusterMap = std::map<std::string, SensorClusterPtr>;
 
 class ThermalConfigSensorCluster {
 public:
@@ -96,7 +94,9 @@ private:
     SensorInfoMap sensorInfolist_;
     AuxSensorInfoMap auxSensorInfolist_;
 };
+
+using SensorClusterPtr = std::shared_ptr<ThermalConfigSensorCluster>;
+using SensorClusterMap = std::map<std::string, SensorClusterPtr>;
 } // namespace PowerMgr
 } // namesapce OHOS
-
 #endif // THERMAL_CONFIG_SENSOR_CLUSTER_H

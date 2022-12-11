@@ -69,7 +69,7 @@ void ThermalPolicy::GetSensorInfomation(TypeTempMap info)
 void ThermalPolicy::LevelDecision()
 {
     for (auto cluster = msc_.begin(); cluster != msc_.end(); cluster++) {
-        THERMAL_HILOGD(COMP_SVC, "update [%{public}s] level", cluster->first().c_str());
+        THERMAL_HILOGD(COMP_SVC, "update [%{public}s] level", cluster->first.c_str());
         cluster->second->UpdateThermalLevel(typeTempMap);
         uint32_t level = cluster->second->GetCurrentLevel();
         clusterLevelMap_[cluster->first] = level;
