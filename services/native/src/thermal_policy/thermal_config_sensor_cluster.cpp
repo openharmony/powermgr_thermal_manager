@@ -33,20 +33,20 @@ bool ThermalConfigSensorCluster::CheckStandard()
         THERMAL_HILOGE(COMP_SVC, "sensor info is empty");
         return false;
     }
-    uint32_t levSize = static_cast<uint32_t>(sensorInfolist_.begin()->second().size());
-    for (auto& sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
-        for (int i = 0; i < sensorInfo->second().size(), ++i) {
-            if (sensorInfo->second().at(i).level != i + 1) {
-                THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] lev mismatch", sensorInfo->first().c_str());
+    uint32_t levSize = static_cast<uint32_t>(sensorInfolist_.begin()->second.size());
+    for (auto sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
+        for (uint32_t i = 0; i < sensorInfo->second.size(), ++i) {
+            if (sensorInfo->second.at(i).level != i + 1) {
+                THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] lev mismatch", sensorInfo->first.c_str());
                 return false;
             }
         }
     }
-    for (auto& sensorInfo = auxSensorInfolist_.begin(); sensorInfo != auxSensorInfolist_.end(); ++sensorInfo) {
-        if (sensorInfo->second().size() == 0 || sensorInfo->second().size() == levSize) {
+    for (auto sensorInfo = auxSensorInfolist_.begin(); sensorInfo != auxSensorInfolist_.end(); ++sensorInfo) {
+        if (sensorInfo->second.size() == 0 || sensorInfo->second.size() == levSize) {
             continue;
         } else {
-            THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] aux lev mismatch", sensorInfo->first().c_str());
+            THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] aux lev mismatch", sensorInfo->first.c_str());
             return false;
         }
     }
@@ -207,8 +207,8 @@ bool ThermalConfigSensorCluster::IsTempRateTrigger(uint32_t& level)
         return true;
     }
     auto& rateMap = g_service->GetSubscriber()->GetSensorsRate();
-    for (auto& sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
-        auto& rateIter = rateMap.find(sensorInfo->first);
+    for (auto sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
+        auto rateIter = rateMap.find(sensorInfo->first);
         if (rateIter == rateMap.end()) {
             continue;
         }
@@ -232,13 +232,13 @@ bool ThermalConfigSensorCluster::IsAuxSensorTrigger(TypeTempMap& typeTempInfo, u
     if (level == 0) {
         return true;
     }
-    for (auto& sensorInfo = auxSensorInfolist_.begin(); sensorInfo != auxSensorInfolist_.end(); ++sensorInfo) {
-        auto& auxIter = typeTempInfo.find(sensorInfo->first);
+    for (auto sensorInfo = auxSensorInfolist_.begin(); sensorInfo != auxSensorInfolist_.end(); ++sensorInfo) {
+        auto auxIter = typeTempInfo.find(sensorInfo->first);
         if (auxIter == typeTempInfo.end()) {
             continue;
         }
-        int32_t lowerTemp = auxSensorInfo->second.at(level - 1).lowerTemp;
-        int32_t upperTemp = auxSensorInfo->second.at(level - 1).upperTemp;
+        int32_t lowerTemp = sensorInfo->second.at(level - 1).lowerTemp;
+        int32_t upperTemp = sensorInfo->second.at(level - 1).upperTemp;
         if (auxIter->second >= lowerTemp && auxIter->second <= upperTemp) {
             continue;
         } else {

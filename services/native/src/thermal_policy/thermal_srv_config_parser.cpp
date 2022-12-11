@@ -81,10 +81,10 @@ bool ThermalSrvConfigParser::ParseRootNode(const xmlNodePtr& node)
     } else if (!xmlStrcmp(node->name, BAD_CAST"idle")) {
         ret = ParseIdleNode(node);
     } else if (!xmlStrcmp(node->name, BAD_CAST"comment")) {
-        ret = true
+        ret = true;
     } else {
         THERMAL_HILOGE(COMP_SVC, "unknown root node %{public}s",
-            reinterpret_cast<const char*>(subNode->name));
+            reinterpret_cast<const char*>(node->name));
     }
     return ret;
 }
