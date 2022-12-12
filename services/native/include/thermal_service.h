@@ -123,10 +123,6 @@ public:
     {
         return serviceSubscriber_;
     }
-    std::shared_ptr<ThermalConfigSensorCluster> GetSensorCluster() const
-    {
-        return cluster_;
-    }
 
     std::shared_ptr<ActionPopup> GetActionPopup() const
     {
@@ -181,7 +177,6 @@ private:
     std::shared_ptr<ThermalConfigBaseInfo> baseInfo_ {nullptr};
     std::shared_ptr<StateMachine> state_ {nullptr};
     std::shared_ptr<ThermalActionManager> actionMgr_ {nullptr};
-    std::shared_ptr<ThermalConfigSensorCluster> cluster_ {nullptr};
     bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};
     sptr<IServiceManager> hdiServiceMgr_ {nullptr};
