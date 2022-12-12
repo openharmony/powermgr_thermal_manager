@@ -35,7 +35,7 @@ bool ThermalConfigSensorCluster::CheckStandard()
     }
     uint32_t levSize = static_cast<uint32_t>(sensorInfolist_.begin()->second.size());
     for (auto sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
-        for (uint32_t i = 0; i < sensorInfo->second.size(), ++i) {
+        for (uint32_t i = 0; i < sensorInfo->second.size(); ++i) {
             if (sensorInfo->second.at(i).level != i + 1) {
                 THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] lev mismatch", sensorInfo->first.c_str());
                 return false;
