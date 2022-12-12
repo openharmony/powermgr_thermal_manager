@@ -19,7 +19,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <mutex>
+#include <memory>
 
 namespace OHOS {
 namespace PowerMgr {
@@ -39,41 +39,64 @@ struct AuxLevelItem {
 using TypeTempMap = std::map<std::string, int32_t>;
 using SensorInfoMap = std::map<std::string, std::vector<LevelItem>>;
 using AuxSensorInfoMap = std::map<std::string, std::vector<AuxLevelItem>>;
+
 class ThermalConfigSensorCluster {
 public:
-    bool Init();
-    void UpdateThermalLevel(TypeTempMap &typeTempInfo);
-    void CalculateSensorLevel(TypeTempMap &typeTempInfo, std::vector<uint32_t> &levelList, uint32_t &level);
-    bool IsAuxSensorTrigger(TypeTempMap &typeTempInfo, uint32_t &level);
-    bool IsTempRateTrigger(TypeTempMap &typeTempInfo, uint32_t &level);
-    void AscJudgment(std::vector<LevelItem> &vlev, int32_t curTemp, uint32_t &level);
-    void DescJudgment(std::vector<LevelItem> &vlev, int32_t curTemp, uint32_t &level);
-    static bool CmpValue(const std::pair<std::string, uint32_t> left, const std::pair<std::string, uint32_t> right);
+    bool CheckStandard();
+    void UpdateThermalLevel(TypeTempMap& typeTempInfo);
 
-    void Dump();
-    uint32_t GetCurrentLevel();
-    bool GetDescFlag();
-    bool GetAuxFlag();
-    bool GetRateFlag();
+    uint32_t GetCurrentLevel()
+    {
+        return latestLevel_;
+    }
+    SensorInfoMap& GetSensorInfoList()
+    {
+        return sensorInfolist_;
+    }
+    AuxSensorInfoMap& GetAuxSensorInfoList()
+    {
+        return auxSensorInfolist_;
+    }
 
-    SensorInfoMap GetSensorInfoList();
-    AuxSensorInfoMap GetAuxSensorInfoList();
-    void SetSensorLevelInfo(SensorInfoMap &sensorInfolist);
-    void SetAuxSensorLevelInfo(AuxSensorInfoMap &auxSensorInfolist);
-    void SetDescFlag(bool descflag);
-    void SetAuxFlag(bool auxflag);
-    void SetRateFlag(bool rateFlag);
+    void SetSensorLevelInfo(SensorInfoMap& sensorInfolist)
+    {
+        sensorInfolist_ = sensorInfolist;
+    }
+    void SetAuxSensorLevelInfo(AuxSensorInfoMap& auxSensorInfolist)
+    {
+        auxSensorInfolist_ = auxSensorInfolist;
+    }
+    void SetDescFlag(bool descflag)
+    {
+        descFlag_ = descflag;
+    }
+    void SetAuxFlag(bool auxflag)
+    {
+        auxFlag_ = auxflag;
+    }
+    void SetRateFlag(bool rateFlag)
+    {
+        rateFlag_ =  rateFlag;
+    }
+
 private:
+    void CalculateSensorLevel(TypeTempMap& typeTempInfo, std::vector<uint32_t>& levelList);
+    void AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
+    void DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
+    void CheckExtraCondition(TypeTempMap& typeTempInfo, uint32_t& level);
+    bool IsTempRateTrigger(uint32_t& level);
+    bool IsAuxSensorTrigger(TypeTempMap& typeTempInfo, uint32_t& level);
+
     bool descFlag_ {false};
     bool auxFlag_ {false};
     bool rateFlag_ {false};
-    uint32_t latestLevel_;
+    uint32_t latestLevel_ {0};
     SensorInfoMap sensorInfolist_;
     AuxSensorInfoMap auxSensorInfolist_;
-    std::map<std::string, bool> isRateMap_;
-    std::mutex levelMutex_;
 };
+
+using SensorClusterPtr = std::shared_ptr<ThermalConfigSensorCluster>;
+using SensorClusterMap = std::map<std::string, SensorClusterPtr>;
 } // namespace PowerMgr
 } // namesapce OHOS
-
 #endif // THERMAL_CONFIG_SENSOR_CLUSTER_H
