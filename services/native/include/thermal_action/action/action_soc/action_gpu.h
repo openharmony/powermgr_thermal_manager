@@ -16,30 +16,24 @@
 #ifndef ACTION_GPU_H
 #define ACTION_GPU_H
 
-#include "ithermal_action.h"
+#include "soc_action_base.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionGpu : public IThermalAction {
+class ActionGpu : public IThermalAction, public SocActionBase {
 public:
-    ActionGpu(const std::string& params);
+    ActionGpu(const std::string& actionName);
     ~ActionGpu() = default;
 
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
-    bool GetStrict()
-    {
-        return flag_;
-    }
-    int32_t GpuRequest(uint32_t freq);
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
+
 private:
+    uint32_t lastValue_ {0};
     std::vector<uint32_t> valueList_;
-    bool flag_;
-    bool enableEvent_ = false;
-    uint32_t lastValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

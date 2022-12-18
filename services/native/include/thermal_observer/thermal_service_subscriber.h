@@ -31,7 +31,7 @@ public:
     bool Init();
     void OnTemperatureChanged(TypeTempMap typeTempMap);
     void SetHistoryTypeTempMap(TypeTempMap typeTempMap);
-    std::map<std::string, double>& GetSensorsRate()
+    const std::map<std::string, double>& GetSensorsRate()
     {
         return sensorsRateMap_;
     }

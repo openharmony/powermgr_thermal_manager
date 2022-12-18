@@ -15,20 +15,19 @@
 
 #include "action_display.h"
 
-#include <map>
 #include "display_power_mgr_client.h"
 #include "file_operation.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
-#include "securec.h"
 
 using namespace OHOS::DisplayPowerMgr;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-constexpr const char* LCD_PATH = "/data/service/el0/thermal/config/lcd";
-const int MAX_PATH = 256;
+const std::string LCD_MOCK_PATH = "/data/service/el0/thermal/config/lcd";
+constexpr int32_t DEFAULT_FALLBACK_VALUE = 100;
+constexpr float PERCENT_UNIT = 100.0;
 }
 ActionDisplay::ActionDisplay(const std::string& actionName)
 {
@@ -39,9 +38,9 @@ void ActionDisplay::InitParams(const std::string& params)
 {
 }
 
-void ActionDisplay::SetStrict(bool flag)
+void ActionDisplay::SetStrict(bool enable)
 {
-    flag_ = flag;
+    isStrict_ = enable;
 }
 
 void ActionDisplay::SetEnableEvent(bool enable)
@@ -51,81 +50,47 @@ void ActionDisplay::SetEnableEvent(bool enable)
 
 void ActionDisplay::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
-    if (value.empty()) return;
-    valueList_.push_back(atof(value.c_str()));
+    valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionDisplay::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    float value;
     THERMAL_RETURN_IF (g_service == nullptr);
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        value = static_cast<float>(atof(iter->second.c_str()));
-        if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
-            DisplayRequest(value);
-        } else if (value != lastValue_) {
-            DisplayExecution(value);
-        } else {
-            THERMAL_HILOGD(COMP_SVC, "value is not change");
-        }
-        WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-        lastValue_ = value;
-        return;
-    }
 
-    if (valueList_.empty()) {
-        value = 0;
-    } else {
-        if (flag_) {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        } else {
+    int32_t value = DEFAULT_FALLBACK_VALUE;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
         }
         valueList_.clear();
     }
 
     if (value != lastValue_) {
         if (!g_service->GetSimulationXml()) {
-            DisplayRequest(value);
+            RequestDisplay(static_cast<float>(value) / PERCENT_UNIT);
         } else {
-            DisplayExecution(value);
+            ExecuteMock(value);
         }
-        WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }
 
-uint32_t ActionDisplay::DisplayRequest(float brightness)
+void ActionDisplay::RequestDisplay(float factor)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (!DisplayPowerMgrClient::GetInstance().DiscountBrightness(brightness)) {
+    if (!DisplayPowerMgrClient::GetInstance().DiscountBrightness(factor)) {
         THERMAL_HILOGE(COMP_SVC, "failed to discount brightness");
-        return ERR_INVALID_VALUE;
+        return;
     }
-    return ERR_OK;
+    THERMAL_HILOGI(COMP_SVC, "action execute: {%{public}s = %{public}f}", actionName_.c_str(), factor);
 }
 
-int32_t ActionDisplay::DisplayExecution(float brightness)
+void ActionDisplay::ExecuteMock(int32_t factor)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    int32_t ret = -1;
-    char lcdBuf[MAX_PATH] = {0};
-    ret = snprintf_s(lcdBuf, MAX_PATH, sizeof(lcdBuf) - 1, LCD_PATH);
-    if (ret < EOK) {
-        return ret;
-    }
-    std::string valueString = std::to_string(brightness) + "\n";
-    ret = FileOperation::WriteFile(lcdBuf, valueString, valueString.length());
-    if (ret != ERR_OK) {
-        return ret;
-    }
-    return ERR_OK;
+    std::string valueString = std::to_string(factor) + "\n";
+    FileOperation::WriteFile(LCD_MOCK_PATH, valueString, valueString.length());
 }
 } // namespace PowerMgr
 } // namespace OHOS
