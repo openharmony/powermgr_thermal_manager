@@ -219,7 +219,7 @@ void ThermalPolicy::PrintPolicyState()
 {
     std::string levInfo = "";
     for (auto clusterIter = clusterLevelMap_.begin(); clusterIter != clusterLevelMap_.end(); clusterIter++) {
-        levInfo = levInfo + clusterIter->first + "-" + std::to_string(clusterIter->second) + " ";
+        levInfo.append(clusterIter->first).append("-").append(std::to_string(clusterIter->second)).append(" ");
     }
     THERMAL_HILOGD(COMP_SVC, "current level: %{public}s", levInfo.c_str());
 }
