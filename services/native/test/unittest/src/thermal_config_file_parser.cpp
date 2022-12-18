@@ -64,7 +64,7 @@ bool ThermalConfigFileParser::GetActionPolicy(const std::string& name, uint32_t 
     if (vPolicyCfg != policyConfigMap_.end()) {
         for (auto cfgIter : vPolicyCfg->second) {
             if (cfgIter.level == level) {
-                policy = cfgIter.vPolicyAction;
+                policy = cfgIter.policyActionList;
                 return true;
             }
         }
@@ -466,7 +466,7 @@ void ThermalConfigFileParser::ParsePolicySubnode(const xmlNode* cur, PolicyConfi
         if (subNode->properties == nullptr) {
             THERMAL_HILOGD(LABEL_TEST, "action prop is nullptr");
             policyAction.isProp = false;
-            policyConfig.vPolicyAction.push_back(policyAction);
+            policyConfig.policyActionList.push_back(policyAction);
             continue;
         }
         for (auto actionProp = subNode->properties; actionProp != nullptr; actionProp = actionProp->next) {
@@ -476,12 +476,12 @@ void ThermalConfigFileParser::ParsePolicySubnode(const xmlNode* cur, PolicyConfi
                 std::string propValue = reinterpret_cast<char*>(xmlPropValue);
                 THERMAL_HILOGD(LABEL_TEST, "propName.name: %{public}s, propValue:%{public}s",
                     propName.c_str(), propValue.c_str());
-                policyAction.mActionProp.emplace(std::pair(propName, propValue));
+                policyAction.actionPropMap.emplace(std::pair(propName, propValue));
                 xmlFree(xmlPropValue);
             }
             policyAction.isProp = true;
         }
-        policyConfig.vPolicyAction.push_back(policyAction);
+        policyConfig.policyActionList.push_back(policyAction);
     }
 }
 } // namespace PowerMgr

@@ -34,7 +34,7 @@ using TypeTempMap = std::map<std::string, int32_t>;
 class ThermalService;
 class ThermalObserver {
 public:
-    using Callback = std::function<void(TypeTempMap)>;
+    using Callback = std::function<void(const TypeTempMap&)>;
     ThermalObserver() {};
     explicit ThermalObserver(const wptr<ThermalService>& tms);
     ~ThermalObserver();

@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <fcntl.h>
 #include <ipc_skeleton.h>
+#include <thread>
 #include <unistd.h>
 
 #include "constants.h"
@@ -34,7 +35,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-std::string VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
+std::string VENDOR_CONFIG = "/vendor/etc/thermal_config/cust/thermal_service_config.xml";
 std::string SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* THMERMAL_SERVICE_NAME = "ThermalService";
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";

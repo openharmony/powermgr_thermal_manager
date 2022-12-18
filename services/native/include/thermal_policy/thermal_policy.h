@@ -16,13 +16,9 @@
 #ifndef THERMAL_POLICY_H
 #define THERMAL_POLICY_H
 
-#include <thread>
-#include <condition_variable>
-#include <mutex>
-#include <list>
-#include <vector>
 #include <map>
-#include <memory>
+#include <string>
+#include <vector>
 
 #include "delayed_sp_singleton.h"
 #include "thermal_srv_sensor_info.h"
@@ -34,56 +30,48 @@ namespace PowerMgr {
 struct PolicyAction {
     std::string actionName;
     std::string actionValue;
-    std::map<std::string, std::string> mActionProp;
+    std::map<std::string, std::string> actionPropMap;
     bool isProp;
 };
 
 struct PolicyConfig {
     uint32_t level;
-    std::vector<PolicyAction> vPolicyAction;
+    std::vector<PolicyAction> policyActionList;
 };
-
 
 class ThermalPolicy {
 public:
     using PolicyConfigMap = std::map<std::string, std::vector<PolicyConfig>>;
-    ThermalPolicy();
+    ThermalPolicy() = default;
     ~ThermalPolicy() = default;
+
     bool Init();
-    /* receive sensor temp related */
-    void RegisterObserver();
-    void GetSensorInfomation(TypeTempMap info);
-    void SetPolicyMap(PolicyConfigMap &policyConfigMap);
-    void SetSensorClusterMap(SensorClusterMap &msc);
-    void DumpConfigInfo();
-    void LevelDecision();
-    void PolicyDecision(std::map<std::string, uint32_t> &clusterLevelMap);
-    void ActionDecision(std::vector<PolicyAction> &vAction);
-    bool StateMachineDecision(std::map<std::string, std::string> &stateMap);
-    bool ActionFallbackDecision();
-    bool ActionExecution();
-    void SortLevel();
-    void WriteLevel();
+    void OnSensorInfoReported(const TypeTempMap& info);
+    void SetPolicyMap(PolicyConfigMap& pcm);
+    void SetSensorClusterMap(SensorClusterMap& scm);
     void FindSubscribeActionValue();
-public:
     /* Test */
     std::map<std::string, uint32_t> GetClusterLevelMap();
+
 private:
+    void SortLevel();
+    void RegisterObserver();
+    void WriteLevel();
+    void LevelDecision();
+    void PolicyDecision();
+    void ActionDecision(const std::vector<PolicyAction>& actionList);
+    bool StateMachineDecision(const std::map<std::string, std::string>& stateMap);
+    bool ActionExecution();
+    void PrintPolicyState();
+
     static bool LevelCompare(const PolicyConfig& r, const PolicyConfig& l)
     {
         return r.level < l.level;
     }
-    struct classcomp {
-        bool operator()(const std::shared_ptr<IThermalAction> &l, const std::shared_ptr<IThermalAction> &r) const
-        {
-            return l < r;
-        }
-    };
-private:
-    std::set<const std::shared_ptr<IThermalAction>, classcomp> actionFallbackSet_;
-    std::set<const std::shared_ptr<IThermalAction>, classcomp> preExecuteList_;
+
     std::shared_ptr<ThermalsrvEventHandler> handler_;
-    SensorClusterMap msc_;
+    TypeTempMap typeTempMap_;
+    SensorClusterMap sensorClusterMap_;
     std::map<std::string, uint32_t> clusterLevelMap_;
     PolicyConfigMap clusterPolicyMap_;
 };
