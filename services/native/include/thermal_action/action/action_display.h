@@ -26,10 +26,10 @@ public:
     ~ActionDisplay() = default;
 
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool enable) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
     void RequestDisplay(float factor);
     void ExecuteMock(int32_t factor);
  
