@@ -91,7 +91,7 @@ void ActionVolume::Execute()
         }
         valueList_.clear();
     }
-    if (value != lastValue_) {
+    if (fabs(value - lastValue_) > FLOAT_ACCURACY) {
         if (!g_service->GetSimulationXml()) {
             VolumeRequest(value);
         } else {
