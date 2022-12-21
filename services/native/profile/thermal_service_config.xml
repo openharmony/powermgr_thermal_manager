@@ -72,11 +72,11 @@
 
     <policy>
         <config name="base_safe" level="1">
-            <lcd>100</lcd>
-            <lcd scene="cam">99</lcd>
-            <lcd scene="call">98</lcd>
-            <lcd scene="game">97</lcd>
-            <lcd scene="test">91</lcd>
+            <lcd>1.00</lcd>
+            <lcd scene="cam">0.99</lcd>
+            <lcd scene="call">0.98</lcd>
+            <lcd scene="game">0.97</lcd>
+            <lcd scene="test">0.91</lcd>
             <cpu_big>1992000</cpu_big>
             <cpu_med>1991500</cpu_med>
             <cpu_lit>1991200</cpu_lit>
@@ -95,10 +95,10 @@
             <volume>1.0</volume>
         </config>
         <config name="base_safe" level="2">
-            <lcd>90</lcd>
-            <lcd scene="cam">89</lcd>
-            <lcd scene="call">88</lcd>
-            <lcd scene="game">87</lcd>
+            <lcd>0.90</lcd>
+            <lcd scene="cam">0.89</lcd>
+            <lcd scene="call">0.88</lcd>
+            <lcd scene="game">0.87</lcd>
             <cpu_big>1991000</cpu_big>
             <cpu_med>1990500</cpu_med>
             <cpu_lit>1990200</cpu_lit>
@@ -116,10 +116,10 @@
             <volume>0.8</volume>
         </config>
         <config name="base_safe" level="3">
-            <lcd>80</lcd>
-            <lcd scene="cam">79</lcd>
-            <lcd scene="call">78</lcd>
-            <lcd scene="game">77</lcd>
+            <lcd>0.80</lcd>
+            <lcd scene="cam">0.79</lcd>
+            <lcd scene="call">0.78</lcd>
+            <lcd scene="game">0.77</lcd>
             <cpu_big>1990000</cpu_big>
             <cpu_med>1989500</cpu_med>
             <cpu_lit>1989200</cpu_lit>
@@ -138,12 +138,12 @@
             <shut_down>1</shut_down>
         </config>
         <config name="warm_5G" level="1">
-            <lcd>70</lcd>
+            <lcd>0.70</lcd>
             <thermallevel>4</thermallevel>
             <process_ctrl>2</process_ctrl>
         </config>
         <config name="warm_5G" level="2">
-            <lcd>60</lcd>
+            <lcd>0.60</lcd>
             <process_ctrl>3</process_ctrl>
             <thermallevel>5</thermallevel>
         </config>

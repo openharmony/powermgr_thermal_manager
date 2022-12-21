@@ -31,11 +31,11 @@ public:
     void AddActionValue(std::string value) override;
     void Execute() override;
     void RequestDisplay(float factor);
-    void ExecuteMock(int32_t factor);
+    void ExecuteMock(float factor);
  
 private:
-    int32_t lastValue_ {0};
-    std::vector<int32_t> valueList_;
+    float lastValue_ {0.0f};
+    std::vector<float> valueList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

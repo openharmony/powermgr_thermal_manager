@@ -15,6 +15,8 @@
 
 #include "action_display.h"
 
+#include <cmath>
+
 #include "display_power_mgr_client.h"
 #include "file_operation.h"
 #include "thermal_hisysevent.h"
@@ -26,8 +28,7 @@ namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string LCD_MOCK_PATH = "/data/service/el0/thermal/config/lcd";
-constexpr int32_t DEFAULT_FALLBACK_VALUE = 100;
-constexpr float PERCENT_UNIT = 100.0;
+constexpr float DEFAULT_FALLBACK_VALUE = 1.0f;
 }
 ActionDisplay::ActionDisplay(const std::string& actionName)
 {
@@ -50,14 +51,14 @@ void ActionDisplay::SetEnableEvent(bool enable)
 
 void ActionDisplay::AddActionValue(std::string value)
 {
-    valueList_.push_back(atoi(value.c_str()));
+    valueList_.push_back(atof(value.c_str()));
 }
 
 void ActionDisplay::Execute()
 {
     THERMAL_RETURN_IF (g_service == nullptr);
 
-    int32_t value = DEFAULT_FALLBACK_VALUE;
+    float value = DEFAULT_FALLBACK_VALUE;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
@@ -67,13 +68,13 @@ void ActionDisplay::Execute()
         valueList_.clear();
     }
 
-    if (value != lastValue_) {
+    if (fabs(value - lastValue_) > FLOAT_ACCURACY) {
         if (!g_service->GetSimulationXml()) {
-            RequestDisplay(static_cast<float>(value) / PERCENT_UNIT);
+            RequestDisplay(value);
         } else {
             ExecuteMock(value);
         }
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
         lastValue_ = value;
     }
 }
@@ -87,7 +88,7 @@ void ActionDisplay::RequestDisplay(float factor)
     THERMAL_HILOGI(COMP_SVC, "action execute: {%{public}s = %{public}f}", actionName_.c_str(), factor);
 }
 
-void ActionDisplay::ExecuteMock(int32_t factor)
+void ActionDisplay::ExecuteMock(float factor)
 {
     std::string valueString = std::to_string(factor) + "\n";
     FileOperation::WriteFile(LCD_MOCK_PATH, valueString, valueString.length());
