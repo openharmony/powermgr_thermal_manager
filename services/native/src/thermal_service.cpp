@@ -35,8 +35,8 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-std::string VENDOR_CONFIG = "/vendor/etc/thermal_config/cust/thermal_service_config.xml";
-std::string SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
+const std::string VENDOR_CONFIG = "/vendor/etc/thermal_config/cust/thermal_service_config.xml";
+const std::string SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* THMERMAL_SERVICE_NAME = "ThermalService";
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 constexpr uint32_t RETRY_TIME = 1000;
