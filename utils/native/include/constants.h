@@ -49,7 +49,6 @@ namespace PowerMgr {
     const int INTERVAL = 5000;
     constexpr const char* SC_PROTOCOL = "sc";
     constexpr const char* BUCK_PROTOCOL = "buck";
-    constexpr int TIME_TO_SLEEP = 1000;
     constexpr int32_t INVAILD_TEMP = -1000;
     constexpr float INVALID_ACTION_VALUE = -3.1415926;
 

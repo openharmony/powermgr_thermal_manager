@@ -48,14 +48,11 @@ ThermalService::~ThermalService() {}
 
 void ThermalService::OnStart()
 {
-    int time = 100;
     THERMAL_HILOGD(COMP_SVC, "Enter");
     if (ready_) {
         THERMAL_HILOGE(COMP_SVC, "OnStart is ready, nothing to do");
         return;
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(time));
 
     if (!(Init())) {
         THERMAL_HILOGE(COMP_SVC, "OnStart call init fail");
@@ -82,7 +79,6 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
 bool ThermalService::Init()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    std::this_thread::sleep_for(std::chrono::milliseconds(TIME_TO_SLEEP));
 
     if (!eventRunner_) {
         eventRunner_ = AppExecFwk::EventRunner::Create(THMERMAL_SERVICE_NAME);
