@@ -16,26 +16,24 @@
 #ifndef ACTION_CPU_BIG_H
 #define ACTION_CPU_BIG_H
 
-#include "ithermal_action.h"
+#include "soc_action_base.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionCpuBig : public IThermalAction {
+class ActionCpuBig : public IThermalAction, public SocActionBase {
 public:
     ActionCpuBig(const std::string& actionName);
     ~ActionCpuBig() = default;
 
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
-    int32_t CpuRuquest(uint32_t freq);
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
+
 private:
+    uint32_t lastValue_ {0};
     std::vector<uint32_t> valueList_;
-    bool flag_;
-    bool enableEvent_ = false;
-    uint32_t lastValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

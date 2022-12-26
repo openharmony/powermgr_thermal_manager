@@ -26,17 +26,16 @@ public:
     ~ActionDisplay() = default;
 
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
-    uint32_t DisplayRequest(float brightness);
-    int32_t DisplayExecution(float brightness);
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
+    void RequestDisplay(float factor);
+    void ExecuteMock(float factor);
+ 
 private:
+    float lastValue_ {0.0f};
     std::vector<float> valueList_;
-    bool flag_;
-    bool enableEvent_ = false;
-    float lastValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

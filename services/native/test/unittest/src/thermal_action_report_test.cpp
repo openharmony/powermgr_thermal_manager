@@ -222,7 +222,7 @@ std::string ThermalActionReportTest::ActionValueDecision(const std::string& acti
     for (auto actionIter : vAction) {
         if (actionIter.actionName == actionName) {
             if (actionIter.isProp) {
-                if (StateDecision(actionIter.mActionProp)) {
+                if (StateDecision(actionIter.actionPropMap)) {
                     valueList.push_back(stoi(actionIter.actionValue));
                 }
             } else {
@@ -255,9 +255,9 @@ std::string ThermalActionReportTest::LcdValueDecision(const std::string& actionN
     for (auto actionIter : vAction) {
         if (actionIter.actionName == actionName) {
             if (actionIter.isProp) {
-                if (StateDecision(actionIter.mActionProp)) {
+                if (StateDecision(actionIter.actionPropMap)) {
                     valueList.push_back(stof(actionIter.actionValue));
-                    sceneMap.emplace(std::pair(actionIter.mActionProp.begin()->second, actionIter.actionValue));
+                    sceneMap.emplace(std::pair(actionIter.actionPropMap.begin()->second, actionIter.actionValue));
                 }
             } else {
                 valueList.push_back(stof(actionIter.actionValue));

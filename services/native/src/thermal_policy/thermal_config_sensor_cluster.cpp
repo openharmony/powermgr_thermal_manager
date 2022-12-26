@@ -33,27 +33,33 @@ bool ThermalConfigSensorCluster::CheckStandard()
         THERMAL_HILOGE(COMP_SVC, "sensor info is empty");
         return false;
     }
-    uint32_t levSize = static_cast<uint32_t>(sensorInfolist_.begin()->second.size());
+    uint32_t expectedLevSize = static_cast<uint32_t>(sensorInfolist_.begin()->second.size());
     for (auto sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
+        uint32_t actualLevSize = static_cast<uint32_t>(sensorInfo->second.size());
+        if (actualLevSize != expectedLevSize) {
+            THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] lev size mismatch", sensorInfo->first.c_str());
+            return false;
+        }
         for (uint32_t i = 0; i < sensorInfo->second.size(); ++i) {
-            if (sensorInfo->second.at(i).level != i + 1) {
+            uint32_t expectedLev = i + 1;
+            if (sensorInfo->second.at(i).level != expectedLev) {
                 THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] lev mismatch", sensorInfo->first.c_str());
                 return false;
             }
         }
     }
     for (auto sensorInfo = auxSensorInfolist_.begin(); sensorInfo != auxSensorInfolist_.end(); ++sensorInfo) {
-        if (sensorInfo->second.size() == 0 || sensorInfo->second.size() == levSize) {
+        uint32_t actualLevSize = static_cast<uint32_t>(sensorInfo->second.size());
+        if (actualLevSize == 0 || actualLevSize == expectedLevSize) {
             continue;
-        } else {
-            THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] aux lev mismatch", sensorInfo->first.c_str());
-            return false;
         }
+        THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] aux lev size mismatch", sensorInfo->first.c_str());
+        return false;
     }
     return true;
 }
 
-void ThermalConfigSensorCluster::UpdateThermalLevel(TypeTempMap& typeTempInfo)
+void ThermalConfigSensorCluster::UpdateThermalLevel(const TypeTempMap& typeTempInfo)
 {
     std::vector<uint32_t> levelList;
 
@@ -64,10 +70,10 @@ void ThermalConfigSensorCluster::UpdateThermalLevel(TypeTempMap& typeTempInfo)
     }
 
     latestLevel_ = *std::max_element(levelList.begin(), levelList.end());
-    THERMAL_HILOGD(COMP_SVC, "final latestLevel = %{public}d", latestLevel_);
+    THERMAL_HILOGD(COMP_SVC, "final latestLevel = %{public}u", latestLevel_);
 }
 
-void ThermalConfigSensorCluster::CalculateSensorLevel(TypeTempMap& typeTempInfo,
+void ThermalConfigSensorCluster::CalculateSensorLevel(const TypeTempMap& typeTempInfo,
     std::vector<uint32_t>& levelList)
 {
     if (sensorInfolist_.empty()) {
@@ -186,7 +192,7 @@ void ThermalConfigSensorCluster::DescJudgment(std::vector<LevelItem>& levItems, 
     }
 }
 
-void ThermalConfigSensorCluster::CheckExtraCondition(TypeTempMap& typeTempInfo, uint32_t& level)
+void ThermalConfigSensorCluster::CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level)
 {
     if (auxFlag_) {
         if (!IsAuxSensorTrigger(typeTempInfo, level)) {
@@ -206,7 +212,7 @@ bool ThermalConfigSensorCluster::IsTempRateTrigger(uint32_t& level)
     if (level == 0) {
         return true;
     }
-    auto& rateMap = g_service->GetSubscriber()->GetSensorsRate();
+    const auto& rateMap = g_service->GetSubscriber()->GetSensorsRate();
     for (auto sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
         auto rateIter = rateMap.find(sensorInfo->first);
         if (rateIter == rateMap.end()) {
@@ -227,7 +233,7 @@ bool ThermalConfigSensorCluster::IsTempRateTrigger(uint32_t& level)
     return true;
 }
 
-bool ThermalConfigSensorCluster::IsAuxSensorTrigger(TypeTempMap& typeTempInfo, uint32_t& level)
+bool ThermalConfigSensorCluster::IsAuxSensorTrigger(const TypeTempMap& typeTempInfo, uint32_t& level)
 {
     if (level == 0) {
         return true;
@@ -247,6 +253,36 @@ bool ThermalConfigSensorCluster::IsAuxSensorTrigger(TypeTempMap& typeTempInfo, u
         }
     }
     return true;
+}
+
+uint32_t ThermalConfigSensorCluster::GetCurrentLevel()
+{
+    return latestLevel_;
+}
+
+void ThermalConfigSensorCluster::SetSensorLevelInfo(SensorInfoMap& sensorInfolist)
+{
+    sensorInfolist_ = sensorInfolist;
+}
+
+void ThermalConfigSensorCluster::SetAuxSensorLevelInfo(AuxSensorInfoMap& auxSensorInfolist)
+{
+    auxSensorInfolist_ = auxSensorInfolist;
+}
+
+void ThermalConfigSensorCluster::SetDescFlag(bool descflag)
+{
+    descFlag_ = descflag;
+}
+
+void ThermalConfigSensorCluster::SetAuxFlag(bool auxflag)
+{
+    auxFlag_ = auxflag;
+}
+
+void ThermalConfigSensorCluster::SetRateFlag(bool rateFlag)
+{
+    rateFlag_ =  rateFlag;
 }
 } // namespace PowerMgr
 } // namespace OHOS

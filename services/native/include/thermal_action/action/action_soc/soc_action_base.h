@@ -13,30 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef ACTION_CPU_LIT_H
-#define ACTION_CPU_LIT_H
+#ifndef SOC_ACTION_BASE_H
+#define SOC_ACTION_BASE_H
 
-#include "soc_action_base.h"
+#include "ithermal_action.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionCpuLit : public IThermalAction, public SocActionBase {
+class SocActionBase {
 public:
-    ActionCpuLit(const std::string& actionName);
-    ~ActionCpuLit() = default;
+    SocActionBase() = default;
+    ~SocActionBase() = default;
 
-    void InitParams(const std::string& params) override;
-    void SetStrict(bool enable) override;
-    void SetEnableEvent(bool enable) override;
-    void AddActionValue(std::string value) override;
-    void Execute() override;
+protected:
+    void SocLimitRequest(int32_t tag, int64_t value);
 
-private:
-    void CpuRuquest(uint32_t freq);
-
-    uint32_t lastValue_ {0};
-    std::vector<uint32_t> valueList_;
+    uint32_t fallbackValue = {INT_MAX};
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // ACTION_CPU_LIT_H
+#endif // SOC_ACTION_BASE_H
