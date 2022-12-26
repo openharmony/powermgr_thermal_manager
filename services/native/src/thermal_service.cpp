@@ -35,7 +35,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string VENDOR_CONFIG = "/vendor/etc/thermal_config/cust/thermal_service_config.xml";
+const std::string CUST_CONFIG = "/chip_prod/etc/thermal_config/cust/thermal_service_config.xml";
 const std::string SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* THMERMAL_SERVICE_NAME = "ThermalService";
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
@@ -152,8 +152,8 @@ bool ThermalService::CreateConfigModule()
 
 bool ThermalService::InitConfigFile()
 {
-    if (!ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(VENDOR_CONFIG)) {
-        THERMAL_HILOGE(COMP_SVC, "thermal service config init fail:VENDOR_CONFIG");
+    if (!ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(CUST_CONFIG)) {
+        THERMAL_HILOGE(COMP_SVC, "thermal service config init fail:CUST_CONFIG");
         if (!ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(SYSTEM_CONFIG)) {
             THERMAL_HILOGE(COMP_SVC, "thermal service config init fail:SYSTEM_CONFIG");
             return false;
