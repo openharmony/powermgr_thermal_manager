@@ -15,18 +15,12 @@
 
 #include "action_gpu.h"
 
-#include <map>
-#include <unistd.h>
-#include "socperf_client.h"
 #include "thermal_hisysevent.h"
-#include "thermal_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
 constexpr int32_t LIM_GPU_ID = 2001;
-constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 ActionGpu::ActionGpu(const std::string& actionName)
 {
@@ -37,9 +31,9 @@ void ActionGpu::InitParams(const std::string& params)
 {
 }
 
-void ActionGpu::SetStrict(bool flag)
+void ActionGpu::SetStrict(bool enable)
 {
-    flag_ = flag;
+    isStrict_ = enable;
 }
 
 void ActionGpu::SetEnableEvent(bool enable)
@@ -54,61 +48,22 @@ void ActionGpu::AddActionValue(std::string value)
 
 void ActionGpu::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
-    uint32_t value;
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
-        if (value != lastValue_) {
-            GpuRequest(value);
-            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-            g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-            lastValue_ = value;
-            valueList_.clear();
-        }
-        return;
-    }
-
-    if (valueList_.empty()) {
-        value = 0;
-    } else {
-        if (flag_) {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        } else {
+    uint32_t value = fallbackValue;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
         }
         valueList_.clear();
     }
 
-    THERMAL_HILOGD(COMP_SVC, "Enter value=%{public}d, lastValue_=%{public}d", value, lastValue_);
     if (value != lastValue_) {
-        GpuRequest(value);
+        SocLimitRequest(LIM_GPU_ID, value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
+        THERMAL_HILOGI(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
-}
-
-int32_t ActionGpu::GpuRequest(uint32_t freq)
-{
-    if (!g_service->GetSimulationXml()) {
-        std::vector<int32_t> tags;
-        std::vector<int64_t> configs;
-        tags.push_back(LIM_GPU_ID);
-        configs.push_back(freq);
-        OHOS::SOCPERF::SocPerfClient::GetInstance().LimitRequest(ACTION_TYPE_THERMAL_ID, tags, configs, "");
-    } else {
-        auto thermalInterface = g_service->GetThermalInterface();
-        if (thermalInterface != nullptr) {
-            int32_t ret = thermalInterface->SetGpuFreq(freq);
-            if (ret != ERR_OK) {
-                return ret;
-            }
-        }
-    }
-
-    return ERR_OK;
 }
 } // namespace PowermMgr
 } // namespace OHOS

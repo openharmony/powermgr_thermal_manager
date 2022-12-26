@@ -534,7 +534,7 @@ bool ThermalSrvConfigParser::ParsePolicyActionInfo(const xmlNodePtr& cur, Policy
 
         if (subNode->properties == nullptr) {
             policyAction.isProp = false;
-            policyConfig.vPolicyAction.push_back(policyAction);
+            policyConfig.policyActionList.push_back(policyAction);
             continue;
         }
         for (auto actionProp = subNode->properties; actionProp != nullptr; actionProp = actionProp->next) {
@@ -544,7 +544,7 @@ bool ThermalSrvConfigParser::ParsePolicyActionInfo(const xmlNodePtr& cur, Policy
                 std::string propValue = reinterpret_cast<char*>(xmlPropValue);
                 THERMAL_HILOGD(COMP_SVC, "propName.name: %{public}s, propValue:%{public}s",
                     propName.c_str(), propValue.c_str());
-                policyAction.mActionProp.emplace(std::pair(propName, propValue));
+                policyAction.actionPropMap.emplace(std::pair(propName, propValue));
                 xmlFree(xmlPropValue);
             } else {
                 THERMAL_HILOGE(COMP_SVC, "prop [%{public}s] value is null", propName.c_str());
@@ -552,7 +552,7 @@ bool ThermalSrvConfigParser::ParsePolicyActionInfo(const xmlNodePtr& cur, Policy
             }
             policyAction.isProp = true;
         }
-        policyConfig.vPolicyAction.push_back(policyAction);
+        policyConfig.policyActionList.push_back(policyAction);
     }
     return true;
 }

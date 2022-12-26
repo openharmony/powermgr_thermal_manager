@@ -30,7 +30,7 @@ public:
     virtual ~IThermalAction() = default;
 
     virtual void InitParams(const std::string& params) = 0;
-    virtual void SetStrict(bool flag) = 0;
+    virtual void SetStrict(bool enable) = 0;
     virtual void SetEnableEvent(bool enable) = 0;
     virtual void SetXmlScene(const std::string& scene, const std::string& value)
     {
@@ -49,6 +49,8 @@ public:
     virtual void Execute() = 0;
 
 protected:
+    bool isStrict_ {true};
+    bool enableEvent_ {false};
     std::string actionName_ = "";
     std::map<std::string, std::string> g_sceneMap;
 };

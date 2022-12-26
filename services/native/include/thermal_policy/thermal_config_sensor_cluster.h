@@ -43,49 +43,22 @@ using AuxSensorInfoMap = std::map<std::string, std::vector<AuxLevelItem>>;
 class ThermalConfigSensorCluster {
 public:
     bool CheckStandard();
-    void UpdateThermalLevel(TypeTempMap& typeTempInfo);
+    void UpdateThermalLevel(const TypeTempMap& typeTempInfo);
 
-    uint32_t GetCurrentLevel()
-    {
-        return latestLevel_;
-    }
-    SensorInfoMap& GetSensorInfoList()
-    {
-        return sensorInfolist_;
-    }
-    AuxSensorInfoMap& GetAuxSensorInfoList()
-    {
-        return auxSensorInfolist_;
-    }
-
-    void SetSensorLevelInfo(SensorInfoMap& sensorInfolist)
-    {
-        sensorInfolist_ = sensorInfolist;
-    }
-    void SetAuxSensorLevelInfo(AuxSensorInfoMap& auxSensorInfolist)
-    {
-        auxSensorInfolist_ = auxSensorInfolist;
-    }
-    void SetDescFlag(bool descflag)
-    {
-        descFlag_ = descflag;
-    }
-    void SetAuxFlag(bool auxflag)
-    {
-        auxFlag_ = auxflag;
-    }
-    void SetRateFlag(bool rateFlag)
-    {
-        rateFlag_ =  rateFlag;
-    }
+    uint32_t GetCurrentLevel();
+    void SetSensorLevelInfo(SensorInfoMap& sensorInfolist);
+    void SetAuxSensorLevelInfo(AuxSensorInfoMap& auxSensorInfolist);
+    void SetDescFlag(bool descflag);
+    void SetAuxFlag(bool auxflag);
+    void SetRateFlag(bool rateFlag);
 
 private:
-    void CalculateSensorLevel(TypeTempMap& typeTempInfo, std::vector<uint32_t>& levelList);
+    void CalculateSensorLevel(const TypeTempMap& typeTempInfo, std::vector<uint32_t>& levelList);
     void AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
     void DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
-    void CheckExtraCondition(TypeTempMap& typeTempInfo, uint32_t& level);
+    void CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level);
     bool IsTempRateTrigger(uint32_t& level);
-    bool IsAuxSensorTrigger(TypeTempMap& typeTempInfo, uint32_t& level);
+    bool IsAuxSensorTrigger(const TypeTempMap& typeTempInfo, uint32_t& level);
 
     bool descFlag_ {false};
     bool auxFlag_ {false};
