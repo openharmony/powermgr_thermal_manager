@@ -13,17 +13,18 @@
  * limitations under the License.
  */
 
-#ifndef THERMAL_MOCK_STUB_TEST_H
-#define THERMAL_MOCK_STUB_TEST_H
+#ifndef THERMAL_SERVICE_TEST_H
+#define THERMAL_SERVICE_TEST_H
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 namespace OHOS {
 namespace PowerMgr {
-class ThermalMockStubTest : public testing::Test {
+class ThermalServiceTest : public testing::Test {
 public:
     static void SetUpTestCase();
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // THERMAL_MOCK_STUB_TEST_H
+#endif // THERMAL_SERVICE_TEST_H

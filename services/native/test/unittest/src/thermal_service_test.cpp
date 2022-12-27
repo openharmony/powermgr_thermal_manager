@@ -1,0 +1,516 @@
+/*
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "thermal_service_test.h"
+
+#ifdef THERMAL_GTEST
+#define private   public
+#define protected public
+#define final
+#endif
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include "system_ability_definition.h"
+
+#include "thermal_config_sensor_cluster.h"
+#include "thermal_log.h"
+#include "thermal_mgr_dumper.h"
+#include "thermal_policy.h"
+#include "thermal_service.h"
+
+using namespace OHOS::PowerMgr;
+using namespace OHOS;
+using namespace testing::ext;
+using namespace std;
+
+namespace {
+sptr<ThermalService> g_service = nullptr;
+constexpr const char* VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
+constexpr const char* SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
+} // namespace
+
+void ThermalServiceTest::SetUpTestCase()
+{
+    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->OnStart();
+}
+
+namespace {
+/**
+ * @tc.name: ThermalMgrDumperTest001
+ * @tc.desc: test dump help
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalMgrDumperTest001, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrDumperTest001 start.");
+    std::vector<std::string> args;
+    std::string result;
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+    EXPECT_TRUE(!result.empty());
+
+    result.clear();
+    args.push_back("-h");
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+    EXPECT_TRUE(!result.empty());
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrDumperTest001 end.");
+}
+
+/**
+ * @tc.name: ThermalMgrDumperTest002
+ * @tc.desc: test dump -d
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalMgrDumperTest002, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrDumperTest002 start.");
+    std::vector<std::string> args;
+    std::string result;
+
+    args.push_back("-d");
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+    EXPECT_TRUE(result.empty());
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrDumperTest002 end.");
+}
+
+/**
+ * @tc.name: ThermalMgrDumperTest003
+ * @tc.desc: test dump -t
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalMgrDumperTest003, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrDumperTest003 start.");
+    std::vector<std::string> args;
+    std::string result;
+
+    g_service->RegisterThermalHdiCallback();
+    args.push_back("-t");
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrDumperTest003 end.");
+}
+
+/**
+ * @tc.name: ThermalMgrDumperTest004
+ * @tc.desc: test dump Invalid value
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalMgrDumperTest004, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrDumperTest004 start.");
+    std::vector<std::string> args;
+    std::string result;
+
+    args.push_back("---");
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+    EXPECT_TRUE(result.empty());
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrDumperTest004 end.");
+}
+
+/**
+ * @tc.name: ThermalServiceTest000
+ * @tc.desc: test OnAddSystemAbility
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalServiceTest000, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest000 start.");
+    std::string deviceId = "";
+    g_service->OnAddSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId);
+    g_service->OnAddSystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, deviceId);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest000 end.");
+}
+
+/**
+ * @tc.name: ThermalServiceTest001
+ * @tc.desc: test OnStart and OnStop
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalServiceTest001, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest001 start.");
+    g_service->ready_ = true;
+    g_service->OnStart();
+
+    g_service->ready_ = false;
+    g_service->OnStop();
+
+    g_service->ready_ = true;
+    g_service->RegisterHdiStatusListener();
+    g_service->GetThermalInfo();
+    g_service->OnStop();
+    EXPECT_FALSE(g_service->ready_);
+
+    g_service->ready_ = true;
+    g_service->OnStop();
+    EXPECT_FALSE(g_service->ready_);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest001 end.");
+}
+
+/**
+ * @tc.name: ThermalServiceTest002
+ * @tc.desc: test Init
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalServiceTest002, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest002 start.");
+    EXPECT_TRUE(g_service->Init());
+    EXPECT_TRUE(g_service->CreateConfigModule());
+    EXPECT_TRUE(g_service->Init());
+    EXPECT_TRUE(g_service->CreateConfigModule());
+    EXPECT_TRUE(g_service->InitStateMachine());
+    EXPECT_TRUE(g_service->InitConfigModule());
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest002 end.");
+}
+
+/**
+ * @tc.name: ThermalServiceTest003
+ * @tc.desc: test InitConfigFile
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalServiceTest003, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest003 start.");
+
+    std::string VENDOR_CONFIG_BACKUP = "/vendor/etc/thermal_config/thermal_service_config_backup.xml";
+    std::string SYSTEM_CONFIG_BACKUP = "/system/etc/thermal_config/thermal_service_config_backup.xml";
+
+    rename(VENDOR_CONFIG, VENDOR_CONFIG_BACKUP.c_str());
+    EXPECT_TRUE(g_service->InitConfigFile());
+
+    rename(SYSTEM_CONFIG, SYSTEM_CONFIG_BACKUP.c_str());
+    EXPECT_FALSE(g_service->InitConfigFile());
+
+    rename(VENDOR_CONFIG_BACKUP.c_str(), VENDOR_CONFIG);
+    rename(SYSTEM_CONFIG_BACKUP.c_str(), SYSTEM_CONFIG);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest003 end.");
+}
+
+/**
+ * @tc.name: ThermalServiceTest004
+ * @tc.desc: test Service Dump
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalServiceTest004, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest004 start.");
+
+    int fd = 0;
+    std::vector<std::u16string> args;
+    args.push_back(u"-h");
+    EXPECT_EQ(ERR_OK, g_service->Dump(fd, args));
+
+    fd = -1;
+    EXPECT_EQ(ERR_OK, g_service->Dump(fd, args));
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest004 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster001
+ * @tc.desc: test CheckStandard
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster001, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster001 start.");
+
+    ThermalConfigSensorCluster cluster;
+    cluster.sensorInfolist_.clear();
+    EXPECT_FALSE(cluster.CheckStandard());
+
+    // The first for loop returns the value false
+    LevelItem item;
+    item.level = 2;
+    std::vector<LevelItem> vecLevel;
+    vecLevel.push_back(item);
+    cluster.sensorInfolist_["test"] = vecLevel;
+    EXPECT_FALSE(cluster.CheckStandard());
+
+    // continue
+    vecLevel.clear();
+    item.level = 1;
+    vecLevel.push_back(item);
+    cluster.sensorInfolist_["test"] = vecLevel;
+    std::vector<AuxLevelItem> auxLevel;
+    cluster.auxSensorInfolist_["test"] = auxLevel;
+    EXPECT_TRUE(cluster.CheckStandard());
+
+    // The second for loop returns the value false
+    AuxLevelItem auxItem;
+    auxLevel.push_back(auxItem);
+    auxLevel.push_back(auxItem);
+    cluster.auxSensorInfolist_["test"] = auxLevel;
+    EXPECT_FALSE(cluster.CheckStandard());
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster001 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster002
+ * @tc.desc: test UpdateThermalLevel
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster002, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster002 start.");
+
+    // Null data return
+    ThermalConfigSensorCluster cluster;
+    TypeTempMap typeTempInfo;
+    cluster.latestLevel_ = 0;
+    cluster.UpdateThermalLevel(typeTempInfo);
+    EXPECT_EQ(cluster.latestLevel_, 0);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster002 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster003
+ * @tc.desc: test AscJudgment if branch
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster003, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster003 start.");
+    // inner if branch (curTemp >= threshold)
+    LevelItem item1;
+    item1.threshold = 0;
+    LevelItem item2;
+    item2.threshold = 0;
+    item2.level = 999;
+    std::vector<LevelItem> levItems1;
+    levItems1.push_back(item1);
+    levItems1.push_back(item2);
+    int32_t curTemp = 1;
+    uint32_t level = 1;
+    ThermalConfigSensorCluster cluster;
+    cluster.AscJudgment(levItems1, curTemp, level);
+    EXPECT_EQ(level, item2.level);
+
+    const int32_t INDEX0 = 0;
+    const int32_t INDEX1 = 1;
+    // The break branch in the for loop
+    levItems1.at(INDEX1).threshold = 3;
+    level = 1;
+    cluster.AscJudgment(levItems1, curTemp, level);
+    EXPECT_EQ(level, 1);
+
+    // inner else if branch (curTemp < thresholdClr)
+    levItems1.at(INDEX0).thresholdClr = 2;
+    levItems1.at(INDEX0).level = 999;
+    levItems1.at(INDEX1).threshold = 2;
+    levItems1.at(INDEX1).thresholdClr = 2;
+    level = 1;
+    cluster.AscJudgment(levItems1, curTemp, level);
+    EXPECT_EQ(level, levItems1.at(INDEX0).level - 1);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster003 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster004
+ * @tc.desc: test AscJudgment else if branch
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster004, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster004 start.");
+
+    LevelItem item;
+    item.thresholdClr = 2;
+    item.level = 999;
+    std::vector<LevelItem> levItems;
+    levItems.push_back(item);
+    int32_t curTemp = 1;
+    uint32_t level = 1;
+    ThermalConfigSensorCluster cluster;
+    cluster.AscJudgment(levItems, curTemp, level);
+    EXPECT_EQ(level, item.level - 1);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster004 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster005
+ * @tc.desc: test AscJudgment else branch
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster005, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster005 start.");
+
+    LevelItem item;
+    item.threshold = 1;
+    item.level = 999;
+    std::vector<LevelItem> levItems;
+    levItems.push_back(item);
+    levItems.push_back(item);
+    int32_t curTemp = 1;
+    uint32_t level = 0;
+    ThermalConfigSensorCluster cluster;
+    cluster.AscJudgment(levItems, curTemp, level);
+    EXPECT_EQ(level, item.level);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster005 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster006
+ * @tc.desc: test DescJudgment if branch
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster006, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster006 start.");
+    // inner if branch (curTemp <= nextUptemp)
+    LevelItem item1;
+    item1.threshold = 1;
+    LevelItem item2;
+    item2.threshold = 1;
+    item2.level = 999;
+    std::vector<LevelItem> levItems;
+    levItems.push_back(item1);
+    levItems.push_back(item2);
+    int32_t curTemp = 1;
+    uint32_t level = 1;
+    ThermalConfigSensorCluster cluster;
+    cluster.DescJudgment(levItems, curTemp, level);
+    EXPECT_EQ(level, item2.level);
+
+    const int32_t INDEX0 = 0;
+    const int32_t INDEX1 = 1;
+    // inner else if branch (curTemp > curDownTemp)
+    levItems.at(INDEX0).thresholdClr = 0;
+    levItems.at(INDEX0).level = 999;
+    levItems.at(INDEX1).threshold = 0;
+    levItems.at(INDEX1).thresholdClr = 0;
+    level = 1;
+    cluster.DescJudgment(levItems, curTemp, level);
+    EXPECT_EQ(level, levItems.at(INDEX0).level - 1);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster006 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster007
+ * @tc.desc: test DescJudgment else if branch
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster007, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster007 start.");
+
+    LevelItem item;
+    item.thresholdClr = 2;
+    item.level = 999;
+    std::vector<LevelItem> levItems;
+    levItems.push_back(item);
+    int32_t curTemp = 3;
+    uint32_t level = 1;
+    ThermalConfigSensorCluster cluster;
+    cluster.DescJudgment(levItems, curTemp, level);
+    EXPECT_EQ(level, item.level - 1);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster007 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster008
+ * @tc.desc: test DescJudgment else branch
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster008, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster008 start.");
+
+    LevelItem item;
+    item.threshold = 2;
+    item.level = 999;
+    std::vector<LevelItem> levItems;
+    levItems.push_back(item);
+    levItems.push_back(item);
+    int32_t curTemp = 2;
+    uint32_t level = 0;
+    ThermalConfigSensorCluster cluster;
+    cluster.DescJudgment(levItems, curTemp, level);
+    EXPECT_EQ(level, item.level);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster008 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster009
+ * @tc.desc: test IsAuxSensorTrigger
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster009, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster009 start.");
+
+    TypeTempMap typeTempInfo;
+    uint32_t level = 0;
+    ThermalConfigSensorCluster cluster;
+    // Returns true when level = 0
+    EXPECT_TRUE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
+
+    // No matching item is found
+    std::vector<AuxLevelItem> auxLevel;
+    cluster.auxSensorInfolist_["test1"] = auxLevel;
+    level = 1;
+    EXPECT_TRUE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
+    EXPECT_EQ(level, 1);
+
+    AuxLevelItem item;
+    item.lowerTemp = 1;
+    item.upperTemp = 1;
+    auxLevel.push_back(item);
+    cluster.auxSensorInfolist_["test1"] = auxLevel;
+    cluster.auxSensorInfolist_["test"] = auxLevel;
+    cluster.auxSensorInfolist_["test2"] = auxLevel;
+    typeTempInfo["test"] = 1;  // The range is lowerTemp and upperTemp
+    typeTempInfo["test2"] = 5; // The range is not lowerTemp or upperTemp
+    level = 1;
+    EXPECT_FALSE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
+    EXPECT_EQ(level, 0);
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster009 end.");
+}
+
+/**
+ * @tc.name: ThermalConfigSensorCluster010
+ * @tc.desc: test IsTempRateTrigger rateMap and sensorInfolist_ No match
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster010, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster010 start.");
+
+    g_service->RegisterThermalHdiCallback();
+    ThermalConfigSensorCluster cluster;
+    std::vector<LevelItem> vecLevel;
+    cluster.sensorInfolist_["test"] = vecLevel;
+
+    uint32_t level = 2;
+    EXPECT_TRUE(cluster.IsTempRateTrigger(level));
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster010 end.");
+}
+} // namespace
