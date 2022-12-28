@@ -75,6 +75,8 @@ ohos_shared_library("thermalservice") {
     ":thermalsrv_private_config",
   ]
 
+  defines = []
+
   public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
@@ -82,7 +84,6 @@ ohos_shared_library("thermalservice") {
     "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
-    "//foundation/resourceschedule/resource_schedule_service/soc_perf:socperf_client",
     "//third_party/libxml2:xml2",
   ]
 
@@ -113,6 +114,12 @@ ohos_shared_library("thermalservice") {
     "time_service:time_client",
     "window_manager:libdm",
   ]
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.resourceschedule_soc_perf)) {
+    external_deps += [ "soc_perf:socperf_client" ]
+    defines += [ "SOC_PERF_ENABLE" ]
+  }
 
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
