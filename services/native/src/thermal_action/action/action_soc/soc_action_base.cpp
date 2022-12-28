@@ -15,21 +15,27 @@
 
 #include "soc_action_base.h"
 
+#ifdef SOC_PERF_ENBALE
 #include "socperf_client.h"
+#endif
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
+#ifdef SOC_PERF_ENBALE
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
+#endif
 }
 
 void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 {
+#ifdef SOC_PERF_ENBALE
     std::vector<int32_t> tags;
     std::vector<int64_t> configs;
     tags.push_back(tag);
     configs.push_back(value);
     OHOS::SOCPERF::SocPerfClient::GetInstance().LimitRequest(ACTION_TYPE_THERMAL_ID, tags, configs, "");
+#endif
 }
 } // namespace PowerMgr
 } // namespace OHOS
