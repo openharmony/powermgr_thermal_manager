@@ -38,7 +38,9 @@ public:
 
     bool Start(std::string eventName, EventHandle callback);
 
+#ifndef THERMAL_OBSERVER_UT_TEST
 private:
+#endif
     class EventSubscriber : public Ces {
     public:
         EventSubscriber(const sptr<CesInfo>& info, const std::map<std::string, EventHandle>& handles) : Ces(*info),
