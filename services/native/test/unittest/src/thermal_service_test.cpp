@@ -27,6 +27,8 @@
 
 #include "system_ability_definition.h"
 
+#include "action_cpu_big.h"
+#include "screen_state_collection.h"
 #include "thermal_config_sensor_cluster.h"
 #include "thermal_log.h"
 #include "thermal_mgr_dumper.h"
@@ -502,15 +504,173 @@ HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster009, TestSize.Level0)
 HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster010, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster010 start.");
-
     g_service->RegisterThermalHdiCallback();
     ThermalConfigSensorCluster cluster;
     std::vector<LevelItem> vecLevel;
     cluster.sensorInfolist_["test"] = vecLevel;
-
     uint32_t level = 2;
     EXPECT_TRUE(cluster.IsTempRateTrigger(level));
 
+    // continue
+    auto& rateMap = g_service->serviceSubscriber_->sensorsRateMap_;
+    rateMap["test"] = 3.14;
+    LevelItem item1;
+    item1.level = 1;
+    LevelItem item2;
+    item2.level = 2;
+    item2.tempRiseRate = 2.14;
+    vecLevel.push_back(item1);
+    vecLevel.push_back(item2);
+    cluster.sensorInfolist_["test"] = vecLevel;
+    EXPECT_TRUE(cluster.IsTempRateTrigger(level));
+
+    // false is returned if the condition is not met
+    vecLevel.clear();
+    item1.level = 2;
+    item1.tempRiseRate = 4.14;
+    vecLevel.push_back(item1);
+    cluster.sensorInfolist_["test"] = vecLevel;
+    EXPECT_FALSE(cluster.IsTempRateTrigger(level));
+    EXPECT_EQ(level, 0);
     THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster010 end.");
+}
+
+/**
+ * @tc.name: ThermalPolicy001
+ * @tc.desc: test GetClusterLevelMap
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalPolicy001, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy001 start.");
+    ThermalPolicy policy;
+    policy.GetClusterLevelMap();
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy001 end.");
+}
+
+/**
+ * @tc.name: ThermalPolicy002
+ * @tc.desc: test PolicyDecision continue in a loop
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalPolicy002, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy002 start.");
+    ThermalPolicy policy;
+    policy.Init();
+    std::vector<PolicyConfig> vecConfig;
+    policy.clusterPolicyMap_[""] = vecConfig;
+    policy.clusterPolicyMap_["test"] = vecConfig;
+    PolicyConfig config;
+    vecConfig.push_back(config);
+    policy.clusterPolicyMap_["test1"] = vecConfig;
+    policy.PolicyDecision();
+
+    // ActionExecution Let the function return false
+    auto mgrTmp = g_service->actionMgr_;
+    g_service->actionMgr_ = nullptr;
+    policy.PolicyDecision();
+    g_service->actionMgr_ = mgrTmp;
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy002 end.");
+}
+
+/**
+ * @tc.name: ThermalPolicy003
+ * @tc.desc: test ActionDecision continue in a loop
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalPolicy003, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy003 start.");
+    // No matching item
+    ThermalPolicy policy;
+    std::vector<PolicyAction> actionList;
+    PolicyAction action;
+    action.actionName = "test";
+    actionList.push_back(action);
+    policy.ActionDecision(actionList);
+
+    // second is nullptr
+    auto& actionMap = g_service->actionMgr_->actionMap_;
+    actionMap["test"] = nullptr;
+    policy.ActionDecision(actionList);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy003 end.");
+}
+
+/**
+ * @tc.name: ThermalPolicy004
+ * @tc.desc: test ActionDecision Execute the if else branch
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalPolicy004, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy004 start.");
+    ThermalPolicy policy;
+    std::vector<PolicyAction> actionList;
+    PolicyAction action1;
+    action1.actionName = "test";
+    action1.isProp = true;
+    PolicyAction action2;
+    action2.actionName = "test1";
+    action1.isProp = false;
+    PolicyAction action3;
+    action2.actionName = "test2";
+    action1.isProp = true;
+    actionList.push_back(action1);
+    actionList.push_back(action2);
+    actionList.push_back(action3);
+
+    auto& actionMap = g_service->actionMgr_->actionMap_;
+    actionMap["test"] = std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME);
+    actionMap["test1"] = std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME);
+    actionMap["test2"] = std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME);
+    policy.ActionDecision(actionList);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy004 end.");
+}
+
+/**
+ * @tc.name: ThermalPolicy005
+ * @tc.desc: test StateMachineDecision
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalPolicy005, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy005 start.");
+    // No match
+    ThermalPolicy policy;
+    std::map<std::string, std::string> stateMap;
+    stateMap["test"] = "test";
+    EXPECT_FALSE(policy.StateMachineDecision(stateMap));
+
+    // The second term is nullptr
+    auto& collectionMap = g_service->state_->stateCollectionMap_;
+    collectionMap["test"] = nullptr;
+    EXPECT_FALSE(policy.StateMachineDecision(stateMap));
+
+    // for loop return false
+    collectionMap["test"] = std::make_shared<ScreenStateCollection>();
+    EXPECT_FALSE(policy.StateMachineDecision(stateMap));
+
+    // for loop continue or retrun true
+    stateMap["test"] = "1";
+    policy.StateMachineDecision(stateMap);
+    stateMap["test1"] = "0";
+    collectionMap["test1"] = std::make_shared<ScreenStateCollection>();
+    policy.StateMachineDecision(stateMap);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy005 end.");
+}
+
+/**
+ * @tc.name: ThermalPolicy006
+ * @tc.desc: test Miscellaneous branches are not omitted
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalPolicy006, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy006 start.");
+    ThermalPolicy policy;
+    g_service->observer_ = nullptr;
+    policy.FindSubscribeActionValue();
+    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy006 end.");
 }
 } // namespace
