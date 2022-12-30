@@ -69,7 +69,9 @@ public:
     bool RegisterEvent();
 public:
     virtual void SetState() override;
+#ifndef THERMAL_OBSERVER_UT_TEST
 private:
+#endif
     static void HandleChargeIdleState();
     static void PublishIdleEvent(bool isIdle, const std::string commonEventSupport);
     std::string state_;
