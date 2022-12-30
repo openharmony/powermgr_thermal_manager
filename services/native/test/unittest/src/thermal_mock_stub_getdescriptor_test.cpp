@@ -110,7 +110,7 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest003, 
 
 /**
  * @tc.name: ThermalMockStubGetdescriptorTest004
- * @tc.desc: stub OnThermalTempChangedStub
+ * @tc.desc: stub ThermalTempCallbackStub OnRemoteRequest THERMAL_TEMPERATURE_CHANGD
  * @tc.type: FUNC
  */
 HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest004, TestSize.Level0)
@@ -128,6 +128,87 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest004, 
     int32_t ret = tempStub->OnRemoteRequest(code, data, reply, option);
     EXPECT_EQ(ret, ERR_OK) << "ret: " << ret << " code: " << code;
 
+    // Read Uint32 parcel error
+    data.WriteInterfaceToken(ThermalTempCallbackStub::GetDescriptor());
+    ret = tempStub->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ret, E_READ_PARCEL_ERROR_THERMAL) << "ret: " << ret << " code: " << code;
+
+    // Read String parcel error
+    data.WriteInterfaceToken(ThermalTempCallbackStub::GetDescriptor());
+    data.WriteUint32(1);
+    ret = tempStub->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ret, E_READ_PARCEL_ERROR_THERMAL) << "ret: " << ret << " code: " << code;
+
+    // Read Int32 parcel error
+    data.WriteInterfaceToken(ThermalTempCallbackStub::GetDescriptor());
+    data.WriteUint32(1);
+    data.WriteString("ThermalMockStubGetdescriptorTest004");
+    ret = tempStub->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ret, E_READ_PARCEL_ERROR_THERMAL) << "ret: " << ret << " code: " << code;
+
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest004 end.");
+}
+
+/**
+ * @tc.name: ThermalMockStubGetdescriptorTest005
+ * @tc.desc: stub ThermalActionCallbackStub OnRemoteRequest THERMAL_ACTION_CHANGD
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest005, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest005 start.");
+    uint32_t code = static_cast<uint32_t>(IThermalActionCallback::THERMAL_ACTION_CHANGD);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    sptr<ThermalActionCallbackStub> actionStub = new ThermalActionCallbackStub();
+    data.WriteInterfaceToken(ThermalActionCallbackStub::GetDescriptor());
+    data.WriteUint32(1);
+    data.WriteString("ThermalMockStubGetdescriptorTest005");
+    data.WriteFloat(3.14);
+    int32_t ret = actionStub->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ret, ERR_OK) << "ret: " << ret << " code: " << code;
+
+    // Read Uint32 parcel error
+    data.WriteInterfaceToken(ThermalActionCallbackStub::GetDescriptor());
+    ret = actionStub->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ret, E_READ_PARCEL_ERROR_THERMAL) << "ret: " << ret << " code: " << code;
+
+    // Read String parcel error
+    data.WriteInterfaceToken(ThermalActionCallbackStub::GetDescriptor());
+    data.WriteUint32(1);
+    ret = actionStub->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ret, E_READ_PARCEL_ERROR_THERMAL) << "ret: " << ret << " code: " << code;
+
+    // Read Float parcel error
+    data.WriteInterfaceToken(ThermalActionCallbackStub::GetDescriptor());
+    data.WriteUint32(1);
+    data.WriteString("ThermalMockStubGetdescriptorTest005");
+    ret = actionStub->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ret, E_READ_PARCEL_ERROR_THERMAL) << "ret: " << ret << " code: " << code;
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest005 end.");
+}
+
+/**
+ * @tc.name: ThermalMockStubGetdescriptorTest006
+ * @tc.desc: stub ThermalLevelCallbackStub OnRemoteRequest GET_THERMAL_LEVEL Read Int32 parcel error
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest006, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest006 start.");
+    uint32_t code = static_cast<uint32_t>(IThermalLevelCallback::GET_THERMAL_LEVEL);
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    sptr<ThermalLevelCallbackStub> actionStub = new ThermalLevelCallbackStub();
+    data.WriteInterfaceToken(ThermalLevelCallbackStub::GetDescriptor());
+    int32_t ret = actionStub->OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(ret, E_READ_PARCEL_ERROR_THERMAL) << "ret: " << ret << " code: " << code;
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest006 end.");
 }
 } // namespace
