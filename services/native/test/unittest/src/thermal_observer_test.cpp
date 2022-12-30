@@ -23,6 +23,10 @@
 #include "thermal_observer.h"
 #include "thermal_service.h"
 #include "thermal_sensor_info.h"
+#include "charger_state_collection.h"
+#include "scene_state_collection.h"
+#include "screen_state_collection.h"
+#include "state_machine.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -173,6 +177,85 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest005, TestSize.Level0)
         info->GetTemp("soc");
         info->GetHistoryTemperature("soc");
         info->NotifyObserver();
+    }
+}
+
+/**
+ * @tc.name: ThermalObserverTest006
+ * @tc.desc: Thermal Charger State Collection Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest006, TestSize.Level0)
+{
+    auto chargerState = std::make_shared<ChargerStateCollection>();
+    if (chargerState != nullptr) {
+        chargerState->Init();
+        string param = "charging";
+        bool ret = chargerState->InitParam(param);
+        EXPECT_TRUE(ret);
+        chargerState->GetState();
+        chargerState->RegisterEvent();
+        CommonEventData data;
+        chargerState->HandleChangerStatusCompleted(data);
+        chargerState->SetState();
+        chargerState->DecideState("1");
+        chargerState->HandleChargeIdleState();
+        chargerState->HandleThermalLevelCompleted(data);
+    }
+}
+
+/**
+ * @tc.name: ThermalObserverTest007
+ * @tc.desc: Thermal Scene State Collection Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest007, TestSize.Level0)
+{
+    auto sceneState = std::make_shared<SceneStateCollection>();
+    if (sceneState != nullptr) {
+        sceneState->Init();
+        string param = "game";
+        bool ret = sceneState->InitParam(param);
+        EXPECT_TRUE(ret);
+        sceneState->SetState();
+        sceneState->DecideState("game");
+    }
+}
+
+/**
+ * @tc.name: ThermalObserverTest008
+ * @tc.desc: Thermal Screen State Collection Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
+{
+    auto screenState = std::make_shared<ScreenStateCollection>();
+    if (screenState != nullptr) {
+        screenState->Init();
+        string param = "on";
+        bool ret = screenState->InitParam(param);
+        EXPECT_TRUE(ret);
+        screenState->GetState();
+        screenState->RegisterEvent();
+        CommonEventData data;
+        screenState->HandleScreenOnCompleted(data);
+        screenState->HandleScreenOffCompleted(data);
+        screenState->SetState();
+        screenState->DecideState("0");
+    }
+}
+
+/**
+ * @tc.name: ThermalObserverTest009
+ * @tc.desc: Thermal State Machine Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest009, TestSize.Level0)
+{
+    auto stateMachine = std::make_shared<StateMachine>();
+    if (stateMachine != nullptr) {
+        bool ret = stateMachine->Init();
+        EXPECT_TRUE(ret);
     }
 }
 } // namespace

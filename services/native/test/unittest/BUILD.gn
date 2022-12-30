@@ -24,6 +24,7 @@ config("module_private_config") {
     "include",
     "mock/include",
     "${utils_path}/native/include",
+    "${thermal_manager_path}/services/native/include/thermal_action",
     "${thermal_service_zidl}/include",
     "${ability_runtime_services_path}/appmgr/include",
     "${thermal_innerkits}/native/include",
@@ -50,6 +51,7 @@ deps_ex = [
   "window_manager:libwm",
   "drivers_interface_battery:libbattery_proxy_1.1",
   "drivers_interface_thermal:libthermal_proxy_1.0",
+  "time_service:time_client",
 ]
 
 # thermal service test
