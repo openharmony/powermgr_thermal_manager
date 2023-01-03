@@ -93,7 +93,6 @@
         }
       ],
       "test": [
-        "//base/powermgr/thermal_manager/interfaces/kits/js/test:thermalmgr_js_interface_test",
         "//base/powermgr/thermal_manager/services/native/test:thermalmgr_test",
         "//base/powermgr/thermal_manager/test:fuzztest"
       ]
