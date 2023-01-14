@@ -17,6 +17,7 @@
 #define THERMAL_SRV_SUBSCRIBER_H
 
 #include <memory>
+#include <mutex>
 #include <time.h>
 #include "thermal_sensor_info.h"
 #include "thermal_observer.h"
@@ -46,6 +47,7 @@ private:
     time_t startTime_;
     time_t endTime_;
     std::map<std::string, double> sensorsRateMap_;
+    std::mutex mutex_;
     int32_t count_ {0};
     int32_t magnification_ {0};
 };
