@@ -39,6 +39,7 @@ bool ThermalServiceSubscriber::Init()
 
 void ThermalServiceSubscriber::OnTemperatureChanged(TypeTempMap typeTempMap)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (typeTempMap.empty()) {
         THERMAL_HILOGE(COMP_SVC, "failed to get sensor info: %{public}zu", typeTempMap.size());
         return;
