@@ -64,7 +64,6 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -103,7 +102,6 @@ ohos_systemtest("ThermalMgrSystemTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
@@ -156,7 +154,6 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",

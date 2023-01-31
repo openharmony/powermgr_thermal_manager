@@ -66,7 +66,6 @@ ohos_unittest("ThermalPolicyTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
@@ -89,7 +88,6 @@ ohos_unittest("ThermalLevelEventTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
@@ -112,7 +110,6 @@ ohos_unittest("ThermalClientApiTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
@@ -135,7 +132,6 @@ ohos_unittest("ThermalActionHubTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
@@ -163,7 +159,6 @@ ohos_unittest("ThermalActionReportTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
@@ -192,7 +187,6 @@ ohos_unittest("ThermalMockProxyTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -219,7 +213,6 @@ ohos_unittest("ThermalMockProxyRemoteTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -248,7 +241,6 @@ ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
   defines = [ "MOCK_WRITE_INTERFACE_TOKEN_RETURN_FALSE" ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -278,7 +270,6 @@ ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
   defines = [ "MOCK_WRITE_REMOTE_OBJECT_RETURN_FALSE" ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -308,7 +299,6 @@ ohos_unittest("ThermalMockProxyWritevectorTest") {
   defines = [ "MOCK_WRITEVECTOR_RETURN_FALSE" ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -337,7 +327,6 @@ ohos_unittest("ThermalMockProxySendrequestTest") {
   defines = [ "MOCK_SEND_REQUEST_RETURN_ONE" ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -360,7 +349,6 @@ ohos_unittest("ThermalUtilsTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -388,7 +376,6 @@ ohos_unittest("ThermalServiceDeathTest") {
   defines = [ "THERMAL_SERVICE_DEATH_UT" ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -411,7 +398,6 @@ ohos_unittest("ThermalListenerTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalmgr_listener",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
@@ -439,7 +425,6 @@ ohos_unittest("ThermalClientTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalmgr_listener",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
@@ -482,7 +467,6 @@ ohos_unittest("ThermalMockStubTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -505,7 +489,6 @@ ohos_unittest("ThermalMockStubGetdescriptorTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -531,7 +514,6 @@ ohos_unittest("ThermalActionTest") {
   ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
@@ -559,7 +541,6 @@ ohos_unittest("ThermalObserverTest") {
   defines = [ "THERMAL_OBSERVER_UT_TEST" ]
 
   deps = [
-    "${ability_runtime_services_path}/appmgr:libappms",
     "${thermal_innerkits}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
