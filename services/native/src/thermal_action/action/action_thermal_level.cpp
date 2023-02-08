@@ -169,6 +169,7 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
     SendThermalLevelEvents(level_);
 
     // Call back all level listeners
+    std::lock_guard lock(mutex_);
     for (auto& listener : thermalLevelListeners_) {
         listener->GetThermalLevel(static_cast<ThermalLevel>(level_));
     }
