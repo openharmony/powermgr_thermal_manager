@@ -172,7 +172,7 @@ void ThermalPolicy::FindSubscribeActionValue()
         return;
     }
 
-    THERMAL_HILOGI(COMP_SVC, "g_service->GetObserver() is %{public}p", g_service->GetObserver().get());
+    THERMAL_HILOGI(COMP_SVC, "g_service->GetObserver() is %{private}p", g_service->GetObserver().get());
     g_service->GetObserver()->FindSubscribeActionValue();
 }
 
