@@ -97,10 +97,9 @@ bool ChargerStateCollection::RegisterEvent()
 
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData& data)
 {
-    g_cachedIdleState.soc = data.GetWant().GetIntParam(ToString(BatteryInfo::COMMON_EVENT_CODE_CAPACITY), -1);
-    g_cachedIdleState.current = data.GetWant().GetIntParam(
-        ToString(BatteryInfo::COMMON_EVENT_CODE_PLUGGED_NOW_CURRENT), -1);
-    g_cachedIdleState.charging = data.GetWant().GetIntParam(ToString(BatteryInfo::COMMON_EVENT_CODE_CHARGE_STATE), -1);
+    g_cachedIdleState.soc = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CAPACITY, -1);
+    g_cachedIdleState.current = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_PLUGGED_NOW_CURRENT, -1);
+    g_cachedIdleState.charging = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, -1);
     HandleChargeIdleState();
 
     switch (g_cachedIdleState.charging) {
