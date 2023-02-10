@@ -9,7 +9,7 @@
 
 热管理服务提供设备温度管理控制能力，保障整机热安全及热体验。
 
-**图 1**  热管理服务架构图 
+**图 1**  热管理服务架构图<br>
 ![](figures/thermal_manager_architecture.png "热管理服务架构图")
 
 **热管理服务模块功能说明**：
@@ -23,23 +23,23 @@
 ```
 /base/powermgr/thermal_manager
 ├── application                  # Native应用
+│   ├── init                     # Init配置
 │   └── protector                # Thermal Protector代码
-├── etc                          # Init配置
 ├── figures                      # 架构图
 ├── frameworks                   # Framework层
-│   ├── dialog                   # 对话框
 │   ├── napi                     # NAPI层
 │   └── native                   # Native层
-├── interface                    # 接口
-│   ├── innerkits                # 内部接口
-│   └── kits                     # 外部接口
+├── interface                    # 接口层
+│   └── inner_api                # 内部接口
 ├── sa_profile                   # SA配置文件
 ├── services                     # Thermal Service代码
 │   ├── native                   # Native层
 │   └── zidl                     # Zidl层
 ├── test                         # 测试代码
-│   ├── fuzztest                 # Fuzz测试
-│   └── systemtest               # 系统测试
+│   ├── fuzztest                 # Fuzz 测试
+│   ├── unittest                 # 单元测试
+│   ├── systemtest               # 系统测试
+│   └── utils                    # 测试工具
 └── utils                        # 工具和通用层
 ```
 
