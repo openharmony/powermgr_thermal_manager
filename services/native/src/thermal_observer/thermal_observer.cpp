@@ -105,7 +105,7 @@ void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string
     }
     callbackTypeMap_.insert(std::make_pair(callback, typeList));
     THERMAL_HILOGI(COMP_SVC,
-        "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, insertOk=%{public}d",
+        "object=%{private}p, callback=%{private}p, listeners.size=%{public}d, insertOk=%{public}d",
         object.GetRefPtr(), callback.GetRefPtr(),
         static_cast<unsigned int>(sensorTempListeners_.size()), retIt.second);
 }
@@ -126,7 +126,7 @@ void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
         object->RemoveDeathRecipient(sensorTempCBDeathRecipient_);
     }
     THERMAL_HILOGI(COMP_SVC,
-        "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, eraseNum=%{public}zu",
+        "object=%{private}p, callback=%{private}p, listeners.size=%{public}d, eraseNum=%{public}zu",
         object.GetRefPtr(), callback.GetRefPtr(), static_cast<unsigned int>(sensorTempListeners_.size()), eraseNum);
 }
 
@@ -144,7 +144,7 @@ void ThermalObserver::SubscribeThermalActionCallback(const std::vector<std::stri
     }
     callbackActionMap_.insert(std::make_pair(callback, actionList));
     THERMAL_HILOGD(COMP_SVC,
-        "object=%{public}p, callback=%{public}p, listeners.size=%{public}u, insertOk=%{public}d",
+        "object=%{private}p, callback=%{private}p, listeners.size=%{public}u, insertOk=%{public}d",
         object.GetRefPtr(), callback.GetRefPtr(),
         static_cast<uint32_t>(actionListeners_.size()), retIt.second);
 }
@@ -165,7 +165,7 @@ void ThermalObserver::UnSubscribeThermalActionCallback(const sptr<IThermalAction
         object->RemoveDeathRecipient(actionCBDeathRecipient_);
     }
     THERMAL_HILOGD(COMP_SVC,
-        "object=%{public}p, callback=%{public}p, listeners.size=%{public}u, eraseNum=%{public}zu",
+        "object=%{private}p, callback=%{private}p, listeners.size=%{public}u, eraseNum=%{public}zu",
         object.GetRefPtr(), callback.GetRefPtr(), static_cast<uint32_t>(actionListeners_.size()), eraseNum);
 }
 
@@ -342,7 +342,7 @@ void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
-    THERMAL_HILOGI(COMP_SVC, "ThermalSensorTemp::OnRemoteDied remote = %{public}p", remote.promote().GetRefPtr());
+    THERMAL_HILOGI(COMP_SVC, "ThermalSensorTemp::OnRemoteDied remote = %{private}p", remote.promote().GetRefPtr());
     auto pms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (pms == nullptr) {
         return;
@@ -363,7 +363,7 @@ void ThermalObserver::ActionCallbackDeathRecipient::OnRemoteDied(const wptr<IRem
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
-    THERMAL_HILOGI(COMP_SVC, "ThermalAction::OnRemoteDied remote = %{public}p", remote.promote().GetRefPtr());
+    THERMAL_HILOGI(COMP_SVC, "ThermalAction::OnRemoteDied remote = %{private}p", remote.promote().GetRefPtr());
     auto pms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (pms == nullptr) {
         return;
