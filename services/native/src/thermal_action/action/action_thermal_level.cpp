@@ -154,7 +154,7 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
         listener->GetThermalLevel(static_cast<ThermalLevel>(level_));
     }
     THERMAL_HILOGI(COMP_SVC,
-        "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, insertOk=%{public}d",
+        "object=%{private}p, callback=%{private}p, listeners.size=%{public}d, insertOk=%{public}d",
         object.GetRefPtr(), callback.GetRefPtr(),
         static_cast<unsigned int>(thermalLevelListeners_.size()), retIt.second);
 }
@@ -171,7 +171,7 @@ void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLeve
         object->RemoveDeathRecipient(thermalLevelCBDeathRecipient_);
     }
     THERMAL_HILOGI(COMP_SVC,
-        "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, eraseNum=%{public}zu",
+        "object=%{private}p, callback=%{private}p, listeners.size=%{public}d, eraseNum=%{public}zu",
         object.GetRefPtr(), callback.GetRefPtr(),
         static_cast<unsigned int>(thermalLevelListeners_.size()), eraseNum);
 }
@@ -182,7 +182,7 @@ void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const 
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
-    THERMAL_HILOGI(COMP_SVC, "remote = %{public}p", remote.promote().GetRefPtr());
+    THERMAL_HILOGI(COMP_SVC, "remote = %{private}p", remote.promote().GetRefPtr());
     auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (tms == nullptr) {
         return;
