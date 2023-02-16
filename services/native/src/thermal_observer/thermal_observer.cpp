@@ -88,7 +88,7 @@ void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string
     const sptr<IThermalTempCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutexTempCallback_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
     THERMAL_RETURN_IF(object == nullptr);
@@ -106,7 +106,7 @@ void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string
 void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    std::lock_guard lock(mutex_);
+    std::lock_guard lock(mutexTempCallback_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
     THERMAL_RETURN_IF(object == nullptr);
@@ -125,6 +125,7 @@ void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
 
 void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap &tempCbMap)
 {
+    std::lock_guard lockTempCallback(mutexTempCallback_);
     static std::map<std::string, int32_t> preSensor;
     IThermalTempCallback::TempCallbackMap newTempCbMap;
     if (sensorTempListeners_.empty()) return;
@@ -133,6 +134,7 @@ void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallback
         if (callbackIter != callbackTypeMap_.end()) {
             THERMAL_HILOGD(COMP_SVC, "find callback");
             for (auto type : callbackIter->second) {
+                std::lock_guard lockCallbackInfo(mutexCallbackInfo_);
                 if (preSensor[type] != tempCbMap[type]) {
                     newTempCbMap.insert(std::make_pair(type, tempCbMap[type]));
                     preSensor[type] = tempCbMap[type];
@@ -145,7 +147,10 @@ void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallback
 
 void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap &info)
 {
-    callbackinfo_ = info;
+    {
+        std::lock_guard lock(mutexCallbackInfo_);
+        callbackinfo_ = info;
+    }
 
     if (callback_ != nullptr) {
         callback_(callbackinfo_);
@@ -156,21 +161,21 @@ void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap &info)
 
 bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType &type, ThermalSrvSensorInfo& sensorInfo)
 {
+    std::lock_guard lock(mutexCallbackInfo_);
     auto iter = callbackinfo_.find(typeMap_[type]);
     if (iter != callbackinfo_.end()) {
-            THERMAL_HILOGD(COMP_SVC, "set temp for sensor");
-            sensorInfo.SetType(typeMap_[type]);
-            if (iter->second == INVALID_TEMP) {
-                return false;
-            } else {
-                sensorInfo.SetTemp(iter->second);
-            }
-            return true;
-    } else {
-            THERMAL_HILOGD(COMP_SVC, "set invalid temp for sensor");
-            sensorInfo.SetType(typeMap_[type]);
-            sensorInfo.SetTemp(INVALID_TEMP);
+        THERMAL_HILOGD(COMP_SVC, "set temp for sensor");
+        sensorInfo.SetType(typeMap_[type]);
+        if (iter->second == INVALID_TEMP) {
             return false;
+        } else {
+            sensorInfo.SetTemp(iter->second);
+        }
+        return true;
+    } else {
+        THERMAL_HILOGD(COMP_SVC, "set invalid temp for sensor");
+        sensorInfo.SetType(typeMap_[type]);
+        sensorInfo.SetTemp(INVALID_TEMP);
     }
     return false;
 }

@@ -71,7 +71,8 @@ private:
     };
 
     const wptr<ThermalService> tms_;
-    std::mutex mutex_;
+    std::mutex mutexTempCallback_;
+    std::mutex mutexCallbackInfo_;
     TypeTempMap callbackinfo_;
     sptr<IRemoteObject::DeathRecipient> sensorTempCBDeathRecipient_;
     std::set<const sptr<IThermalTempCallback>, classcomp> sensorTempListeners_;
