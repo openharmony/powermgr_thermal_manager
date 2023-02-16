@@ -262,7 +262,7 @@ bool ThermalObserver::CompareActionCallbackMap(const IThermalActionCallback::Act
 void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap& tempCbMap)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    std::lock_guard lock(mutexTempCallback_);
+    std::lock_guard lockTempCallback(mutexTempCallback_);
     static std::map<std::string, int32_t> preSensor;
     IThermalTempCallback::TempCallbackMap newTempCbMap;
     THERMAL_HILOGI(COMP_SVC,
@@ -274,7 +274,7 @@ void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallback
         if (callbackIter != callbackTypeMap_.end()) {
             THERMAL_HILOGD(COMP_SVC, "find callback");
             for (auto type : callbackIter->second) {
-                std::lock_guard lock(mutexCallbackInfo_);
+                std::lock_guard lockCallbackInfo(mutexCallbackInfo_);
                 if (preSensor[type] != tempCbMap[type]) {
                     newTempCbMap.insert(std::make_pair(type, tempCbMap[type]));
                     preSensor[type] = tempCbMap[type];
