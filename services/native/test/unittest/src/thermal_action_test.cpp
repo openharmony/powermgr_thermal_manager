@@ -40,7 +40,8 @@ using namespace std;
 
 namespace {
 static sptr<ThermalService> g_service = nullptr;
-std::shared_ptr<ActionApplicationProcess> g_actionApplicationProcess = std::make_shared<ActionApplicationProcess>("process_ctrl");
+std::shared_ptr<ActionApplicationProcess> g_actionApplicationProcess =
+    std::make_shared<ActionApplicationProcess>("process_ctrl");
 std::shared_ptr<ActionCharger> g_actionCharger = std::make_shared<ActionCharger>("current_sc");
 std::shared_ptr<ActionCpuBig> g_actionCpuBig = std::make_shared<ActionCpuBig>("cpu_big");
 std::shared_ptr<ActionCpuMed> g_actionCpuMed = std::make_shared<ActionCpuMed>("cpu_med");
@@ -133,7 +134,8 @@ HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
         deathRecipient->OnRemoteDied(sptrRemoteObj);
 
         g_actionThermalLevel->NotifyThermalLevelChanged(1);
-        bool ret = g_actionThermalLevel->PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, 1);
+        bool ret = g_actionThermalLevel->
+            PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, 1);
         EXPECT_TRUE(ret);
     }
 }
