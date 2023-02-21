@@ -23,7 +23,8 @@ namespace PowerMgr {
 template<typename... Types>
 static void WriteEvent(const std::string& eventType, Types... args)
 {
-    int ret = HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::THERMAL, eventType, HiviewDFX::HiSysEvent::EventType::STATISTIC, args...);
+    int ret = HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::THERMAL, eventType,
+        HiviewDFX::HiSysEvent::EventType::STATISTIC, args...);
     if (ret != 0) {
         THERMAL_HILOGE(COMP_SVC, "Write event fail: %{public}s", eventType.c_str());
     }
