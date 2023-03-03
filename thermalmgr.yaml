@@ -14,16 +14,16 @@
 domain: THERMAL
 
 POWER_TEMPERATURE:
-  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: device temperature}
-  NAME: {type: STRING, desc: device temperature level}
+  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: device temperature information}
+  NAME: {type: STRING, desc: device name}
   TEMPERATURE: {type: INT32, desc: device temperature level}
 
 THERMAL_LEVEL_CHANGED:
-  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: temperature changed}
-  LEVEL: {type: INT32, desc: level}
+  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: temperature control level information}
+  LEVEL: {type: INT32, desc: temperature control level}
 
 THERMAL_ACTION_TRIGGERED:
-  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: thermal action triggered}
+  __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: Trigger the temperature control action}
   ACTION: {type: STRING, desc: action name}
   VALUE: {type: INT32, desc: action value}
   RATIO: {type: FLOAT, desc: action ration value}
