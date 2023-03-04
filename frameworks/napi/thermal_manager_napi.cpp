@@ -104,6 +104,7 @@ void ThermalLevelCallback::OnThermalLevel()
     napi_value levelValue = nullptr;
     if (napi_ok != napi_create_int32(env_, static_cast<int32_t>(level_), &levelValue)) {
         THERMAL_HILOGW(COMP_FWK, "napi_create_int32 callback failed");
+        napi_close_handle_scope(env_, scope);
         return;
     }
 
@@ -111,6 +112,7 @@ void ThermalLevelCallback::OnThermalLevel()
     napi_status status = napi_get_reference_value(env_, callbackRef_, &callback);
     if (status != napi_ok) {
         THERMAL_HILOGE(COMP_FWK, "napi_get_reference_value callback failed, status = %{public}d", status);
+        napi_close_handle_scope(env_, scope);
         return;
     }
 
