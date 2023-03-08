@@ -15,6 +15,8 @@
 
 #include "thermal_hisysevent.h"
 
+#define HISYSEVENT_PERIOD 5
+#define HISYSEVENT_THRESHOLD 200
 #include "hisysevent.h"
 #include "thermal_log.h"
 
