@@ -7,12 +7,13 @@
 
 ## Introduction<a name="section0056945901"></a>
 
-The thermal manager provides the device temperature management and control capabilities to ensure the thermal safety and experience of the entire system.
+The Thermal Manager module provides the device temperature management and control capabilities to ensure the thermal safety and experience of the entire system.
 
-**Figure 1**  Architecture of the thermal manager
-![](figures/thermal_manager_architecture.png "Architecture of the thermal manager")
+**Figure 1** Architecture of the Thermal Manager module
 
-**Key components of the thermal manager**:
+![](figures/thermal_manager_architecture.png "Architecture of the thermal manager module")
+
+**Key components of the Thermal Manager module**:
 
 1. Thermal Manager: provides temperature query and callback APIs for applications and other subsystems.
 2. Thermal Service: implements core temperature control functions, such as temperature detection, temperature level arbitration, and action delivery, according to the configuration file.
@@ -23,28 +24,28 @@ The thermal manager provides the device temperature management and control capab
 ```
 /base/powermgr/thermal_manager
 ├── application                  # Native application
+│   ├── init                     # Init configuration
 │   └── protector                # Thermal Protector code
-├── etc                          # Init configuration
-├── figures                      # Architecture diagram
-├── frameworks                   # Architecture layer
-│   ├── dialog                   # Dialog
+├── figures                      # Architecture
+├── frameworks                   # Framework layer
 │   ├── napi                     # NAPI layer
 │   └── native                   # Native layer
-├── interface                    # APIs
-│   ├── innerkits                # Internal APIs
-│   └── kits                     # External APIs
+├── interface                    # API layer
+│   └── inner_api                # Internal APIs
 ├── sa_profile                   # SA profile
 ├── services                     # Thermal Service code
-│   ├── native                   # Native APIs
-│   └── zidl                     # Zidl APIs
+│   ├── native                   # Native layer
+│   └── zidl                     # Zidl layer
 ├── test                         # Test code
 │   ├── fuzztest                 # Fuzz test
-│   └── systemtest               # Systemtest
+│   ├── unittest                 # Unit test
+│   ├── systemtest               # System test
+│   └── utils                    # Test tools
 └── utils                        # Utilities
 ```
 
 ## Configuration Description<a name="section0056945903"></a>
-**1. thermal\_service\_config.xml**
+**thermal_service_config.xml**
 Configuration example:
 
 ```
@@ -102,7 +103,7 @@ Configuration example:
 thermal                          # Root directory. Wherein, version indicates the version number, and product indicates the product name.
 ├── base                         # base directory, used to configure basic parameters.
 │   └── item                     # item directory. Wherein, tag indicates the configuration tag, and value indicates the configuration value.
-├── level                        # Level directory, used to store the temperature level information.
+├── level                        # level directory, used to store the temperature level information.
 │   └── sensor_cluster           # sensor_cluster directory, used to configure a cluster of sensors. Wherein, name indicates the cluster name, and sensor indicates the sensor name.
 │       └── item                 # item directory, used to configure the temperature level information. Wherein, level indicates the temperature level, threshold indicates the triggering temperature, and xxx_clr indicates the setback temperature.
 ├── state                        # state directory, used to configure the state machine. Wherein, name indicates the name of the state machine.
