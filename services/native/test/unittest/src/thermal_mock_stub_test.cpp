@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,6 +79,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest001, TestSize.Level0)
  * @tc.name: ThermalMockStubTest002
  * @tc.desc: OnRemoteRequest all
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest002, TestSize.Level0)
 {
@@ -87,7 +88,9 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest002, TestSize.Level0)
     uint32_t end = static_cast<uint32_t>(IThermalSrv::SHELL_DUMP);
     for (uint32_t code = begin; code <= end; ++code) {
         g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
-        g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
+        auto ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
+        EXPECT_TRUE(ret == E_READ_PARCEL_ERROR_THERMAL || ret == E_GET_SYSTEM_ABILITY_MANAGER_FAILED_THERMAL ||
+            ret == 0);
     }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest002 end.");
 }
