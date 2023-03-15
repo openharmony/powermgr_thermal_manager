@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -166,16 +166,17 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest004, TestSize.Level0)
  * @tc.name: ThermalObserverTest005
  * @tc.desc: Thermal Sensor Info Test
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest005, TestSize.Level0)
 {
     auto info = std::make_shared<ThermalSensorInfo>();
     if (info != nullptr) {
-        info->GetTypeTempMap();
+        EXPECT_TRUE(info->GetTypeTempMap().empty());
         TypeTempMap type;
         info->SetTypeTempMap(type);
         info->GetTemp("soc");
-        info->GetHistoryTemperature("soc");
+        EXPECT_TRUE(info->GetHistoryTemperature("soc").empty());
         info->NotifyObserver();
     }
 }
