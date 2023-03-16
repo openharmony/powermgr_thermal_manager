@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -129,11 +129,13 @@ HWTEST_F(ThermalServiceTest, ThermalMgrDumperTest004, TestSize.Level0)
  * @tc.name: ThermalServiceTest000
  * @tc.desc: test OnAddSystemAbility
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalServiceTest, ThermalServiceTest000, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest000 start.");
     std::string deviceId = "";
+    EXPECT_FALSE(g_service == nullptr);
     g_service->OnAddSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId);
     g_service->OnAddSystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, deviceId);
     THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest000 end.");
@@ -539,12 +541,13 @@ HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster010, TestSize.Level0)
  * @tc.name: ThermalPolicy001
  * @tc.desc: test GetClusterLevelMap
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalServiceTest, ThermalPolicy001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy001 start.");
     ThermalPolicy policy;
-    policy.GetClusterLevelMap();
+    EXPECT_TRUE(policy.GetClusterLevelMap().empty());
     THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy001 end.");
 }
 
@@ -552,12 +555,13 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy001, TestSize.Level0)
  * @tc.name: ThermalPolicy002
  * @tc.desc: test PolicyDecision continue in a loop
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalServiceTest, ThermalPolicy002, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy002 start.");
     ThermalPolicy policy;
-    policy.Init();
+    EXPECT_TRUE(policy.Init());
     std::vector<PolicyConfig> vecConfig;
     policy.clusterPolicyMap_[""] = vecConfig;
     policy.clusterPolicyMap_["test"] = vecConfig;
@@ -578,6 +582,7 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy002, TestSize.Level0)
  * @tc.name: ThermalPolicy003
  * @tc.desc: test ActionDecision continue in a loop
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalServiceTest, ThermalPolicy003, TestSize.Level0)
 {
@@ -588,6 +593,7 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy003, TestSize.Level0)
     PolicyAction action;
     action.actionName = "test";
     actionList.push_back(action);
+    EXPECT_FALSE(actionList.empty());
     policy.ActionDecision(actionList);
 
     // second is nullptr
@@ -601,6 +607,7 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy003, TestSize.Level0)
  * @tc.name: ThermalPolicy004
  * @tc.desc: test ActionDecision Execute the if else branch
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalServiceTest, ThermalPolicy004, TestSize.Level0)
 {
@@ -619,6 +626,7 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy004, TestSize.Level0)
     actionList.push_back(action1);
     actionList.push_back(action2);
     actionList.push_back(action3);
+    EXPECT_FALSE(actionList.empty());
 
     auto& actionMap = g_service->actionMgr_->actionMap_;
     actionMap["test"] = std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME);
