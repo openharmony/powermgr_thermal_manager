@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,10 @@
  */
 
 #include "thermal_action_test.h"
+
+#ifdef THERMAL_GTEST
+#define private   public
+#endif
 
 #include <memory>
 #include <singleton.h>
@@ -163,6 +167,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
  * @tc.name: ThermalActionTest005
  * @tc.desc: Action Popup Function Test
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
 {
@@ -170,6 +175,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
         g_actionPopup->AddActionValue("");
         g_actionPopup->AddActionValue("1.0");
         g_actionPopup->Execute();
+        EXPECT_TRUE(g_actionPopup->valueList_.empty());
     }
 }
 
@@ -177,6 +183,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
  * @tc.name: ThermalActionTest006
  * @tc.desc: Action Display Function Test
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
 {
@@ -184,6 +191,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
         g_actionDisplay->AddActionValue("");
         g_actionDisplay->AddActionValue("1.0");
         g_actionDisplay->Execute();
+        EXPECT_TRUE(g_actionDisplay->valueList_.empty());
     }
 }
 
@@ -232,6 +240,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
  * @tc.name: ThermalActionTest009
  * @tc.desc: Action CPU Big Test
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
 {
@@ -239,6 +248,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
         g_actionCpuBig->AddActionValue("");
         g_actionCpuBig->AddActionValue("1.0");
         g_actionCpuBig->Execute();
+        EXPECT_TRUE(g_actionCpuBig->valueList_.empty());
     }
 }
 
@@ -246,6 +256,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
  * @tc.name: ThermalActionTest010
  * @tc.desc: Action CPU Med Test
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
 {
@@ -253,6 +264,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
         g_actionCpuMed->AddActionValue("");
         g_actionCpuMed->AddActionValue("1.0");
         g_actionCpuMed->Execute();
+        EXPECT_TRUE(g_actionCpuMed->valueList_.empty());
     }
 }
 
@@ -260,6 +272,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
  * @tc.name: ThermalActionTest011
  * @tc.desc: Action CPU Lit Test
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
 {
@@ -267,6 +280,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
         g_actionCpuLit->AddActionValue("");
         g_actionCpuLit->AddActionValue("1.0");
         g_actionCpuLit->Execute();
+        EXPECT_TRUE(g_actionCpuLit->valueList_.empty());
     }
 }
 
@@ -274,6 +288,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
  * @tc.name: ThermalActionTest012
  * @tc.desc: Action GPU Test
  * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
 {
@@ -281,6 +296,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
         g_actionGpu->AddActionValue("");
         g_actionGpu->AddActionValue("1.0");
         g_actionGpu->Execute();
+        EXPECT_TRUE(g_actionGpu->valueList_.empty());
     }
 }
 } // namespace
