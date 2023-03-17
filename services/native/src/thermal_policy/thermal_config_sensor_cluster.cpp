@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -218,7 +218,7 @@ bool ThermalConfigSensorCluster::IsTempRateTrigger(uint32_t& level)
         if (rateIter == rateMap.end()) {
             continue;
         }
-        for (auto& levItem : sensorInfo->second) {
+        for (const auto& levItem : sensorInfo->second) {
             if (levItem.level != level) {
                 continue;
             }
