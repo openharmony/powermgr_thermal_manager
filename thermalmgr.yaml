@@ -18,11 +18,11 @@ POWER_TEMPERATURE:
   NAME: {type: STRING, desc: device name}
   TEMPERATURE: {type: INT32, desc: device temperature level}
 
-THERMAL_LEVEL_CHANGED:
+LEVEL_CHANGED:
   __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: temperature control level information}
   LEVEL: {type: INT32, desc: temperature control level}
 
-THERMAL_ACTION_TRIGGERED:
+ACTION_TRIGGERED:
   __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: Trigger the temperature control action}
   ACTION: {type: STRING, desc: action name}
   VALUE: {type: INT32, desc: action value}

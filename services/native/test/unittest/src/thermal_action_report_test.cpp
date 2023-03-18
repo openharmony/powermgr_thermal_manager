@@ -367,7 +367,7 @@ void ThermalActionReportTest::ThermalActionTriggered(const std::string& actionNa
         valueLabel = " Ratio = ";
     }
     expectedDumpInfo.append("Additional debug info: ")
-    .append("Event name = THERMAL_ACTION_TRIGGERED")
+    .append("Event name = ACTION_TRIGGERED")
     .append(" Action name = ")
     .append(actionName)
     .append(valueLabel)
