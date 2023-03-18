@@ -35,21 +35,21 @@ static void WriteEvent(const std::string& eventType, Types... args)
 void WriteLevelChangedHiSysEvent(bool enableEvent, int32_t level)
 {
     if (enableEvent) {
-        WriteEvent("THERMAL_LEVEL_CHANGED", "LEVEL", level);
+        WriteEvent("LEVEL_CHANGED", "LEVEL", level);
     }
 }
 
 void WriteActionTriggeredHiSysEvent(bool enableEvent, const std::string& actionName, int32_t value)
 {
     if (enableEvent) {
-        WriteEvent("THERMAL_ACTION_TRIGGERED", "ACTION", actionName, "VALUE", value);
+        WriteEvent("ACTION_TRIGGERED", "ACTION", actionName, "VALUE", value);
     }
 }
 
 void WriteActionTriggeredHiSysEventWithRatio(bool enableEvent, const std::string& actionName, float value)
 {
     if (enableEvent) {
-        WriteEvent("THERMAL_ACTION_TRIGGERED", "ACTION", actionName, "RATIO", value);
+        WriteEvent("ACTION_TRIGGERED", "ACTION", actionName, "RATIO", value);
     }
 }
 } // namespace PowerMgr
