@@ -116,6 +116,12 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
     map2.insert(std::make_pair("lcd", 1.0));
     bool ret = observer->CompareActionCallbackMap(map1, map2);
     EXPECT_TRUE(ret);
+    map1.clear();
+    map2.clear();
+    ret = observer->CompareActionCallbackMap(map1, map2);
+    map1.insert(std::make_pair("lcd", 1.0));
+    map2.insert(std::make_pair("cpu", 2.0));
+    ret = observer->CompareActionCallbackMap(map1, map2);
     IThermalTempCallback::TempCallbackMap tempCbMap;
     observer->NotifySensorTempChanged(tempCbMap);
     TypeTempMap info;
@@ -124,6 +130,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
     ThermalSrvSensorInfo sensorInfo;
     observer->GetThermalSrvSensorInfo(type, sensorInfo);
     observer->GetTemp(type);
+    observer->NotifyActionChanged(actionCb, map1);
 }
 
 /**
