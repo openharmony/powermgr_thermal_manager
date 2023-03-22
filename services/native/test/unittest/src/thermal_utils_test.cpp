@@ -84,6 +84,8 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest002, TestSize.Level0)
     WriteLevelChangedHiSysEvent(false, 1);
     WriteActionTriggeredHiSysEvent(true, configDir, 1);
     WriteActionTriggeredHiSysEvent(false, configDir, 1);
+    WriteActionTriggeredHiSysEventWithRatio(true, configDir, 1);
+    WriteActionTriggeredHiSysEventWithRatio(false, configDir, 1);
     THERMAL_HILOGD(LABEL_TEST, "ThermalUtilsTest002 end.");
 }
 } // namespace
