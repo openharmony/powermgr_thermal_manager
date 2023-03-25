@@ -97,9 +97,7 @@ void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string
         object->AddDeathRecipient(sensorTempCBDeathRecipient_);
     }
     callbackTypeMap_.insert(std::make_pair(callback, typeList));
-    THERMAL_HILOGD(COMP_SVC,
-        "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, insertOk=%{public}d",
-        object.GetRefPtr(), callback.GetRefPtr(),
+    THERMAL_HILOGD(COMP_SVC, "listeners.size=%{public}d, insertOk=%{public}d",
         static_cast<unsigned int>(sensorTempListeners_.size()), retIt.second);
 }
 
@@ -118,9 +116,8 @@ void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
     if (eraseNum != 0) {
         object->RemoveDeathRecipient(sensorTempCBDeathRecipient_);
     }
-    THERMAL_HILOGD(COMP_SVC,
-        "object=%{public}p, callback=%{public}p, listeners.size=%{public}d, eraseNum=%{public}zu",
-        object.GetRefPtr(), callback.GetRefPtr(), static_cast<unsigned int>(sensorTempListeners_.size()), eraseNum);
+    THERMAL_HILOGD(COMP_SVC, "listeners.size=%{public}d, eraseNum=%{public}zu",
+        static_cast<unsigned int>(sensorTempListeners_.size()), eraseNum);
 }
 
 void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap &tempCbMap)
@@ -193,7 +190,6 @@ void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
-    THERMAL_HILOGD(COMP_SVC, "ThermalSensorTemp::OnRemoteDied remote = %{public}p", remote.promote().GetRefPtr());
     auto pms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (pms == nullptr) {
         return;
