@@ -43,7 +43,6 @@ constexpr uint32_t MAX_PATH = 256;
 constexpr int32_t THERMAL_RATIO_BEGIN = 0;
 constexpr int32_t THERMAL_RATIO_LENGTH = 4;
 constexpr const char* BATTERY_TEMP_PATH = "/data/service/el0/thermal/sensor/battery/temp";
-constexpr const char* CONFIG_LEVEL_PATH = "/data/service/el0/thermal/config/configLevel";
 constexpr const char* VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
 }
@@ -177,15 +176,8 @@ int32_t ThermalActionReportTest::SetCondition(int32_t value, const std::string& 
 
 int32_t ThermalActionReportTest::GetThermalLevel(int32_t expectValue)
 {
-    int32_t ret = -1;
-    char levelBuf[MAX_PATH] = {0};
-    char levelValue[MAX_PATH] = {0};
-    ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-    ret = ReadFile(levelBuf, levelValue, sizeof(levelValue));
-    EXPECT_EQ(true, ret == ERR_OK);
-    std::string level = levelValue;
-    int32_t value = ConvertInt(level);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    int32_t value = static_cast<int32_t>(thermalMgrClient.GetThermalLevel());
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == expectValue) << "Thermal action policy failed";
     return value;
