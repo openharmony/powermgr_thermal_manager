@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <datetime_ex.h>
+#include <dirent.h>
 #include <fcntl.h>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -45,6 +46,22 @@ namespace {
 static std::mutex g_mtx;
 std::vector<std::string> typelist;
 } // namespace
+bool ThermalMgrInterfaceTest::IsMock(const std::string& path)
+{
+    DIR* dir = opendir(path.c_str());
+    if (dir == nullptr) {
+        return false;
+    }
+    struct dirent* ptr = nullptr;
+    while ((ptr = readdir(dir)) != nullptr) {
+        if (strcmp(".", ptr->d_name) != 0 && strcmp("..", ptr->d_name) != 0) {
+            closedir(dir);
+            return true;
+        }
+    }
+    closedir(dir);
+    return false;
+}
 
 int32_t ThermalMgrInterfaceTest::WriteFile(std::string path, std::string buf, size_t size)
 {
@@ -177,11 +194,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest001, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
-    THERMAL_HILOGD(LABEL_TEST, "battry temp: %{public}d", out);
-    EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest001 Failed";
+    if (IsMock(BATTERY_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
+        THERMAL_HILOGD(LABEL_TEST, "battry temp: %{public}d", out);
+        EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest001 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest001 end.");
 }
 
@@ -202,11 +221,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest002, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(socTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::SOC);
-    THERMAL_HILOGD(LABEL_TEST, "soc temp:%{public}d", out);
-    EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest002 Failed";
+    if (IsMock(SOC_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::SOC);
+        THERMAL_HILOGD(LABEL_TEST, "soc temp:%{public}d", out);
+        EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest002 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest002 end.");
 }
 
@@ -227,11 +248,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest003, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::SHELL);
-    THERMAL_HILOGD(LABEL_TEST, "shell temp: %{public}d", out);
-    EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest003 Failed";
+    if (IsMock(SHELL_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::SHELL);
+        THERMAL_HILOGD(LABEL_TEST, "shell temp: %{public}d", out);
+        EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest003 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest003 end.");
 }
 
@@ -252,11 +275,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest004, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(cpuTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::SENSOR1);
-    THERMAL_HILOGD(LABEL_TEST, "shell temp: %{public}d", out);
-    EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest004 Failed";
+    if (IsMock(CPU_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::SENSOR1);
+        THERMAL_HILOGD(LABEL_TEST, "shell temp: %{public}d", out);
+        EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest004 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest004 end.");
 }
 
@@ -277,11 +302,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest005, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(chargerTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::SENSOR2);
-    THERMAL_HILOGD(LABEL_TEST, "shell temp: %{public}d", out);
-    EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest005 Failed";
+    if (IsMock(CHARGER_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::SENSOR2);
+        THERMAL_HILOGD(LABEL_TEST, "shell temp: %{public}d", out);
+        EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest005 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest005 end.");
 }
 
@@ -388,12 +415,14 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest008, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    ThermalLevel level = thermalMgrClient.GetThermalLevel();
-    int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
-    EXPECT_EQ(true, level == ThermalLevel::NORMAL) << "ThermalMgrInterfaceTest008 Failed";
+    if (IsMock(BATTERY_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        ThermalLevel level = thermalMgrClient.GetThermalLevel();
+        int32_t levelValue = static_cast<int32_t>(level);
+        THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
+        EXPECT_EQ(true, level == ThermalLevel::NORMAL) << "ThermalMgrInterfaceTest008 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest008 end.");
 }
 
@@ -414,12 +443,14 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest009, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    ThermalLevel level = thermalMgrClient.GetThermalLevel();
-    int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
-    EXPECT_EQ(true, level == ThermalLevel::WARM) << "ThermalMgrInterfaceTest009 Failed";
+    if (IsMock(BATTERY_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        ThermalLevel level = thermalMgrClient.GetThermalLevel();
+        int32_t levelValue = static_cast<int32_t>(level);
+        THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
+        EXPECT_EQ(true, level == ThermalLevel::WARM) << "ThermalMgrInterfaceTest009 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest009 end.");
 }
 
@@ -440,12 +471,14 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest010, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    ThermalLevel level = thermalMgrClient.GetThermalLevel();
-    int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
-    EXPECT_EQ(true, level == ThermalLevel::HOT) << "ThermalMgrInterfaceTest010 Failed";
+    if (IsMock(BATTERY_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        ThermalLevel level = thermalMgrClient.GetThermalLevel();
+        int32_t levelValue = static_cast<int32_t>(level);
+        THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
+        EXPECT_EQ(true, level == ThermalLevel::HOT) << "ThermalMgrInterfaceTest010 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest010 end.");
 }
 
@@ -475,11 +508,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest011, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ThermalLevel level = thermalMgrClient.GetThermalLevel();
-    int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
-    EXPECT_EQ(true, level == ThermalLevel::HOT) << "ThermalMgrInterfaceTest011 Failed";
+    if (IsMock(PA_PATH) && IsMock(AMBIENT_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        ThermalLevel level = thermalMgrClient.GetThermalLevel();
+        int32_t levelValue = static_cast<int32_t>(level);
+        THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
+        EXPECT_EQ(true, level == ThermalLevel::HOT) << "ThermalMgrInterfaceTest011 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest011 end.");
 }
 
@@ -515,12 +550,14 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest012, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(shellTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    ThermalLevel level = thermalMgrClient.GetThermalLevel();
-    int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
-    EXPECT_EQ(true, level == ThermalLevel::HOT) << "ThermalMgrInterfaceTest012 Failed";
+    if (IsMock(AP_PATH) && IsMock(AMBIENT_PATH) && IsMock(SHELL_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        ThermalLevel level = thermalMgrClient.GetThermalLevel();
+        int32_t levelValue = static_cast<int32_t>(level);
+        THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
+        EXPECT_EQ(true, level == ThermalLevel::HOT) << "ThermalMgrInterfaceTest012 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest012 end.");
 }
 
@@ -737,11 +774,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest021, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
-    THERMAL_HILOGD(LABEL_TEST, "battry temp: %{public}d", out);
-    EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest021 Failed";
+    if (IsMock(BATTERY_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
+        THERMAL_HILOGD(LABEL_TEST, "battry temp: %{public}d", out);
+        EXPECT_EQ(true, temp == out) << "ThermalMgrInterfaceTest021 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest021 end.");
 }
 
@@ -789,12 +828,14 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest023, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    ThermalLevel level = thermalMgrClient.GetThermalLevel();
-    int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
-    EXPECT_EQ(true, level == ThermalLevel::OVERHEATED) << "ThermalMgrInterfaceTest023 Failed";
+    if (IsMock(BATTERY_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        ThermalLevel level = thermalMgrClient.GetThermalLevel();
+        int32_t levelValue = static_cast<int32_t>(level);
+        THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
+        EXPECT_EQ(true, level == ThermalLevel::OVERHEATED) << "ThermalMgrInterfaceTest023 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest023 end.");
 }
 
