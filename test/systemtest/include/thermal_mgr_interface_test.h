@@ -45,6 +45,7 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    bool IsMock(const std::string& path);
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
     static int32_t ReadFile(const char* path, char* buf, size_t size);
     static int32_t ConvertInt(const std::string& value);
