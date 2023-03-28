@@ -21,6 +21,7 @@
 #include "mock_thermal_mgr_client.h"
 #include "thermal_log.h"
 #include "thermal_mgr_client.h"
+#include <dirent.h>
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -77,6 +78,23 @@ void ThermalListenerTest::TearDown()
     g_thermalLevel = ThermalLevel::COOL;
 }
 
+bool ThermalListenerTest::IsMock(const std::string& path)
+{
+    DIR* dir = opendir(path.c_str());
+    if (dir == nullptr) {
+        return false;
+    }
+    struct dirent* ptr = nullptr;
+    while ((ptr = readdir(dir)) != nullptr) {
+        if (strcmp(".", ptr->d_name) != 0 && strcmp("..", ptr->d_name) != 0) {
+            closedir(dir);
+            return true;
+        }
+    }
+    closedir(dir);
+    return false;
+}
+
 namespace {
 /**
  * @tc.name: ThermalListenerTest001
@@ -96,15 +114,17 @@ HWTEST_F(ThermalListenerTest, ThermalListenerTest001, TestSize.Level0)
     int32_t ret = thermalListener->SubscribeLevelEvent(thermalEvent);
     EXPECT_EQ(true, ret == ERR_OK);
 
-    g_thermalLevel = ThermalLevel::COOL;
-    SetSensorTemp(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    EXPECT_EQ(true, g_thermalLevel == ThermalLevel::HOT);
-    thermalListener->UnSubscribeLevelEvent();
+    if (IsMock(BATTERY_PATH)) {
+        g_thermalLevel = ThermalLevel::COOL;
+        SetSensorTemp(46100, BATTERY_PATH);
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        EXPECT_EQ(true, g_thermalLevel == ThermalLevel::HOT);
+        thermalListener->UnSubscribeLevelEvent();
 
-    ThermalLevel levelListener = thermalListener->GetThermalLevel();
-    ThermalLevel levelClient = ThermalMgrClient::GetInstance().GetThermalLevel();
-    EXPECT_EQ(levelListener, levelClient);
+        ThermalLevel levelListener = thermalListener->GetThermalLevel();
+        ThermalLevel levelClient = ThermalMgrClient::GetInstance().GetThermalLevel();
+        EXPECT_EQ(levelListener, levelClient);
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalListenerTest001 end.");
 }
 

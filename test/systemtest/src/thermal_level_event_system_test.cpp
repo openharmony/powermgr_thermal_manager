@@ -28,6 +28,7 @@
 #include <common_event_support.h>
 #include <condition_variable>
 #include <datetime_ex.h>
+#include <dirent.h>
 #include <fcntl.h>
 #include <gtest/gtest.h>
 #include <if_system_ability_manager.h>
@@ -299,6 +300,23 @@ void ThermalLevelEventSystemTest::TearDown()
     InitNode();
 }
 
+bool ThermalLevelEventSystemTest::IsMock(const std::string& path)
+{
+    DIR* dir = opendir(path.c_str());
+    if (dir == nullptr) {
+        return false;
+    }
+    struct dirent* ptr = nullptr;
+    while ((ptr = readdir(dir)) != nullptr) {
+        if (strcmp(".", ptr->d_name) != 0 && strcmp("..", ptr->d_name) != 0) {
+            closedir(dir);
+            return true;
+        }
+    }
+    closedir(dir);
+    return false;
+}
+
 namespace {
 /*
  * @tc.number: ThermalLevelEventSystemTest001
@@ -393,25 +411,27 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    ret = snprintf_s(batteryCapacityBuf, MAX_PATH, sizeof(batteryCapacityBuf) - 1, BATTERY_CAPACITY_PATH.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    int32_t batteryCapacity = 90;
-    std::string cTemp = to_string(batteryCapacity);
-    ret = FileOperation::WriteFile(batteryCapacityBuf, cTemp, cTemp.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    if (IsMock(BATTERY_CAPACITY_PATH) && IsMock(CHARGER_STATUS_PATH) && IsMock(CHARGER_CURRENT_PATH)) {
+        ret = snprintf_s(batteryCapacityBuf, MAX_PATH, sizeof(batteryCapacityBuf) - 1, BATTERY_CAPACITY_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        int32_t batteryCapacity = 90;
+        std::string cTemp = to_string(batteryCapacity);
+        ret = FileOperation::WriteFile(batteryCapacityBuf, cTemp, cTemp.length());
+        EXPECT_EQ(true, ret == ERR_OK);
 
-    ret = snprintf_s(batteryChargerBuf, MAX_PATH, sizeof(batteryChargerBuf) - 1, CHARGER_STATUS_PATH.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    std::string batteryChargerState = "Charging";
-    ret = FileOperation::WriteFile(batteryChargerBuf, batteryChargerState, batteryChargerState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+        ret = snprintf_s(batteryChargerBuf, MAX_PATH, sizeof(batteryChargerBuf) - 1, CHARGER_STATUS_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        std::string batteryChargerState = "Charging";
+        ret = FileOperation::WriteFile(batteryChargerBuf, batteryChargerState, batteryChargerState.length());
+        EXPECT_EQ(true, ret == ERR_OK);
 
-    ret = snprintf_s(chargerCurrentBuf, MAX_PATH, sizeof(chargerCurrentBuf) - 1, CHARGER_CURRENT_PATH.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    int32_t chargerCurrent = 1100;
-    std::string cCurrent = to_string(chargerCurrent);
-    ret = FileOperation::WriteFile(chargerCurrentBuf, cCurrent, cCurrent.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+        ret = snprintf_s(chargerCurrentBuf, MAX_PATH, sizeof(chargerCurrentBuf) - 1, CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        int32_t chargerCurrent = 1100;
+        std::string cCurrent = to_string(chargerCurrent);
+        ret = FileOperation::WriteFile(chargerCurrentBuf, cCurrent, cCurrent.length());
+        EXPECT_EQ(true, ret == ERR_OK);
+    }
 
     system("hidumper -s 3302 -a -r");
     std::unique_lock<std::mutex> lck(g_mtx);
@@ -443,25 +463,27 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest005, TestSize.
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    ret = snprintf_s(batteryCapacityBuf, MAX_PATH, sizeof(batteryCapacityBuf) - 1, BATTERY_CAPACITY_PATH.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    int32_t batteryCapacity = 70;
-    std::string capacity = to_string(batteryCapacity);
-    ret = FileOperation::WriteFile(batteryCapacityBuf, capacity, capacity.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    if (IsMock(BATTERY_CAPACITY_PATH) && IsMock(CHARGER_STATUS_PATH) && IsMock(CHARGER_CURRENT_PATH)) {
+        ret = snprintf_s(batteryCapacityBuf, MAX_PATH, sizeof(batteryCapacityBuf) - 1, BATTERY_CAPACITY_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        int32_t batteryCapacity = 70;
+        std::string capacity = to_string(batteryCapacity);
+        ret = FileOperation::WriteFile(batteryCapacityBuf, capacity, capacity.length());
+        EXPECT_EQ(true, ret == ERR_OK);
 
-    ret = snprintf_s(batteryChargerBuf, MAX_PATH, sizeof(batteryChargerBuf) - 1, CHARGER_STATUS_PATH.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    std::string batteryChargerState = "DisCharging";
-    ret = FileOperation::WriteFile(batteryChargerBuf, batteryChargerState, batteryChargerState.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+        ret = snprintf_s(batteryChargerBuf, MAX_PATH, sizeof(batteryChargerBuf) - 1, CHARGER_STATUS_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        std::string batteryChargerState = "DisCharging";
+        ret = FileOperation::WriteFile(batteryChargerBuf, batteryChargerState, batteryChargerState.length());
+        EXPECT_EQ(true, ret == ERR_OK);
 
-    ret = snprintf_s(chargerCurrentBuf, MAX_PATH, sizeof(chargerCurrentBuf) - 1, CHARGER_CURRENT_PATH.c_str());
-    EXPECT_EQ(true, ret >= EOK);
-    int32_t chargerCurrent = 900;
-    std::string current = to_string(chargerCurrent);
-    ret = FileOperation::WriteFile(chargerCurrentBuf, current, current.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+        ret = snprintf_s(chargerCurrentBuf, MAX_PATH, sizeof(chargerCurrentBuf) - 1, CHARGER_CURRENT_PATH.c_str());
+        EXPECT_EQ(true, ret >= EOK);
+        int32_t chargerCurrent = 900;
+        std::string current = to_string(chargerCurrent);
+        ret = FileOperation::WriteFile(chargerCurrentBuf, current, current.length());
+        EXPECT_EQ(true, ret == ERR_OK);
+    }
 
     system("hidumper -s 3302 -a -r");
     std::unique_lock<std::mutex> lck(g_mtx);

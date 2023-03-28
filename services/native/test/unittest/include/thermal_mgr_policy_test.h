@@ -55,6 +55,7 @@ public:
     static int32_t ReadFile(const char* path, char* buf, size_t size);
     static int32_t ReadSysfsFile(const char* path, char* buf, size_t size);
     static int32_t InitNode();
+    bool IsMock(const std::string& path);
 };
 } // namespace PowerMgr
 } // namespace OHOS
