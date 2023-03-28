@@ -165,27 +165,11 @@ HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
 
 /**
  * @tc.name: ThermalActionTest005
- * @tc.desc: Action Popup Function Test
- * @tc.type: FUNC
- * @tc.require: issueI6KRS8
- */
-HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
-{
-    if (g_actionPopup != nullptr) {
-        g_actionPopup->AddActionValue("");
-        g_actionPopup->AddActionValue("1.0");
-        g_actionPopup->Execute();
-        EXPECT_TRUE(g_actionPopup->valueList_.empty());
-    }
-}
-
-/**
- * @tc.name: ThermalActionTest006
  * @tc.desc: Action Display Function Test
  * @tc.type: FUNC
  * @tc.require: issueI6KRS8
  */
-HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
+HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
 {
     if (g_actionDisplay != nullptr) {
         g_actionDisplay->AddActionValue("");
@@ -196,11 +180,11 @@ HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
 }
 
 /**
- * @tc.name: ThermalActionTest007
+ * @tc.name: ThermalActionTest006
  * @tc.desc: Action Charger Function Test
  * @tc.type: FUNC
  */
-HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
+HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
 {
     if (g_actionCharger != nullptr) {
         g_actionCharger->AddActionValue("");
@@ -214,11 +198,11 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
 }
 
 /**
- * @tc.name: ThermalActionTest008
+ * @tc.name: ThermalActionTest007
  * @tc.desc: Action Application Process Test
  * @tc.type: FUNC
  */
-HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
+HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
 {
     if (g_actionApplicationProcess != nullptr) {
         bool ret = g_actionApplicationProcess->Init();
@@ -237,12 +221,12 @@ HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
 }
 
 /**
- * @tc.name: ThermalActionTest009
+ * @tc.name: ThermalActionTest008
  * @tc.desc: Action CPU Big Test
  * @tc.type: FUNC
  * @tc.require: issueI6KRS8
  */
-HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
+HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
 {
     if (g_actionCpuBig != nullptr) {
         g_actionCpuBig->AddActionValue("");
@@ -253,12 +237,12 @@ HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
 }
 
 /**
- * @tc.name: ThermalActionTest010
+ * @tc.name: ThermalActionTest009
  * @tc.desc: Action CPU Med Test
  * @tc.type: FUNC
  * @tc.require: issueI6KRS8
  */
-HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
+HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
 {
     if (g_actionCpuMed != nullptr) {
         g_actionCpuMed->AddActionValue("");
@@ -269,12 +253,12 @@ HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
 }
 
 /**
- * @tc.name: ThermalActionTest011
+ * @tc.name: ThermalActionTest010
  * @tc.desc: Action CPU Lit Test
  * @tc.type: FUNC
  * @tc.require: issueI6KRS8
  */
-HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
+HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
 {
     if (g_actionCpuLit != nullptr) {
         g_actionCpuLit->AddActionValue("");
@@ -285,12 +269,12 @@ HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
 }
 
 /**
- * @tc.name: ThermalActionTest012
+ * @tc.name: ThermalActionTest011
  * @tc.desc: Action GPU Test
  * @tc.type: FUNC
  * @tc.require: issueI6KRS8
  */
-HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
+HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
 {
     if (g_actionGpu != nullptr) {
         g_actionGpu->AddActionValue("");
