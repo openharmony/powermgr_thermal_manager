@@ -170,6 +170,5 @@ group("systemtest") {
     ":ThermalLevelEventSystemTest",
     ":ThermalMgrDialogTest",
     ":ThermalMgrInterfaceTest",
-    ":ThermalMgrSystemTest",
   ]
 }

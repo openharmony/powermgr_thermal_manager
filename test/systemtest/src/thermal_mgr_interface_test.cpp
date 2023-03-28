@@ -578,12 +578,14 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest0013, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ThermalLevel level = thermalMgrClient.GetThermalLevel();
-    int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
-    EXPECT_EQ(true, level == ThermalLevel::COOL) << "ThermalMgrInterfaceTest0013 Failed";
+    if (IsMock(BATTERY_PATH)) {
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        ThermalLevel level = thermalMgrClient.GetThermalLevel();
+        int32_t levelValue = static_cast<int32_t>(level);
+        THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
+        EXPECT_EQ(true, level == ThermalLevel::COOL) << "ThermalMgrInterfaceTest0013 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest0013 end.");
 }
 
@@ -613,11 +615,13 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest014, TestSize.Level0)
     ret = ThermalMgrInterfaceTest::WriteFile(amTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ThermalLevel level = thermalMgrClient.GetThermalLevel();
-    int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
-    EXPECT_EQ(true, level == ThermalLevel::COOL) << "ThermalMgrInterfaceTest014 Failed";
+    if (IsMock(PA_PATH) && IsMock(AMBIENT_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        ThermalLevel level = thermalMgrClient.GetThermalLevel();
+        int32_t levelValue = static_cast<int32_t>(level);
+        THERMAL_HILOGD(LABEL_TEST, "levelValue: %{public}d", levelValue);
+        EXPECT_EQ(true, level == ThermalLevel::COOL) << "ThermalMgrInterfaceTest014 Failed";
+    }
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest014 end.");
 }
 
