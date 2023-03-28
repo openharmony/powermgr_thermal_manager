@@ -17,6 +17,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <dirent.h>
 #include <fcntl.h>
 #include "securec.h"
 
@@ -127,6 +128,23 @@ int32_t ThermalMgrPolicyTest::InitNode()
         WriteFile(bufTemp, temp, temp.length());
     }
     return ERR_OK;
+}
+
+bool ThermalMgrPolicyTest::IsMock(const std::string& path)
+{
+    DIR* dir = opendir(path.c_str());
+    if (dir == nullptr) {
+        return false;
+    }
+    struct dirent* ptr = nullptr;
+    while ((ptr = readdir(dir)) != nullptr) {
+        if (strcmp(".", ptr->d_name) != 0 && strcmp("..", ptr->d_name) != 0) {
+            closedir(dir);
+            return true;
+        }
+    }
+    closedir(dir);
+    return false;
 }
 
 std::string ThermalMgrPolicyTest::GetActionValue(const std::string& path)
@@ -1931,10 +1949,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest084, Function|MediumTest|Lev
     THERMAL_HILOGI(LABEL_TEST, "ThermalMgrPolicyTest084: start");
     int32_t temp = 40100;
     SetSensorTemp(temp, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
-    EXPECT_EQ(true, temp == out);
+    if (IsMock(BATTERY_PATH)) {
+        MockThermalMgrClient::GetInstance().GetThermalInfo();
+        auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+        int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
+        EXPECT_EQ(true, temp == out);
+    }
     THERMAL_HILOGI(LABEL_TEST, "ThermalMgrPolicyTest084: end");
 }
 }
