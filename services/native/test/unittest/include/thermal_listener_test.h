@@ -33,6 +33,7 @@ public:
     void TearDown();
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
     static void SetSensorTemp(int32_t temperature, const std::string& path);
+    bool IsMock(const std::string& path);
 
     class ThermalLevelTestEvent : public ThermalMgrListener::ThermalLevelEvent {
     public:

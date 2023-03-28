@@ -40,6 +40,7 @@ class ThermalLevelEventSystemTest : public testing::Test {
 public:
     void TearDown();
     int32_t InitNode();
+    bool IsMock(const std::string& path);
 };
 } // namespace PowerMgr
 } // namespace OHOS
