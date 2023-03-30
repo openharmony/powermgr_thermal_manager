@@ -70,7 +70,7 @@
       },
       "inner_kits": [
         {
-          "name": "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",
+          "name": "//base/powermgr/thermal_manager/interfaces/inner_api:thermalsrv_client",
           "header": {
             "header_files": [
               "ithermal_srv.h",
@@ -79,16 +79,16 @@
               "ithermal_level_callback.h",
               "thermal_srv_sensor_info.h"
             ],
-            "header_base": "//base/powermgr/thermal_manager/interfaces/innerkits/native/include"
+            "header_base": "//base/powermgr/thermal_manager/interfaces/inner_api/native/include"
           }
         },
         {
-            "name": "//base/powermgr/thermal_manager/interfaces/innerkits:thermalmgr_listener",
+            "name": "//base/powermgr/thermal_manager/interfaces/inner_api:thermalmgr_listener",
             "header": {
               "header_files": [
                 "thermal_mgr_listener.h"
               ],
-              "header_base": "//base/powermgr/thermal_manager/interfaces/innerkits/native/include"
+              "header_base": "//base/powermgr/thermal_manager/interfaces/inner_api/native/include"
             }
         }
       ],
