@@ -29,7 +29,7 @@ config("thermalsrv_public_config") {
     "native/include/thermal_observer/state_machine",
     "native/include/thermal_action/action",
     "native/include/thermal_action/action/action_soc",
-    "${thermal_innerkits}/native/include",
+    "${thermal_inner_api}/native/include",
   ]
 }
 

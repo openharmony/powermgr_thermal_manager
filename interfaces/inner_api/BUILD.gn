@@ -10,25 +10,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 
-config("module_private_config") {
-  visibility = [ ":*" ]
-  include_dirs = [
-    "include",
-    "${thermal_service_zidl}/include",
-    "${ability_runtime_services_path}/appmgr/include",
-    "${thermal_innerkits}/native/include",
-  ]
+config("thermalsrv_private_config") {
+  include_dirs = [ "${thermal_service_zidl}/include" ]
 }
 
-ohos_shared_library("mock_thermalsrv_client") {
-  sources = [ "src/mock_thermal_mgr_client.cpp" ]
+config("thermalsrv_public_config") {
+  include_dirs = [ "native/include" ]
+}
+
+ohos_shared_library("thermalsrv_client") {
+  sources = [ "${thermal_frameworks}/native/thermal_mgr_client.cpp" ]
 
   configs = [
     "${utils_path}:utils_config",
-    ":module_private_config",
+    ":thermalsrv_private_config",
   ]
+
+  public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [ "${thermal_service_zidl}:thermalmgr_proxy" ]
 
@@ -39,6 +40,32 @@ ohos_shared_library("mock_thermalsrv_client") {
     "ipc:ipc_core",
     "samgr:samgr_proxy",
   ]
+  subsystem_name = "powermgr"
+  part_name = "thermal_manager"
+}
+
+ohos_shared_library("thermalmgr_listener") {
+  sources = [ "${thermal_frameworks}/native/thermal_mgr_listener.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":thermalsrv_private_config",
+  ]
+
+  public_configs = [ ":thermalsrv_public_config" ]
+
+  deps = [
+    "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+  ]
+
+  external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }

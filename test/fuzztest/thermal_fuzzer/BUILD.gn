@@ -38,7 +38,7 @@ ohos_fuzztest("ThermalFuzzTest") {
 
   include_dirs = [
     "./",
-    "${thermal_innerkits}/native/include",
+    "${thermal_inner_api}/native/include",
     "${utils_path}/native/include",
   ]
 
@@ -50,7 +50,7 @@ ohos_fuzztest("ThermalFuzzTest") {
   ]
   sources = [ "./thermal_fuzzer_test.cpp" ]
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
   ]
