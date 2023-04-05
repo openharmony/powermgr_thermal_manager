@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef POWERMGR_INNERKITS_ITHERMAL_SRV_H
-#define POWERMGR_INNERKITS_ITHERMAL_SRV_H
+#ifndef POWERMGR_INNER_API_ITHERMAL_SRV_H
+#define POWERMGR_INNER_API_ITHERMAL_SRV_H
 
 #include "iremote_broker.h"
 #include "iremote_object.h"
@@ -58,4 +58,4 @@ public:
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // POWERMGR_INNERKITS_ITHERMAL_SRV_H
+#endif // POWERMGR_INNER_API_ITHERMAL_SRV_H

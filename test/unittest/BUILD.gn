@@ -20,14 +20,14 @@ module_output_path = "thermal_manager/thermal_native"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "../mock_client/include",
+    "mock_client/include",
     "include",
     "mock/include",
     "${utils_path}/native/include",
     "${thermal_manager_path}/services/native/include/thermal_action",
     "${thermal_service_zidl}/include",
     "${ability_runtime_services_path}/appmgr/include",
-    "${thermal_innerkits}/native/include",
+    "${thermal_inner_api}/native/include",
   ]
 }
 
@@ -67,9 +67,9 @@ ohos_unittest("ThermalLevelEventTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gtest_main",
   ]
@@ -89,9 +89,9 @@ ohos_unittest("ThermalClientApiTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gtest_main",
   ]
@@ -111,9 +111,9 @@ ohos_unittest("ThermalActionHubTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
@@ -138,17 +138,18 @@ ohos_unittest("ThermalActionReportTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
-    "//base/powermgr/battery_statistics/interfaces/innerkits:batterystats_client",
+    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
     "//base/powermgr/battery_statistics/utils:batterystats_utils",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gtest_main",
     "//third_party/libxml2:libxml2",
   ]
 
-  external_deps = deps_ex
+  external_deps = [ "battery_statistics:batterystats_client" ]
+
+  external_deps += deps_ex
 }
 
 # thermal mock proxy test
@@ -166,7 +167,7 @@ ohos_unittest("ThermalMockProxyTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -192,7 +193,7 @@ ohos_unittest("ThermalMockProxyRemoteTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -220,7 +221,7 @@ ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
   defines = [ "MOCK_WRITE_INTERFACE_TOKEN_RETURN_FALSE" ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -249,7 +250,7 @@ ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
   defines = [ "MOCK_WRITE_REMOTE_OBJECT_RETURN_FALSE" ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -278,7 +279,7 @@ ohos_unittest("ThermalMockProxyWritevectorTest") {
   defines = [ "MOCK_WRITEVECTOR_RETURN_FALSE" ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -306,7 +307,7 @@ ohos_unittest("ThermalMockProxySendrequestTest") {
   defines = [ "MOCK_SEND_REQUEST_RETURN_ONE" ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -328,7 +329,7 @@ ohos_unittest("ThermalUtilsTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -355,7 +356,7 @@ ohos_unittest("ThermalServiceDeathTest") {
   defines = [ "THERMAL_SERVICE_DEATH_UT" ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -377,10 +378,10 @@ ohos_unittest("ThermalListenerTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalmgr_listener",
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalmgr_listener",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/services/native/test/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "//third_party/googletest:gtest_main",
@@ -404,8 +405,8 @@ ohos_unittest("ThermalClientTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalmgr_listener",
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalmgr_listener",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -447,7 +448,7 @@ ohos_unittest("ThermalMockStubTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -469,7 +470,7 @@ ohos_unittest("ThermalMockStubGetdescriptorTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -496,7 +497,7 @@ ohos_unittest("ThermalActionTest") {
   defines = [ "THERMAL_GTEST" ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -523,7 +524,7 @@ ohos_unittest("ThermalObserverTest") {
   defines = [ "THERMAL_OBSERVER_UT_TEST" ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
@@ -545,7 +546,7 @@ ohos_unittest("ThermalServiceTest") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",

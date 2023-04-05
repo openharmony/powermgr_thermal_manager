@@ -64,13 +64,13 @@
           "//base/powermgr/thermal_manager/frameworks:thermal_napi"
         ],
         "service_group": [
-          "//base/powermgr/thermal_manager/services/native/test/mock_client:mock_thermalsrv_client",
+          "//base/powermgr/thermal_manager/test/unittest/mock_client:mock_thermalsrv_client",
           "//base/powermgr/thermal_manager/services:service"
         ]
       },
-      "inner_kits": [
+      "inner_api": [
         {
-          "name": "//base/powermgr/thermal_manager/interfaces/innerkits:thermalsrv_client",
+          "name": "//base/powermgr/thermal_manager/interfaces/inner_api:thermalsrv_client",
           "header": {
             "header_files": [
               "ithermal_srv.h",
@@ -79,21 +79,21 @@
               "ithermal_level_callback.h",
               "thermal_srv_sensor_info.h"
             ],
-            "header_base": "//base/powermgr/thermal_manager/interfaces/innerkits/native/include"
+            "header_base": "//base/powermgr/thermal_manager/interfaces/inner_api/native/include"
           }
         },
         {
-            "name": "//base/powermgr/thermal_manager/interfaces/innerkits:thermalmgr_listener",
+            "name": "//base/powermgr/thermal_manager/interfaces/inner_api:thermalmgr_listener",
             "header": {
               "header_files": [
                 "thermal_mgr_listener.h"
               ],
-              "header_base": "//base/powermgr/thermal_manager/interfaces/innerkits/native/include"
+              "header_base": "//base/powermgr/thermal_manager/interfaces/inner_api/native/include"
             }
         }
       ],
       "test": [
-        "//base/powermgr/thermal_manager/services/native/test:thermalmgr_test",
+        "//base/powermgr/thermal_manager/test:unittest",
         "//base/powermgr/thermal_manager/test:fuzztest",
         "//base/powermgr/thermal_manager/test:systemtest"
       ]

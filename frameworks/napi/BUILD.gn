@@ -30,7 +30,7 @@ ohos_shared_library("thermal") {
   ]
 
   deps = [
-    "${thermal_innerkits}:thermalsrv_client",
+    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
   ]
 

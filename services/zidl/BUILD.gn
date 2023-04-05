@@ -14,7 +14,7 @@
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 
 config("thermalmgr_ipc_private_config") {
-  include_dirs = [ "${thermal_innerkits}/native/include" ]
+  include_dirs = [ "${thermal_inner_api}/native/include" ]
 }
 
 config("thermalmgr_ipc_public_config") {
