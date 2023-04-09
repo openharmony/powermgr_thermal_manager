@@ -575,6 +575,7 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy002, TestSize.Level0)
     g_service->actionMgr_ = nullptr;
     policy.PolicyDecision();
     g_service->actionMgr_ = mgrTmp;
+    EXPECT_TRUE(g_service->actionMgr_ != nullptr);
     THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy002 end.");
 }
 
@@ -600,6 +601,7 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy003, TestSize.Level0)
     auto& actionMap = g_service->actionMgr_->actionMap_;
     actionMap["test"] = nullptr;
     policy.ActionDecision(actionList);
+    EXPECT_FALSE(actionMap.empty());
     THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy003 end.");
 }
 
@@ -633,6 +635,7 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy004, TestSize.Level0)
     actionMap["test1"] = std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME);
     actionMap["test2"] = std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME);
     policy.ActionDecision(actionList);
+    EXPECT_FALSE(actionMap.empty());
     THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy004 end.");
 }
 
@@ -646,6 +649,9 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy005, TestSize.Level0)
     THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy005 start.");
     // No match
     ThermalPolicy policy;
+    g_service->observer_ = nullptr;
+    policy.FindSubscribeActionValue();
+
     std::map<std::string, std::string> stateMap;
     stateMap["test"] = "test";
     EXPECT_FALSE(policy.StateMachineDecision(stateMap));
@@ -661,24 +667,10 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy005, TestSize.Level0)
 
     // for loop continue or retrun true
     stateMap["test"] = "1";
-    policy.StateMachineDecision(stateMap);
+    EXPECT_TRUE(policy.StateMachineDecision(stateMap));
     stateMap["test1"] = "0";
     collectionMap["test1"] = std::make_shared<ScreenStateCollection>();
-    policy.StateMachineDecision(stateMap);
+    EXPECT_FALSE(policy.StateMachineDecision(stateMap));
     THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy005 end.");
-}
-
-/**
- * @tc.name: ThermalPolicy006
- * @tc.desc: test Miscellaneous branches are not omitted
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalServiceTest, ThermalPolicy006, TestSize.Level0)
-{
-    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy006 start.");
-    ThermalPolicy policy;
-    g_service->observer_ = nullptr;
-    policy.FindSubscribeActionValue();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalPolicy006 end.");
 }
 } // namespace
