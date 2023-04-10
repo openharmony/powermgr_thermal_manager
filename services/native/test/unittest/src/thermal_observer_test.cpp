@@ -178,14 +178,12 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest004, TestSize.Level0)
 HWTEST_F(ThermalObserverTest, ThermalObserverTest005, TestSize.Level0)
 {
     auto info = std::make_shared<ThermalSensorInfo>();
-    if (info != nullptr) {
-        EXPECT_TRUE(info->GetTypeTempMap().empty());
-        TypeTempMap type;
-        info->SetTypeTempMap(type);
-        info->GetTemp("soc");
-        EXPECT_TRUE(info->GetHistoryTemperature("soc").empty());
-        info->NotifyObserver();
-    }
+    EXPECT_TRUE(info->GetTypeTempMap().empty());
+    TypeTempMap type;
+    info->SetTypeTempMap(type);
+    info->GetTemp("soc");
+    EXPECT_TRUE(info->GetHistoryTemperature("soc").empty());
+    info->NotifyObserver();
 }
 
 /**
@@ -196,20 +194,18 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest005, TestSize.Level0)
 HWTEST_F(ThermalObserverTest, ThermalObserverTest006, TestSize.Level0)
 {
     auto chargerState = std::make_shared<ChargerStateCollection>();
-    if (chargerState != nullptr) {
-        chargerState->Init();
-        string param = "charging";
-        bool ret = chargerState->InitParam(param);
-        EXPECT_TRUE(ret);
-        chargerState->GetState();
-        chargerState->RegisterEvent();
-        CommonEventData data;
-        chargerState->HandleChangerStatusCompleted(data);
-        chargerState->SetState();
-        chargerState->DecideState("1");
-        chargerState->HandleChargeIdleState();
-        chargerState->HandleThermalLevelCompleted(data);
-    }
+    chargerState->Init();
+    string param = "charging";
+    bool ret = chargerState->InitParam(param);
+    EXPECT_TRUE(ret);
+    chargerState->GetState();
+    chargerState->RegisterEvent();
+    CommonEventData data;
+    chargerState->HandleChangerStatusCompleted(data);
+    chargerState->SetState();
+    chargerState->DecideState("1");
+    chargerState->HandleChargeIdleState();
+    chargerState->HandleThermalLevelCompleted(data);
 }
 
 /**
@@ -220,14 +216,12 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest006, TestSize.Level0)
 HWTEST_F(ThermalObserverTest, ThermalObserverTest007, TestSize.Level0)
 {
     auto sceneState = std::make_shared<SceneStateCollection>();
-    if (sceneState != nullptr) {
-        sceneState->Init();
-        string param = "game";
-        bool ret = sceneState->InitParam(param);
-        EXPECT_TRUE(ret);
-        sceneState->SetState();
-        sceneState->DecideState("game");
-    }
+    sceneState->Init();
+    string param = "game";
+    bool ret = sceneState->InitParam(param);
+    EXPECT_TRUE(ret);
+    sceneState->SetState();
+    sceneState->DecideState("game");
 }
 
 /**
@@ -238,19 +232,17 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest007, TestSize.Level0)
 HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
 {
     auto screenState = std::make_shared<ScreenStateCollection>();
-    if (screenState != nullptr) {
-        screenState->Init();
-        string param = "on";
-        bool ret = screenState->InitParam(param);
-        EXPECT_TRUE(ret);
-        screenState->GetState();
-        screenState->RegisterEvent();
-        CommonEventData data;
-        screenState->HandleScreenOnCompleted(data);
-        screenState->HandleScreenOffCompleted(data);
-        screenState->SetState();
-        screenState->DecideState("0");
-    }
+    screenState->Init();
+    string param = "on";
+    bool ret = screenState->InitParam(param);
+    EXPECT_TRUE(ret);
+    screenState->GetState();
+    screenState->RegisterEvent();
+    CommonEventData data;
+    screenState->HandleScreenOnCompleted(data);
+    screenState->HandleScreenOffCompleted(data);
+    screenState->SetState();
+    screenState->DecideState("0");
 }
 
 /**
@@ -261,9 +253,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
 HWTEST_F(ThermalObserverTest, ThermalObserverTest009, TestSize.Level0)
 {
     auto stateMachine = std::make_shared<StateMachine>();
-    if (stateMachine != nullptr) {
-        bool ret = stateMachine->Init();
-        EXPECT_TRUE(ret);
-    }
+    bool ret = stateMachine->Init();
+    EXPECT_TRUE(ret);
 }
 } // namespace

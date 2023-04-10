@@ -82,16 +82,14 @@ namespace {
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest001, TestSize.Level0)
 {
-    if (g_actionVolume != nullptr) {
-        g_actionVolume->InitParams("volume");
-        g_actionVolume->SetEnableEvent(false);
-        g_actionVolume->AddActionValue("");
-        g_actionVolume->AddActionValue("1.0");
-        g_actionVolume->Execute();
-        g_actionVolume->VolumeRequest(1.0);
-        int32_t ret = g_actionVolume->VolumeExecution(1.0);
-        EXPECT_TRUE(ret == ERR_OK);
-    }
+    g_actionVolume->InitParams("volume");
+    g_actionVolume->SetEnableEvent(false);
+    g_actionVolume->AddActionValue("");
+    g_actionVolume->AddActionValue("1.0");
+    g_actionVolume->Execute();
+    g_actionVolume->VolumeRequest(1.0);
+    int32_t ret = g_actionVolume->VolumeExecution(1.0);
+    EXPECT_TRUE(ret == ERR_OK);
 }
 
 /**
@@ -101,15 +99,13 @@ HWTEST_F(ThermalActionTest, ThermalActionTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest002, TestSize.Level0)
 {
-    if (g_actionVoltage != nullptr) {
-        g_actionVoltage->AddActionValue("");
-        g_actionVoltage->AddActionValue("1.0");
-        g_actionVoltage->Execute();
-        g_actionVoltage->SetVoltage(123456);
-        g_actionVoltage->ExecuteVoltageLimit();
-        int32_t ret = g_actionVoltage->WriteMockNode(123456);
-        EXPECT_FALSE(ret == ERR_OK);
-    }
+    g_actionVoltage->AddActionValue("");
+    g_actionVoltage->AddActionValue("1.0");
+    g_actionVoltage->Execute();
+    g_actionVoltage->SetVoltage(123456);
+    g_actionVoltage->ExecuteVoltageLimit();
+    int32_t ret = g_actionVoltage->WriteMockNode(123456);
+    EXPECT_FALSE(ret == ERR_OK);
 }
 
 /**
@@ -119,29 +115,27 @@ HWTEST_F(ThermalActionTest, ThermalActionTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
 {
-    if (g_actionThermalLevel != nullptr) {
-        g_actionThermalLevel->AddActionValue("");
-        g_actionThermalLevel->AddActionValue("1.0");
-        g_actionThermalLevel->Execute();
-        g_actionThermalLevel->GetThermalLevel();
-        g_actionThermalLevel->LevelRequest(1);
-        g_actionThermalLevel->SubscribeThermalLevelCallback(nullptr);
-        g_actionThermalLevel->UnSubscribeThermalLevelCallback(nullptr);
-        std::shared_ptr<IRemoteObject::DeathRecipient> deathRecipient =
-            std::make_shared<ActionThermalLevel::ThermalLevelCallbackDeathRecipient>();
-        wptr<IRemoteObject> remoteObj = nullptr;
-        EXPECT_NE(deathRecipient, nullptr);
-        deathRecipient->OnRemoteDied(remoteObj);
+    g_actionThermalLevel->AddActionValue("");
+    g_actionThermalLevel->AddActionValue("1.0");
+    g_actionThermalLevel->Execute();
+    g_actionThermalLevel->GetThermalLevel();
+    g_actionThermalLevel->LevelRequest(1);
+    g_actionThermalLevel->SubscribeThermalLevelCallback(nullptr);
+    g_actionThermalLevel->UnSubscribeThermalLevelCallback(nullptr);
+    std::shared_ptr<IRemoteObject::DeathRecipient> deathRecipient =
+        std::make_shared<ActionThermalLevel::ThermalLevelCallbackDeathRecipient>();
+    wptr<IRemoteObject> remoteObj = nullptr;
+    EXPECT_NE(deathRecipient, nullptr);
+    deathRecipient->OnRemoteDied(remoteObj);
 
-        sptr<IRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
-        EXPECT_FALSE(sptrRemoteObj == nullptr);
-        deathRecipient->OnRemoteDied(sptrRemoteObj);
+    sptr<IRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
+    EXPECT_FALSE(sptrRemoteObj == nullptr);
+    deathRecipient->OnRemoteDied(sptrRemoteObj);
 
-        g_actionThermalLevel->NotifyThermalLevelChanged(1);
-        bool ret = g_actionThermalLevel->
-            PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, 1);
-        EXPECT_TRUE(ret);
-    }
+    g_actionThermalLevel->NotifyThermalLevelChanged(1);
+    bool ret = g_actionThermalLevel->
+        PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, 1);
+    EXPECT_TRUE(ret);
 }
 
 /**
@@ -151,16 +145,14 @@ HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
 {
-    if (g_actionShutdown != nullptr) {
-        g_actionShutdown->AddActionValue("1.0");
-        g_actionShutdown->Execute();
-        int32_t ret = g_actionShutdown->ShutdownRequest(false);
-        EXPECT_TRUE(ret == ERR_OK);
-        g_actionShutdown->ShutdownExecution(false);
-        g_actionShutdown->ShutdownExecution(false);
-        ret = g_actionShutdown->DelayShutdown(false, 0, 0);
-        EXPECT_TRUE(ret == ERR_OK);
-    }
+    g_actionShutdown->AddActionValue("1.0");
+    g_actionShutdown->Execute();
+    int32_t ret = g_actionShutdown->ShutdownRequest(false);
+    EXPECT_TRUE(ret == ERR_OK);
+    g_actionShutdown->ShutdownExecution(false);
+    g_actionShutdown->ShutdownExecution(false);
+    ret = g_actionShutdown->DelayShutdown(false, 0, 0);
+    EXPECT_TRUE(ret == ERR_OK);
 }
 
 /**
@@ -171,12 +163,10 @@ HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
 {
-    if (g_actionDisplay != nullptr) {
-        g_actionDisplay->AddActionValue("");
-        g_actionDisplay->AddActionValue("1.0");
-        g_actionDisplay->Execute();
-        EXPECT_TRUE(g_actionDisplay->valueList_.empty());
-    }
+    g_actionDisplay->AddActionValue("");
+    g_actionDisplay->AddActionValue("1.0");
+    g_actionDisplay->Execute();
+    EXPECT_TRUE(g_actionDisplay->valueList_.empty());
 }
 
 /**
@@ -186,15 +176,13 @@ HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
 {
-    if (g_actionCharger != nullptr) {
-        g_actionCharger->AddActionValue("");
-        g_actionCharger->AddActionValue("1.0");
-        g_actionCharger->Execute();
-        g_actionCharger->ChargerRequest(0);
-        g_actionCharger->ExecuteCurrentLimit();
-        int32_t ret = g_actionCharger->WriteSimValue(0);
-        EXPECT_TRUE(ret);
-    }
+    g_actionCharger->AddActionValue("");
+    g_actionCharger->AddActionValue("1.0");
+    g_actionCharger->Execute();
+    g_actionCharger->ChargerRequest(0);
+    g_actionCharger->ExecuteCurrentLimit();
+    int32_t ret = g_actionCharger->WriteSimValue(0);
+    EXPECT_TRUE(ret);
 }
 
 /**
@@ -204,20 +192,18 @@ HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
 {
-    if (g_actionApplicationProcess != nullptr) {
-        bool ret = g_actionApplicationProcess->Init();
-        EXPECT_TRUE(ret);
-        g_actionApplicationProcess->AddActionValue("");
-        g_actionApplicationProcess->Execute();
-        g_actionApplicationProcess->KillApplicationAction("");
-        g_actionApplicationProcess->KillProcess(0);
-        g_actionApplicationProcess->GetAppProcessInfoByName("");
-        g_actionApplicationProcess->GetAllRunnningAppProcess();
-        g_actionApplicationProcess->KillBgAppProcess();
-        g_actionApplicationProcess->KillAllAppProcess();
-        g_actionApplicationProcess->ProcessAppActionRequest(0);
-        g_actionApplicationProcess->ProcessAppActionExecution(0);
-    }
+    bool ret = g_actionApplicationProcess->Init();
+    EXPECT_TRUE(ret);
+    g_actionApplicationProcess->AddActionValue("");
+    g_actionApplicationProcess->Execute();
+    g_actionApplicationProcess->KillApplicationAction("");
+    g_actionApplicationProcess->KillProcess(0);
+    g_actionApplicationProcess->GetAppProcessInfoByName("");
+    g_actionApplicationProcess->GetAllRunnningAppProcess();
+    g_actionApplicationProcess->KillBgAppProcess();
+    g_actionApplicationProcess->KillAllAppProcess();
+    g_actionApplicationProcess->ProcessAppActionRequest(0);
+    g_actionApplicationProcess->ProcessAppActionExecution(0);
 }
 
 /**
@@ -228,12 +214,10 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
 {
-    if (g_actionCpuBig != nullptr) {
-        g_actionCpuBig->AddActionValue("");
-        g_actionCpuBig->AddActionValue("1.0");
-        g_actionCpuBig->Execute();
-        EXPECT_TRUE(g_actionCpuBig->valueList_.empty());
-    }
+    g_actionCpuBig->AddActionValue("");
+    g_actionCpuBig->AddActionValue("1.0");
+    g_actionCpuBig->Execute();
+    EXPECT_TRUE(g_actionCpuBig->valueList_.empty());
 }
 
 /**
@@ -244,12 +228,10 @@ HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
 {
-    if (g_actionCpuMed != nullptr) {
-        g_actionCpuMed->AddActionValue("");
-        g_actionCpuMed->AddActionValue("1.0");
-        g_actionCpuMed->Execute();
-        EXPECT_TRUE(g_actionCpuMed->valueList_.empty());
-    }
+    g_actionCpuMed->AddActionValue("");
+    g_actionCpuMed->AddActionValue("1.0");
+    g_actionCpuMed->Execute();
+    EXPECT_TRUE(g_actionCpuMed->valueList_.empty());
 }
 
 /**
@@ -260,12 +242,10 @@ HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
 {
-    if (g_actionCpuLit != nullptr) {
-        g_actionCpuLit->AddActionValue("");
-        g_actionCpuLit->AddActionValue("1.0");
-        g_actionCpuLit->Execute();
-        EXPECT_TRUE(g_actionCpuLit->valueList_.empty());
-    }
+    g_actionCpuLit->AddActionValue("");
+    g_actionCpuLit->AddActionValue("1.0");
+    g_actionCpuLit->Execute();
+    EXPECT_TRUE(g_actionCpuLit->valueList_.empty());
 }
 
 /**
@@ -276,11 +256,9 @@ HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
 {
-    if (g_actionGpu != nullptr) {
-        g_actionGpu->AddActionValue("");
-        g_actionGpu->AddActionValue("1.0");
-        g_actionGpu->Execute();
-        EXPECT_TRUE(g_actionGpu->valueList_.empty());
-    }
+    g_actionGpu->AddActionValue("");
+    g_actionGpu->AddActionValue("1.0");
+    g_actionGpu->Execute();
+    EXPECT_TRUE(g_actionGpu->valueList_.empty());
 }
 } // namespace
