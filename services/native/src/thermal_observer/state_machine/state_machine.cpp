@@ -37,5 +37,35 @@ bool StateMachine::Init()
     }
     return true;
 }
+
+void StateMachine::DumpState(std::string& result)
+{
+    for (auto iter = vState_.begin(); iter != vState_.end(); ++iter) {
+        result.append("name: ");
+        result.append(iter->name);
+        if (!iter->params.empty()) {
+            result.append("\t");
+            result.append("params: ");
+            result.append(iter->params);
+        }
+        result.append("\n");
+    }
+}
+
+void StateMachine::DumpIdle(std::string& result)
+{
+    result.append("thermallevel: ");
+    result.append(std::to_string(idleStateConfig_.level));
+    result.append("\n");
+    result.append("soc: ");
+    result.append(std::to_string(idleStateConfig_.soc));
+    result.append("\n");
+    result.append("charging: ");
+    result.append(std::to_string(idleStateConfig_.charging));
+    result.append("\n");
+    result.append("current: ");
+    result.append(std::to_string(idleStateConfig_.current));
+    result.append("\n");
+}
 } // namespace PowerMgr
 } // namespace OHOS

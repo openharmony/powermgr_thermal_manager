@@ -26,6 +26,11 @@ namespace {
 constexpr const char* ARGS_HELP = "-h";
 constexpr const char* ARGS_DIALOG = "-d";
 constexpr const char* ARGS_THERMALINFO = "-t";
+constexpr const char* ARGS_SCENE = "-s";
+constexpr const char* ARGS_LEVEL = "-l";
+constexpr const char* ARGS_ACTION = "-a";
+constexpr const char* ARGS_POLICY = "-p";
+constexpr const char* ARGS_IDLE = "-i";
 }
 
 bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& result)
@@ -51,6 +56,21 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
     for (auto it = args.begin(); it != args.end(); it++) {
         if (*it == ARGS_THERMALINFO) {
             ShowThermalZoneInfo(result);
+        } else if (*it == ARGS_SCENE) {
+            std::shared_ptr<StateMachine> state = tms->GetStateMachineObj();
+            state->DumpState(result);
+        } else if (*it == ARGS_LEVEL) {
+            std::shared_ptr<ThermalPolicy> policy = tms->GetPolicy();
+            policy->DumpLevel(result);
+        } else if (*it == ARGS_ACTION) {
+            std::shared_ptr<ThermalActionManager> action = tms->GetActionManagerObj();
+            action->DumpAction(result);
+        } else if (*it == ARGS_POLICY) {
+            std::shared_ptr<ThermalPolicy> policy = tms->GetPolicy();
+            policy->DumpPolicy(result);
+        } else if (*it == ARGS_IDLE) {
+            std::shared_ptr<StateMachine> state = tms->GetStateMachineObj();
+            state->DumpIdle(result);
         } else {
             break;
         }
@@ -83,7 +103,12 @@ void ThermalMgrDumper::ShowUsage(std::string& result)
         .append("  description of the cmd option:\n")
         .append("    -h: show this help.\n")
         .append("    -d: show thermal level dialog.\n")
-        .append("    -t: show thermal zone data.\n");
+        .append("    -t: show thermal zone data.\n")
+        .append("    -s: show thermal scene data.\n")
+        .append("    -l: show thermal level data.\n")
+        .append("    -a: show thermal action data.\n")
+        .append("    -p: show thermal policy data.\n")
+        .append("    -i: show thermal charging idle state data.\n");
 }
 } // namespace PowerMgr
 } // namespace OHOS

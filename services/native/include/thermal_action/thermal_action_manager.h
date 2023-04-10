@@ -60,6 +60,7 @@ public:
     }
 
     int32_t CreateActionMockFile();
+    void DumpAction(std::string& result);
 private:
     void InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict, bool enableEvent);
     ThermalActionMap actionMap_;

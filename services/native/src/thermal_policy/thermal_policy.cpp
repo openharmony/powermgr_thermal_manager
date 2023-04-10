@@ -222,5 +222,55 @@ void ThermalPolicy::PrintPolicyState()
     }
     THERMAL_HILOGD(COMP_SVC, "current level: %{public}s", levInfo.c_str());
 }
+
+void ThermalPolicy::DumpLevel(std::string& result)
+{
+    for (auto iter = clusterLevelMap_.begin(); iter != clusterLevelMap_.end(); ++iter) {
+        result.append("name: ");
+        result.append(iter->first);
+        result.append("\t");
+        result.append("level: ");
+        result.append(std::to_string(iter->second));
+        result.append("\n");
+    }
+}
+
+void ThermalPolicy::PrintPolicyAction(std::vector<PolicyAction> policyActionList, std::string& result)
+{
+    for (auto iter = policyActionList.begin(); iter != policyActionList.end(); ++iter) {
+        result.append("actionName: ");
+        result.append(iter->actionName);
+        result.append("\t");
+        result.append("actionValue: ");
+        result.append(iter->actionValue);
+        result.append("\t");
+        for (auto it = iter->actionPropMap.begin(); it != iter->actionPropMap.end(); ++it) {
+            result.append(it->first);
+            result.append(": ");
+            result.append(it->second);
+            result.append("\t");
+        }
+        result.append("isProp: ");
+        result.append(std::to_string(iter->isProp));
+        result.append("\n");
+    }
+}
+
+void ThermalPolicy::DumpPolicy(std::string& result)
+{
+    for (auto iter = clusterPolicyMap_.begin(); iter != clusterPolicyMap_.end(); ++iter) {
+        result.append("name: ");
+        result.append(iter->first);
+        result.append("\t");
+        for (auto it = iter->second.begin(); it != iter->second.end(); ++it) {
+            result.append("level: ");
+            result.append(std::to_string(it->level));
+            result.append("\n");
+            PrintPolicyAction(it->policyActionList, result);
+            result.append("\n");
+        }
+        result.append("\n");
+    }
+}
 } // namespace PowerMgr
 } // namespace OHOS
