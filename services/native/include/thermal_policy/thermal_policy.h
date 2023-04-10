@@ -52,6 +52,9 @@ public:
     void FindSubscribeActionValue();
     /* Test */
     std::map<std::string, uint32_t> GetClusterLevelMap();
+    void DumpLevel(std::string& result);
+    void PrintPolicyAction(std::vector<PolicyAction> policyActionList, std::string& result);
+    void DumpPolicy(std::string& result);
 
 private:
     void SortLevel();
