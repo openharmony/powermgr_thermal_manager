@@ -329,7 +329,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest008, TestSize.Level0)
     ret = FileOperation::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    EXPECT_TRUE(MockThermalMgrClient::GetInstance().GetThermalInfo());
 
     CommonEventData stickyData;
     CommonEventManager::GetStickyCommonEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, stickyData);
