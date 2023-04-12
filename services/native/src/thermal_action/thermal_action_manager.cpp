@@ -126,5 +126,35 @@ int32_t ThermalActionManager::CreateActionMockFile()
     }
     return ERR_OK;
 }
+
+void ThermalActionManager::DumpAction(std::string& result)
+{
+    for (auto iter = vActionItem_.begin(); iter != vActionItem_.end(); ++iter) {
+    result.append("name: ");
+    result.append(iter->name);
+    if (!iter->params.empty()) {
+        result.append("\t");
+        result.append("params: ");
+        result.append(iter->params);
+    }
+    if (!iter->protocol.empty()) {
+        result.append("\t");
+        result.append("protocol: ");
+        result.append(iter->protocol);
+    }
+    if (!iter->uid.empty()) {
+        result.append("\t");
+        result.append("uid: ");
+        result.append(iter->uid);
+    }
+    result.append("\t");
+    result.append("strict: ");
+    result.append(std::to_string(iter->strict));
+    result.append("\t");
+    result.append("enableEvent: ");
+    result.append(std::to_string(iter->enableEvent));
+    result.append("\n");
+    }
+}
 } // namespace PowerMgr
 } // namespace OHOS
