@@ -53,7 +53,6 @@ public:
     /* Test */
     std::map<std::string, uint32_t> GetClusterLevelMap();
     void DumpLevel(std::string& result);
-    void PrintPolicyAction(std::vector<PolicyAction> policyActionList, std::string& result);
     void DumpPolicy(std::string& result);
 
 private:
@@ -66,6 +65,7 @@ private:
     bool StateMachineDecision(const std::map<std::string, std::string>& stateMap);
     bool ActionExecution();
     void PrintPolicyState();
+    void PrintPolicyAction(std::vector<PolicyAction> policyActionList, std::string& result);
 
     static bool LevelCompare(const PolicyConfig& r, const PolicyConfig& l)
     {
