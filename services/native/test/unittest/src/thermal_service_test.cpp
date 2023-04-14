@@ -28,6 +28,7 @@
 #include "system_ability_definition.h"
 
 #include "action_cpu_big.h"
+#include "power_mgr_client.h"
 #include "screen_state_collection.h"
 #include "thermal_config_sensor_cluster.h"
 #include "thermal_log.h"
@@ -667,7 +668,12 @@ HWTEST_F(ThermalServiceTest, ThermalPolicy005, TestSize.Level0)
 
     // for loop continue or retrun true
     stateMap["test"] = "1";
-    EXPECT_TRUE(policy.StateMachineDecision(stateMap));
+    auto& powerMgrClient = PowerMgrClient::GetInstance();
+    if (powerMgrClient.IsScreenOn()) {
+        EXPECT_TRUE(policy.StateMachineDecision(stateMap));
+    } else {
+        EXPECT_FALSE(policy.StateMachineDecision(stateMap));
+    }
     stateMap["test1"] = "0";
     collectionMap["test1"] = std::make_shared<ScreenStateCollection>();
     EXPECT_FALSE(policy.StateMachineDecision(stateMap));
