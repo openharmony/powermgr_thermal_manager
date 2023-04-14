@@ -23,3 +23,8 @@ group("fuzztest") {
   testonly = true
   deps = [ "fuzztest/thermal_fuzzer:fuzztest" ]
 }
+
+group("unittest") {
+  testonly = true
+  deps = [ "unittest:unittest" ]
+}

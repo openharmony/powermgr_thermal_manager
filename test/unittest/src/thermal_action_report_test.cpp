@@ -37,7 +37,7 @@ namespace {
 static std::shared_ptr<ThermalConfigFileParser> g_configParser = nullptr;
 static std::vector<std::string> g_dumpArgs;
 static std::string g_sceneState;
-static const std::string policyCfgName = "base_safe";
+static const std::string POLICY_CFG_NAME = "base_safe";
 constexpr int32_t NUM_ZERO = 0;
 constexpr uint32_t MAX_PATH = 256;
 constexpr int32_t THERMAL_RATIO_BEGIN = 0;
@@ -188,8 +188,8 @@ std::string ThermalActionReportTest::GetActionValue(const std::string& actionNam
     THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s, level = %{public}d", actionName.c_str(), level);
     std::string value = "0";
     std::vector<PolicyAction> vAction;
-    if (!g_configParser->GetActionPolicy(policyCfgName, level, vAction)) {
-        THERMAL_HILOGD(LABEL_TEST, "Get policy failed name = %{public}s, return", policyCfgName.c_str());
+    if (!g_configParser->GetActionPolicy(POLICY_CFG_NAME, level, vAction)) {
+        THERMAL_HILOGD(LABEL_TEST, "Get policy failed name = %{public}s, return", POLICY_CFG_NAME.c_str());
         return value;
     }
     return ActionDecision(actionName, vAction);
