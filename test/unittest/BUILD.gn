@@ -20,6 +20,7 @@ module_output_path = "thermal_manager/thermal_native"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
+    "mock_action/include",
     "mock_client/include",
     "include",
     "mock/include",
@@ -54,6 +55,31 @@ deps_ex = [
   "drivers_interface_thermal:libthermal_proxy_1.0",
   "time_service:time_client",
 ]
+
+# thermal mock action test
+ohos_unittest("ThermalMockActionTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "${thermal_manager_path}/test/unittest/mock_action/src/mock_soc_action_base.cpp",
+    "${thermal_manager_path}/test/unittest/mock_action/src/mock_socperf_action.cpp",
+    "src/thermal_mock_action_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
 
 # thermal level event test
 ohos_unittest("ThermalLevelEventTest") {
@@ -567,6 +593,7 @@ group("unittest") {
     ":ThermalClientTest",
     ":ThermalLevelEventTest",
     ":ThermalListenerTest",
+    ":ThermalMockActionTest",
     ":ThermalMockProxyRemoteTest",
     ":ThermalMockProxySendrequestTest",
     ":ThermalMockProxyTest",

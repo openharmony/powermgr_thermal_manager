@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,19 +26,18 @@ public:
     ~ActionShutdown() = default;
 
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
     uint32_t ShutdownRequest(bool isShutdown);
     uint32_t DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr);
     /* the api is used to test */
     int32_t ShutdownExecution(bool isShutdown);
 private:
-    bool flag_;
-    bool enableEvent_ = false;
-    std::vector<int32_t> valuesList_;
-    int32_t lastValue_;
+    uint32_t GetActionValue();
+    std::vector<uint32_t> valueList_;
+    uint32_t lastValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

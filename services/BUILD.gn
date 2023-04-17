@@ -41,6 +41,7 @@ ohos_shared_library("thermalservice") {
     "native/src/thermal_action/action/action_popup.cpp",
     "native/src/thermal_action/action/action_shutdown.cpp",
     "native/src/thermal_action/action/action_soc/action_cpu_big.cpp",
+    "native/src/thermal_action/action/action_soc/action_cpu_boost.cpp",
     "native/src/thermal_action/action/action_soc/action_cpu_lit.cpp",
     "native/src/thermal_action/action/action_soc/action_cpu_med.cpp",
     "native/src/thermal_action/action/action_soc/action_gpu.cpp",

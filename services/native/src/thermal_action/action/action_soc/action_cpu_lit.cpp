@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "action_cpu_lit.h"
 
+#include "constants.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
 
@@ -24,6 +25,7 @@ namespace {
 constexpr int32_t LIM_CPU_LIT_ID = 1001;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
+
 ActionCpuLit::ActionCpuLit(const std::string& actionName)
 {
     actionName_ = actionName;
@@ -31,6 +33,7 @@ ActionCpuLit::ActionCpuLit(const std::string& actionName)
 
 void ActionCpuLit::InitParams(const std::string& params)
 {
+    (void)params;
 }
 
 void ActionCpuLit::SetStrict(bool enable)
@@ -45,29 +48,42 @@ void ActionCpuLit::SetEnableEvent(bool enable)
 
 void ActionCpuLit::AddActionValue(std::string value)
 {
-    valueList_.push_back(atoi(value.c_str()));
+    if (value.empty()) {
+        return;
+    }
+    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
 }
 
 void ActionCpuLit::Execute()
 {
     THERMAL_RETURN_IF (g_service == nullptr);
+    uint32_t value = GetActionValue();
+    if (value != lastValue_) {
+        CpuRuquest(value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
+    }
+    valueList_.clear();
+}
 
-    uint32_t value = fallbackValue;
+uint32_t ActionCpuLit::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    }
+    uint32_t value = FALLBACK_VALUE_UINT_SOC;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
         } else {
             value = *max_element(valueList_.begin(), valueList_.end());
         }
-        valueList_.clear();
     }
-
-    if (value != lastValue_) {
-        CpuRuquest(value);
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        lastValue_ = value;
-        THERMAL_HILOGI(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
-    }
+    return value;
 }
 
 void ActionCpuLit::CpuRuquest(uint32_t freq)

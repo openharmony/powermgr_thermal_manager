@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,9 +44,9 @@ void ActionVoltage::InitParams(const std::string& protocol)
     protocol_ = protocol;
 }
 
-void ActionVoltage::SetStrict(bool flag)
+void ActionVoltage::SetStrict(bool enable)
 {
-    flag_ = flag;
+    isStrict_ = enable;
 }
 
 void ActionVoltage::SetEnableEvent(bool enable)
@@ -56,56 +56,47 @@ void ActionVoltage::SetEnableEvent(bool enable)
 
 void ActionVoltage::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value: %{public}s", value.c_str());
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(atoi(value.c_str()));
+    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
 }
 
 void ActionVoltage::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     THERMAL_RETURN_IF (g_service == nullptr);
-    uint32_t value;
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
-        if (value != lastValue_) {
-            SetVoltage(value);
-            WriteMockNode(value);
-            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-            g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-            lastValue_ = value;
-            valueList_.clear();
-        }
-        return;
-    }
-
-    if (valueList_.empty()) {
-        value = 0;
-    } else {
-        if (flag_) {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        } else {
-            value = *min_element(valueList_.begin(), valueList_.end());
-        }
-        valueList_.clear();
-    }
-
+    uint32_t value = GetActionValue();
     if (value != lastValue_) {
         SetVoltage(value);
         WriteMockNode(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
+    valueList_.clear();
+}
+
+uint32_t ActionVoltage::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    }
+    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+    return value;
 }
 
 int32_t ActionVoltage::SetVoltage(int32_t voltage)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     sptr<IBatteryInterface> iBatteryInterface = IBatteryInterface::Get();
     if (iBatteryInterface == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "iBatteryInterface_ is nullptr");
@@ -121,7 +112,6 @@ int32_t ActionVoltage::SetVoltage(int32_t voltage)
 
 void ActionVoltage::ExecuteVoltageLimit()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (chargeLimitList_.empty()) {
         return;
     }
@@ -140,7 +130,6 @@ void ActionVoltage::ExecuteVoltageLimit()
 
 int32_t ActionVoltage::WriteMockNode(int32_t mockValue)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char buf[MAX_PATH] = {0};
     if (protocol_ == SC_PROTOCOL) {

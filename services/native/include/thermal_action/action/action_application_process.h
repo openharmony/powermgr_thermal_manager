@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,10 +37,10 @@ public:
     };
 
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
     bool Init();
     ErrCode KillApplicationAction(const std::string& bundleName);
     ErrCode GetRunningProcessInfo(std::vector<AppExecFwk::RunningProcessInfo>& info);
@@ -55,9 +55,8 @@ public:
     /* The api is used to UT, MT, ST */
     void ProcessAppActionExecution(const uint32_t& value);
 private:
+    uint32_t GetActionValue();
     std::vector<uint32_t> valueList_;
-    bool flag_;
-    bool enableEvent_ = false;
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;
     std::vector<AppExecFwk::RunningProcessInfo> bgAppProcessInfos_;
     std::vector<AppExecFwk::RunningProcessInfo> fgAppProcessInfos_;
