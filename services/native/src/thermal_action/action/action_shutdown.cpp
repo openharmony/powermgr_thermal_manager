@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,8 @@
 
 #include <map>
 #include <thread>
+
+#include "constants.h"
 #include "event_runner.h"
 #include "event_handler.h"
 #include "event_queue.h"
@@ -36,6 +38,7 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* SHUTDOWN_PATH = "/data/service/el0/thermal/config/shut_down";
 const int MAX_PATH = 256;
 }
+
 ActionShutdown::ActionShutdown(const std::string& actionName)
 {
     actionName_ = actionName;
@@ -43,11 +46,12 @@ ActionShutdown::ActionShutdown(const std::string& actionName)
 
 void ActionShutdown::InitParams(const std::string& params)
 {
+    (void)params;
 }
 
-void ActionShutdown::SetStrict(bool flag)
+void ActionShutdown::SetStrict(bool enable)
 {
-    flag_ = flag;
+    isStrict_ = enable;
 }
 
 void ActionShutdown::SetEnableEvent(bool enable)
@@ -57,44 +61,16 @@ void ActionShutdown::SetEnableEvent(bool enable)
 
 void ActionShutdown::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
-    valuesList_.push_back(atoi(value.c_str()));
+    if (value.empty()) {
+        return;
+    }
+    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
 }
 
 void ActionShutdown::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    int32_t value;
     THERMAL_RETURN_IF (g_service == nullptr);
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        value = static_cast<int32_t>(atoi(iter->second.c_str()));
-        if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
-            ShutdownRequest(static_cast<bool>(value));
-        } else if (value != lastValue_) {
-            ShutdownExecution(static_cast<bool>(value));
-        } else {
-            THERMAL_HILOGD(COMP_SVC, "value is not change");
-        }
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-        lastValue_ = value;
-        valuesList_.clear();
-        return;
-    }
-
-    if (valuesList_.empty()) {
-        value = 0;
-    } else {
-        if (flag_) {
-            value = *max_element(valuesList_.begin(), valuesList_.end());
-        } else {
-            value = *min_element(valuesList_.begin(), valuesList_.end());
-        }
-        valuesList_.clear();
-    }
-
+    uint32_t value = GetActionValue();
     if (value != lastValue_) {
         if (!g_service->GetFlag()) {
             ShutdownExecution(static_cast<bool>(value));
@@ -104,12 +80,31 @@ void ActionShutdown::Execute()
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
+    valueList_.clear();
+}
+
+uint32_t ActionShutdown::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    }
+    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+    return value;
 }
 
 uint32_t ActionShutdown::ShutdownRequest(bool isShutdown)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (isShutdown) {
         PowerMgrClient::GetInstance().ShutDownDevice(SHUTDOWN_REASON);
         THERMAL_HILOGI(COMP_SVC, "device start shutdown");
@@ -119,7 +114,6 @@ uint32_t ActionShutdown::ShutdownRequest(bool isShutdown)
 
 int32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char shutdownBuf[MAX_PATH] = {0};
     ret = snprintf_s(shutdownBuf, MAX_PATH, sizeof(shutdownBuf) - 1, SHUTDOWN_PATH);
@@ -136,7 +130,6 @@ int32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 
 uint32_t ActionShutdown::DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     uint32_t delay = 50000;
     auto handler = g_service->GetHandler();
     if (handler == nullptr) {

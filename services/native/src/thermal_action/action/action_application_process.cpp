@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 #include <map>
 #include <sys/types.h>
 
+#include "constants.h"
 #include "file_operation.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
@@ -40,6 +41,7 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* PROCESS_PATH = "/data/service/el0/thermal/config/process_ctrl";
 const int MAX_PATH = 256;
 }
+
 ActionApplicationProcess::ActionApplicationProcess(const std::string& actionName)
 {
     actionName_ = actionName;
@@ -47,7 +49,6 @@ ActionApplicationProcess::ActionApplicationProcess(const std::string& actionName
 
 bool ActionApplicationProcess::Init()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppMgrClient>();
     }
@@ -56,11 +57,12 @@ bool ActionApplicationProcess::Init()
 
 void ActionApplicationProcess::InitParams(const std::string& params)
 {
+    (void)params;
 }
 
-void ActionApplicationProcess::SetStrict(bool flag)
+void ActionApplicationProcess::SetStrict(bool enable)
 {
-    flag_ = flag;
+    isStrict_ = enable;
 }
 
 void ActionApplicationProcess::SetEnableEvent(bool enable)
@@ -70,55 +72,45 @@ void ActionApplicationProcess::SetEnableEvent(bool enable)
 
 void ActionApplicationProcess::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
-    if (value.empty()) return;
-    valueList_.push_back(atoi(value.c_str()));
+    if (value.empty()) {
+        return;
+    }
+    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
 }
 
 void ActionApplicationProcess::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    uint32_t value;
     THERMAL_RETURN_IF (g_service == nullptr);
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
-        if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
-            ProcessAppActionRequest(value);
-        } else if (value != lastValue_) {
-            ProcessAppActionExecution(value);
-        } else {
-            THERMAL_HILOGD(COMP_SVC, "value is not change");
-        }
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-        lastValue_ = value;
-        valueList_.clear();
-        return;
-    }
-
-    if (valueList_.empty()) {
-        value = 0;
-    } else {
-        if (flag_) {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        } else {
-            value = *min_element(valueList_.begin(), valueList_.end());
-        }
-        valueList_.clear();
-    }
-
+    uint32_t value = GetActionValue();
     if (value != lastValue_) {
-        if (!g_service->GetFlag()) {
-            ProcessAppActionExecution(value);
-        } else {
+        if (!g_service->GetSimulationXml()) {
             ProcessAppActionRequest(value);
+        } else {
+            ProcessAppActionExecution(value);
         }
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
     }
+    valueList_.clear();
+}
+
+uint32_t ActionApplicationProcess::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    }
+    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+    return value;
 }
 
 ErrCode ActionApplicationProcess::KillApplicationAction(const std::string& bundleName)
@@ -135,7 +127,6 @@ ErrCode ActionApplicationProcess::KillApplicationAction(const std::string& bundl
 
 ErrCode ActionApplicationProcess::GetRunningProcessInfo(std::vector<RunningProcessInfo>& info)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     ErrCode result = ERR_OK;
     result = appMgrClient_->GetAllRunningProcesses(info);
     if (result == ERR_OK) {
@@ -148,15 +139,13 @@ ErrCode ActionApplicationProcess::GetRunningProcessInfo(std::vector<RunningProce
 
 ErrCode ActionApplicationProcess::KillProcess(const pid_t pid)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     if (pid > 0) {
-        THERMAL_HILOGI(COMP_SVC, "KillProcess: kill pid %{public}d", pid);
         ret = kill(pid, SIGNAL_KILL);
         if (ret == ERR_OK) {
-            THERMAL_HILOGI(COMP_SVC, "KillProcess: success kill");
+            THERMAL_HILOGI(COMP_SVC, "KillProcess: success kill, pid=%{public}d", pid);
         } else {
-            THERMAL_HILOGE(COMP_SVC, "KillProcess: failed to kill");
+            THERMAL_HILOGE(COMP_SVC, "KillProcess: failed to kill, pid=%{public}d", pid);
         }
     }
     return ret;
@@ -241,7 +230,6 @@ void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t& value)
 
 void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t& value)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char processBuf[MAX_PATH] = {0};
     ret = snprintf_s(processBuf, MAX_PATH, sizeof(processBuf) - 1, PROCESS_PATH);

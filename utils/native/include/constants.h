@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@ namespace PowerMgr {
     constexpr const char* CPU_BIG_ACTION_NAME = "cpu_big";
     constexpr const char* CPU_MED_ACTION_NAME = "cpu_med";
     constexpr const char* CPU_LIT_ACTION_NAME = "cpu_lit";
+    constexpr const char* CPU_BOOST_ACTION_NAME = "boost";
     constexpr const char* GPU_ACTION_NAME = "gpu";
     constexpr const char* LCD_ACTION_NAME = "lcd";
     constexpr const char* VOLUME_ACTION_NAME = "volume";
@@ -80,6 +81,17 @@ namespace PowerMgr {
     const uint32_t ARG_7 = 7;
     const uint32_t ARG_8 = 8;
     const uint32_t ARG_9 = 9;
+
+    //fallback value
+    constexpr float FALLBACK_VALUE_FLOAT = 1.0f;
+    constexpr uint32_t FALLBACK_VALUE_UINT_ZERO = 0;
+    constexpr uint32_t FALLBACK_VALUE_UINT_SOC = static_cast<uint32_t>(INT_MAX);
+
+    // floating-point precision
+    constexpr float FLOAT_ACCURACY = 0.001f;
+
+    // strtol function base parameter format
+    constexpr uint32_t STRTOL_FORMART_DEC = 10;
 } // namespace PowerMgr
 } // namespace OHOS
 #endif // OHOS_THERMAL_CONSTANTS_H

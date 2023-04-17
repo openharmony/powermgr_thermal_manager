@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,10 +38,10 @@ public:
     explicit ActionThermalLevel(const wptr<ThermalService>& tms);
 
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
     bool Init();
     void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
@@ -65,16 +65,15 @@ private:
         }
     };
 private:
+    uint32_t GetActionValue();
     const wptr<ThermalService> tms_;
     std::mutex mutex_;
     sptr<IRemoteObject::DeathRecipient> thermalLevelCBDeathRecipient_;
     std::vector<uint32_t> valueList_;
     std::string params_;
-    bool flag_;
-    bool enableEvent_ = false;
     static std::set<const sptr<IThermalLevelCallback>, classcomp> thermalLevelListeners_;
     static int32_t level_;
-    uint32_t laststValue_;
+    uint32_t lastValue_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

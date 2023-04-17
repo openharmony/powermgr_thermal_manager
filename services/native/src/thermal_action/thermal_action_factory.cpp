@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include "action_application_process.h"
 #include "action_charger.h"
 #include "action_cpu_big.h"
+#include "action_cpu_boost.h"
 #include "action_cpu_med.h"
 #include "action_cpu_lit.h"
 #include "action_gpu.h"
@@ -57,6 +58,7 @@ void ThermalActionFactory::InitFactory()
         std::make_pair(VOLATAGE_SC_ACTION_NAME, std::make_shared<ActionVoltage>(VOLATAGE_SC_ACTION_NAME)));
     g_actionMap.insert(
         std::make_pair(VOLATAGE_BUCK_ACTION_NAME, std::make_shared<ActionVoltage>(VOLATAGE_BUCK_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(CPU_BOOST_ACTION_NAME, std::make_shared<ActionCpuBoost>(CPU_BOOST_ACTION_NAME)));
 }
 
 std::shared_ptr<IThermalAction> ThermalActionFactory::Create(const std::string& actionName)

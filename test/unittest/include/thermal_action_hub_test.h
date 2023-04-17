@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -75,6 +75,13 @@ public:
     public:
         ThermalActionTest6Callback() {};
         virtual ~ThermalActionTest6Callback() {};
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
+    };
+
+    class ThermalActionTest7Callback : public ThermalActionCallbackStub {
+    public:
+        ThermalActionTest7Callback() = default;
+        virtual ~ThermalActionTest7Callback() = default;
         virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 };
