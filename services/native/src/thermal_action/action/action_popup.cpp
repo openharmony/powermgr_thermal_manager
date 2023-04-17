@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,11 +39,14 @@ ActionPopup::ActionPopup(const std::string& actionName)
     actionName_ = actionName;
 }
 
-void ActionPopup::InitParams(const std::string& params) {}
-
-void ActionPopup::SetStrict(bool flag)
+void ActionPopup::InitParams(const std::string& params)
 {
-    flag_ = flag;
+    (void)params;
+}
+
+void ActionPopup::SetStrict(bool enable)
+{
+    isStrict_ = enable;
 }
 
 void ActionPopup::SetEnableEvent(bool enable)
@@ -53,49 +56,42 @@ void ActionPopup::SetEnableEvent(bool enable)
 
 void ActionPopup::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(atoi(value.c_str()));
+    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
 }
 
 void ActionPopup::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    uint32_t value;
-    THERMAL_RETURN_IF(g_service == nullptr);
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
-        if (value != lastValue_) {
-            HandlePopupEvent(value);
-            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-            g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-            lastValue_ = value;
-            valueList_.clear();
-        }
-        return;
-    }
-
-    if (valueList_.empty()) {
-        value = 0;
-    } else {
-        if (flag_) {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        } else {
-            value = *min_element(valueList_.begin(), valueList_.end());
-        }
-        valueList_.clear();
-    }
-
+    THERMAL_RETURN_IF (g_service == nullptr);
+    uint32_t value = GetActionValue();
     if (value != lastValue_) {
         HandlePopupEvent(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
+    valueList_.clear();
+}
+
+uint32_t ActionPopup::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    }
+    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+    return value;
 }
 
 void ActionPopup::HandlePopupEvent(const int32_t value)
@@ -116,7 +112,6 @@ void ActionPopup::HandlePopupEvent(const int32_t value)
 
 bool ActionPopup::ShowThermalDialog(TempStatus value)
 {
-    THERMAL_HILOGD(COMP_SVC, "ShowThermalDialog start.");
     auto client = AbilityManagerClient::GetInstance();
     if (client == nullptr) {
         return false;
@@ -132,7 +127,7 @@ bool ActionPopup::ShowThermalDialog(TempStatus value)
         THERMAL_HILOGE(COMP_SVC, "ShowThermalDialog failed, result = %{public}d", result);
         return false;
     }
-    THERMAL_HILOGD(COMP_SVC, "ShowThermalDialog success.");
+    THERMAL_HILOGD(COMP_SVC, "ShowThermalDialog success");
     return true;
 }
 } // namespace PowerMgr

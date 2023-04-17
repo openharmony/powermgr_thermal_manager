@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,7 @@ constexpr const char* VOLUME_PATH = "/data/service/el0/thermal/config/volume";
 const int MAX_PATH = 256;
 std::vector<ActionItem> g_actionInfo;
 }
+
 ActionVolume::ActionVolume(const std::string& actionName)
 {
     actionName_ = actionName;
@@ -39,11 +40,12 @@ ActionVolume::ActionVolume(const std::string& actionName)
 
 void ActionVolume::InitParams(const std::string& params)
 {
+    (void)params;
 }
 
-void ActionVolume::SetStrict(bool flag)
+void ActionVolume::SetStrict(bool enable)
 {
-    flag_ = flag;
+    isStrict_ = enable;
 }
 
 void ActionVolume::SetEnableEvent(bool enable)
@@ -56,41 +58,13 @@ void ActionVolume::AddActionValue(std::string value)
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(atof(value.c_str()));
+    valueList_.push_back(static_cast<float>(strtof(value.c_str(), nullptr)));
 }
 
 void ActionVolume::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     THERMAL_RETURN_IF (g_service == nullptr);
-    float value;
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        value = static_cast<float>(atoi(iter->second.c_str()));
-        if ((value != lastValue_) && (!g_service->GetSimulationXml())) {
-            VolumeRequest(value);
-        } else if (value != lastValue_) {
-            VolumeExecution(value);
-        } else {
-            THERMAL_HILOGD(COMP_SVC, "value is not change");
-        }
-        WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-        lastValue_ = value;
-        return;
-    }
-
-    if (valueList_.empty()) {
-        value = 0.0;
-    } else {
-        if (flag_) {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        } else {
-            value = *min_element(valueList_.begin(), valueList_.end());
-        }
-        valueList_.clear();
-    }
+    float value = GetActionValue();
     if (fabs(value - lastValue_) > FLOAT_ACCURACY) {
         if (!g_service->GetSimulationXml()) {
             VolumeRequest(value);
@@ -100,12 +74,31 @@ void ActionVolume::Execute()
         WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}f}", actionName_.c_str(), lastValue_);
     }
+    valueList_.clear();
+}
+
+float ActionVolume::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<float>(strtof(iter->second.c_str(), nullptr));
+    }
+    float value = FALLBACK_VALUE_FLOAT;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+    return value;
 }
 
 int32_t ActionVolume::VolumeRequest(float volume)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::string uid;
     std::vector<std::string> uidList;
     g_actionInfo = g_service->GetActionManagerObj()->GetActionItem();
@@ -147,7 +140,6 @@ int32_t ActionVolume::VolumeRequest(float volume)
 
 int32_t ActionVolume::VolumeExecution(float volume)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char buf[MAX_PATH] = {0};
     ret = snprintf_s(buf, MAX_PATH, sizeof(buf) - 1, VOLUME_PATH);

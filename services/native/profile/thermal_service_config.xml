@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2022 Huawei Device Co., Ltd.
+  Copyright (c) 2022-2023 Huawei Device Co., Ltd.
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -59,6 +59,7 @@
         <item name="cpu_med"/>
         <item name="cpu_lit"/>
         <item name="gpu"/>
+        <item name="boost" event="1"/>
         <item name="lcd"/>
         <item name="volume" uid="2001,2002"/>
         <item name="current" protocol="sc,buck" event="1"/>
@@ -93,6 +94,7 @@
             <voltage_sc>4000</voltage_sc>
             <voltage_buck>3000</voltage_buck>
             <volume>1.0</volume>
+            <boost>1</boost>
         </config>
         <config name="base_safe" level="2">
             <lcd>0.90</lcd>
@@ -114,6 +116,7 @@
             <voltage_sc>3000</voltage_sc>
             <voltage_buck>2000</voltage_buck>
             <volume>0.8</volume>
+            <boost>1</boost>
         </config>
         <config name="base_safe" level="3">
             <lcd>0.80</lcd>
@@ -136,6 +139,7 @@
             <voltage_buck>1000</voltage_buck>
             <volume>0.7</volume>
             <shut_down>1</shut_down>
+            <boost>0</boost>
         </config>
         <config name="warm_5G" level="1">
             <lcd>0.70</lcd>

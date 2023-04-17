@@ -47,8 +47,8 @@ public:
     static std::string GetScreenState();
     static std::string GetChargeState();
     static void GetStateMap(std::map<std::string, std::string>& stateMap);
-    static void ThermalActionTriggered(const std::string& actionName, int32_t level, const std::string& dumpInfo);
-    static void ReturnWithLog(bool conditon, int32_t ret, int32_t level, const std::string& info);
+    static void ThermalActionTriggered(const std::string& actionName, int32_t level, const std::string& dumpInfo,
+        bool isReversed = false);
 };
 } // namespace PowerMgr
 } // namespace OHOS

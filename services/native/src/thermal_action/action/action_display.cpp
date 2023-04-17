@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 
 #include <cmath>
 
+#include "constants.h"
 #include "display_power_mgr_client.h"
 #include "file_operation.h"
 #include "thermal_hisysevent.h"
@@ -28,8 +29,8 @@ namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string LCD_MOCK_PATH = "/data/service/el0/thermal/config/lcd";
-constexpr float DEFAULT_FALLBACK_VALUE = 1.0f;
 }
+
 ActionDisplay::ActionDisplay(const std::string& actionName)
 {
     actionName_ = actionName;
@@ -37,6 +38,7 @@ ActionDisplay::ActionDisplay(const std::string& actionName)
 
 void ActionDisplay::InitParams(const std::string& params)
 {
+    (void)params;
 }
 
 void ActionDisplay::SetStrict(bool enable)
@@ -51,23 +53,16 @@ void ActionDisplay::SetEnableEvent(bool enable)
 
 void ActionDisplay::AddActionValue(std::string value)
 {
-    valueList_.push_back(atof(value.c_str()));
+    if (value.empty()) {
+        return;
+    }
+    valueList_.push_back(static_cast<float>(strtof(value.c_str(), nullptr)));
 }
 
 void ActionDisplay::Execute()
 {
     THERMAL_RETURN_IF (g_service == nullptr);
-
-    float value = DEFAULT_FALLBACK_VALUE;
-    if (!valueList_.empty()) {
-        if (isStrict_) {
-            value = *min_element(valueList_.begin(), valueList_.end());
-        } else {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        }
-        valueList_.clear();
-    }
-
+    float value = GetActionValue();
     if (fabs(value - lastValue_) > FLOAT_ACCURACY) {
         if (!g_service->GetSimulationXml()) {
             RequestDisplay(value);
@@ -75,8 +70,29 @@ void ActionDisplay::Execute()
             ExecuteMock(value);
         }
         WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}f}", actionName_.c_str(), lastValue_);
     }
+    valueList_.clear();
+}
+
+float ActionDisplay::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<float>(strtof(iter->second.c_str(), nullptr));
+    }
+    float value = FALLBACK_VALUE_FLOAT;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+    return value;
 }
 
 void ActionDisplay::RequestDisplay(float factor)

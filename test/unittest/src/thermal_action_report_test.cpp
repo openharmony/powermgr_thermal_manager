@@ -344,7 +344,7 @@ void ThermalActionReportTest::GetStateMap(std::map<std::string, std::string>& st
 }
 
 void ThermalActionReportTest::ThermalActionTriggered(const std::string& actionName, int32_t level,
-    const std::string& dumpInfo)
+    const std::string& dumpInfo, bool isReversed)
 {
     bool enableEvent = g_configParser->GetActionEnableEvent(actionName);
     THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s, event flag = %{public}d", actionName.c_str(), enableEvent);
@@ -367,8 +367,13 @@ void ThermalActionReportTest::ThermalActionTriggered(const std::string& actionNa
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}s", value.c_str());
     GTEST_LOG_(INFO) << __func__ << " action name: " << actionName <<" expected debug info: " << expectedDumpInfo;
     auto index = dumpInfo.find(expectedDumpInfo);
-    EXPECT_TRUE(index != string::npos) << " Thermal action fail due to not found related debug info."
-        << " action name = " << actionName;
+    if (!isReversed) {
+        EXPECT_TRUE(index != string::npos) << " Thermal action fail due to not found related debug info."
+            << " action name = " << actionName;
+    } else {
+        EXPECT_TRUE(index == string::npos) << " Thermal action fail due to not found related debug info."
+            << " action name = " << actionName;
+    }
 }
 
 void ThermalActionReportTest::SetUpTestCase()
@@ -431,6 +436,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.001 end");
 }
@@ -471,6 +477,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.002 end");
 }
@@ -511,6 +518,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.003 end");
 }
@@ -551,6 +559,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.004 end");
 }
@@ -591,6 +600,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.005 end");
 }
@@ -631,6 +641,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.006 end");
 }
@@ -671,6 +682,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.007 end");
 }
@@ -711,6 +723,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.008 end");
 }
@@ -752,6 +765,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.009 end");
 }
@@ -793,6 +807,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.010 end");
 }
@@ -834,6 +849,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.011 end");
 }
@@ -875,6 +891,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
         ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
+        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     }
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.012 end");
 }

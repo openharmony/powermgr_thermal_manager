@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -108,12 +108,15 @@ bool ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(Ac
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest1Callback::OnThermalActionChanged Enter");
     int32_t cpuBigFreq = 1992000;
+    bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "cpu_big") {
             EXPECT_EQ(iter.second, cpuBigFreq);
+            isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    EXPECT_TRUE(isFind);
     return true;
 }
 
@@ -121,13 +124,16 @@ bool ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest2Callback::OnThermalActionChanged Enter");
     std::string lcd = "0.9";
+    bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 3: end position
             EXPECT_EQ(std::to_string(iter.second).substr(0, 3), lcd);
+            isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    EXPECT_TRUE(isFind);
     return true;
 }
 
@@ -136,16 +142,22 @@ bool ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(Ac
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
     int32_t cpuMedFreq = 1989500;
     std::string lcd = "0.8";
+    bool isFindCpuMed = false;
+    bool isFindLcd = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "cpu_med") {
             EXPECT_EQ(iter.second, cpuMedFreq);
+            isFindCpuMed = true;
         }
         if (iter.first == "lcd") {
             // 0： begin position; 3: end position
             EXPECT_EQ(std::to_string(iter.second).substr(0, 3), lcd);
+            isFindLcd = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    EXPECT_TRUE(isFindCpuMed);
+    EXPECT_TRUE(isFindLcd);
     return true;
 }
 
@@ -153,13 +165,16 @@ bool ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(Ac
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest4Callback::OnThermalActionChanged Enter");
     std::string lcd = "0.99";
+    bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 4: end position
             EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
+            isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    EXPECT_TRUE(isFind);
     return true;
 }
 
@@ -167,13 +182,16 @@ bool ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(Ac
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest5Callback::OnThermalActionChanged Enter");
     std::string lcd = "0.88";
+    bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 4: end position
             EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
+            isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    EXPECT_TRUE(isFind);
     return true;
 }
 
@@ -181,13 +199,31 @@ bool ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(Ac
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest6Callback::OnThermalActionChanged Enter");
     std::string lcd = "0.77";
+    bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 4: end position
             EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
+            isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
     }
+    EXPECT_TRUE(isFind);
+    return true;
+}
+
+bool ThermalActionHubTest::ThermalActionTest7Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest7Callback::OnThermalActionChanged Enter");
+    bool isFind = false;
+    for (auto iter : actionCbMap) {
+        if (iter.first == "boost") {
+            EXPECT_TRUE(static_cast<bool>(iter.second));
+            isFind = true;
+        }
+        GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
+    }
+    EXPECT_TRUE(isFind);
     return true;
 }
 
@@ -199,7 +235,7 @@ namespace {
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start");
     std::vector<std::string> actionList;
     actionList.push_back("cpu_big");
 
@@ -226,7 +262,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb1);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
 }
 
 /**
@@ -236,7 +272,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start");
     const std::string LCD = "lcd";
     std::vector<std::string> actionList;
     actionList.push_back(LCD);
@@ -269,7 +305,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb2);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 end");
 }
 
 /**
@@ -279,7 +315,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start");
     const std::string LCD = "lcd";
     std::vector<std::string> actionList;
     actionList.push_back("cpu_med");
@@ -308,7 +344,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb3);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 end");
 }
 
 /**
@@ -318,7 +354,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start");
     const std::string LCD = "lcd";
     std::vector<std::string> actionList;
     actionList.push_back(LCD);
@@ -352,7 +388,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb4);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 end");
 }
 
 /**
@@ -362,7 +398,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start");
     const std::string LCD = "lcd";
     std::vector<std::string> actionList;
     actionList.push_back(LCD);
@@ -396,7 +432,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb5);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 end");
 }
 
 /**
@@ -406,7 +442,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start");
     const std::string LCD = "lcd";
     std::vector<std::string> actionList;
     actionList.push_back(LCD);
@@ -440,6 +476,44 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     thermalMgrClient.UnSubscribeThermalActionCallback(cb6);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 end");
+}
+
+/**
+ * @tc.name: ThermalActionHubTest007
+ * @tc.desc: register action is boost test
+ * @tc.type: FUNC
+ * @tc.require: issueI6JSQD
+ */
+HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest007 start");
+    std::vector<std::string> actionList;
+    actionList.push_back("boost");
+
+    std::string desc = "";
+    char batteryTempBuf[MAX_PATH] = {0};
+    char socTempBuf[MAX_PATH] = {0};
+    int32_t ret = -1;
+    InitData();
+    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+
+    ret = snprintf_s(socTempBuf, MAX_PATH, sizeof(socTempBuf) - 1, SOC_PATH.c_str());
+    EXPECT_EQ(true, ret >= EOK);
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    const sptr<IThermalActionCallback> cbBoost = new ThermalActionTest7Callback();
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
+    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cbBoost);
+
+    int32_t batteryTemp = 40100;
+    std::string sTemp = to_string(batteryTemp) + "\n";
+    ret = ThermalActionHubTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
+    EXPECT_EQ(true, ret == ERR_OK);
+
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    thermalMgrClient.UnSubscribeThermalActionCallback(cbBoost);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
 }
 } // namespace

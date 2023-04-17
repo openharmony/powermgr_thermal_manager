@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@ namespace PowerMgr {
 namespace {
 #ifdef SOC_PERF_ENBALE
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
+constexpr int32_t ACTION_TYPE_CPU_BOOST_CMDID = 10028;
 #endif
 }
 
@@ -35,6 +36,13 @@ void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
     tags.push_back(tag);
     configs.push_back(value);
     OHOS::SOCPERF::SocPerfClient::GetInstance().LimitRequest(ACTION_TYPE_THERMAL_ID, tags, configs, "");
+#endif
+}
+
+void SocActionBase::SocPerfRequest(bool onOffTag)
+{
+#ifdef SOC_PERF_ENBALE
+    OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEX(ACTION_TYPE_CPU_BOOST_CMDID, onOffTag, "");
 #endif
 }
 } // namespace PowerMgr

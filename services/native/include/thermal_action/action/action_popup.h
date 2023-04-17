@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,16 +29,15 @@ public:
         HIGHER_TEMP = 2
     };
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
     void HandlePopupEvent(const int32_t value);
     bool ShowThermalDialog(TempStatus value);
 private:
+    uint32_t GetActionValue();
     std::vector<uint32_t> valueList_;
-    bool flag_;
-    bool enableEvent_ = false;
     uint32_t lastValue_;
 };
 } // namespace PowerMgr
