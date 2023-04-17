@@ -19,7 +19,7 @@ group("thermal_napi") {
 
 group("client") {
   deps = [
-    "${thermal_inner_api}:thermalmgr_listener",
-    "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_innerkits}:thermalmgr_listener",
+    "${thermal_innerkits}:thermalsrv_client",
   ]
 }
