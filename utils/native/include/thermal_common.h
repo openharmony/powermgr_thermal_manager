@@ -24,8 +24,6 @@
 
 namespace OHOS {
 namespace PowerMgr {
-constexpr float FLOAT_ACCURACY = 0.001f;
-
 #define THERMAL_RETURN_IF_WITH_RET(cond, retval) \
     if (cond) { return (retval); }
 #define THERMAL_RETURN_IF(cond) if (cond) {return;}

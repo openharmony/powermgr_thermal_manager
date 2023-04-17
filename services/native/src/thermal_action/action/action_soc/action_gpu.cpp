@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,13 +15,17 @@
 
 #include "action_gpu.h"
 
+#include "constants.h"
 #include "thermal_hisysevent.h"
+#include "thermal_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
 constexpr int32_t LIM_GPU_ID = 2001;
+auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
+
 ActionGpu::ActionGpu(const std::string& actionName)
 {
     actionName_ = actionName;
@@ -29,6 +33,7 @@ ActionGpu::ActionGpu(const std::string& actionName)
 
 void ActionGpu::InitParams(const std::string& params)
 {
+    (void)params;
 }
 
 void ActionGpu::SetStrict(bool enable)
@@ -43,27 +48,42 @@ void ActionGpu::SetEnableEvent(bool enable)
 
 void ActionGpu::AddActionValue(std::string value)
 {
-    valueList_.push_back(atoi(value.c_str()));
+    if (value.empty()) {
+        return;
+    }
+    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
 }
 
 void ActionGpu::Execute()
 {
-    uint32_t value = fallbackValue;
+    THERMAL_RETURN_IF (g_service == nullptr);
+    uint32_t value = GetActionValue();
+    if (value != lastValue_) {
+        SocLimitRequest(LIM_GPU_ID, value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
+    }
+    valueList_.clear();
+}
+
+uint32_t ActionGpu::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    }
+    uint32_t value = FALLBACK_VALUE_UINT_SOC;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
         } else {
             value = *max_element(valueList_.begin(), valueList_.end());
         }
-        valueList_.clear();
     }
-
-    if (value != lastValue_) {
-        SocLimitRequest(LIM_GPU_ID, value);
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        lastValue_ = value;
-        THERMAL_HILOGI(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
-    }
+    return value;
 }
 } // namespace PowermMgr
 } // namespace OHOS

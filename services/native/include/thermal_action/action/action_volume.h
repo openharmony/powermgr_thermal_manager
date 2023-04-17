@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,16 +26,15 @@ public:
     ~ActionVolume() = default;
 
     void InitParams(const std::string& params) override;
-    virtual void SetStrict(bool flag) override;
-    virtual void SetEnableEvent(bool enable) override;
-    virtual void AddActionValue(std::string value) override;
-    virtual void Execute() override;
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
     int32_t VolumeRequest(float volume);
     int32_t VolumeExecution(float volume);
 private:
+    float GetActionValue();
     std::vector<float> valueList_;
-    bool flag_;
-    bool enableEvent_ = false;
     float lastValue_;
 };
 } // namespace PowerMgr

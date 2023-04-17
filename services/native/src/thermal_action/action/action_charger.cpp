@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,26 +26,26 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
 constexpr const char* BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
 const int MAX_PATH = 256;
+auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
+std::vector<ChargingLimit> ActionCharger::chargeLimitList_;
+
 ActionCharger::ActionCharger(const std::string& actionName)
 {
     actionName_ = actionName;
 }
-
-std::vector<ChargingLimit> ActionCharger::chargeLimitList_;
 
 void ActionCharger::InitParams(const std::string& protocol)
 {
     protocol_ = protocol;
 }
 
-void ActionCharger::SetStrict(bool flag)
+void ActionCharger::SetStrict(bool enable)
 {
-    flag_ = flag;
+    isStrict_ = enable;
 }
 
 void ActionCharger::SetEnableEvent(bool enable)
@@ -55,55 +55,47 @@ void ActionCharger::SetEnableEvent(bool enable)
 
 void ActionCharger::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
-    if (value.empty()) return;
-    valueList_.push_back(atoi(value.c_str()));
+    if (value.empty()) {
+        return;
+    }
+    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
 }
 
 void ActionCharger::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    uint32_t value;
     THERMAL_RETURN_IF (g_service == nullptr);
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        THERMAL_HILOGD(COMP_SVC, "g_service->GetScene()=%{public}s", g_service->GetScene().c_str());
-        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
-        if (value != lastValue_) {
-            ChargerRequest(value);
-            WriteSimValue(value);
-            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-            g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-            lastValue_ = value;
-            valueList_.clear();
-        }
-        return;
-    }
-
-    if (valueList_.empty()) {
-        value = 0;
-    } else {
-        if (flag_) {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        } else {
-            value = *min_element(valueList_.begin(), valueList_.end());
-        }
-        valueList_.clear();
-    }
-
+    uint32_t value = GetActionValue();
     if (value != lastValue_) {
         ChargerRequest(value);
         WriteSimValue(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
+    valueList_.clear();
+}
+
+uint32_t ActionCharger::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    }
+    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+    return value;
 }
 
 int32_t ActionCharger::ChargerRequest(int32_t current)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     ChargingLimit chargingLimit;
     chargingLimit.type = TYPE_CURRENT;
     chargingLimit.protocol = protocol_;
@@ -123,7 +115,6 @@ int32_t ActionCharger::ChargerRequest(int32_t current)
 
 void ActionCharger::ExecuteCurrentLimit()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (chargeLimitList_.empty()) {
         return;
     }
@@ -142,7 +133,6 @@ void ActionCharger::ExecuteCurrentLimit()
 
 int32_t ActionCharger::WriteSimValue(int32_t simValue)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     int32_t ret = -1;
     char buf[MAX_PATH] = {0};
     if (protocol_ == SC_PROTOCOL) {

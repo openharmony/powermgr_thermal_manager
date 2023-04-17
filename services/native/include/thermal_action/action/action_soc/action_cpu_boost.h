@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,31 +13,30 @@
  * limitations under the License.
  */
 
-#ifndef ACTION_DISPLAY_H
-#define ACTION_DISPLAY_H
+#ifndef ACTION_CPU_BOOST_H
+#define ACTION_CPU_BOOST_H
 
-#include "ithermal_action.h"
+#include "soc_action_base.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionDisplay : public IThermalAction {
+class ActionCpuBoost : public IThermalAction, public SocActionBase {
 public:
-    ActionDisplay(const std::string& actionName);
-    ~ActionDisplay() = default;
+    ActionCpuBoost(const std::string& actionName);
+    ~ActionCpuBoost() = default;
 
     void InitParams(const std::string& params) override;
     void SetStrict(bool enable) override;
     void SetEnableEvent(bool enable) override;
     void AddActionValue(std::string value) override;
     void Execute() override;
-    void RequestDisplay(float factor);
-    void ExecuteMock(float factor);
 
 private:
-    float GetActionValue();
-    float lastValue_ {0.0f};
-    std::vector<float> valueList_;
+    bool GetActionValue();
+    bool isAction_ {false};
+    bool actionTag_ {false};
+    bool lastTag_ {false};
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // ACTION_DISPLAY_H
+#endif // ACTION_CPU_BOOST_H

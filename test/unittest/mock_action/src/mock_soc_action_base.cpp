@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,22 @@
  * limitations under the License.
  */
 
-#ifndef SOC_ACTION_BASE_H
-#define SOC_ACTION_BASE_H
+#include "soc_action_base.h"
 
-#include "ithermal_action.h"
+#include "mock_socperf_action.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class SocActionBase {
-public:
-    SocActionBase() = default;
-    ~SocActionBase() = default;
+void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
+{
+    (void)tag;
+    (void)value;
+}
 
-protected:
-    void SocLimitRequest(int32_t tag, int64_t value);
-    void SocPerfRequest(bool onOffTag);
-};
+void SocActionBase::SocPerfRequest(bool onOffTag)
+{
+    (void)onOffTag;
+    MockSocPerfAction::BoostRequest();
+}
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // SOC_ACTION_BASE_H

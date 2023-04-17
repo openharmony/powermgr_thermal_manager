@@ -60,7 +60,7 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
     "${thermal_manager_path}/test/unittest/mock_client/include",
-    "${thermal_manager_path}/services/native/test/unittest/include",
+    "${thermal_manager_path}/test/unittest/include",
     "${thermal_manager_path}/services/zidl/include",
   ]
 
@@ -83,7 +83,7 @@ ohos_systemtest("ThermalMgrSystemTest") {
   module_out_path = "${module_output_path}"
 
   sources = [
-    "${thermal_manager_path}/services/native/test/unittest/src/thermal_config_file_parser.cpp",
+    "${thermal_manager_path}/test/unittest/src/thermal_config_file_parser.cpp",
     "src/thermal_mgr_system_test.cpp",
   ]
 
@@ -99,7 +99,7 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
     "${thermal_manager_path}/test/unittest/mock_client/include",
-    "${thermal_manager_path}/services/native/test/unittest/include",
+    "${thermal_manager_path}/test/unittest/include",
   ]
 
   deps = [

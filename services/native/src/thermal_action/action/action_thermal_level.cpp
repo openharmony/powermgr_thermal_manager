@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,7 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::COOL);
 std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> ActionThermalLevel::thermalLevelListeners_;
 
-ActionThermalLevel::ActionThermalLevel(const wptr<ThermalService>& tms) : tms_(tms), laststValue_(0) {}
+ActionThermalLevel::ActionThermalLevel(const wptr<ThermalService>& tms) : tms_(tms), lastValue_(0) {}
 ActionThermalLevel::~ActionThermalLevel() {}
 
 ActionThermalLevel::ActionThermalLevel(const std::string& actionName)
@@ -48,11 +48,12 @@ ActionThermalLevel::ActionThermalLevel(const std::string& actionName)
 
 void ActionThermalLevel::InitParams(const std::string& params)
 {
+    (void)params;
 }
 
-void ActionThermalLevel::SetStrict(bool flag)
+void ActionThermalLevel::SetStrict(bool enable)
 {
-    flag_ = flag;
+    isStrict_ = enable;
 }
 
 void ActionThermalLevel::SetEnableEvent(bool enable)
@@ -62,55 +63,46 @@ void ActionThermalLevel::SetEnableEvent(bool enable)
 
 void ActionThermalLevel::AddActionValue(std::string value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value=%{public}s", value.c_str());
-    if (value.empty()) return;
-    valueList_.push_back(atoi(value.c_str()));
-    for (auto iter : valueList_) {
-        THERMAL_HILOGD(COMP_SVC, "thermallevel=%{public}d", iter);
+    if (value.empty()) {
+        return;
     }
+    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
 }
 
 void ActionThermalLevel::Execute()
 {
-    THERMAL_HILOGD(COMP_SVC, "valueList_.size=%{public}zu", valueList_.size());
     THERMAL_RETURN_IF (g_service == nullptr);
-    uint32_t value;
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        value = static_cast<uint32_t>(atoi(iter->second.c_str()));
-        if (value != laststValue_) {
-            LevelRequest(value);
-            WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-            g_service->GetObserver()->SetDecisionValue(actionName_, iter->second);
-            laststValue_ = value;
-            valueList_.clear();
-        }
-        return;
-    }
-
-    if (valueList_.empty()) {
-        value = 0;
-    } else {
-        if (flag_) {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        } else {
-            value = *min_element(valueList_.begin(), valueList_.end());
-        }
-        valueList_.clear();
-    }
-
-    if (value != laststValue_) {
+    uint32_t value = GetActionValue();
+    if (value != lastValue_) {
         LevelRequest(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
-        laststValue_ = value;
+        lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
+    valueList_.clear();
+}
+
+uint32_t ActionThermalLevel::GetActionValue()
+{
+    std::string scene = g_service->GetScene();
+    auto iter = g_sceneMap.find(scene);
+    if (iter != g_sceneMap.end()) {
+        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    }
+    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+    return value;
 }
 
 bool ActionThermalLevel::Init()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (thermalLevelCBDeathRecipient_ == nullptr) {
         thermalLevelCBDeathRecipient_ = new ThermalLevelCallbackDeathRecipient();
     }
@@ -141,7 +133,6 @@ uint32_t ActionThermalLevel::LevelRequest(int32_t level)
  */
 void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lock(mutex_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -159,7 +150,6 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
 
 void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lock(mutex_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -174,7 +164,6 @@ void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLeve
 
 void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
