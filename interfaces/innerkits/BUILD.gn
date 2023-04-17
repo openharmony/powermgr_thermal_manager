@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -13,21 +13,46 @@
 
 import("//base/powermgr/thermal_manager/thermalmgr.gni")
 
-config("thermal_private_config") {
+config("thermalsrv_private_config") {
   include_dirs = [ "${thermal_service_zidl}/include" ]
 }
 
-ohos_shared_library("thermal") {
+config("thermalsrv_public_config") {
+  include_dirs = [ "native/include" ]
+}
+
+ohos_shared_library("thermalsrv_client") {
+  sources = [ "${thermal_frameworks}/native/thermal_mgr_client.cpp" ]
+
   configs = [
     "${utils_path}:utils_config",
-    ":thermal_private_config",
+    ":thermalsrv_private_config",
   ]
 
-  sources = [
-    "napi_errors.cpp",
-    "napi_utils.cpp",
-    "thermal_manager_napi.cpp",
+  public_configs = [ ":thermalsrv_public_config" ]
+
+  deps = [ "${thermal_service_zidl}:thermalmgr_proxy" ]
+
+  external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "samgr:samgr_proxy",
   ]
+  subsystem_name = "powermgr"
+  part_name = "thermal_manager"
+}
+
+ohos_shared_library("thermalmgr_listener") {
+  sources = [ "${thermal_frameworks}/native/thermal_mgr_listener.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":thermalsrv_private_config",
+  ]
+
+  public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
     "${thermal_innerkits}:thermalsrv_client",
@@ -39,10 +64,8 @@ ohos_shared_library("thermal") {
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "napi:ace_napi",
   ]
 
-  relative_install_dir = "module"
-  part_name = "thermal_manager"
   subsystem_name = "powermgr"
+  part_name = "thermal_manager"
 }
