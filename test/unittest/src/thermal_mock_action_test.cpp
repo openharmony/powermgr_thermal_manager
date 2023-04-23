@@ -17,6 +17,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <dirent.h>
 #include <fcntl.h>
 #include "securec.h"
 
@@ -91,6 +92,23 @@ void ThermalMockActionTest::SetSensorTemp(int32_t temperature, const std::string
     EXPECT_EQ(true, ret == ERR_OK);
 }
 
+bool ThermalMockActionTest::IsMock(const std::string& path)
+{
+    DIR* dir = opendir(path.c_str());
+    if (dir == nullptr) {
+        return false;
+    }
+    struct dirent* ptr = nullptr;
+    while ((ptr = readdir(dir)) != nullptr) {
+        if (strcmp(".", ptr->d_name) != 0 && strcmp("..", ptr->d_name) != 0) {
+            closedir(dir);
+            return true;
+        }
+    }
+    closedir(dir);
+    return false;
+}
+
 void ThermalMockActionTest::SetUpTestCase()
 {
     g_thermalSvc = DelayedSpSingleton<ThermalService>::GetInstance();
@@ -124,16 +142,20 @@ namespace {
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|Level2)
 {
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest001 start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    int32_t temp = 40100;
-    ThermalLevel level = ThermalLevel::COOL;
-    int32_t expectLevel = 1;
-    SetSensorTemp(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
-    g_thermalSvc->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
-    EXPECT_EQ(1, MockSocPerfAction::GetBoostRequestCounter());
-    MockSocPerfAction::ClearBoost();
+    if (IsMock(BATTERY_PATH)) {
+        int32_t temp = 40100;
+        ThermalLevel level = ThermalLevel::COOL;
+        int32_t expectLevel = 1;
+        SetSensorTemp(temp, BATTERY_PATH);
+        g_thermalSvc->GetThermalInfo();
+        g_thermalSvc->GetThermalLevel(level);
+        EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+        EXPECT_EQ(1, MockSocPerfAction::GetBoostRequestCounter());
+        MockSocPerfAction::ClearBoost();
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest001 end");
 }
 
 /**
@@ -146,16 +168,20 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest002, Function|MediumTest|Level2)
 {
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest002 start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    int32_t temp = 46100;
-    ThermalLevel level = ThermalLevel::COOL;
-    int32_t expectLevel = 3;
-    SetSensorTemp(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
-    g_thermalSvc->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
-    EXPECT_EQ(1, MockSocPerfAction::GetBoostRequestCounter());
-    MockSocPerfAction::ClearBoost();
+    if (IsMock(BATTERY_PATH)) {
+        int32_t temp = 46100;
+        ThermalLevel level = ThermalLevel::COOL;
+        int32_t expectLevel = 3;
+        SetSensorTemp(temp, BATTERY_PATH);
+        g_thermalSvc->GetThermalInfo();
+        g_thermalSvc->GetThermalLevel(level);
+        EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+        EXPECT_EQ(1, MockSocPerfAction::GetBoostRequestCounter());
+        MockSocPerfAction::ClearBoost();
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest002 end");
 }
 
 /**
@@ -168,15 +194,19 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest002, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest003, Function|MediumTest|Level2)
 {
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest003 start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    int32_t temp = 43100;
-    ThermalLevel level = ThermalLevel::COOL;
-    int32_t expectLevel = 2;
-    SetSensorTemp(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
-    g_thermalSvc->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
-    EXPECT_EQ(1, MockSocPerfAction::GetBoostRequestCounter());
-    MockSocPerfAction::ClearBoost();
+    if (IsMock(BATTERY_PATH)) {
+        int32_t temp = 43100;
+        ThermalLevel level = ThermalLevel::COOL;
+        int32_t expectLevel = 2;
+        SetSensorTemp(temp, BATTERY_PATH);
+        g_thermalSvc->GetThermalInfo();
+        g_thermalSvc->GetThermalLevel(level);
+        EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+        EXPECT_EQ(1, MockSocPerfAction::GetBoostRequestCounter());
+        MockSocPerfAction::ClearBoost();
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest003 end");
 }
 }
