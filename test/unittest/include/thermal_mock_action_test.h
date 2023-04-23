@@ -30,6 +30,7 @@ public:
     static void SetSensorTemp(int32_t temperature, const std::string& path);
     static int32_t WriteFile(std::string path, std::string buf, size_t size);
     static int32_t InitNode();
+    bool IsMock(const std::string& path);
 };
 } // namespace PowerMgr
 } // namespace OHOS
