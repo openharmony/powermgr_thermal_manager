@@ -27,6 +27,7 @@ ohos_shared_library("thermalsrv_client") {
   configs = [
     "${utils_path}:utils_config",
     ":thermalsrv_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   public_configs = [ ":thermalsrv_public_config" ]
@@ -50,6 +51,7 @@ ohos_shared_library("thermalmgr_listener") {
   configs = [
     "${utils_path}:utils_config",
     ":thermalsrv_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   public_configs = [ ":thermalsrv_public_config" ]

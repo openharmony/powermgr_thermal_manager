@@ -74,6 +74,7 @@ ohos_shared_library("thermalservice") {
   configs = [
     "${utils_path}:utils_config",
     ":thermalsrv_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   defines = []

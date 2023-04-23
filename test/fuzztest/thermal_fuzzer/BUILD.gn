@@ -42,6 +42,8 @@ ohos_fuzztest("ThermalFuzzTest") {
     "${utils_path}/native/include",
   ]
 
+  configs = [ "${utils_path}:coverage_flags" ]
+
   cflags = [
     "-g",
     "-O0",
