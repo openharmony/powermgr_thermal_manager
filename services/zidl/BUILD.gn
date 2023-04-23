@@ -43,6 +43,7 @@ ohos_shared_library("thermalmgr_stub") {
   configs = [
     "${utils_path}:utils_config",
     ":thermalmgr_ipc_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   public_configs = [ ":thermalmgr_ipc_public_config" ]
@@ -66,6 +67,7 @@ ohos_shared_library("thermalmgr_proxy") {
   configs = [
     "${utils_path}:utils_config",
     ":thermalmgr_ipc_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   public_configs = [ ":thermalmgr_ipc_public_config" ]

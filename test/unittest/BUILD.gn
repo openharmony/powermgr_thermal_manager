@@ -69,6 +69,7 @@ ohos_unittest("ThermalMockActionTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -90,6 +91,7 @@ ohos_unittest("ThermalLevelEventTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -112,6 +114,7 @@ ohos_unittest("ThermalClientApiTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -134,6 +137,7 @@ ohos_unittest("ThermalActionHubTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -161,6 +165,7 @@ ohos_unittest("ThermalActionReportTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -190,6 +195,7 @@ ohos_unittest("ThermalMockProxyTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -216,6 +222,7 @@ ohos_unittest("ThermalMockProxyRemoteTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -242,6 +249,7 @@ ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   defines = [ "MOCK_WRITE_INTERFACE_TOKEN_RETURN_FALSE" ]
@@ -271,6 +279,7 @@ ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   defines = [ "MOCK_WRITE_REMOTE_OBJECT_RETURN_FALSE" ]
@@ -300,6 +309,7 @@ ohos_unittest("ThermalMockProxyWritevectorTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   defines = [ "MOCK_WRITEVECTOR_RETURN_FALSE" ]
@@ -328,6 +338,7 @@ ohos_unittest("ThermalMockProxySendrequestTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   defines = [ "MOCK_SEND_REQUEST_RETURN_ONE" ]
@@ -352,6 +363,7 @@ ohos_unittest("ThermalUtilsTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -377,6 +389,7 @@ ohos_unittest("ThermalServiceDeathTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   defines = [ "THERMAL_SERVICE_DEATH_UT" ]
@@ -401,6 +414,7 @@ ohos_unittest("ThermalListenerTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -428,6 +442,7 @@ ohos_unittest("ThermalClientTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -471,6 +486,7 @@ ohos_unittest("ThermalMockStubTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -493,6 +509,7 @@ ohos_unittest("ThermalMockStubGetdescriptorTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
@@ -518,6 +535,7 @@ ohos_unittest("ThermalActionTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   defines = [ "THERMAL_GTEST" ]
@@ -545,6 +563,7 @@ ohos_unittest("ThermalObserverTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   defines = [ "THERMAL_OBSERVER_UT_TEST" ]
@@ -569,6 +588,7 @@ ohos_unittest("ThermalServiceTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [
