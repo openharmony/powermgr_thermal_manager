@@ -121,6 +121,19 @@ bool ThermalSrvConfigParser::ParseBaseNode(const xmlNodePtr& node)
         THERMAL_HILOGD(COMP_SVC, "tag: %{public}s, value: %{public}s", bi.tag.c_str(), bi.value.c_str());
     }
     g_service->GetBaseinfoObj()->SetBaseInfo(baseInfoMap);
+    auto iter = baseInfoMap.find("sim_tz");
+    if (iter != baseInfoMap.end()) {
+        if (iter->second == "") {
+            g_service->SetSimulationXml(false);
+            return true;
+        }
+        if (iter->second == "0" || iter->second == "1") {
+            g_service->SetSimulationXml(static_cast<bool>(std::stoi(iter->second)));
+            return true;
+        }
+        return false;
+    }
+    g_service->SetSimulationXml(false);
     return true;
 }
 

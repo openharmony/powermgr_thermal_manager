@@ -46,6 +46,7 @@ ohos_executable("thermal_protector") {
 
   external_deps = [
     "c_utils:utils",
+    "config_policy:configpolicy_util",
     "hiviewdfx_hilog_native:libhilog",
   ]
 
