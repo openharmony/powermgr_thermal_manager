@@ -38,7 +38,7 @@ public:
     }
 
     bool Init(const std::string &path);
-    void ParseThermalKernelXML(const std::string &path);
+    bool ParseThermalKernelXML(const std::string &path);
     void ParserBaseNode(xmlNodePtr node);
     void ParseControlNode(xmlNodePtr node);
 private:

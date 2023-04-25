@@ -28,6 +28,7 @@
 #include "system_ability_definition.h"
 
 #include "action_cpu_big.h"
+#include "config_policy_utils.h"
 #include "power_mgr_client.h"
 #include "screen_state_collection.h"
 #include "thermal_config_sensor_cluster.h"
@@ -46,6 +47,12 @@ sptr<ThermalService> g_service = nullptr;
 constexpr const char* VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
 } // namespace
+
+char* GetOneCfgFile(const char *pathSuffix, char *buf, unsigned int bufLength)
+{
+    THERMAL_HILOGD(LABEL_TEST, "mock GetOneCfgFile.");
+    return nullptr;
+}
 
 void ThermalServiceTest::SetUpTestCase()
 {

@@ -16,12 +16,14 @@
 #include "thermal_kernel_service.h"
 #include "thermal_common.h"
 #include "thermal_kernel_config_file.h"
-
+#include "config_policy_utils.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-constexpr const char* CONFIG_FILE_PATH = "/system/etc/thermal_config/thermal_kernel_config.xml";
+constexpr const char* THERMAL_KERNEL_CONFIG_PATH = "etc/thermal_config/thermal_kernel_config.xml";
+constexpr const char* VENDOR_THERMAL_KERNEL_CONFIG_PATH = "/vendor/etc/thermal_config/thermal_kernel_config.xml";
+constexpr const char* SYSTEM_THERMAL_KERNEL_CONFIG_PATH = "/system/etc/thermal_config/thermal_kernel_config.xml";
 }
 void ThermalKernelService::OnStart()
 {
@@ -48,7 +50,26 @@ bool ThermalKernelService::Init()
         timer_ = std::make_shared<ThermalProtectorTimer>(provision_);
     }
 
-    ThermalKernelConfigFile::GetInstance().Init(CONFIG_FILE_PATH);
+    char buf[MAX_PATH_LEN];
+    bool parseConfigSuc = false;
+    char* path = GetOneCfgFile(THERMAL_KERNEL_CONFIG_PATH, buf, MAX_PATH_LEN);
+    if (path != nullptr && *path != '\0') {
+        if (!ThermalKernelConfigFile::GetInstance().Init(path)) {
+            THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to parse config");
+            return false;
+        }
+        parseConfigSuc = true;
+    }
+
+    if (!parseConfigSuc) {
+        if (!ThermalKernelConfigFile::GetInstance().Init(VENDOR_THERMAL_KERNEL_CONFIG_PATH)) {
+            THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to parse vendor config");
+            if (!ThermalKernelConfigFile::GetInstance().Init(SYSTEM_THERMAL_KERNEL_CONFIG_PATH)) {
+                THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to parse system config");
+                return false;
+            }
+        }
+    }
 
     if (!policy_->Init()) {
         THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to init policy");
