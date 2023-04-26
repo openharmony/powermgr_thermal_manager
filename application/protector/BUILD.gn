@@ -40,7 +40,10 @@ ohos_executable("thermal_protector") {
 
   public_configs = [ ":thermal_protector_public_config" ]
 
-  configs = [ "${utils_path}:utils_config" ]
+  configs = [
+    "${utils_path}:utils_config",
+    "${utils_path}:coverage_flags",
+  ]
 
   deps = [ "//third_party/libxml2:xml2" ]
 
