@@ -49,7 +49,10 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
 
   sources = [ "src/thermal_mgr_interface_test.cpp" ]
 
-  configs = [ "${utils_path}:utils_config" ]
+  configs = [
+    "${utils_path}:utils_config",
+    "${utils_path}:coverage_flags",
+  ]
 
   include_dirs = [
     "include",
@@ -87,7 +90,10 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "src/thermal_mgr_system_test.cpp",
   ]
 
-  configs = [ "${utils_path}:utils_config" ]
+  configs = [
+    "${utils_path}:utils_config",
+    "${utils_path}:coverage_flags",
+  ]
 
   include_dirs = [
     "include",
@@ -118,7 +124,10 @@ ohos_systemtest("ThermalMgrDialogTest") {
 
   sources = [ "src/thermal_mgr_dialog_test.cpp" ]
 
-  configs = [ "${utils_path}:utils_config" ]
+  configs = [
+    "${utils_path}:utils_config",
+    "${utils_path}:coverage_flags",
+  ]
 
   include_dirs = [
     "include",
@@ -152,6 +161,7 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
+    "${utils_path}:coverage_flags",
   ]
 
   deps = [

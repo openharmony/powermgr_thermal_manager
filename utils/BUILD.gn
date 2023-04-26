@@ -19,12 +19,26 @@ config("utils_config") {
   ]
 }
 
+declare_args() {
+  thermal_manager_feature_coverage = false
+}
+
+config("coverage_flags") {
+  if (thermal_manager_feature_coverage) {
+    cflags = [ "--coverage" ]
+    cflags_cc = [ "--coverage" ]
+    ldflags = [ "--coverage" ]
+  }
+}
+
 ohos_source_set("thermal_utils") {
   sources = [
     "native/src/file_operation.cpp",
     "native/src/string_operation.cpp",
     "native/src/thermal_hisysevent.cpp",
   ]
+
+  configs = [ "${utils_path}:coverage_flags" ]
 
   public_configs = [ ":utils_config" ]
 
