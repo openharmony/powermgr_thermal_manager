@@ -18,7 +18,7 @@
 
 #include "constants.h"
 #include "thermal_common.h"
-#include "xcollie.h"
+#include "xcollie/xcollie.h"
 
 namespace OHOS {
 namespace PowerMgr {
