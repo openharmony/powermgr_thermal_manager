@@ -11,8 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base/powermgr/thermal_manager/thermalmgr.gni")
 import("//build/test.gni")
+import("../../thermalmgr.gni")
 
 module_output_path = "thermal_manager/thermal_native"
 
@@ -169,10 +169,10 @@ ohos_unittest("ThermalActionReportTest") {
   ]
 
   deps = [
+    "${batterystats_utils_path}:batterystats_utils",
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
-    "//base/powermgr/battery_statistics/utils:batterystats_utils",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gtest_main",
     "//third_party/libxml2:libxml2",

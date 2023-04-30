@@ -23,7 +23,7 @@
 #include "ithermal_level_callback.h"
 #include "thermal_srv_sensor_info.h"
 #include "thermal_common.h"
-#include "xcollie.h"
+#include "xcollie/xcollie.h"
 
 namespace OHOS {
 namespace PowerMgr {
