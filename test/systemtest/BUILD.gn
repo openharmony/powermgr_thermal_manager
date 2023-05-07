@@ -11,8 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base/powermgr/thermal_manager/thermalmgr.gni")
 import("//build/test.gni")
+import("../../thermalmgr.gni")
 
 module_output_path = "thermal_manager/thermal_native"
 
@@ -81,7 +81,7 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
 
 ohos_systemtest("ThermalMgrSystemTest") {
   resource_config_file =
-      "//base/powermgr/thermal_manager/test/resource/system_test/ohos_test.xml"
+      "${thermal_manager_path}/test/resource/system_test/ohos_test.xml"
 
   module_out_path = "${module_output_path}"
 
@@ -145,7 +145,6 @@ ohos_systemtest("ThermalMgrDialogTest") {
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
-    "//base/powermgr/thermal_manager/services:thermalservice",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libxml2:xml2",
