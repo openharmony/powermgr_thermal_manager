@@ -16,6 +16,7 @@ import("//build/ohos.gni")
 ability_runtime_path = "//foundation/ability/ability_runtime"
 ability_runtime_inner_api_path = "${ability_runtime_path}/interfaces/inner_api"
 ability_runtime_services_path = "${ability_runtime_path}/services"
+batterystats_utils_path = "//base/powermgr/battery_statistics/utils"
 thermalmgr_native_part_name = "thermal_manager"
 thermal_manager_path = "//base/powermgr/thermal_manager"
 thermal_inner_api = "${thermal_manager_path}/interfaces/inner_api"

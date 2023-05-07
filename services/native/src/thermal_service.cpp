@@ -31,7 +31,7 @@
 #include "thermal_common.h"
 #include "thermal_mgr_dumper.h"
 #include "thermal_srv_config_parser.h"
-#include "watchdog.h"
+#include "xcollie/watchdog.h"
 
 #include "config_policy_utils.h"
 

@@ -21,8 +21,8 @@
 #include "thermal_common.h"
 #include "thermal_log.h"
 #include "thermal_mgr_errors.h"
-#include "xcollie.h"
-#include "xcollie_define.h"
+#include "xcollie/xcollie.h"
+#include "xcollie/xcollie_define.h"
 
 namespace OHOS {
 namespace PowerMgr {
