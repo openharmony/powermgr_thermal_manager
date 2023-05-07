@@ -18,6 +18,7 @@
     <base>
         <item tag="history_temp_count" value="10"/>
         <item tag="temperature_query_enum" value="soc,battery,shell,cpu,charger,ambient,ap,pa"/>
+        <item tag="sim_tz" value="1"/>
     </base>
 
     <level>

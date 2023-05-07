@@ -26,15 +26,16 @@ std::vector<LevelAction> g_levelActionList;
 bool ThermalKernelConfigFile::Init(const std::string &path)
 {
     THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
+    bool ret = false;
     if (!baseInfo_) {
         baseInfo_ = std::make_unique<ProtectorBaseInfo>();
     }
 
-    ParseThermalKernelXML(path);
-    return true;
+    ret = ParseThermalKernelXML(path);
+    return ret;
 }
 
-void ThermalKernelConfigFile::ParseThermalKernelXML(const std::string &path)
+bool ThermalKernelConfigFile::ParseThermalKernelXML(const std::string &path)
 {
     THERMAL_HILOGD(FEATURE_PROTECTOR, "Enter");
 
@@ -42,13 +43,13 @@ void ThermalKernelConfigFile::ParseThermalKernelXML(const std::string &path)
         xmlReadFile(path.c_str(), nullptr, XML_PARSE_NOBLANKS), xmlFreeDoc);
     if (docPtr == nullptr) {
         THERMAL_HILOGE(FEATURE_PROTECTOR, "Init failed, read file failed.");
-        return;
+        return false;
     }
 
     auto rootNode = xmlDocGetRootElement(docPtr.get());
     if (rootNode == nullptr) {
         THERMAL_HILOGE(FEATURE_PROTECTOR, "Get root node failed.");
-        return;
+        return false;
     }
 
     for (auto node = rootNode->children; node; node = node->next) {
@@ -59,6 +60,7 @@ void ThermalKernelConfigFile::ParseThermalKernelXML(const std::string &path)
             ParseControlNode(node);
         }
     }
+    return true;
 }
 
 void ThermalKernelConfigFile::ParserBaseNode(xmlNodePtr node)

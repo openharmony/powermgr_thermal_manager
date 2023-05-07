@@ -33,12 +33,14 @@
 #include "thermal_srv_config_parser.h"
 #include "watchdog.h"
 
+#include "config_policy_utils.h"
+
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string CUST_CONFIG = "/chip_prod/etc/thermal_config/cust/thermal_service_config.xml";
-const std::string VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
-const std::string SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
+const std::string THERMAL_SERVICE_CONFIG_PATH = "etc/thermal_config/thermal_service_config.xml";
+const std::string VENDOR_THERMAL_SERVICE_CONFIG_PATH = "/vendor/etc/thermal_config/thermal_service_config.xml";
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* THMERMAL_SERVICE_NAME = "ThermalService";
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 constexpr uint32_t RETRY_TIME = 1000;
@@ -150,18 +152,28 @@ bool ThermalService::CreateConfigModule()
 
 bool ThermalService::InitConfigFile()
 {
-    if (!ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(CUST_CONFIG)) {
-        THERMAL_HILOGE(COMP_SVC, "thermal service config init fail:CUST_CONFIG");
-        if (!ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(VENDOR_CONFIG)) {
-            THERMAL_HILOGE(COMP_SVC, "thermal service config init fail:VENDOR_CONFIG");
-            if (!ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(SYSTEM_CONFIG)) {
-                THERMAL_HILOGE(COMP_SVC, "thermal service config init fail:SYSTEM_CONFIG");
-                return false;
-            }
+    char buf[MAX_PATH_LEN];
+    char* path = GetOneCfgFile(THERMAL_SERVICE_CONFIG_PATH.c_str(), buf, MAX_PATH_LEN);
+    if (path != nullptr && *path != '\0') {
+        if (ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(path)) {
+            THERMAL_HILOGD(COMP_SVC, "match pliocy config file");
+            return true;
         }
-        isSimulation_ = true;
+        THERMAL_HILOGE(COMP_SVC, "pliocy config file config init err");
+        return false;
     }
-    return true;
+
+    if (ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(VENDOR_THERMAL_SERVICE_CONFIG_PATH)) {
+        THERMAL_HILOGD(COMP_SVC, "thermal service config init suc:VENDOR_CONFIG");
+        return true;
+    }
+
+    if (ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH)) {
+        THERMAL_HILOGD(COMP_SVC, "thermal service config init suc:SYSTEM_CONFIG");
+        return true;
+    }
+
+    return false;
 }
 
 
