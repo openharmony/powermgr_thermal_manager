@@ -139,6 +139,11 @@ public:
         return isSimulation_;
     }
 
+    void SetSimulationXml(bool isSimulation)
+    {
+        isSimulation_ = isSimulation;
+    }
+
     std::string GetScene()
     {
         return scene_;
