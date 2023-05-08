@@ -20,12 +20,12 @@ module_output_path = "thermal_manager/thermal_native"
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "mock_action/include",
-    "mock_client/include",
     "include",
+    "mock_action/include",
     "mock/include",
     "${utils_path}/native/include",
     "${thermal_manager_path}/services/native/include/thermal_action",
+    "${thermal_manager_path}/test/common/include",
     "${thermal_service_zidl}/include",
     "${ability_runtime_services_path}/appmgr/include",
     "${thermal_inner_api}/native/include",
@@ -62,6 +62,7 @@ ohos_unittest("ThermalMockActionTest") {
   module_out_path = module_output_path
 
   sources = [
+    "${thermal_manager_path}/test/common/src/thermal_test.cpp",
     "${thermal_manager_path}/test/unittest/mock_action/src/mock_soc_action_base.cpp",
     "${thermal_manager_path}/test/unittest/mock_action/src/mock_socperf_action.cpp",
     "src/thermal_mock_action_test.cpp",
@@ -73,10 +74,36 @@ ohos_unittest("ThermalMockActionTest") {
     "${utils_path}:coverage_flags",
   ]
 
+  defines = [ "THERMAL_GTEST" ]
+
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal policy test
+ohos_unittest("ThermalPolicyTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "${thermal_manager_path}/test/common/src/thermal_test.cpp",
+    "src/thermal_mgr_policy_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+  ]
+
+  deps = [
+    "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -87,7 +114,10 @@ ohos_unittest("ThermalMockActionTest") {
 ohos_unittest("ThermalLevelEventTest") {
   module_out_path = module_output_path
 
-  sources = [ "src/thermal_level_event_test.cpp" ]
+  sources = [
+    "${thermal_manager_path}/test/common/src/thermal_test.cpp",
+    "src/thermal_level_event_test.cpp",
+  ]
 
   configs = [
     "${utils_path}:utils_config",
@@ -98,8 +128,7 @@ ohos_unittest("ThermalLevelEventTest") {
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
-    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -121,7 +150,7 @@ ohos_unittest("ThermalClientApiTest") {
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gtest_main",
   ]
@@ -133,7 +162,10 @@ ohos_unittest("ThermalClientApiTest") {
 ohos_unittest("ThermalActionHubTest") {
   module_out_path = module_output_path
 
-  sources = [ "src/thermal_action_hub_test.cpp" ]
+  sources = [
+    "${thermal_manager_path}/test/common/src/thermal_test.cpp",
+    "src/thermal_action_hub_test.cpp",
+  ]
 
   configs = [
     "${utils_path}:utils_config",
@@ -144,10 +176,9 @@ ohos_unittest("ThermalActionHubTest") {
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -159,6 +190,7 @@ ohos_unittest("ThermalActionReportTest") {
   module_out_path = module_output_path
 
   sources = [
+    "${thermal_manager_path}/test/common/src/thermal_test.cpp",
     "src/thermal_action_report_test.cpp",
     "src/thermal_config_file_parser.cpp",
   ]
@@ -173,8 +205,7 @@ ohos_unittest("ThermalActionReportTest") {
     "${batterystats_utils_path}:batterystats_utils",
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
-    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//third_party/googletest:gtest_main",
     "//third_party/libxml2:libxml2",
   ]
@@ -410,7 +441,10 @@ ohos_unittest("ThermalServiceDeathTest") {
 ohos_unittest("ThermalListenerTest") {
   module_out_path = module_output_path
 
-  sources = [ "src/thermal_listener_test.cpp" ]
+  sources = [
+    "${thermal_manager_path}/test/common/src/thermal_test.cpp",
+    "src/thermal_listener_test.cpp",
+  ]
 
   configs = [
     "${utils_path}:utils_config",
@@ -422,7 +456,7 @@ ohos_unittest("ThermalListenerTest") {
     "${thermal_inner_api}:thermalmgr_listener",
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "//third_party/googletest:gtest_main",
@@ -624,6 +658,7 @@ group("unittest") {
     ":ThermalMockStubGetdescriptorTest",
     ":ThermalMockStubTest",
     ":ThermalObserverTest",
+    ":ThermalPolicyTest",
     ":ThermalServiceDeathTest",
     ":ThermalServiceTest",
     ":ThermalUtilsTest",

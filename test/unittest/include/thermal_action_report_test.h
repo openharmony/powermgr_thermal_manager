@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,22 +20,15 @@
 #include <string>
 
 #include "thermal_policy.h"
+#include "thermal_test.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class ThermalActionReportTest : public testing::Test {
+class ThermalActionReportTest : public testing::Test, public ThermalTest {
 public:
     static void SetUpTestCase();
-    static void TearDownTestCase();
-    void SetUp();
     void TearDown();
     static void ParserThermalSrvConfigFile();
-    static int32_t WriteFile(const std::string& path, const std::string& buf, size_t size);
-    static int32_t ReadFile(const char* path, char* buf, size_t size);
-    static int32_t ReadSysfsFile(const char* path, char* buf, size_t size);
-    static int32_t ConvertInt(const std::string& value);
-    static void Trim(char* str);
-    static int32_t InitNode();
     static int32_t SetCondition(int32_t value, const std::string& scene);
     static void SetScene(const std::string& scene);
     static int32_t GetThermalLevel(int32_t expectValue);

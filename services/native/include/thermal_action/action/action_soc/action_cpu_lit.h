@@ -33,8 +33,6 @@ public:
 
 private:
     uint32_t GetActionValue();
-    void CpuRuquest(uint32_t freq);
-
     uint32_t lastValue_ {0};
     std::vector<uint32_t> valueList_;
 };

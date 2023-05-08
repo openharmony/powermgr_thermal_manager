@@ -21,8 +21,7 @@ namespace OHOS {
 namespace PowerMgr {
 void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 {
-    (void)tag;
-    (void)value;
+    MockSocPerfAction::LimitRequest(tag, value);
 }
 
 void SocActionBase::SocPerfRequest(bool onOffTag)
