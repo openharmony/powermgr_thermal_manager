@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-constexpr int32_t LIM_CPU_LIT_ID = 1001;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
@@ -59,7 +58,7 @@ void ActionCpuLit::Execute()
     THERMAL_RETURN_IF (g_service == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
-        CpuRuquest(value);
+        SocLimitRequest(LIM_CPU_LIT_ID, value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
@@ -84,18 +83,6 @@ uint32_t ActionCpuLit::GetActionValue()
         }
     }
     return value;
-}
-
-void ActionCpuLit::CpuRuquest(uint32_t freq)
-{
-    if (!g_service->GetSimulationXml()) {
-        SocLimitRequest(LIM_CPU_LIT_ID, freq);
-    } else {
-        auto thermalInterface = g_service->GetThermalInterface();
-        if (thermalInterface != nullptr) {
-            thermalInterface->SetCpuFreq(freq);
-        }
-    }
 }
 } // namespace PowerMgr
 } // namespace OHOS

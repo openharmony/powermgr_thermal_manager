@@ -64,7 +64,7 @@
           "//base/powermgr/thermal_manager/frameworks:thermal_napi"
         ],
         "service_group": [
-          "//base/powermgr/thermal_manager/test/unittest/mock_client:mock_thermalsrv_client",
+          "//base/powermgr/thermal_manager/test/common:mock_thermalsrv_client",
           "//base/powermgr/thermal_manager/services:service"
         ]
       },

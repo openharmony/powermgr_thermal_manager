@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-constexpr int32_t LIM_CPU_BIG_ID = 1005;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 

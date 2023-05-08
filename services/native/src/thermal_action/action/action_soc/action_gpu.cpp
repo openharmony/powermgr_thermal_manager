@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-constexpr int32_t LIM_GPU_ID = 2001;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
