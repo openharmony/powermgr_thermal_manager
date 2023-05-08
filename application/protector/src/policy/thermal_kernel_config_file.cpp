@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,12 +16,15 @@
 #include "thermal_kernel_config_file.h"
 #include "thermal_common.h"
 #include "thermal_kernel_service.h"
+#include "string_ex.h"
+#include "string_operation.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto &service = ThermalKernelService::GetInstance();
 std::vector<LevelAction> g_levelActionList;
+const std::string DESCENDING_ORDER = "1";
 }
 bool ThermalKernelConfigFile::Init(const std::string &path)
 {
@@ -100,7 +103,8 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
         }
         xmlChar* xmlInterval = xmlGetProp(cur, BAD_CAST"interval");
         if (xmlInterval != nullptr) {
-            int32_t interval = atoi(reinterpret_cast<char*>(xmlInterval));
+            int32_t interval = 0;
+            StrToInt(reinterpret_cast<char*>(xmlInterval), interval);
             tzinfo->SetInterval(interval);
             xmlFree(xmlInterval);
         }
@@ -108,7 +112,7 @@ void ThermalKernelConfigFile::ParseControlNode(xmlNodePtr node)
         xmlChar* desc = xmlGetProp(cur, BAD_CAST"desc");
         if (desc != nullptr) {
             std::string value = reinterpret_cast<char*>(desc);
-            if (atoi(value.c_str()) == 1) {
+            if (TrimStr(value) == DESCENDING_ORDER) {
                 tzinfo->SetDesc(true);
             }
             xmlFree(desc);
@@ -143,17 +147,17 @@ void ThermalKernelConfigFile::ParseSubNode(xmlNodePtr cur, std::vector<ThermalZo
         ThermalZoneInfoItem tziItem;
         xmlChar* xmlThreshold = xmlGetProp(subNode, BAD_CAST"threshold");
         if (xmlThreshold != nullptr) {
-            tziItem.threshold= atoi(reinterpret_cast<char*>(xmlThreshold));
+            StrToInt(reinterpret_cast<char*>(xmlThreshold), tziItem.threshold);
             xmlFree(xmlThreshold);
         }
         xmlChar* xmlThresholdClr = xmlGetProp(subNode, BAD_CAST"threshold_clr");
         if (xmlThresholdClr != nullptr) {
-            tziItem.thresholdClr = atoi(reinterpret_cast<char*>(xmlThresholdClr));
+            StrToInt(reinterpret_cast<char*>(xmlThresholdClr), tziItem.thresholdClr);
             xmlFree(xmlThresholdClr);
         }
         xmlChar* xmlLevel = xmlGetProp(subNode, BAD_CAST"level");
         if (xmlLevel != nullptr) {
-            tziItem.level = static_cast<uint32_t>(atoi(reinterpret_cast<char*>(xmlLevel)));
+            StringOperation::StrToUint(reinterpret_cast<char*>(xmlLevel), tziItem.level);
             levelAction.level = tziItem.level;
             xmlFree(xmlLevel);
         }
@@ -162,7 +166,7 @@ void ThermalKernelConfigFile::ParseSubNode(xmlNodePtr cur, std::vector<ThermalZo
             action.name = reinterpret_cast<const char*>(subActionNode->name);
             xmlChar* xmlValue = xmlNodeGetContent(subActionNode);
             if (xmlValue != nullptr) {
-                action.value = static_cast<uint32_t>(atoi(reinterpret_cast<char*>(xmlValue)));
+                StringOperation::StrToUint(reinterpret_cast<char*>(xmlValue), action.value);
                 xmlFree(xmlValue);
             }
             levelAction.vAction.push_back(action);
