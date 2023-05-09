@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@
 #include <unistd.h>
 
 #include "constants.h"
+#include "permission.h"
 #include "thermal_common.h"
 #include "thermal_mgr_dumper.h"
 #include "thermal_srv_config_parser.h"
@@ -273,6 +274,9 @@ void ThermalService::OnStop()
 bool ThermalService::SubscribeThermalTempCallback(
     const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback)
 {
+    if (!Permission::IsSystem()) {
+        return false;
+    }
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
@@ -282,6 +286,9 @@ bool ThermalService::SubscribeThermalTempCallback(
 
 bool ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
+    if (!Permission::IsSystem()) {
+        return false;
+    }
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "uid %{public}d", uid);
@@ -320,6 +327,9 @@ bool ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCal
 bool ThermalService::SubscribeThermalActionCallback(
     const std::vector<std::string>& actionList, const std::string& desc, const sptr<IThermalActionCallback>& callback)
 {
+    if (!Permission::IsSystem()) {
+        return false;
+    }
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto pid = IPCSkeleton::GetCallingPid();
     auto uid = IPCSkeleton::GetCallingUid();
@@ -331,6 +341,9 @@ bool ThermalService::SubscribeThermalActionCallback(
 
 bool ThermalService::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
 {
+    if (!Permission::IsSystem()) {
+        return false;
+    }
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto pid = IPCSkeleton::GetCallingPid();
     auto uid = IPCSkeleton::GetCallingUid();
@@ -372,6 +385,9 @@ bool ThermalService::GetThermalInfo()
 
 bool ThermalService::SetScene(const std::string& scene)
 {
+    if (!Permission::IsSystem()) {
+        return false;
+    }
     scene_ = scene;
     return true;
 }
@@ -475,12 +491,9 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
 
 std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint32_t argc)
 {
-    auto uid = IPCSkeleton::GetCallingUid();
-    if (uid >= APP_FIRST_UID) {
-        THERMAL_HILOGE(COMP_FWK, "Request failed, %{public}d permission check failed", uid);
-        return nullptr;
+    if (!Permission::IsSystem()) {
+        return "";
     }
-
     std::lock_guard<std::mutex> lock(mutex_);
     pid_t pid = IPCSkeleton::GetCallingPid();
     THERMAL_HILOGI(COMP_SVC, "PID: %{public}d", pid);
