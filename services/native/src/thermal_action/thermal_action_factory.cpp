@@ -47,8 +47,6 @@ void ThermalActionFactory::InitFactory()
     g_actionMap.insert(std::make_pair(LCD_ACTION_NAME, std::make_shared<ActionDisplay>(LCD_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(VOLUME_ACTION_NAME, std::make_shared<ActionVolume>(VOLUME_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(SHUTDOWN_ACTION_NAME, std::make_shared<ActionShutdown>(SHUTDOWN_ACTION_NAME)));
-    g_actionMap.insert(
-        std::make_pair(PROCESS_ACTION_NAME, std::make_shared<ActionApplicationProcess>(PROCESS_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(THERMAL_LEVEL_NAME, std::make_shared<ActionThermalLevel>(THERMAL_LEVEL_NAME)));
     g_actionMap.insert(std::make_pair(POPUP_ACTION_NAME, std::make_shared<ActionPopup>(POPUP_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(CURRENT_SC_ACTION_NAME, std::make_shared<ActionCharger>(CURRENT_SC_ACTION_NAME)));
@@ -59,6 +57,10 @@ void ThermalActionFactory::InitFactory()
     g_actionMap.insert(
         std::make_pair(VOLATAGE_BUCK_ACTION_NAME, std::make_shared<ActionVoltage>(VOLATAGE_BUCK_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(CPU_BOOST_ACTION_NAME, std::make_shared<ActionCpuBoost>(CPU_BOOST_ACTION_NAME)));
+    std::shared_ptr<ActionApplicationProcess> actionAppProcess =
+        std::make_shared<ActionApplicationProcess>(PROCESS_ACTION_NAME);
+    actionAppProcess->Init();
+    g_actionMap.insert(std::make_pair(PROCESS_ACTION_NAME, actionAppProcess));
 }
 
 std::shared_ptr<IThermalAction> ThermalActionFactory::Create(const std::string& actionName)
