@@ -16,24 +16,18 @@
 #ifndef THERMAL_ACTION_HUB_TEST_H
 #define THERMAL_ACTION_HUB_TEST_H
 
+#include <gtest/gtest.h>
+
 #include "ithermal_action_callback.h"
 #include "thermal_action_callback_stub.h"
-#include <gtest/gtest.h>
+#include "thermal_test.h"
+
 
 namespace OHOS {
 namespace PowerMgr {
-const uint32_t MAX_PATH = 256;
-const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
-const std::string SOC_PATH = "/data/service/el0/thermal/sensor/soc/temp";
-
-class ThermalActionHubTest : public testing::Test {
+class ThermalActionHubTest : public testing::Test, public ThermalTest {
 public:
-    static void SetUpTestCase();
-    static void TearDownTestCase();
-    void SetUp();
     void TearDown();
-    static int32_t WriteFile(std::string path, std::string buf, size_t size);
-    static int32_t ReadFile(const char* path, char* buf, size_t size);
     void InitData();
 
     class ThermalActionTest1Callback : public ThermalActionCallbackStub {

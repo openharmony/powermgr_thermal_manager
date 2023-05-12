@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,27 +17,14 @@
 #define THERMAL_LEVEL_EVENT_TEST
 
 #include <gtest/gtest.h>
-#include "thermal_service.h"
+
+#include "thermal_test.h"
 
 namespace OHOS {
 namespace PowerMgr {
-namespace {
-const uint32_t MAX_PATH = 256;
-const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
-const std::string SHELL_PATH = "/data/service/el0/thermal/sensor/shell/temp";
-const std::string SOC_PATH = "/data/service/el0/thermal/sensor/soc/temp";
-const std::string AMBIENT_PATH = "/data/service/el0/thermal/sensor/ambient/temp";
-const std::string PA_PATH = "/data/service/el0/thermal/sensor/pa/temp";
-const std::string AP_PATH = "/data/service/el0/thermal/sensor/ap/temp";
-constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
-}
-class ThermalLevelEventTest : public testing::Test {
+class ThermalLevelEventTest : public testing::Test, public ThermalTest {
 public:
-    static void SetUpTestCase();
-    static void TearDownTestCase();
-    void SetUp();
     void TearDown();
-    int32_t InitNode();
 };
 } // namespace PowerMgr
 } // namespace OHOS

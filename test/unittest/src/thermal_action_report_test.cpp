@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,13 +38,8 @@ static std::shared_ptr<ThermalConfigFileParser> g_configParser = nullptr;
 static std::vector<std::string> g_dumpArgs;
 static std::string g_sceneState;
 static const std::string POLICY_CFG_NAME = "base_safe";
-constexpr int32_t NUM_ZERO = 0;
-constexpr uint32_t MAX_PATH = 256;
 constexpr int32_t THERMAL_RATIO_BEGIN = 0;
 constexpr int32_t THERMAL_RATIO_LENGTH = 4;
-constexpr const char* BATTERY_TEMP_PATH = "/data/service/el0/thermal/sensor/battery/temp";
-constexpr const char* VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
-constexpr const char* SIMULATION_TEMP_DIR = "/data/service/el0/thermal/sensor/%s/temp";
 }
 
 void ThermalActionReportTest::ParserThermalSrvConfigFile()
@@ -57,102 +52,6 @@ void ThermalActionReportTest::ParserThermalSrvConfigFile()
     }
 }
 
-int32_t ThermalActionReportTest::WriteFile(const std::string& path, const std::string& buf, size_t size)
-{
-    FILE* stream = fopen(path.c_str(), "w+");
-    if (stream == nullptr) {
-        return ERR_INVALID_VALUE;
-    }
-    size_t ret = fwrite(buf.c_str(), strlen(buf.c_str()), 1, stream);
-    if (ret == ERR_OK) {
-        THERMAL_HILOGE(LABEL_TEST, "ret=%{public}zu", ret);
-    }
-    int32_t state = fseek(stream, 0, SEEK_SET);
-    if (state != ERR_OK) {
-        fclose(stream);
-        return state;
-    }
-    state = fclose(stream);
-    if (state != ERR_OK) {
-        return state;
-    }
-    return ERR_OK;
-}
-
-int32_t ThermalActionReportTest::ReadFile(const char* path, char* buf, size_t size)
-{
-    int32_t ret = ReadSysfsFile(path, buf, size);
-    if (ret != NUM_ZERO) {
-        THERMAL_HILOGD(LABEL_TEST, "failed to read file");
-        return ret;
-    }
-    return ERR_OK;
-}
-
-int32_t ThermalActionReportTest::ReadSysfsFile(const char* path, char* buf, size_t size)
-{
-    int32_t readSize;
-    int fd = open(path, O_RDONLY, S_IRUSR | S_IRGRP | S_IROTH);
-    if (fd < NUM_ZERO) {
-        THERMAL_HILOGE(LABEL_TEST, "failed to open file node");
-        return ERR_INVALID_VALUE;
-    }
-
-    readSize = read(fd, buf, size - 1);
-    if (readSize < NUM_ZERO) {
-        THERMAL_HILOGE(LABEL_TEST, "failed to read file");
-        close(fd);
-        return ERR_INVALID_VALUE;
-    }
-
-    buf[readSize] = '\0';
-    Trim(buf);
-    close(fd);
-
-    return ERR_OK;
-}
-
-int32_t ThermalActionReportTest::ConvertInt(const std::string& value)
-{
-    if (IsNumericStr(value)) {
-        return std::stoi(value);
-    }
-    return -1;
-}
-
-void ThermalActionReportTest::Trim(char* str)
-{
-    if (str == nullptr) {
-        return;
-    }
-
-    str[strcspn(str, "\n")] = 0;
-}
-
-int32_t ThermalActionReportTest::InitNode()
-{
-    char bufTemp[MAX_PATH] = {0};
-    int32_t ret = -1;
-    std::map<std::string, int32_t> sensor;
-    sensor["battery"] = 0;
-    sensor["charger"] = 0;
-    sensor["pa"] = 0;
-    sensor["ap"] = 0;
-    sensor["ambient"] = 0;
-    sensor["cpu"] = 0;
-    sensor["soc"] = 0;
-    sensor["shell"] = 0;
-    for (auto iter : sensor) {
-        ret = snprintf_s(bufTemp, MAX_PATH, sizeof(bufTemp) - 1, SIMULATION_TEMP_DIR, iter.first.c_str());
-        if (ret < EOK) {
-            return ret;
-        }
-        std::string temp = std::to_string(iter.second);
-        WriteFile(bufTemp, temp, temp.length());
-    }
-    return ERR_OK;
-}
-
 void ThermalActionReportTest::SetScene(const std::string& scene)
 {
     g_sceneState = scene;
@@ -163,13 +62,7 @@ void ThermalActionReportTest::SetScene(const std::string& scene)
 int32_t ThermalActionReportTest::SetCondition(int32_t value, const std::string& scene)
 {
     THERMAL_HILOGD(LABEL_TEST, "battery = %{public}d, scene = %{public}s", value, scene.c_str());
-    int32_t ret = -1;
-    char batteryTempBuf[MAX_PATH] = {0};
-    ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_TEMP_PATH);
-    EXPECT_EQ(true, ret >= EOK);
-    std::string strTemp = to_string(value) + "\n";
-    ret = WriteFile(batteryTempBuf, strTemp, strTemp.length());
-    EXPECT_EQ(true, ret == ERR_OK);
+    int32_t ret = SetNodeValue(value, BATTERY_PATH);
     SetScene(scene);
     return ret;
 }
@@ -382,18 +275,9 @@ void ThermalActionReportTest::SetUpTestCase()
     g_dumpArgs.push_back("-batterystats");
 }
 
-void ThermalActionReportTest::TearDownTestCase()
-{
-}
-
-void ThermalActionReportTest::SetUp()
-{
-    InitNode();
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-}
-
 void ThermalActionReportTest::TearDown()
 {
+    InitNode();
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     thermalMgrClient.SetScene("");
     MockThermalMgrClient::GetInstance().GetThermalInfo();
@@ -410,6 +294,9 @@ namespace {
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.001 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -420,24 +307,22 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.001 end");
 }
 
@@ -451,6 +336,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.002 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -461,24 +349,22 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.002 end");
 }
 
@@ -492,6 +378,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.003 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -502,24 +391,22 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.003 end");
 }
 
@@ -533,6 +420,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.004 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -543,24 +433,22 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.004 end");
 }
 
@@ -574,6 +462,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.005 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -584,24 +475,22 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.005 end");
 }
 
@@ -615,6 +504,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.006 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -625,24 +517,22 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.006 end");
 }
 
@@ -656,6 +546,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.007 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -666,24 +559,22 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.007 end");
 }
 
@@ -697,6 +588,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.008 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -707,24 +601,22 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.008 end");
 }
 
@@ -738,6 +630,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.009 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -748,25 +643,23 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.009 end");
 }
 
@@ -780,6 +673,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.010 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -790,25 +686,23 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.010 end");
 }
 
@@ -822,6 +716,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.011 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -832,25 +729,23 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.011 end");
 }
 
@@ -864,6 +759,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
 HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.012 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -874,26 +772,23 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
 
-    if (access(VENDOR_CONFIG, 0) != 0) {
-        MockThermalMgrClient::GetInstance().GetThermalInfo();
-        int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
-        std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
-        GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
-        ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
-    }
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
+    GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(GPU_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(LCD_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(PROCESS_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(THERMAL_LEVEL_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CURRENT_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
+    ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.012 end");
 }
 }
-

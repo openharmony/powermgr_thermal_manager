@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,39 +16,19 @@
 #ifndef THERMAL_MGR_INTERFACE_TEST_H
 #define THERMAL_MGR_INTERFACE_TEST_H
 
+#include <gtest/gtest.h>
+
 #include "ithermal_level_callback.h"
 #include "ithermal_temp_callback.h"
 #include "thermal_level_callback_stub.h"
 #include "thermal_temp_callback_stub.h"
-#include <gtest/gtest.h>
+#include "thermal_test.h"
 
 namespace OHOS {
 namespace PowerMgr {
-constexpr int SLEEP_WAIT_TIME_S = 1;
-constexpr int SLEEP_WAIT_TIME_LOOP_S = 3;
-const uint32_t MAX_PATH = 256;
-const uint32_t WAIT_TIME = 10;
-const std::string BATTERY_CURRENT_PATH = "/data/service/el0/thermal/mitigation/charger/current";
-const std::string CPU_FREQ_PATH = "/data/service/el0/thermal/mitigation/cpu/freq";
-const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
-const std::string SHELL_PATH = "/data/service/el0/thermal/sensor/shell/temp";
-const std::string CHARGER_PATH = "/data/service/el0/thermal/sensor/charger/temp";
-const std::string SOC_PATH = "/data/service/el0/thermal/sensor/soc/temp";
-const std::string AMBIENT_PATH = "/data/service/el0/thermal/sensor/ambient/temp";
-const std::string CPU_PATH = "/data/service/el0/thermal/sensor/cpu/temp";
-const std::string PA_PATH = "/data/service/el0/thermal/sensor/pa/temp";
-const std::string AP_PATH = "/data/service/el0/thermal/sensor/ap/temp";
-
-class ThermalMgrInterfaceTest : public testing::Test {
+class ThermalMgrInterfaceTest : public testing::Test, public ThermalTest {
 public:
-    static void SetUpTestCase();
-    static void TearDownTestCase();
-    void SetUp();
     void TearDown();
-    bool IsMock(const std::string& path);
-    static int32_t WriteFile(std::string path, std::string buf, size_t size);
-    static int32_t ReadFile(const char* path, char* buf, size_t size);
-    static int32_t ConvertInt(const std::string& value);
     void InitData();
 
     class ThermalTempTest1Callback : public ThermalTempCallbackStub {
@@ -83,6 +63,20 @@ public:
     public:
         ThermalLevelTest3Callback() {};
         virtual ~ThermalLevelTest3Callback() {};
+        virtual bool GetThermalLevel(ThermalLevel level) override;
+    };
+
+    class ThermalLevelTest4Callback : public ThermalLevelCallbackStub {
+    public:
+        ThermalLevelTest4Callback() {};
+        virtual ~ThermalLevelTest4Callback() {};
+        virtual bool GetThermalLevel(ThermalLevel level) override;
+    };
+
+    class ThermalLevelTest5Callback : public ThermalLevelCallbackStub {
+    public:
+        ThermalLevelTest5Callback() {};
+        virtual ~ThermalLevelTest5Callback() {};
         virtual bool GetThermalLevel(ThermalLevel level) override;
     };
 };
