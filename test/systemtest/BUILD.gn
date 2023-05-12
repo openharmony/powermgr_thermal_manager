@@ -21,8 +21,8 @@ config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "mock",
     "${ability_runtime_services_path}/appmgr/include",
+    "${thermal_manager_path}/test/common/include",
     "${thermal_service_zidl}/include",
   ]
 }
@@ -47,11 +47,15 @@ deps_ex = [
 ohos_systemtest("ThermalMgrInterfaceTest") {
   module_out_path = "${module_output_path}"
 
-  sources = [ "src/thermal_mgr_interface_test.cpp" ]
+  sources = [
+    "${thermal_manager_path}/test/common/src/thermal_test.cpp",
+    "src/thermal_mgr_interface_test.cpp",
+  ]
 
   configs = [
     "${utils_path}:utils_config",
     "${utils_path}:coverage_flags",
+    ":module_private_config",
   ]
 
   include_dirs = [
@@ -62,14 +66,13 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "${thermal_manager_path}/services/native/include/thermal_policy",
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
-    "${thermal_manager_path}/test/unittest/mock_client/include",
     "${thermal_manager_path}/test/unittest/include",
     "${thermal_manager_path}/services/zidl/include",
   ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
-    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
@@ -104,13 +107,12 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "${thermal_manager_path}/services/native/include/thermal_policy",
     "${thermal_manager_path}/services/native/include/thermal_observer/state_machine",
     "${thermal_manager_path}/services/native/include/thermal_action/action",
-    "${thermal_manager_path}/test/unittest/mock_client/include",
     "${thermal_manager_path}/test/unittest/include",
   ]
 
   deps = [
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_manager_path}/test/unittest/mock_client:mock_thermalsrv_client",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -155,7 +157,10 @@ ohos_systemtest("ThermalMgrDialogTest") {
 ohos_systemtest("ThermalLevelEventSystemTest") {
   module_out_path = module_output_path
 
-  sources = [ "src/thermal_level_event_system_test.cpp" ]
+  sources = [
+    "${thermal_manager_path}/test/common/src/thermal_test.cpp",
+    "src/thermal_level_event_system_test.cpp",
+  ]
 
   configs = [
     "${utils_path}:utils_config",
@@ -166,7 +171,7 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
+    "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//third_party/googletest:gtest_main",
   ]
   external_deps = deps_ex

@@ -17,20 +17,16 @@
 #define THERMAL_MGR_POLICY_TEST
 
 #include <gtest/gtest.h>
-#include <string>
+
+#include "thermal_test.h"
 
 namespace OHOS {
 namespace PowerMgr {
-class ThermalMockActionTest : public testing::Test {
+class ThermalMockActionTest : public testing::Test, public ThermalTest {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
-    void SetUp();
     void TearDown();
-    static void SetSensorTemp(int32_t temperature, const std::string& path);
-    static int32_t WriteFile(std::string path, std::string buf, size_t size);
-    static int32_t InitNode();
-    bool IsMock(const std::string& path);
 };
 } // namespace PowerMgr
 } // namespace OHOS

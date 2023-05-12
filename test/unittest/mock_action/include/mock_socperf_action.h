@@ -17,18 +17,22 @@
 #define MOCK_SOCPERF_ACTION_H
 
 #include <cstdint>
+#include <map>
 
 namespace OHOS {
 namespace PowerMgr {
 class MockSocPerfAction {
 public:
+    static void LimitRequest(int32_t tag, int64_t value);
+    static int64_t GetLimitValue(int32_t tag);
+    static void ClearLimit();
     static void BoostRequest();
     static uint32_t GetBoostRequestCounter();
     static void ClearBoost();
 
 private:
-    static bool tag_;
-    static uint32_t counter_;
+    static std::map<int32_t, int64_t> limitMap_;
+    static uint32_t boostCounter_;
 };
 } // namespace Power
 } // namespace OHOS

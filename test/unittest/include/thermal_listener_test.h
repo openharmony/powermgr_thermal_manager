@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,21 +19,13 @@
 #include <gtest/gtest.h>
 
 #include "thermal_mgr_listener.h"
+#include "thermal_test.h"
 
 namespace OHOS {
 namespace PowerMgr {
-const uint32_t MAX_PATH = 256;
-const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
-
-class ThermalListenerTest : public testing::Test {
+class ThermalListenerTest : public testing::Test, public ThermalTest {
 public:
-    static void SetUpTestCase() {}
-    static void TearDownTestCase() {}
-    void SetUp() {}
     void TearDown();
-    static int32_t WriteFile(std::string path, std::string buf, size_t size);
-    static void SetSensorTemp(int32_t temperature, const std::string& path);
-    bool IsMock(const std::string& path);
 
     class ThermalLevelTestEvent : public ThermalMgrListener::ThermalLevelEvent {
     public:
