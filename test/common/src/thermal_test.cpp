@@ -39,7 +39,7 @@ int32_t ThermalTest::WriteFile(std::string path, std::string buf)
     }
     size_t num = fwrite(buf.c_str(), sizeof(char), buf.length(), fp);
     if (num != buf.length()) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to fwrite %{public}s, num=%{public}d", path.c_str(), num);
+        THERMAL_HILOGD(COMP_SVC, "Failed to fwrite %{public}s, num=%{public}zu", path.c_str(), num);
         fclose(fp);
         return ERR_INVALID_OPERATION;
     }
@@ -59,8 +59,8 @@ int32_t ThermalTest::ReadFile(std::string path, std::string& buf)
     buffer.resize(fileSize);
     fseek(fp, 0, SEEK_SET);
     size_t num = fread(&buffer[0], sizeof(char), fileSize, fp);
-    if (num != fileSize) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to fread %{public}s, num=%{public}d", path.c_str(), num);
+    if (static_cast<int32_t>(num) != fileSize) {
+        THERMAL_HILOGD(COMP_SVC, "Failed to fread %{public}s, num=%{public}zu", path.c_str(), num);
         fclose(fp);
         return ERR_INVALID_OPERATION;
     }
