@@ -105,19 +105,17 @@ void ThermalConfigSensorCluster::AscJudgment(std::vector<LevelItem>& levItems, i
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp >= nextUptemp) {
             for (uint32_t i = level; i < levItems.size(); i++) {
-                if (curTemp >= levItems.at(i).threshold) {
-                    level = levItems.at(i).level;
-                } else {
+                if (curTemp < levItems.at(i).threshold) {
                     break;
                 }
+                level = levItems.at(i).level;
             }
         } else if (curTemp < curDownTemp) {
             for (uint32_t i = level; i >= 1; i--) {
-                if (curTemp < levItems.at(i - 1).thresholdClr) {
-                    level = levItems.at(i - 1).level - 1;
-                } else {
+                if (curTemp >= levItems.at(i - 1).thresholdClr) {
                     break;
                 }
+                level = levItems.at(i - 1).level - 1;
             }
         }
     } else if (level == levItems.size()) {
@@ -152,19 +150,17 @@ void ThermalConfigSensorCluster::DescJudgment(std::vector<LevelItem>& levItems, 
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp <= nextUptemp) {
             for (uint32_t i = level; i < levItems.size(); i++) {
-                if (curTemp <= levItems.at(i).threshold) {
-                    level = levItems.at(i).level;
-                } else {
+                if (curTemp > levItems.at(i).threshold) {
                     break;
                 }
+                level = levItems.at(i).level;
             }
         } else if (curTemp > curDownTemp) {
             for (uint32_t i = level; i >= 1; i--) {
-                if (curTemp > levItems.at(i - 1).thresholdClr) {
-                    level = levItems.at(i - 1).level - 1;
-                } else {
+                if (curTemp <= levItems.at(i - 1).thresholdClr) {
                     break;
                 }
+                level = levItems.at(i - 1).level - 1;
             }
         }
     } else if (level == levItems.size()) {

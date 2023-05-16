@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,11 +42,13 @@ using namespace OHOS;
 using namespace std;
 using namespace testing::ext;
 
+namespace {
 static sptr<ThermalService> g_service;
 static std::map<std::string, SensorInfoMap> g_sensorInfoMap;
 static int32_t g_temp = 0;
 std::unique_ptr<ThermalConfigFileParser> g_parser;
 const std::string SYSTEM_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
+} // namespace
 
 int32_t ThermalMgrSystemTest::WriteFile(std::string path, std::string buf, size_t size)
 {
