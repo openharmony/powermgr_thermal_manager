@@ -72,5 +72,6 @@ ohos_shared_library("thermalmgr_proxy") {
   external_deps = deps_ex
 
   subsystem_name = "powermgr"
+  innerapi_tags = [ "platformsdk" ]
   part_name = "thermal_manager"
 }
