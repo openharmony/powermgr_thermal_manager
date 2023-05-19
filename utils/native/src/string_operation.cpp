@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,9 @@
 
 #include "string_operation.h"
 
+#include <cmath>
 #include <cstdint>
+#include <limits.h>
 #include <string>
 
 namespace OHOS {
@@ -23,7 +25,7 @@ namespace PowerMgr {
 namespace {
 const uint32_t COMPARE_SUCCESS = 0;
 }
-void StringOperation::SplitString(const std::string &str, std::vector<std::string> &ret, const std::string &sep)
+void StringOperation::SplitString(const std::string& str, std::vector<std::string>& ret, const std::string& sep)
 {
     ClearAllSpace(str);
     if (str.empty()) {
@@ -61,7 +63,7 @@ void StringOperation::ClearAllSpace(std::string s)
     }
 }
 
-bool StringOperation::Compare(const std::string &origin, const std::string &target)
+bool StringOperation::Compare(const std::string& origin, const std::string& target)
 {
     if (origin.compare(target) == COMPARE_SUCCESS) {
         return true;
@@ -69,12 +71,46 @@ bool StringOperation::Compare(const std::string &origin, const std::string &targ
     return false;
 }
 
-bool StringOperation::Find(const std::string &origin, const std::string &target)
+bool StringOperation::Find(const std::string& origin, const std::string& target)
 {
     if (origin.find(target) != std::string::npos) {
         return true;
     }
     return false;
+}
+
+bool StringOperation::StrToUint(const std::string& str, uint32_t& value)
+{
+    if (str.empty() || (!isdigit(str.front()) && (str.front() != '-'))) {
+        return false;
+    }
+
+    char* end = nullptr;
+    errno = 0;
+    auto addr = str.c_str();
+    auto result = strtoul(addr, &end, 10); // 10 means decimal
+    if ((end == addr) || (end[0] != '\0') || (errno == ERANGE) || (result >= ULONG_MAX)) {
+        return false;
+    }
+    value = static_cast<uint32_t>(result);
+    return true;
+}
+
+bool StringOperation::StrToDouble(const std::string& str, double& value)
+{
+    if (str.empty()) {
+        return false;
+    }
+
+    char* end = nullptr;
+    errno = 0;
+    auto addr = str.c_str();
+    auto result = strtod(addr, &end);
+    if ((end == addr) || (end[0] != '\0') || (errno == ERANGE) || (result == HUGE_VAL)) {
+        return false;
+    }
+    value = result;
+    return true;
 }
 } // namespace PowerMgr
 } // namespace OHOS

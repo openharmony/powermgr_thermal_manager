@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,14 @@
 #include "string_operation.h"
 #include "thermal_common.h"
 #include "thermal_service.h"
+#include "string_ex.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr uint32_t AUX_SENSOR_RANGE_LEN = 2;
+const std::string TRUE_STR = "1";
 }
 
 ThermalSrvConfigParser::ThermalSrvConfigParser() {};
@@ -162,7 +164,7 @@ bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
         }
         xmlChar* desc = xmlGetProp(cur, BAD_CAST("desc"));
         if (desc != nullptr) {
-            if (atoi(reinterpret_cast<char*>(desc)) == 1) {
+            if (TrimStr(reinterpret_cast<char*>(desc)) == TRUE_STR) {
                 sc->SetDescFlag(true);
                 THERMAL_HILOGD(COMP_SVC, "cluster [%{public}s] is desc", name.c_str());
             }
@@ -232,11 +234,13 @@ bool ThermalSrvConfigParser::ParseAuxSensorLevInfo(const xmlNodePtr& cur,
             THERMAL_HILOGE(COMP_SVC, "aux sensor temp range split failed");
             return false;
         }
-        auxlevelItem.lowerTemp = atoi(tempRanges[0].c_str());
-        auxlevelItem.upperTemp = atoi(tempRanges[1].c_str());
+        const int32_t INDEX0 = 0;
+        const int32_t INDEX1 = 1;
+        StrToInt(tempRanges[INDEX0], auxlevelItem.lowerTemp);
+        StrToInt(tempRanges[INDEX1], auxlevelItem.upperTemp);
         xmlChar* xmlLevel = xmlGetProp(subNode, BAD_CAST("level"));
         if (xmlLevel != nullptr) {
-            auxlevelItem.level = atoi(reinterpret_cast<char*>(xmlLevel));
+            StrToInt(reinterpret_cast<char*>(xmlLevel), auxlevelItem.level);
             xmlFree(xmlLevel);
         } else {
             THERMAL_HILOGE(COMP_SVC, "aux sensor level is null");
@@ -334,7 +338,7 @@ bool ThermalSrvConfigParser::ParseSensorLevelInfo(const xmlNodePtr& cur, std::ve
                 xmlFree(tempRiseRates);
                 return false;
             }
-            levelItem.tempRiseRate = atof(rates.at(sensorIdx).c_str());
+            StringOperation::StrToDouble(rates.at(sensorIdx), levelItem.tempRiseRate);
         }
         levelItems.push_back(levelItem);
         xmlFree(tempRiseRates);
@@ -371,15 +375,15 @@ bool ThermalSrvConfigParser::ParseLevelThreshold(const xmlNodePtr& subNode, Leve
     }
     xmlChar* xmlLevel = xmlGetProp(subNode, BAD_CAST("level"));
     if (xmlLevel != nullptr) {
-        levelItem.level = static_cast<uint32_t>(atoi(reinterpret_cast<char*>(xmlLevel)));
+        StringOperation::StrToUint(reinterpret_cast<char*>(xmlLevel), levelItem.level);
         xmlFree(xmlLevel);
     } else {
         THERMAL_HILOGE(COMP_SVC, "level is null");
         return false;
     }
 
-    levelItem.threshold = atoi(thresholds.at(sensorIdx).c_str());
-    levelItem.thresholdClr = atoi(thresholdClrs.at(sensorIdx).c_str());
+    StrToInt(thresholds.at(sensorIdx), levelItem.threshold);
+    StrToInt(thresholdClrs.at(sensorIdx), levelItem.thresholdClr);
     return true;
 }
 
@@ -463,12 +467,12 @@ bool ThermalSrvConfigParser::ParseActionInfo(const xmlNodePtr& cur, ActionItem& 
     }
     xmlChar* strict = xmlGetProp(cur, BAD_CAST("strict"));
     if (strict != nullptr) {
-        ai.strict = atoi(reinterpret_cast<char*>(strict)) == 1 ? true : false;
+        ai.strict = (TrimStr(reinterpret_cast<char*>(strict)) == TRUE_STR);
         xmlFree(strict);
     }
     xmlChar* event = xmlGetProp(cur, BAD_CAST("event"));
     if (event != nullptr) {
-        ai.enableEvent = atoi(reinterpret_cast<char*>(event)) == 1 ? true : false;
+        ai.enableEvent = (TrimStr(reinterpret_cast<char*>(event)) == TRUE_STR);
         xmlFree(event);
     }
     THERMAL_HILOGD(COMP_SVC,
@@ -500,7 +504,7 @@ bool ThermalSrvConfigParser::ParsePolicyNode(const xmlNodePtr& node)
 
         xmlChar* xmlLevel = xmlGetProp(cur, BAD_CAST"level");
         if (xmlLevel != nullptr) {
-            policyConfig.level = static_cast<uint32_t>(atoi(reinterpret_cast<char*>(xmlLevel)));
+            StringOperation::StrToUint(reinterpret_cast<char*>(xmlLevel), policyConfig.level);
             THERMAL_HILOGD(COMP_SVC, "policyConfig.name: %{public}s, policyConfig.level: %{public}u",
                 clusterName.c_str(), policyConfig.level);
             xmlFree(xmlLevel);
@@ -577,25 +581,25 @@ bool ThermalSrvConfigParser::ParseIdleNode(const xmlNodePtr& node)
         if (!xmlStrcmp(subNode->name, BAD_CAST"thermallevel")) {
             xmlChar* value = xmlNodeGetContent(subNode);
             if (value != nullptr) {
-                idleState.level = atoi(reinterpret_cast<char*>(value));
+                StrToInt(reinterpret_cast<char*>(value), idleState.level);
                 xmlFree(value);
             }
         } else if (!xmlStrcmp(subNode->name, BAD_CAST"soc")) {
             xmlChar* value = xmlNodeGetContent(subNode);
             if (value != nullptr) {
-                idleState.soc = atoi(reinterpret_cast<char*>(value));
+                StrToInt(reinterpret_cast<char*>(value), idleState.soc);
                 xmlFree(value);
             }
         } else if (!xmlStrcmp(subNode->name, BAD_CAST"charging")) {
             xmlChar* value = xmlNodeGetContent(subNode);
             if (value != nullptr) {
-                idleState.charging = atoi(reinterpret_cast<char*>(value));
+                StrToInt(reinterpret_cast<char*>(value), idleState.charging);
                 xmlFree(value);
             }
         } else if (!xmlStrcmp(subNode->name, BAD_CAST"current")) {
             xmlChar* value = xmlNodeGetContent(subNode);
             if (value != nullptr) {
-                idleState.current = atoi(reinterpret_cast<char*>(value));
+                StrToInt(reinterpret_cast<char*>(value), idleState.current);
                 xmlFree(value);
             }
         } else {
