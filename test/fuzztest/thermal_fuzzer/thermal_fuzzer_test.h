@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,19 +62,19 @@ public:
     public:
         ThermalTempTestCallback() {};
         virtual ~ThermalTempTestCallback() {};
-        virtual bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override;
+        bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override;
     };
     class ThermalLevelTestCallback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTestCallback() {};
         virtual ~ThermalLevelTestCallback() {};
-        virtual bool GetThermalLevel(ThermalLevel level) override;
+        bool GetThermalLevel(ThermalLevel level) override;
     };
     class ThermalActionTestCallback : public ThermalActionCallbackStub {
     public:
         ThermalActionTestCallback() {};
         virtual ~ThermalActionTestCallback() {};
-        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
+        bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
 };
 } // namespace PowerMgr
