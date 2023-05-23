@@ -37,7 +37,6 @@ constexpr int64_t TIME_OUT = 1;
 bool g_callbackTriggered = false;
 bool g_levelCallBack4 = false;
 bool g_levelCallBack5 = false;
-} // namespace
 
 void Notify()
 {
@@ -54,6 +53,7 @@ void Wait()
     EXPECT_TRUE(g_callbackTriggered);
     g_callbackTriggered = false;
 }
+} // namespace
 
 void ThermalMgrInterfaceTest::TearDown()
 {
