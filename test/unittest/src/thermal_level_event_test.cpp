@@ -41,7 +41,6 @@ std::mutex g_mutex;
 constexpr int64_t TIME_OUT = 1;
 bool g_callbackTriggered = false;
 int32_t g_thermalLevel = -1;
-}
 
 void Notify()
 {
@@ -58,6 +57,7 @@ void Wait()
     EXPECT_TRUE(g_callbackTriggered);
     g_callbackTriggered = false;
 }
+} // namespace
 
 class CommonEventThermalLevelTest : public CommonEventSubscriber {
 public:
