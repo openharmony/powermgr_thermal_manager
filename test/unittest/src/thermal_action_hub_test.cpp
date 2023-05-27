@@ -34,7 +34,6 @@ std::condition_variable g_callbackCV;
 std::mutex g_mutex;
 constexpr int64_t TIME_OUT = 1;
 bool g_callbackTriggered = false;
-}
 
 void Notify()
 {
@@ -51,6 +50,7 @@ void Wait()
     EXPECT_TRUE(g_callbackTriggered);
     g_callbackTriggered = false;
 }
+} // namespace
 
 void ThermalActionHubTest::TearDown()
 {
