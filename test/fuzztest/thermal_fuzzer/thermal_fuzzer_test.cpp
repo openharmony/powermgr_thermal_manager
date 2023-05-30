@@ -17,21 +17,25 @@
 
 #include "thermal_fuzzer_test.h"
 
+#include "thermal_service.h"
 #include "thermal_common.h"
+#include "message_parcel.h"
+#include "securec.h"
 
 using namespace std;
 using namespace OHOS;
 using namespace OHOS::PowerMgr;
 namespace {
 auto& g_thermalMgrClient = ThermalMgrClient::GetInstance();
-constexpr int32_t WAIT_TIME = 1000;
+const int32_t REWIND_READ_DATA = 0;
+sptr<ThermalService> g_service = nullptr;
 } // namespace
 
 static sptr<IThermalActionCallback> actionCb_;
 static sptr<IThermalActionCallback> testActionCb_;
-static sptr<IThermalTempCallback> tempCb_;
+static sptr<IThermalTempCallback> tempCb_ = new ThermalFuzzerTest::ThermalTempTestCallback();
 static sptr<IThermalTempCallback> testTempCb_;
-static sptr<IThermalLevelCallback> levelCb_;
+static sptr<IThermalLevelCallback> levelCb_ = new ThermalFuzzerTest::ThermalLevelTestCallback();
 static sptr<IThermalLevelCallback> testLevelCb_;
 
 bool ThermalFuzzerTest::ThermalActionTestCallback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
@@ -52,137 +56,138 @@ bool ThermalFuzzerTest::ThermalLevelTestCallback::GetThermalLevel(ThermalLevel l
     return true;
 }
 
-void ThermalFuzzerTest::TestSubscribeTemp(const uint8_t* data)
+static std::vector<std::string> GetVector(const uint8_t* data, size_t size)
 {
-    const int32_t NUMBER_FOUR = 4;
-    int32_t type[1];
-    int32_t idSize = 4;
-    std::vector<std::string> typeList;
-    for (int32_t i = 0; i < NUMBER_FOUR; i++) {
-        if (memcpy_s(type, sizeof(type), data, idSize) != EOK) {
-            return;
-        }
-        typeList.push_back(to_string(type[0]));
+    int32_t inputData;
+    std::vector<std::string> list;
+    if (size < sizeof(inputData)) {
+        return list;
     }
-    g_thermalMgrClient.SubscribeThermalTempCallback(typeList, tempCb_);
-    g_thermalMgrClient.SubscribeThermalTempCallback(typeList, testTempCb_);
-    std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_TIME));
-    TestUnSubscribeTemp();
+    if (memcpy_s(&inputData, sizeof(inputData), data, sizeof(inputData)) != EOK) {
+        return list;
+    }
+    int32_t minVectorSize = 0;
+    int32_t maxVectorSize = 5000;
+    int32_t length = (inputData < minVectorSize) ? minVectorSize : inputData;
+    length = (length > maxVectorSize) ? maxVectorSize : length;
+    list.resize(length);
+    for (auto &item : list) {
+        item = std::string(reinterpret_cast<const char *>(data), size);
+    }
+    return list;
 }
 
-void ThermalFuzzerTest::TestUnSubscribeTemp()
+static void TestUnSubscribeTemp()
 {
     g_thermalMgrClient.UnSubscribeThermalTempCallback(tempCb_);
     g_thermalMgrClient.UnSubscribeThermalTempCallback(testTempCb_);
 }
 
-void ThermalFuzzerTest::TestSubscribeAction(const uint8_t* data)
+static void TestSubscribeTemp(const uint8_t* data, size_t size)
 {
-    std::string desc = "";
-    const int32_t NUMBER_FOUR = 4;
-    int32_t type[1];
-    int32_t idSize = 4;
-    std::vector<std::string> actionList;
-    for (int32_t i = 0; i < NUMBER_FOUR; i++) {
-        if (memcpy_s(type, sizeof(type), data, idSize) != EOK) {
-            return;
-        }
-        actionList.push_back(to_string(type[0]));
-    }
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, actionCb_);
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, testActionCb_);
-    std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_TIME));
-    TestUnSubscribeAction();
+    std::vector<std::string> typeList = GetVector(data, size);
+    g_thermalMgrClient.SubscribeThermalTempCallback(typeList, tempCb_);
+    g_thermalMgrClient.SubscribeThermalTempCallback(typeList, testTempCb_);
+    TestUnSubscribeTemp();
 }
 
-void ThermalFuzzerTest::TestUnSubscribeAction()
+static void TestUnSubscribeAction()
 {
     g_thermalMgrClient.UnSubscribeThermalActionCallback(actionCb_);
     g_thermalMgrClient.UnSubscribeThermalActionCallback(testActionCb_);
 }
 
-void ThermalFuzzerTest::TestSubscribeLevel(const uint8_t* data)
+static void TestSubscribeAction(const uint8_t* data, size_t size)
 {
-    g_thermalMgrClient.SubscribeThermalLevelCallback(levelCb_);
-    std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_TIME));
-    TestUnSubscribeLevel();
+    if (data == nullptr || size == 0) {
+        return;
+    }
+    std::string desc(reinterpret_cast<const char *>(data), size);
+    std::vector<std::string> actionList = GetVector(data, size);
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, actionCb_);
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, testActionCb_);
+    TestUnSubscribeAction();
 }
 
-void ThermalFuzzerTest::TestUnSubscribeLevel()
+static void TestUnSubscribeLevel()
 {
     g_thermalMgrClient.UnSubscribeThermalLevelCallback(levelCb_);
 }
 
-void ThermalFuzzerTest::TestGetLevel()
+static void TestSubscribeLevel([[maybe_unused]] const uint8_t* data, [[maybe_unused]] size_t size)
 {
-    ThermalLevel level = g_thermalMgrClient.GetThermalLevel();
-    cout << "Thermal level is: " << static_cast<int32_t>(level) << endl;
+    g_thermalMgrClient.SubscribeThermalLevelCallback(levelCb_);
+    TestUnSubscribeLevel();
 }
 
-void ThermalFuzzerTest::TestSetScene(const uint8_t* data)
+static void TestGetLevel([[maybe_unused]] const uint8_t* data, [[maybe_unused]] size_t size)
 {
-    int32_t type[1];
-    int32_t idSize = 4;
-    if (memcpy_s(type, sizeof(type), data, idSize) != EOK) {
+    g_thermalMgrClient.GetThermalLevel();
+}
+
+static void TestSetScene(const uint8_t* data, size_t size)
+{
+    if (data == nullptr || size == 0) {
+        return;
+    }
+    std::string sceneName(reinterpret_cast<const char *>(data), size);
+    g_thermalMgrClient.SetScene(sceneName);
+}
+
+static void TestGetSensorTemp(const uint8_t* data, size_t size)
+{
+    int32_t code = 0;
+    if (size < sizeof(code)) {
+        return;
+    }
+    if (memcpy_s(&code, sizeof(code), data, sizeof(code)) != EOK) {
         return;
     }
 
-    g_thermalMgrClient.SetScene(to_string(type[0]));
+    SensorType sensorType = static_cast<SensorType>(code);
+    g_thermalMgrClient.GetThermalSensorTemp(sensorType);
 }
 
-void ThermalFuzzerTest::TestGetSensorTemp(const uint8_t* data)
+static void ThermalServiceStub(const uint8_t* data, size_t size)
 {
-    int32_t type[1];
-    int32_t idSize = 4;
-    if (memcpy_s(type, sizeof(type), data, idSize) != EOK) {
+    uint32_t code;
+    if (size < sizeof(code)) {
+        return;
+    }
+    if (memcpy_s(&code, sizeof(code), data, sizeof(code)) != EOK) {
         return;
     }
 
-    SensorType sensorType = static_cast<SensorType>(type[0]);
-    int32_t temp = g_thermalMgrClient.GetThermalSensorTemp(sensorType);
-    cout << "Sensor temp is: " << temp << endl;
+    MessageParcel datas;
+    datas.WriteInterfaceToken(ThermalService::GetDescriptor());
+    datas.WriteBuffer(data, size);
+    datas.RewindRead(REWIND_READ_DATA);
+    MessageParcel reply;
+    MessageOption option;
+    if (g_service == nullptr) {
+        g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+        g_service->OnStart();
+    }
+    g_service->OnRemoteRequest(code, datas, reply, option);
 }
 
-bool ThermalFuzzerTest::DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+static std::vector<std::function<void(const uint8_t*, size_t)>> fuzzFunc = {
+    &TestSubscribeTemp,
+    &TestSubscribeLevel,
+    &TestGetLevel,
+    &TestGetSensorTemp,
+    &TestSubscribeAction,
+    &TestSetScene
+};
+
+static bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
 {
-    int32_t idSize = 4;
-    int32_t cond[1];
-    if (static_cast<int32_t>(size) > idSize) {
-        if (memcpy_s(cond, sizeof(cond), data, idSize) != EOK) {
-            return false;
-        }
-
-        tempCb_ = new ThermalTempTestCallback();
-        levelCb_ = new ThermalLevelTestCallback();
-        std::random_device rd;
-        std::default_random_engine engine(rd());
-        std::uniform_int_distribution<int32_t> randomNum(
-            static_cast<int32_t>(ApiNumber::NUM_ZERO), static_cast<int32_t>(ApiNumber::NUM_END) - 1);
-        cond[0] = randomNum(engine);
-
-        switch (static_cast<ApiNumber>(cond[0])) {
-            case ApiNumber::NUM_ZERO:
-                TestSubscribeTemp(data);
-                break;
-            case ApiNumber::NUM_ONE:
-                TestSubscribeLevel(data);
-                break;
-            case ApiNumber::NUM_TWO:
-                TestGetLevel();
-                break;
-            case ApiNumber::NUM_THREE:
-                TestGetSensorTemp(data);
-                break;
-            case ApiNumber::NUM_FOUR:
-                TestSubscribeAction(data);
-                break;
-            case ApiNumber::NUM_FIVE:
-                TestSetScene(data);
-                break;
-            default:
-                break;
-        }
-    }
+    std::random_device rd;
+    std::default_random_engine engine(rd());
+    std::uniform_int_distribution<int32_t> randomNum(0, fuzzFunc.size() - 1);
+    int32_t number = randomNum(engine);
+    fuzzFunc[number](data, size);
+    ThermalServiceStub(data, size);
     return true;
 }
 
@@ -190,6 +195,6 @@ bool ThermalFuzzerTest::DoSomethingInterestingWithMyAPI(const uint8_t* data, siz
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::PowerMgr::ThermalFuzzerTest::DoSomethingInterestingWithMyAPI(data, size);
+    DoSomethingInterestingWithMyAPI(data, size);
     return 0;
 }
