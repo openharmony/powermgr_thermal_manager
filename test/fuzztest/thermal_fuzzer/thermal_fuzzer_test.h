@@ -43,21 +43,8 @@
 
 namespace OHOS {
 namespace PowerMgr {
-enum class ApiNumber : int32_t { NUM_ZERO = 0, NUM_ONE, NUM_TWO, NUM_THREE, NUM_FOUR, NUM_FIVE, NUM_END };
-
 class ThermalFuzzerTest {
 public:
-    static bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size);
-    static void TestSubscribeTemp(const uint8_t* data);
-    static void TestUnSubscribeTemp();
-    static void TestSubscribeLevel(const uint8_t* data);
-    static void TestUnSubscribeLevel();
-    static void TestSubscribeAction(const uint8_t* data);
-    static void TestUnSubscribeAction();
-    static void TestGetLevel();
-    static void TestSetScene(const uint8_t* data);
-    static void TestGetSensorTemp(const uint8_t* data);
-
     class ThermalTempTestCallback : public ThermalTempCallbackStub {
     public:
         ThermalTempTestCallback() {};

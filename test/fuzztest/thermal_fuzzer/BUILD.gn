@@ -18,16 +18,14 @@ import("../../../thermalmgr.gni")
 module_output_path = "${thermalmgr_native_part_name}/thermal_native"
 
 deps_ex = [
-  "ability_base:base",
-  "ability_base:want",
-  "bundle_framework:appexecfwk_base",
-  "eventhandler:libeventhandler",
   "ipc:ipc_core",
   "hiviewdfx_hilog_native:libhilog",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
-  "appspawn:appspawn_socket_client",
   "c_utils:utils",
+  "hdf_core:libhdi",
+  "hdf_core:libpub_utils",
+  "drivers_interface_thermal:libthermal_proxy_1.0",
 ]
 
 ##############################fuzztest##########################################
@@ -52,8 +50,11 @@ ohos_fuzztest("ThermalFuzzTest") {
   sources = [ "./thermal_fuzzer_test.cpp" ]
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
+    "${utils_path}:thermal_utils",
+    "//third_party/libxml2:xml2",
   ]
   external_deps = deps_ex
 }
