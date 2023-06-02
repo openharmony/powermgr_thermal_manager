@@ -42,6 +42,7 @@ ohos_shared_library("thermalsrv_client") {
     "samgr:samgr_proxy",
   ]
   subsystem_name = "powermgr"
+  innerapi_tags = [ "platformsdk" ]
   part_name = "thermal_manager"
 }
 
