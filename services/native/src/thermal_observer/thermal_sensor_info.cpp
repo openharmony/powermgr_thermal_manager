@@ -25,16 +25,19 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 
 TypeTempMap ThermalSensorInfo::GetTypeTempMap()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     return this->typeTempMap_;
 }
 
 void ThermalSensorInfo::SetTypeTempMap(TypeTempMap &typeTempMap)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     this->typeTempMap_ = typeTempMap;
 }
 
 int32_t ThermalSensorInfo::GetTemp(std::string type)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     TypeTempMap::iterator iter = this->typeTempMap_.find(type);
     if (iter == this->typeTempMap_.end()) {
         THERMAL_HILOGW(COMP_SVC, "failed to find sensor info");

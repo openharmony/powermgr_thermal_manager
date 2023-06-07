@@ -34,6 +34,7 @@ public:
     void NotifyObserver();
 private:
     TypeTempMap typeTempMap_;
+    std::mutex mutex_;
     std::list<int> historyMap_;
     int temp_;
     TypeHistoryMap typeHistoryMap_;
