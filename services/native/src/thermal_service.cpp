@@ -28,6 +28,7 @@
 
 #include "constants.h"
 #include "permission.h"
+#include "sysparam.h"
 #include "thermal_common.h"
 #include "thermal_mgr_dumper.h"
 #include "thermal_srv_config_parser.h"
@@ -46,7 +47,9 @@ constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 constexpr uint32_t RETRY_TIME = 1000;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.GetRefPtr());
+SysParam::BootCompletedCallback g_bootCompletedCallback;
 } // namespace
+std::atomic_bool ThermalService::isBootCompleted_ = false;
 ThermalService::ThermalService() : SystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, true) {}
 
 ThermalService::~ThermalService() {}
@@ -69,8 +72,17 @@ void ThermalService::OnStart()
         THERMAL_HILOGE(COMP_SVC, "OnStart register to system ability manager failed.");
         return;
     }
+    RegisterBootCompletedCallback();
     ready_ = true;
     THERMAL_HILOGD(COMP_SVC, "OnStart and add system ability success");
+}
+
+void ThermalService::RegisterBootCompletedCallback()
+{
+    g_bootCompletedCallback = []() {
+        isBootCompleted_ = true;
+    };
+    SysParam::RegisterBootCompletedCallback(g_bootCompletedCallback);
 }
 
 void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
@@ -288,6 +300,7 @@ void ThermalService::OnStop()
     eventRunner_.reset();
     handler_.reset();
     ready_ = false;
+    isBootCompleted_ = false;
     RemoveSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
     if (thermalInterface_) {
         thermalInterface_->Unregister();
@@ -519,7 +532,7 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
 
 std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint32_t argc)
 {
-    if (!Permission::IsSystem()) {
+    if (!Permission::IsSystem() || !isBootCompleted_) {
         return "";
     }
     std::lock_guard<std::mutex> lock(mutex_);
@@ -533,7 +546,12 @@ std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint
 
 int32_t ThermalService::Dump(int fd, const std::vector<std::u16string>& args)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
+    if (!isBootCompleted_) {
+        return ERR_NO_INIT;
+    }
+    if (!Permission::IsSystem()) {
+        return ERR_PERMISSION_DENIED;
+    }
     std::vector<std::string> argsInStr;
     std::transform(args.begin(), args.end(), std::back_inserter(argsInStr), [](const std::u16string& arg) {
         std::string ret = Str16ToStr8(arg);
