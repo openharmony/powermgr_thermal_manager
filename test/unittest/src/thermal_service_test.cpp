@@ -229,6 +229,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest004, TestSize.Level0)
     int fd = 0;
     std::vector<std::u16string> args;
     args.push_back(u"-h");
+    g_service->isBootCompleted_ = true;
     EXPECT_EQ(ERR_OK, g_service->Dump(fd, args));
 
     fd = -1;

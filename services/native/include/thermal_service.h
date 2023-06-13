@@ -16,10 +16,11 @@
 #ifndef THERMAL_SERVICE_H
 #define THERMAL_SERVICE_H
 
+#include <atomic>
+#include <memory>
 #include "delayed_sp_singleton.h"
 #include "iremote_object.h"
 #include "system_ability.h"
-#include <memory>
 
 #include "action_popup.h"
 #include "ithermal_level_callback.h"
@@ -27,7 +28,6 @@
 #include "thermal_srv_sensor_info.h"
 #include "thermal_srv_stub.h"
 #include "thermalsrv_event_handler.h"
-
 #include "hdi_service_status_listener.h"
 #include "state_machine.h"
 #include "thermal_action_manager.h"
@@ -170,7 +170,9 @@ private:
     void RegisterHdiStatusListener();
     void RegisterThermalHdiCallback();
     void SendEvent(int32_t event, int64_t delayTime);
+    void RegisterBootCompletedCallback();
     bool ready_ {false};
+    static std::atomic_bool isBootCompleted_;
     bool isSimulation_ {false};
     std::mutex mutex_;
     std::shared_ptr<AppExecFwk::EventRunner> eventRunner_ {nullptr};
