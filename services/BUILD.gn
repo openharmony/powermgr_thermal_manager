@@ -111,6 +111,7 @@ ohos_shared_library("thermalservice") {
     "init:libbegetutil",
     "ipc:ipc_core",
     "multimedia_image_framework:image_native",
+    "power_manager:power_sysparam",
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
     "time_service:time_client",
