@@ -82,7 +82,6 @@ ohos_shared_library("thermalservice") {
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
-    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/libxml2:xml2",
   ]
 

@@ -151,7 +151,6 @@ ohos_unittest("ThermalClientApiTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
-    "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     "//third_party/googletest:gtest_main",
   ]
 
