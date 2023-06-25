@@ -32,6 +32,7 @@
 #include "thermal_common.h"
 #include "thermal_mgr_dumper.h"
 #include "thermal_srv_config_parser.h"
+#include "ffrt_utils.h"
 #include "xcollie/watchdog.h"
 
 #include "config_policy_utils.h"
@@ -44,6 +45,7 @@ const std::string VENDOR_THERMAL_SERVICE_CONFIG_PATH = "/vendor/etc/thermal_conf
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* THMERMAL_SERVICE_NAME = "ThermalService";
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
+FFRTQueue g_queue("thermal_service");
 constexpr uint32_t RETRY_TIME = 1000;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.GetRefPtr());
@@ -96,24 +98,6 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
 bool ThermalService::Init()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-
-    if (!eventRunner_) {
-        eventRunner_ = AppExecFwk::EventRunner::Create(THMERMAL_SERVICE_NAME);
-        if (eventRunner_ == nullptr) {
-            THERMAL_HILOGE(COMP_SVC, "Init failed due to create EventRunner");
-            return false;
-        }
-    }
-
-    if (!handler_) {
-        handler_ = std::make_shared<ThermalsrvEventHandler>(eventRunner_, g_service);
-        if (handler_ == nullptr) {
-            THERMAL_HILOGE(COMP_SVC, "Init failed due to create handler error");
-            return false;
-        }
-        HiviewDFX::Watchdog::GetInstance().AddThread("ThermalsrvEventHandler", handler_);
-    }
-
     if (!CreateConfigModule()) {
         return false;
     }
@@ -297,8 +281,6 @@ void ThermalService::OnStop()
     if (!ready_) {
         return;
     }
-    eventRunner_.reset();
-    handler_.reset();
     ready_ = false;
     isBootCompleted_ = false;
     RemoveSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
@@ -433,43 +415,16 @@ bool ThermalService::SetScene(const std::string& scene)
     return true;
 }
 
-void ThermalService::SendEvent(int32_t event, int64_t delayTime)
-{
-    THERMAL_RETURN_IF_WITH_LOG(handler_ == nullptr, "handler is nullptr");
-    handler_->RemoveEvent(event);
-    handler_->SendEvent(event, 0, delayTime);
-}
-
-void ThermalService::HandleEvent(int event)
-{
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    switch (event) {
-        case ThermalsrvEventHandler::SEND_REGISTER_THERMAL_HDI_CALLBACK: {
-            RegisterThermalHdiCallback();
-            break;
-        }
-        case ThermalsrvEventHandler::SEND_RETRY_REGISTER_HDI_STATUS_LISTENER: {
-            RegisterHdiStatusListener();
-            break;
-        }
-        case ThermalsrvEventHandler::SEND_ACTION_HUB_LISTENER: {
-            policy_->FindSubscribeActionValue();
-            break;
-        }
-        default:
-            break;
-    }
-}
-
 void ThermalService::RegisterHdiStatusListener()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     hdiServiceMgr_ = IServiceManager::Get();
     if (hdiServiceMgr_ == nullptr) {
-        SendEvent(ThermalsrvEventHandler::SEND_RETRY_REGISTER_HDI_STATUS_LISTENER, RETRY_TIME);
-        THERMAL_HILOGW(COMP_SVC, "hdi service manager is nullptr, \
-            Try again after %{public}u second",
-            RETRY_TIME);
+        FFRTTask retryTask = [this] {
+            return RegisterHdiStatusListener();
+        };
+        FFRTUtils::SubmitDelayTask(retryTask, RETRY_TIME, g_queue);
+        THERMAL_HILOGW(COMP_SVC, "hdi service manager is nullptr, try again after %{public}u ms", RETRY_TIME);
         return;
     }
 
@@ -478,7 +433,10 @@ void ThermalService::RegisterHdiStatusListener()
             THERMAL_RETURN_IF(status.serviceName != HDI_SERVICE_NAME || status.deviceClass != DEVICE_CLASS_DEFAULT)
 
             if (status.status == SERVIE_STATUS_START) {
-                SendEvent(ThermalsrvEventHandler::SEND_REGISTER_THERMAL_HDI_CALLBACK, 0);
+                FFRTTask task = [this] {
+                    return RegisterThermalHdiCallback();
+                };
+                FFRTUtils::SubmitTask(task);
                 THERMAL_HILOGD(COMP_SVC, "thermal interface service start");
             } else if (status.status == SERVIE_STATUS_STOP && thermalInterface_) {
                 thermalInterface_->Unregister();
@@ -489,10 +447,11 @@ void ThermalService::RegisterHdiStatusListener()
 
     int32_t status = hdiServiceMgr_->RegisterServiceStatusListener(hdiServStatListener_, DEVICE_CLASS_DEFAULT);
     if (status != ERR_OK) {
-        THERMAL_HILOGW(COMP_SVC, "Register hdi failed, \
-            Try again after %{public}u second",
-            RETRY_TIME);
-        SendEvent(ThermalsrvEventHandler::SEND_RETRY_REGISTER_HDI_STATUS_LISTENER, RETRY_TIME);
+        THERMAL_HILOGW(COMP_SVC, "Register hdi failed, try again after %{public}u ms", RETRY_TIME);
+        FFRTTask retryTask = [this] {
+            return RegisterHdiStatusListener();
+        };
+        FFRTUtils::SubmitDelayTask(retryTask, RETRY_TIME, g_queue);
     }
 }
 

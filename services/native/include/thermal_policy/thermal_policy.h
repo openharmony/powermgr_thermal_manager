@@ -23,7 +23,6 @@
 #include "delayed_sp_singleton.h"
 #include "thermal_srv_sensor_info.h"
 #include "thermal_config_sensor_cluster.h"
-#include "thermalsrv_event_handler.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -72,7 +71,6 @@ private:
         return r.level < l.level;
     }
 
-    std::shared_ptr<ThermalsrvEventHandler> handler_;
     TypeTempMap typeTempMap_;
     SensorClusterMap sensorClusterMap_;
     std::map<std::string, uint32_t> clusterLevelMap_;
