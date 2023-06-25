@@ -27,7 +27,6 @@
 #include "ithermal_temp_callback.h"
 #include "thermal_srv_sensor_info.h"
 #include "thermal_srv_stub.h"
-#include "thermalsrv_event_handler.h"
 #include "hdi_service_status_listener.h"
 #include "state_machine.h"
 #include "thermal_action_manager.h"
@@ -69,7 +68,6 @@ public:
     bool SetScene(const std::string& scene) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
-    void HandleEvent(int event);
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
 
     void SetFlag(bool flag)
@@ -87,14 +85,6 @@ public:
         return ready_;
     }
 
-    std::shared_ptr<ThermalsrvEventHandler> GetHandler() const
-    {
-        return handler_;
-    }
-    std::shared_ptr<AppExecFwk::EventRunner> GetEventRunner() const
-    {
-        return eventRunner_;
-    }
     std::shared_ptr<ThermalConfigBaseInfo> GetBaseinfoObj() const
     {
         return baseInfo_;
@@ -169,14 +159,11 @@ private:
     bool CreateConfigModule();
     void RegisterHdiStatusListener();
     void RegisterThermalHdiCallback();
-    void SendEvent(int32_t event, int64_t delayTime);
     void RegisterBootCompletedCallback();
     bool ready_ {false};
     static std::atomic_bool isBootCompleted_;
     bool isSimulation_ {false};
     std::mutex mutex_;
-    std::shared_ptr<AppExecFwk::EventRunner> eventRunner_ {nullptr};
-    std::shared_ptr<ThermalsrvEventHandler> handler_ {nullptr};
     std::shared_ptr<ThermalServiceSubscriber> serviceSubscriber_ {nullptr};
     std::shared_ptr<ThermalObserver> observer_ {nullptr};
     std::shared_ptr<ThermalSensorInfo> info_ {nullptr};

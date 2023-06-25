@@ -23,6 +23,7 @@
 #include "thermal_config_base_info.h"
 #include "thermal_common.h"
 #include "thermal_service.h"
+#include "ffrt_utils.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -341,14 +342,9 @@ void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<
     if (pms == nullptr) {
         return;
     }
-
-    auto handler = pms->GetHandler();
-    if (handler == nullptr) {
-        return;
-    }
     sptr<IThermalTempCallback> callback = iface_cast<IThermalTempCallback>(remote.promote());
-    std::function<void ()> unRegFunc = std::bind(&ThermalService::UnSubscribeThermalTempCallback, pms, callback);
-    handler->PostTask(unRegFunc, TASK_UNREG_SENSOR_TEMP_CALLBACK);
+    FFRTTask task = std::bind(&ThermalService::UnSubscribeThermalTempCallback, pms, callback);
+    FFRTUtils::SubmitTask(task);
 }
 
 void ThermalObserver::ActionCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
@@ -362,14 +358,9 @@ void ThermalObserver::ActionCallbackDeathRecipient::OnRemoteDied(const wptr<IRem
     if (pms == nullptr) {
         return;
     }
-
-    auto handler = pms->GetHandler();
-    if (handler == nullptr) {
-        return;
-    }
     sptr<IThermalActionCallback> callback = iface_cast<IThermalActionCallback>(remote.promote());
-    std::function<void ()> unRegFunc = std::bind(&ThermalService::UnSubscribeThermalActionCallback, pms, callback);
-    handler->PostTask(unRegFunc, TASK_UNREG_ACTION_CALLBACK);
+    FFRTTask task = std::bind(&ThermalService::UnSubscribeThermalActionCallback, pms, callback);
+    FFRTUtils::SubmitTask(task);
 }
 } // namespace PowerMgr
 } // namespace OHOS
