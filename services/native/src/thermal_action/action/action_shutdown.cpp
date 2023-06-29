@@ -16,16 +16,13 @@
 #include "action_shutdown.h"
 
 #include <map>
-#include <thread>
 
 #include "constants.h"
-#include "event_runner.h"
-#include "event_handler.h"
-#include "event_queue.h"
 #include "power_mgr_client.h"
 #include "file_operation.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
+#include "ffrt_utils.h"
 #include "securec.h"
 
 using namespace OHOS::PowerMgr;
@@ -36,6 +33,8 @@ namespace {
 constexpr const char* SHUTDOWN_REASON = "DeviceTempTooHigh";
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* SHUTDOWN_PATH = "/data/service/el0/thermal/config/shut_down";
+FFRTQueue g_queue("thermal_action_shutdown");
+FFRTHandle g_shutdownTaskHandle;
 const int MAX_PATH = 256;
 }
 
@@ -106,8 +105,8 @@ uint32_t ActionShutdown::GetActionValue()
 uint32_t ActionShutdown::ShutdownRequest(bool isShutdown)
 {
     if (isShutdown) {
-        PowerMgrClient::GetInstance().ShutDownDevice(SHUTDOWN_REASON);
         THERMAL_HILOGI(COMP_SVC, "device start shutdown");
+        PowerMgrClient::GetInstance().ShutDownDevice(SHUTDOWN_REASON);
     }
     return ERR_OK;
 }
@@ -130,38 +129,19 @@ int32_t ActionShutdown::ShutdownExecution(bool isShutdown)
 
 uint32_t ActionShutdown::DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr)
 {
-    uint32_t delay = 50000;
-    auto handler = g_service->GetHandler();
-    if (handler == nullptr) {
-        return ERR_INVALID_VALUE;
+    if (g_shutdownTaskHandle && temp < thresholdClr) {
+        THERMAL_HILOGI(COMP_SVC, "shutdown canceled");
+        FFRTUtils::CancelTask(g_shutdownTaskHandle, g_queue);
+        return ERR_OK;
     }
-    auto runner = g_service->GetEventRunner();
-    if (runner == nullptr) {
-        return ERR_INVALID_VALUE;
-    }
-    auto shutDownTask = [&]() {
-        THERMAL_HILOGI(COMP_SVC, "shutdown run");
-        ShutdownRequest(isShutdown);
-        runner->Stop();
-    };
 
-    /**
-     * @steps: post delay task to start runner to shutdown,
-     * then new a thread to start the same runner cancell shutdown.
-     * @expected: return runner is already running error.
-     */
-    auto f = [&]() {
-        if (temp < thresholdClr) {
-            auto runResult = runner->Stop();
-            if (!runResult) {
-                THERMAL_HILOGE(COMP_SVC, "HandleShutdownActionHUb: success to cancell");
-            }
-        }
+    uint32_t delay = 50000;
+    FFRTTask shutdownTask = [&]() {
+        THERMAL_HILOGI(COMP_SVC, "shutdown start");
+        ShutdownRequest(isShutdown);
     };
-    handler->PostTask(shutDownTask, delay, EventQueue::Priority::HIGH);
-    std::thread newThread(f);
-    newThread.detach();
-    runner->Run();
+    g_shutdownTaskHandle = FFRTUtils::SubmitDelayTask(shutdownTask, delay, g_queue);
+    THERMAL_HILOGI(COMP_SVC, "shutdown device after %{public}u ms", delay);
     return ERR_OK;
 }
 } // namespace PowerMgr

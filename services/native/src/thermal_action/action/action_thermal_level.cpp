@@ -24,6 +24,7 @@
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "thermal_common.h"
+#include "ffrt_utils.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::EventFwk;
@@ -171,14 +172,9 @@ void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const 
     if (tms == nullptr) {
         return;
     }
-
-    auto handler = tms->GetHandler();
-    if (handler == nullptr) {
-        return;
-    }
     sptr<IThermalLevelCallback> callback = iface_cast<IThermalLevelCallback>(remote.promote());
-    std::function<void()> unRegFunc = std::bind(&ThermalService::UnSubscribeThermalLevelCallback, tms, callback);
-    handler->PostTask(unRegFunc, TASK_UNREG_THERMAL_LEVEL_CALLBACK);
+    FFRTTask task = std::bind(&ThermalService::UnSubscribeThermalLevelCallback, tms, callback);
+    FFRTUtils::SubmitTask(task);
 }
 /**
  * @brief notify level

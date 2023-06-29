@@ -41,7 +41,7 @@
         "display_manager",
         "drivers_interface_battery",
         "drivers_interface_thermal",
-        "eventhandler",
+        "ffrt",
         "hdf_core",
         "hicollie",
         "hisysevent_native",

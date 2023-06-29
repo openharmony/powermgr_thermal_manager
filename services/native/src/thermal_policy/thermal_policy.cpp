@@ -23,6 +23,7 @@
 #include "thermal_common.h"
 #include "thermal_service.h"
 #include "securec.h"
+#include "ffrt_utils.h"
 #include "string_operation.h"
 
 using namespace OHOS::AppExecFwk;
@@ -40,7 +41,6 @@ bool ThermalPolicy::Init()
     if (g_service == nullptr) {
         return false;
     }
-    handler_ = g_service->GetHandler();
     RegisterObserver();
     return true;
 }
@@ -214,7 +214,10 @@ bool ThermalPolicy::ActionExecution()
     for (auto iter = actionMap.begin(); iter != actionMap.end(); iter++) {
         iter->second->Execute();
     }
-    handler_->SendEvent(ThermalsrvEventHandler::SEND_ACTION_HUB_LISTENER, 0, 0);
+
+    FFRTUtils::SubmitTask([this] {
+        return FindSubscribeActionValue();
+    });
     return true;
 }
 
