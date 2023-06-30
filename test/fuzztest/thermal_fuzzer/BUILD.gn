@@ -19,7 +19,7 @@ module_output_path = "${thermalmgr_native_part_name}/thermal_native"
 
 deps_ex = [
   "ipc:ipc_core",
-  "hiviewdfx_hilog_native:libhilog",
+  "hilog:libhilog",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
   "c_utils:utils",

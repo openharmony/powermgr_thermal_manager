@@ -23,7 +23,7 @@ config("thermalmgr_ipc_public_config") {
 
 deps_ex = [
   "bundle_framework:appexecfwk_base",
-  "hiviewdfx_hilog_native:libhilog",
+  "hilog:libhilog",
   "hicollie:libhicollie",
   "ipc:ipc_core",
   "c_utils:utils",
