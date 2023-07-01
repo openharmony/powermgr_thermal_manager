@@ -82,6 +82,8 @@ bool ThermalSrvConfigParser::ParseRootNode(const xmlNodePtr& node)
         ret = ParsePolicyNode(node);
     } else if (!xmlStrcmp(node->name, BAD_CAST"idle")) {
         ret = ParseIdleNode(node);
+    } else if (!xmlStrcmp(node->name, BAD_CAST"fan")) {
+        ret = ParseFanNode(node);
     } else if (!xmlStrcmp(node->name, BAD_CAST"comment")) {
         ret = true;
     } else {
@@ -609,6 +611,78 @@ bool ThermalSrvConfigParser::ParseIdleNode(const xmlNodePtr& node)
     THERMAL_HILOGI(COMP_SVC, "level=%{public}d, soc=%{public}d, charging=%{public}d, current=%{public}d",
                    idleState.level, idleState.soc, idleState.charging, idleState.current);
     g_service->GetStateMachineObj()->SetIdleStateConfig(idleState);
+    return true;
+}
+
+bool ThermalSrvConfigParser::ParseFanNode(const xmlNodePtr &node)
+{
+    FanFaultInfoMap fanFaultInfoMap;
+    xmlNodePtr cur = node->xmlChildrenNode;
+
+    while (cur != nullptr) {
+        if (xmlStrcmp(cur->name, BAD_CAST"sensor_cluster")) {
+            cur = cur->next;
+            continue;
+        }
+        xmlChar* xmlSensor = xmlGetProp(cur, BAD_CAST"sensor");
+        if (xmlSensor == nullptr) {
+            return false;
+        }
+        std::vector<std::string> sensors;
+        std::string sensorStr = reinterpret_cast<char*>(xmlSensor);
+        StringOperation::SplitString(sensorStr, sensors, ",");
+        xmlFree(xmlSensor);
+        if (!ParseFanFaultInfo(cur, sensors, fanFaultInfoMap)) {
+            THERMAL_HILOGE(COMP_SVC, "ParseFanFaultInfo failed");
+            return false;
+        }
+        cur = cur->next;
+    }
+
+    g_service->GetFanFaultDetect()->SetFaultInfoMap(fanFaultInfoMap);
+    return true;
+}
+
+bool ThermalSrvConfigParser::ParseFanFaultInfo(const xmlNodePtr& node,
+    std::vector<std::string> &sensors, FanFaultInfoMap &fanFaultInfoMap)
+{
+    uint32_t sensorNum = sensors.size();
+    xmlNodePtr cur = node->xmlChildrenNode;
+
+    while (cur != nullptr) {
+        if (xmlStrcmp(cur->name, BAD_CAST"item")) {
+            cur = cur->next;
+            continue;
+        }
+        FanSensorInfo fanSensorInfo;
+        xmlChar* xmlFault = xmlGetProp(cur, BAD_CAST"fault");
+        if (xmlFault == nullptr) {
+            return false;
+        }
+        std::string faultStr = reinterpret_cast<char*>(xmlFault);
+        xmlFree(xmlFault);
+        int32_t faultNum;
+        StrToInt(faultStr, faultNum);
+        xmlChar* xmlThreshold = xmlGetProp(cur, BAD_CAST"threshold");
+        if (xmlThreshold == nullptr) {
+            return false;
+        }
+        std::string thresholdStr = reinterpret_cast<char*>(xmlThreshold);
+        std::vector<std::string> thresholds;
+        StringOperation::SplitString(thresholdStr, thresholds, ",");
+        xmlFree(xmlThreshold);
+        if (thresholds.size() != sensorNum) {
+            return false;
+        }
+        for (uint32_t i = 0; i < sensorNum; i++) {
+            int32_t value;
+            StrToInt(thresholds[i], value);
+            fanSensorInfo.insert(std::make_pair(sensors[i], value));
+        }
+        fanFaultInfoMap.insert(std::make_pair(faultNum, fanSensorInfo));
+        cur = cur->next;
+    }
+
     return true;
 }
 } // namespace PowerMgr

@@ -101,11 +101,10 @@ bool ThermalService::Init()
     if (!CreateConfigModule()) {
         return false;
     }
-
-    RegisterHdiStatusListener();
     if (!InitModules()) {
         return false;
     }
+    RegisterHdiStatusListener();
     THERMAL_HILOGD(COMP_SVC, "Init success");
     return true;
 }
@@ -143,6 +142,15 @@ bool ThermalService::CreateConfigModule()
             return false;
         }
     }
+
+    if (!fanFaultDetect_) {
+        fanFaultDetect_ = std::make_shared<FanFaultDetect>();
+        if (fanFaultDetect_ == nullptr) {
+            THERMAL_HILOGE(COMP_SVC, "failed to create fan fault detect");
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -286,6 +294,7 @@ void ThermalService::OnStop()
     RemoveSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
     if (thermalInterface_) {
         thermalInterface_->Unregister();
+        thermalInterface_->UnregisterFanCallback();
         thermalInterface_ = nullptr;
     }
     if (hdiServiceMgr_) {
@@ -434,12 +443,14 @@ void ThermalService::RegisterHdiStatusListener()
 
             if (status.status == SERVIE_STATUS_START) {
                 FFRTTask task = [this] {
-                    return RegisterThermalHdiCallback();
+                    RegisterThermalHdiCallback();
+                    RegisterFanHdiCallback();
                 };
                 FFRTUtils::SubmitTask(task);
                 THERMAL_HILOGD(COMP_SVC, "thermal interface service start");
             } else if (status.status == SERVIE_STATUS_STOP && thermalInterface_) {
                 thermalInterface_->Unregister();
+                thermalInterface_->UnregisterFanCallback();
                 thermalInterface_ = nullptr;
                 THERMAL_HILOGW(COMP_SVC, "thermal interface service, unregister interface");
             }
@@ -486,6 +497,40 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
         }
     }
     serviceSubscriber_->OnTemperatureChanged(typeTempMap);
+    return ERR_OK;
+}
+
+void ThermalService::RegisterFanHdiCallback()
+{
+    if (!fanFaultDetect_->HasFanConfig()) {
+        return;
+    }
+
+    if (thermalInterface_ == nullptr) {
+        thermalInterface_ = IThermalInterface::Get();
+        THERMAL_RETURN_IF_WITH_LOG(thermalInterface_ == nullptr, "failed to get thermal hdi interface");
+    }
+
+    sptr<IFanCallback> callback = new FanCallback();
+    FanCallback::FanEventCallback eventCb =
+        std::bind(&ThermalService::HandleFanCallbackEvent, this, std::placeholders::_1);
+    FanCallback::RegisterFanEvent(eventCb);
+    int32_t ret = thermalInterface_->RegisterFanCallback(callback);
+    THERMAL_HILOGI(COMP_SVC, "register fan hdi callback end, ret: %{public}d", ret);
+
+    return;
+}
+
+int32_t ThermalService::HandleFanCallbackEvent(const HdfThermalCallbackInfo& event)
+{
+    FanSensorInfo report;
+    if (!event.info.empty()) {
+        for (auto iter = event.info.begin(); iter != event.info.end(); iter++) {
+            report.insert(std::make_pair(iter->type, iter->temp));
+        }
+    }
+
+    fanFaultDetect_->OnFanSensorInfoChanged(report);
     return ERR_OK;
 }
 

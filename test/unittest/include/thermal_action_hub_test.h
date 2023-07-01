@@ -78,6 +78,13 @@ public:
         virtual ~ThermalActionTest7Callback() = default;
         virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
     };
+
+    class ThermalActionTest8Callback : public ThermalActionCallbackStub {
+    public:
+        ThermalActionTest8Callback() = default;
+        virtual ~ThermalActionTest8Callback() = default;
+        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
+    };
 };
 } // namespace PowerMgr
 } // namespace OHOS

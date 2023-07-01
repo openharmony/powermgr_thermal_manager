@@ -61,6 +61,7 @@
         <item name="cpu_lit"/>
         <item name="gpu"/>
         <item name="boost" event="1"/>
+        <item name="isolate" event="1"/>
         <item name="lcd"/>
         <item name="volume" uid="2001,2002"/>
         <item name="current" protocol="sc,buck" event="1"/>
@@ -96,6 +97,7 @@
             <voltage_buck>3000</voltage_buck>
             <volume>1.0</volume>
             <boost>1</boost>
+            <isolate>0</isolate>
         </config>
         <config name="base_safe" level="2">
             <lcd>0.90</lcd>
@@ -118,6 +120,7 @@
             <voltage_buck>2000</voltage_buck>
             <volume>0.8</volume>
             <boost>1</boost>
+            <isolate>1</isolate>
         </config>
         <config name="base_safe" level="3">
             <lcd>0.80</lcd>
@@ -141,6 +144,7 @@
             <volume>0.7</volume>
             <shut_down>1</shut_down>
             <boost>0</boost>
+            <isolate>2</isolate>
         </config>
         <config name="warm_5G" level="1">
             <lcd>0.70</lcd>
@@ -170,6 +174,13 @@
             <thermallevel>0</thermallevel>
         </config>
     </policy>
+
+    <fan>
+        <sensor_cluster name="fan_fault_detect" sensor="soc,gpu,fan">
+            <item fault="1" threshold="50000,50000,500"/>
+            <item fault="2" threshold="30000,30000,1500"/>
+        </sensor_cluster>
+    </fan>
 
     <idle name="charging">
         <thermallevel>1</thermallevel>  <!-- thermal level is equal or less than 1 -->
