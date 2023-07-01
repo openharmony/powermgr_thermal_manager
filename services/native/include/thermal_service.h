@@ -23,6 +23,8 @@
 #include "system_ability.h"
 
 #include "action_popup.h"
+#include "fan_callback.h"
+#include "fan_fault_detect.h"
 #include "ithermal_level_callback.h"
 #include "ithermal_temp_callback.h"
 #include "thermal_srv_sensor_info.h"
@@ -37,13 +39,13 @@
 #include "thermal_policy.h"
 #include "thermal_sensor_info.h"
 #include "thermal_service_subscriber.h"
-#include "v1_0/ithermal_interface.h"
-#include "v1_0/thermal_types.h"
+#include "v1_1/ithermal_interface.h"
+#include "v1_1/thermal_types.h"
 
 namespace OHOS {
 namespace PowerMgr {
 using TypeTempMap = std::map<std::string, int32_t>;
-using namespace OHOS::HDI::Thermal::V1_0;
+using namespace OHOS::HDI::Thermal::V1_1;
 using namespace OHOS::HDI::ServiceManager::V1_0;
 class ThermalService final : public SystemAbility, public ThermalSrvStub {
     DECLARE_SYSTEM_ABILITY(ThermalService);
@@ -69,6 +71,7 @@ public:
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
+    int32_t HandleFanCallbackEvent(const HdfThermalCallbackInfo& event);
 
     void SetFlag(bool flag)
     {
@@ -134,6 +137,11 @@ public:
         isSimulation_ = isSimulation;
     }
 
+    std::shared_ptr<FanFaultDetect> GetFanFaultDetect() const
+    {
+        return fanFaultDetect_;
+    }
+
     std::string GetScene()
     {
         return scene_;
@@ -159,6 +167,7 @@ private:
     bool CreateConfigModule();
     void RegisterHdiStatusListener();
     void RegisterThermalHdiCallback();
+    void RegisterFanHdiCallback();
     void RegisterBootCompletedCallback();
     bool ready_ {false};
     static std::atomic_bool isBootCompleted_;
@@ -171,6 +180,7 @@ private:
     std::shared_ptr<ThermalConfigBaseInfo> baseInfo_ {nullptr};
     std::shared_ptr<StateMachine> state_ {nullptr};
     std::shared_ptr<ThermalActionManager> actionMgr_ {nullptr};
+    std::shared_ptr<FanFaultDetect> fanFaultDetect_ {nullptr};
     bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};
     sptr<IServiceManager> hdiServiceMgr_ {nullptr};
