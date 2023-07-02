@@ -17,6 +17,7 @@
 #include <message_parcel.h>
 
 #include "constants.h"
+#include "thermal_action_callback_ipc_interface_code.h"
 #include "thermal_common.h"
 #include "xcollie/xcollie.h"
 
@@ -38,7 +39,7 @@ int ThermalActionCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
     int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalActionCallbackStub", DFX_DELAY_MS, nullptr, nullptr,
         HiviewDFX::XCOLLIE_FLAG_NOOP);
     int ret = ERR_OK;
-    if (code == static_cast<uint32_t>(IThermalActionCallback::THERMAL_ACTION_CHANGD)) {
+    if (code == static_cast<uint32_t>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGD)) {
         ret = OnThermalActionChangedStub(data);
     } else {
         ret = IPCObjectStub::OnRemoteRequest(code, data, reply, option);

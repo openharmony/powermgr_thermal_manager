@@ -25,9 +25,6 @@ namespace PowerMgr {
 class IThermalTempCallback : public IRemoteBroker {
 public:
     using TempCallbackMap = std::map<std::string, int32_t>;
-    enum {
-        THERMAL_TEMPERATURE_CHANGD = 0,
-    };
 
     virtual bool OnThermalTempChanged(TempCallbackMap& tempCbMap) = 0;
 

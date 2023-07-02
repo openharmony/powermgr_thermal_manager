@@ -21,8 +21,9 @@
 #include "ithermal_action_callback.h"
 #include "ithermal_temp_callback.h"
 #include "ithermal_level_callback.h"
-#include "thermal_srv_sensor_info.h"
 #include "thermal_common.h"
+#include "thermal_srv_ipc_interface_code.h"
+#include "thermal_srv_sensor_info.h"
 #include "xcollie/xcollie.h"
 
 namespace OHOS {
@@ -53,37 +54,37 @@ int32_t ThermalSrvStub::CheckRequestCode(const uint32_t code, MessageParcel& dat
     MessageOption& option)
 {
     switch (code) {
-        case static_cast<int>(IThermalSrv::REG_THERMAL_TEMP_CALLBACK): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_TEMP_CALLBACK): {
             return SubscribeThermalTempCallbackStub(data);
         }
-        case static_cast<int>(IThermalSrv::UNREG_THERMAL_TEMP_CALLBACK): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_TEMP_CALLBACK): {
             return UnSubscribeThermalTempCallbackStub(data);
         }
-        case static_cast<int>(IThermalSrv::REG_THERMAL_LEVEL_CALLBACK): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_LEVEL_CALLBACK): {
             return SubscribeThermalLevelCallbackStub(data);
         }
-        case static_cast<int>(IThermalSrv::UNREG_THERMAL_LEVEL_CALLBACK): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_LEVEL_CALLBACK): {
             return UnSubscribeThermalLevelCallbackStub(data);
         }
-        case static_cast<int>(IThermalSrv::REG_THERMAL_ACTION_CALLBACK): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_ACTION_CALLBACK): {
             return SubscribeThermalActionCallbackStub(data);
         }
-        case static_cast<int>(IThermalSrv::UNREG_THERMAL_ACTION_CALLBACK): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_ACTION_CALLBACK): {
             return UnSubscribeThermalActionCallbackStub(data);
         }
-        case static_cast<int>(IThermalSrv::GET_SENSOR_INFO): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::GET_SENSOR_INFO): {
             return GetThermalSrvSensorInfoStub(data, reply);
         }
-        case static_cast<int>(IThermalSrv::GET_TEMP_LEVEL): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::GET_TEMP_LEVEL): {
             return GetThermalevelStub(reply);
         }
-        case static_cast<int>(IThermalSrv::GET_THERMAL_INFO): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::GET_THERMAL_INFO): {
             return GetThermalInfoStub(reply);
         }
-        case static_cast<int>(IThermalSrv::SET_SCENE): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::SET_SCENE): {
             return SetSceneStub(data);
         }
-        case static_cast<int>(IThermalSrv::SHELL_DUMP): {
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::SHELL_DUMP): {
             return ShellDumpStub(data, reply);
         }
         default: {
