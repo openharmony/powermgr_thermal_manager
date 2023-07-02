@@ -15,6 +15,7 @@
 
 #include "thermal_level_callback_proxy.h"
 #include "thermal_common.h"
+#include "thermal_level_callback_ipc_interface_code.h"
 #include <ipc_types.h>
 #include <message_parcel.h>
 
@@ -36,7 +37,8 @@ bool ThermalLevelCallbackProxy::GetThermalLevel(ThermalLevel level)
 
     THERMAL_WRITE_PARCEL_WITH_RET(data, Int32, static_cast<int32_t>(level), false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalLevelCallback::GET_THERMAL_LEVEL), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalLevelCallbackInterfaceCode::GET_THERMAL_LEVEL), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;

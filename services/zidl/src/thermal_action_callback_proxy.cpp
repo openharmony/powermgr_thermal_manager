@@ -17,6 +17,7 @@
 
 #include "errors.h"
 #include "message_option.h"
+#include "thermal_action_callback_ipc_interface_code.h"
 #include "thermal_common.h"
 #include "thermal_log.h"
 #include <message_parcel.h>
@@ -46,7 +47,9 @@ bool ThermalActionCallbackProxy::OnThermalActionChanged(ActionCallbackMap& actio
         THERMAL_WRITE_PARCEL_WITH_RET(data, Float, iter.second, false);
     }
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalActionCallback::THERMAL_ACTION_CHANGD), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGD),
+        data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;

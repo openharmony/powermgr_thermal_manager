@@ -27,20 +27,6 @@ namespace OHOS {
 namespace PowerMgr {
 class IThermalSrv : public IRemoteBroker {
 public:
-    enum {
-        REG_THERMAL_TEMP_CALLBACK = 0,
-        UNREG_THERMAL_TEMP_CALLBACK,
-        REG_THERMAL_LEVEL_CALLBACK,
-        UNREG_THERMAL_LEVEL_CALLBACK,
-        REG_THERMAL_ACTION_CALLBACK,
-        UNREG_THERMAL_ACTION_CALLBACK,
-        GET_SENSOR_INFO,
-        GET_TEMP_LEVEL,
-        GET_THERMAL_INFO,
-        SET_SCENE,
-        SHELL_DUMP
-    };
-
     virtual bool SubscribeThermalTempCallback(
         const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback) = 0;
     virtual bool UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) = 0;

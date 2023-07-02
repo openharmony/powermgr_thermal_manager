@@ -16,11 +16,14 @@
 #include "thermal_mock_stub_getdescriptor_test.h"
 
 #include "ipc_types.h"
+#include "thermal_action_callback_ipc_interface_code.h"
 #include "thermal_action_callback_stub.h"
+#include "thermal_level_callback_ipc_interface_code.h"
 #include "thermal_level_callback_stub.h"
 #include "thermal_log.h"
 #include "thermal_mgr_errors.h"
 #include "thermal_srv_stub.h"
+#include "thermal_temp_callback_ipc_interface_code.h"
 #include "thermal_temp_callback_stub.h"
 
 using namespace testing::ext;
@@ -117,7 +120,8 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest004, 
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest004 start.");
     sptr<ThermalTempCallbackStub> tempStub = new ThermalTempCallbackStub();
-    uint32_t code = static_cast<uint32_t>(IThermalTempCallback::THERMAL_TEMPERATURE_CHANGD);
+    uint32_t code =
+        static_cast<uint32_t>(PowerMgr::ThermalTempCallbackInterfaceCode::THERMAL_TEMPERATURE_CHANGD);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -157,7 +161,8 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest004, 
 HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest005, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest005 start.");
-    uint32_t code = static_cast<uint32_t>(IThermalActionCallback::THERMAL_ACTION_CHANGD);
+    uint32_t code =
+        static_cast<uint32_t>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGD);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -199,7 +204,8 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest005, 
 HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest006, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest006 start.");
-    uint32_t code = static_cast<uint32_t>(IThermalLevelCallback::GET_THERMAL_LEVEL);
+    uint32_t code =
+        static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::GET_THERMAL_LEVEL);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;

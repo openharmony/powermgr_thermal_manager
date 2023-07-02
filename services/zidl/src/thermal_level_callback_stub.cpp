@@ -19,6 +19,7 @@
 #include "errors.h"
 #include "ipc_object_stub.h"
 #include "thermal_common.h"
+#include "thermal_level_callback_ipc_interface_code.h"
 #include "thermal_log.h"
 #include "thermal_mgr_errors.h"
 #include "xcollie/xcollie.h"
@@ -43,7 +44,7 @@ int ThermalLevelCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data
     int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalLevelCallbackStub", DFX_DELAY_MS, nullptr, nullptr,
         HiviewDFX::XCOLLIE_FLAG_NOOP);
     int ret = ERR_OK;
-    if (code == static_cast<uint32_t>(IThermalLevelCallback::GET_THERMAL_LEVEL)) {
+    if (code == static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::GET_THERMAL_LEVEL)) {
         ret = GetThermalLevelStub(data);
     } else {
         ret = IPCObjectStub::OnRemoteRequest(code, data, reply, option);
