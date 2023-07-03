@@ -27,6 +27,7 @@
 #include "thermal_log.h"
 #include "thermal_mgr_errors.h"
 #include "thermal_service.h"
+#include "thermal_srv_ipc_interface_code.h"
 #include "thermal_srv_proxy.h"
 #include "thermal_srv_stub.h"
 #include "thermal_temp_callback_stub.h"
@@ -84,8 +85,8 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest001, TestSize.Level0)
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest002, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest002 start.");
-    uint32_t begin = static_cast<uint32_t>(IThermalSrv::REG_THERMAL_TEMP_CALLBACK);
-    uint32_t end = static_cast<uint32_t>(IThermalSrv::SHELL_DUMP);
+    uint32_t begin = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_TEMP_CALLBACK);
+    uint32_t end = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::SHELL_DUMP);
     for (uint32_t code = begin; code <= end; ++code) {
         g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
         auto ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
@@ -138,13 +139,13 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest005, TestSize.Level0)
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, RemoteObject, tempStub->AsObject());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, StringVector, typeList);
-    uint32_t code = static_cast<uint32_t>(IThermalSrv::REG_THERMAL_TEMP_CALLBACK);
+    uint32_t code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_TEMP_CALLBACK);
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, RemoteObject, tempStub->AsObject());
-    code = static_cast<uint32_t>(IThermalSrv::UNREG_THERMAL_TEMP_CALLBACK);
+    code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_TEMP_CALLBACK);
     ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest005 end.");
@@ -163,11 +164,11 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest006, TestSize.Level0)
     sptr<ThermalLevelCallbackStub> levelStub = new ThermalLevelCallbackStub();
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, RemoteObject, levelStub->AsObject());
-    uint32_t code = static_cast<uint32_t>(IThermalSrv::REG_THERMAL_LEVEL_CALLBACK);
+    uint32_t code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_LEVEL_CALLBACK);
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
-    code = static_cast<uint32_t>(IThermalSrv::UNREG_THERMAL_LEVEL_CALLBACK);
+    code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_LEVEL_CALLBACK);
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, RemoteObject, levelStub->AsObject());
     ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
@@ -191,11 +192,11 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest007, TestSize.Level0)
     THERMAL_WRITE_PARCEL_NO_RET(g_data, RemoteObject, actionStub->AsObject());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, StringVector, actionList);
     THERMAL_WRITE_PARCEL_NO_RET(g_data, String, "ThermalMockStubTest007");
-    uint32_t code = static_cast<uint32_t>(IThermalSrv::REG_THERMAL_ACTION_CALLBACK);
+    uint32_t code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_ACTION_CALLBACK);
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
-    code = static_cast<uint32_t>(IThermalSrv::UNREG_THERMAL_ACTION_CALLBACK);
+    code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_ACTION_CALLBACK);
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, RemoteObject, actionStub->AsObject());
     ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
@@ -215,7 +216,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest008, TestSize.Level0)
 
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, Uint32, static_cast<uint32_t>(SensorType::BATTERY));
-    uint32_t code = static_cast<uint32_t>(IThermalSrv::GET_SENSOR_INFO);
+    uint32_t code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::GET_SENSOR_INFO);
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
@@ -233,7 +234,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest009, TestSize.Level0)
 
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, String, "test");
-    uint32_t code = static_cast<uint32_t>(IThermalSrv::SET_SCENE);
+    uint32_t code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::SET_SCENE);
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
@@ -252,7 +253,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest010, TestSize.Level0)
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     const int32_t PARAM_MAX_NUM = 100;
     g_data.WriteUint32(PARAM_MAX_NUM);
-    uint32_t code = static_cast<uint32_t>(IThermalSrv::SHELL_DUMP);
+    uint32_t code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::SHELL_DUMP);
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, E_EXCEED_PARAM_LIMIT) << " ret:" << ret;
 

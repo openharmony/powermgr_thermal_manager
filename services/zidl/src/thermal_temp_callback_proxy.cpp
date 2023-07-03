@@ -19,6 +19,7 @@
 #include "message_option.h"
 #include "thermal_common.h"
 #include "thermal_log.h"
+#include "thermal_temp_callback_ipc_interface_code.h"
 #include <message_parcel.h>
 
 namespace OHOS {
@@ -47,7 +48,9 @@ bool ThermalTempCallbackProxy::OnThermalTempChanged(TempCallbackMap& tempCbMap)
     }
 
     int ret =
-        remote->SendRequest(static_cast<int>(IThermalTempCallback::THERMAL_TEMPERATURE_CHANGD), data, reply, option);
+        remote->SendRequest(
+            static_cast<int>(PowerMgr::ThermalTempCallbackInterfaceCode::THERMAL_TEMPERATURE_CHANGD),
+            data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
