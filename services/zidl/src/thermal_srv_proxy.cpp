@@ -19,6 +19,7 @@
 #include "ithermal_temp_callback.h"
 #include "thermal_common.h"
 #include "thermal_log.h"
+#include "thermal_srv_ipc_interface_code.h"
 #include <message_option.h>
 #include <message_parcel.h>
 
@@ -43,7 +44,9 @@ bool ThermalSrvProxy::SubscribeThermalTempCallback(
     THERMAL_WRITE_PARCEL_WITH_RET(data, RemoteObject, callback->AsObject(), false);
     THERMAL_WRITE_PARCEL_WITH_RET(data, StringVector, typeList, false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::REG_THERMAL_TEMP_CALLBACK), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_TEMP_CALLBACK),
+        data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -68,7 +71,9 @@ bool ThermalSrvProxy::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
 
     THERMAL_WRITE_PARCEL_WITH_RET(data, RemoteObject, callback->AsObject(), false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::UNREG_THERMAL_TEMP_CALLBACK), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_TEMP_CALLBACK),
+        data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -93,7 +98,9 @@ bool ThermalSrvProxy::SubscribeThermalLevelCallback(const sptr<IThermalLevelCall
 
     THERMAL_WRITE_PARCEL_WITH_RET(data, RemoteObject, callback->AsObject(), false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::REG_THERMAL_LEVEL_CALLBACK), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_LEVEL_CALLBACK),
+        data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -118,7 +125,9 @@ bool ThermalSrvProxy::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCa
 
     THERMAL_WRITE_PARCEL_WITH_RET(data, RemoteObject, callback->AsObject(), false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::UNREG_THERMAL_LEVEL_CALLBACK), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_LEVEL_CALLBACK),
+        data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -146,7 +155,9 @@ bool ThermalSrvProxy::SubscribeThermalActionCallback(
     THERMAL_WRITE_PARCEL_WITH_RET(data, StringVector, actionList, false);
     THERMAL_WRITE_PARCEL_WITH_RET(data, String, desc, false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::REG_THERMAL_ACTION_CALLBACK), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_ACTION_CALLBACK),
+        data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -171,7 +182,9 @@ bool ThermalSrvProxy::UnSubscribeThermalActionCallback(const sptr<IThermalAction
 
     THERMAL_WRITE_PARCEL_WITH_RET(data, RemoteObject, callback->AsObject(), false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::UNREG_THERMAL_ACTION_CALLBACK), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_ACTION_CALLBACK),
+        data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -197,7 +210,8 @@ bool ThermalSrvProxy::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrv
 
     THERMAL_WRITE_PARCEL_WITH_RET(data, Uint32, static_cast<uint32_t>(type), false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::GET_SENSOR_INFO), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::GET_SENSOR_INFO), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -228,7 +242,8 @@ bool ThermalSrvProxy::GetThermalLevel(ThermalLevel& level)
         return false;
     }
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::GET_TEMP_LEVEL), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::GET_TEMP_LEVEL), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -256,7 +271,8 @@ bool ThermalSrvProxy::GetThermalInfo()
         return result;
     }
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::GET_THERMAL_INFO), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::GET_THERMAL_INFO), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return result;
@@ -286,7 +302,8 @@ bool ThermalSrvProxy::SetScene(const std::string& scene)
 
     THERMAL_WRITE_PARCEL_WITH_RET(data, String, scene, false);
 
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::SET_SCENE), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::SET_SCENE), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
@@ -313,7 +330,8 @@ std::string ThermalSrvProxy::ShellDump(const std::vector<std::string>& args, uin
     for (uint32_t i = 0; i < argc; i++) {
         data.WriteString(args[i]);
     }
-    int ret = remote->SendRequest(static_cast<int>(IThermalSrv::SHELL_DUMP), data, reply, option);
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::SHELL_DUMP), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return result;

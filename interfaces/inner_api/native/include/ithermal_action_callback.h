@@ -25,9 +25,6 @@ namespace PowerMgr {
 class IThermalActionCallback : public IRemoteBroker {
 public:
     using ActionCallbackMap = std::map<std::string, float>;
-    enum {
-        THERMAL_ACTION_CHANGD = 0,
-    };
 
     virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) = 0;
 
