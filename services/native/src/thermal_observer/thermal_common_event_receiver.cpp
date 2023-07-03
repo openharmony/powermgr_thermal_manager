@@ -54,6 +54,7 @@ sptr<CesInfo> ThermalCommonEventReceiver::GetSubscribeInfo() const
         skill.AddEvent(eh.first);
     }
     sptr<CesInfo> info = new CesInfo(skill);
+    info->SetThreadMode(CesInfo::COMMON);
     return info;
 }
 
