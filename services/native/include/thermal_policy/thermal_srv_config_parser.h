@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <libxml/tree.h>
+#include "fan_fault_detect.h"
 #include "thermal_action_manager.h"
 #include "thermal_config_sensor_cluster.h"
 #include "thermal_policy.h"
@@ -55,6 +56,9 @@ private:
         std::vector<std::string>& sensors, const uint32_t sensorIdx);
     bool ParseActionInfo(const xmlNodePtr& cur, ActionItem& ai);
     bool ParsePolicyActionInfo(const xmlNodePtr& cur, PolicyConfig& policyConfig);
+    bool ParseFanNode(const xmlNodePtr& cur);
+    bool ParseFanFaultInfo(const xmlNodePtr& cur,
+        std::vector<std::string> &sensors, FanFaultInfoMap &fanFaultInfoMap);
 };
 } // namespace PowerMgr
 } // namespace OHOS

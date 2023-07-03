@@ -26,6 +26,7 @@
 #include "action_cpu_big.h"
 #include "action_cpu_med.h"
 #include "action_cpu_lit.h"
+#include "action_cpu_isolate.h"
 #include "action_display.h"
 #include "action_gpu.h"
 #include "action_shutdown.h"
@@ -50,6 +51,7 @@ std::shared_ptr<ActionCharger> g_actionCharger = std::make_shared<ActionCharger>
 std::shared_ptr<ActionCpuBig> g_actionCpuBig = std::make_shared<ActionCpuBig>("cpu_big");
 std::shared_ptr<ActionCpuMed> g_actionCpuMed = std::make_shared<ActionCpuMed>("cpu_med");
 std::shared_ptr<ActionCpuLit> g_actionCpuLit = std::make_shared<ActionCpuLit>("cpu_lit");
+std::shared_ptr<ActionCpuIsolate> g_actionCpuIsolate = std::make_shared<ActionCpuIsolate>("isolate");
 std::shared_ptr<ActionDisplay> g_actionDisplay = std::make_shared<ActionDisplay>("lcd");
 std::shared_ptr<ActionGpu> g_actionGpu = std::make_shared<ActionGpu>("gpu");
 std::shared_ptr<ActionPopup> g_actionPopup = std::make_shared<ActionPopup>("popup");
@@ -260,5 +262,18 @@ HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
     g_actionGpu->AddActionValue("1.0");
     g_actionGpu->Execute();
     EXPECT_TRUE(g_actionGpu->valueList_.empty());
+}
+
+/**
+ * @tc.name: ThermalActionTest012
+ * @tc.desc: Action Isolate CPU Test
+ * @tc.type: FUNC
+  */
+HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
+{
+    g_actionCpuIsolate->AddActionValue("");
+    g_actionCpuIsolate->AddActionValue("1.0");
+    g_actionCpuIsolate->Execute();
+    EXPECT_TRUE(g_actionCpuIsolate->valueList_.empty());
 }
 } // namespace

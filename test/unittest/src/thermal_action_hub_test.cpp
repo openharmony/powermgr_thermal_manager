@@ -197,6 +197,22 @@ bool ThermalActionHubTest::ThermalActionTest7Callback::OnThermalActionChanged(Ac
     return true;
 }
 
+bool ThermalActionHubTest::ThermalActionTest8Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest8Callback::OnThermalActionChanged Enter");
+    bool isFind = false;
+    for (auto iter : actionCbMap) {
+        if (iter.first == "isolate") {
+            EXPECT_TRUE(static_cast<bool>(iter.second));
+            isFind = true;
+        }
+        GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
+    }
+    EXPECT_TRUE(isFind);
+    Notify();
+    return true;
+}
+
 namespace {
 /**
  * @tc.name: ThermalActionHubTest001
@@ -417,5 +433,36 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
     Wait();
     thermalMgrClient.UnSubscribeThermalActionCallback(cbBoost);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
+}
+
+/**
+ * @tc.name: ThermalActionHubTest008
+ * @tc.desc: register action is isolate cpu test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionHubTest, ThermalActionHubTest008, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 start");
+    if (!IsMock(BATTERY_PATH) || IsVendor()) {
+        return;
+    }
+    std::vector<std::string> actionList;
+    actionList.push_back("isolate");
+
+    std::string desc = "";
+    InitData();
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    const sptr<IThermalActionCallback> cbIsolateCpu = new ThermalActionTest8Callback();
+
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 start register");
+    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
+
+    int32_t batteryTemp = 43100;
+    SetNodeValue(batteryTemp, BATTERY_PATH);
+
+    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    Wait();
+    thermalMgrClient.UnSubscribeThermalActionCallback(cbIsolateCpu);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 end");
 }
 } // namespace

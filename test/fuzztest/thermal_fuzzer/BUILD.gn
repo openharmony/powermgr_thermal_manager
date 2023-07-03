@@ -25,7 +25,7 @@ deps_ex = [
   "c_utils:utils",
   "hdf_core:libhdi",
   "hdf_core:libpub_utils",
-  "drivers_interface_thermal:libthermal_proxy_1.0",
+  "drivers_interface_thermal:libthermal_proxy_1.1",
 ]
 
 ##############################fuzztest##########################################

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,17 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef THERMAL_HISYSEVENT_H
-#define THERMAL_HISYSEVENT_H
+#include "fan_callback.h"
 
-#include <string>
+#include "hdf_base.h"
 
 namespace OHOS {
 namespace PowerMgr {
-void WriteLevelChangedHiSysEvent(bool enableEvent, int32_t level);
-void WriteActionTriggeredHiSysEvent(bool enableEvent, const std::string& actionName, int32_t value);
-void WriteActionTriggeredHiSysEventWithRatio(bool enableEvent, const std::string& actionName, float value);
-void WriteFanFaultEvent(int32_t faultId, std::string msg);
-} // namespace PowerMgr
-} // namespace OHOS
-#endif // THERMAL_HISYSEVENT_H
+FanCallback::FanEventCallback FanCallback::eventCb_ = nullptr;
+int32_t FanCallback::OnFanDataEvent(const HdfThermalCallbackInfo& event)
+{
+    if (eventCb_ == nullptr) {
+        return HDF_FAILURE;
+    }
+    return eventCb_(event);
+}
+
+int32_t FanCallback::RegisterFanEvent(const FanEventCallback &eventCb)
+{
+    eventCb_ = eventCb;
+    return HDF_SUCCESS;
+}
+} // OHOS
+} // PowerMgr

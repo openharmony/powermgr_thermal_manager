@@ -52,5 +52,21 @@ void WriteActionTriggeredHiSysEventWithRatio(bool enableEvent, const std::string
         WriteEvent("ACTION_TRIGGERED", "ACTION", actionName, "RATIO", value);
     }
 }
+
+template<typename... Types>
+static void WriteFaultEvent(const std::string& eventType, Types... args)
+{
+    int ret = HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::THERMAL, eventType,
+        HiviewDFX::HiSysEvent::EventType::FAULT, args...);
+    if (ret != 0) {
+        THERMAL_HILOGE(COMP_SVC, "Write fault event fail: %{public}s", eventType.c_str());
+    }
+}
+
+void WriteFanFaultEvent(int32_t faultId, std::string msg)
+{
+    WriteFaultEvent("FAN_FAULT", "ID", faultId, "MSG", msg);
+}
+
 } // namespace PowerMgr
 } // namespace OHOS

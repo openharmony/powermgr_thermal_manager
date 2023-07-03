@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,25 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef POWERMGR_THERMAL_MANAGER_THERMAL_CALLBACK_H
-#define POWERMGR_THERMAL_MANAGER_THERMAL_CALLBACK_H
+#ifndef FAN_CALLBACK_H
+#define FAN_CALLBACK_H
 
 #include <functional>
-#include "v1_1/ithermal_callback.h"
+#include "v1_1/ifan_callback.h"
 #include "v1_1/thermal_types.h"
 
 namespace OHOS {
 namespace PowerMgr {
 using namespace OHOS::HDI::Thermal::V1_1;
-class ThermalCallback : public IThermalCallback {
+class FanCallback : public IFanCallback {
 public:
-    virtual ~ThermalCallback() {}
-    using ThermalEventCallback = std::function<int32_t(const HdfThermalCallbackInfo& event)>;
-    static int32_t RegisterThermalEvent(const ThermalEventCallback &eventCb);
-    int32_t OnThermalDataEvent(const HdfThermalCallbackInfo& event) override;
+    virtual ~FanCallback() {}
+    using FanEventCallback = std::function<int32_t(const HdfThermalCallbackInfo& event)>;
+    static int32_t RegisterFanEvent(const FanEventCallback &eventCb);
+    int32_t OnFanDataEvent(const HdfThermalCallbackInfo& event) override;
 private:
-    static ThermalEventCallback eventCb_;
+    static FanEventCallback eventCb_;
 };
 } // OHOS
 } // PowerMgr
-#endif // POWERMGR_THERMAL_MANAGER_THERMAL_CALLBACK_H
+#endif // FAN_CALLBACK_H

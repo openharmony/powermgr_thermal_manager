@@ -19,6 +19,7 @@
 #include "action_charger.h"
 #include "action_cpu_big.h"
 #include "action_cpu_boost.h"
+#include "action_cpu_isolate.h"
 #include "action_cpu_med.h"
 #include "action_cpu_lit.h"
 #include "action_gpu.h"
@@ -57,6 +58,8 @@ void ThermalActionFactory::InitFactory()
     g_actionMap.insert(
         std::make_pair(VOLATAGE_BUCK_ACTION_NAME, std::make_shared<ActionVoltage>(VOLATAGE_BUCK_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(CPU_BOOST_ACTION_NAME, std::make_shared<ActionCpuBoost>(CPU_BOOST_ACTION_NAME)));
+    g_actionMap.insert(std::make_pair(CPU_ISOLATE_ACTION_NAME,
+        std::make_shared<ActionCpuIsolate>(CPU_ISOLATE_ACTION_NAME)));
     std::shared_ptr<ActionApplicationProcess> actionAppProcess =
         std::make_shared<ActionApplicationProcess>(PROCESS_ACTION_NAME);
     actionAppProcess->Init();
