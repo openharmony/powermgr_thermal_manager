@@ -27,3 +27,8 @@ ACTION_TRIGGERED:
   ACTION: {type: STRING, desc: action name}
   VALUE: {type: INT32, desc: action value}
   RATIO: {type: FLOAT, desc: action ration value}
+
+FAN_FAULT:
+  __BASE: {type: FAULT, level: MINOR, tag: PowerStats, desc: fan fault information}
+  ID: {type: INT32, desc: fault id}
+  MSG: {type: STRING, desc: fan speed and temprature of hardwares}

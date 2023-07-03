@@ -52,7 +52,7 @@ deps_ex = [
   "appspawn:appspawn_socket_client",
   "window_manager:libwm",
   "drivers_interface_battery:libbattery_proxy_1.2",
-  "drivers_interface_thermal:libthermal_proxy_1.0",
+  "drivers_interface_thermal:libthermal_proxy_1.1",
   "time_service:time_client",
 ]
 
@@ -496,7 +496,7 @@ ohos_unittest("ThermalClientTest") {
     "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
-    "drivers_interface_thermal:libthermal_proxy_1.0",
+    "drivers_interface_thermal:libthermal_proxy_1.1",
     "hdf_core:libhdi",
     "hdf_core:libpub_utils",
     "hilog:libhilog",

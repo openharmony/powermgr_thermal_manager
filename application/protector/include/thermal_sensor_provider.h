@@ -23,11 +23,11 @@
 
 #include "thermal_zone_manager.h"
 #include "thermal_simulation_node.h"
-#include "v1_0/thermal_types.h"
+#include "v1_1/thermal_types.h"
 
 namespace OHOS {
 namespace PowerMgr {
-using namespace OHOS::HDI::Thermal::V1_0;
+using namespace OHOS::HDI::Thermal::V1_1;
 using SensorsMap = std::map<std::string, int32_t>;
 enum EventType {
     EVENT_UEVENT_FD,

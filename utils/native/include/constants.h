@@ -25,6 +25,7 @@ namespace PowerMgr {
     constexpr const char* CPU_MED_ACTION_NAME = "cpu_med";
     constexpr const char* CPU_LIT_ACTION_NAME = "cpu_lit";
     constexpr const char* CPU_BOOST_ACTION_NAME = "boost";
+    constexpr const char* CPU_ISOLATE_ACTION_NAME = "isolate";
     constexpr const char* GPU_ACTION_NAME = "gpu";
     constexpr const char* LCD_ACTION_NAME = "lcd";
     constexpr const char* VOLUME_ACTION_NAME = "volume";
