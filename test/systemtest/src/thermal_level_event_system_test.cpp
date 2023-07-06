@@ -247,7 +247,7 @@ shared_ptr<CommonEventThermalIdleTrueTest> CommonEventThermalIdleTrueTest::Regis
     int32_t retryTimes = 2;
     bool succeed = false;
     MatchingSkills matchingSkills;
-    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_CHARGE_IDLE);
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_CHARGE_IDLE_MODE_CHANGED);
     CommonEventSubscribeInfo subscribeInfo(matchingSkills);
     auto subscriberPtr = std::make_shared<CommonEventThermalIdleTrueTest>(subscribeInfo);
     for (int32_t tryTimes = 0; tryTimes < retryTimes; tryTimes++) {
@@ -266,7 +266,7 @@ shared_ptr<CommonEventThermalIdleFalseTest> CommonEventThermalIdleFalseTest::Reg
     int32_t retryTimes = 2;
     bool succeed = false;
     MatchingSkills matchingSkills;
-    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_CHARGE_IDLE);
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_CHARGE_IDLE_MODE_CHANGED);
     CommonEventSubscribeInfo subscribeInfo(matchingSkills);
     auto subscriberPtr = std::make_shared<CommonEventThermalIdleFalseTest>(subscribeInfo);
     for (int32_t tryTimes = 0; tryTimes < retryTimes; tryTimes++) {
