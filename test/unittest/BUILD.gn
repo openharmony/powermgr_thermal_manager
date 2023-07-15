@@ -635,9 +635,39 @@ ohos_unittest("ThermalServiceTest") {
   external_deps = deps_ex
 }
 
+# fan fault detect test
+ohos_unittest("FanFaultDetectTest") {
+  module_out_path = module_output_path
+  defines = [ "THERMAL_GTEST" ]
+  sources = [ "src/fan_fault_detect_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+    "${utils_path}:coverage_flags",
+  ]
+
+  deps = [
+    "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "hisysevent:libhisysevent",
+    "hisysevent:libhisyseventmanager",
+  ]
+
+  external_deps += deps_ex
+}
+
 group("unittest") {
   testonly = true
   deps = [
+    ":FanFaultDetectTest",
     ":ThermalActionHubTest",
     ":ThermalActionReportTest",
     ":ThermalActionTest",
