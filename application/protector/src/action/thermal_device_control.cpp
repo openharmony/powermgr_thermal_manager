@@ -32,6 +32,7 @@ bool ThermalDeviceControl::Init()
         return false;
     }
 
+    std::lock_guard<std::mutex> lock(mutex_);
     auto actionList = policy->GetLevelAction();
     if (actionList.empty()) {
         return false;
