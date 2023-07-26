@@ -18,6 +18,7 @@
 
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include "ithermal_action.h"
@@ -38,6 +39,7 @@ private:
     ThermalActionMap thermalActionMap_;
     std::shared_ptr<IThermalAction> thermalAction_;
     std::string preName_;
+    std::mutex mutex_;
 };
 } // namespace PowerMgr
 } // namespace OHOs

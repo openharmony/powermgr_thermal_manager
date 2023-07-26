@@ -70,6 +70,7 @@ void ActionCpuBoost::Execute()
 
 bool ActionCpuBoost::GetActionValue()
 {
+    std::lock_guard<std::mutex> lock(sceneMutex_);
     std::string scene = g_service->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {

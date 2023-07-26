@@ -43,7 +43,7 @@ public:
 private:
     TypeTempMap typeTempMap_;
     ThermalSensorInfo::TypeHistoryMap typeHistoryMap_;
-    uint32_t historyCount_;
+    uint32_t historyCount_ {0};
     time_t startTime_;
     time_t endTime_;
     std::map<std::string, double> sensorsRateMap_;

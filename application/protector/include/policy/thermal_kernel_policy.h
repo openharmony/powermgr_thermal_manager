@@ -68,7 +68,7 @@ private:
     LevelMap levelMap_;
     std::vector<LevelAction> levelAction_;
     std::vector<std::string> executeActionList_;
-    int32_t maxCd_;
+    int32_t maxCd_ {0};
 };
 } // namespace PowerMgr
 } // namespace OHOS
