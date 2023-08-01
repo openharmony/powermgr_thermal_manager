@@ -63,7 +63,7 @@ public:
 private:
     std::function<void(std::shared_ptr<HiSysEventRecord>)> func_;
 };
-}
+} // namespace
 
 void FanFaultDetectTest::SetUpTestCase() {}
 
@@ -118,6 +118,7 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
     EXPECT_TRUE(ret == SUCCESS);
 }
 
+namespace {
 /**
  * @tc.name: FanFaultDetectTest001
  * @tc.desc: test class FanFaultDetectTest function
@@ -261,3 +262,4 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest008, TestSize.Level0)
     EXPECT_TRUE(faultId == FAN_FAULT_OK);
     THERMAL_HILOGD(LABEL_TEST, "FanFaultDetectTest008 end");
 }
+} // namespace
