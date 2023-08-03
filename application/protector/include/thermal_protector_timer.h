@@ -53,7 +53,7 @@ private:
     int32_t timerInterval_ {-1};
     std::map<int32_t, Callback> callbackHandler_;
     std::vector<int32_t> multipleList_;
-    int32_t reportTime_;
+    int32_t reportTime_ {0};
     NotifyTask notify_;
     SensorsMap sensorMap_;
     std::shared_ptr<ThermalSensorProvision> provision_;

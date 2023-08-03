@@ -35,7 +35,7 @@ public:
 private:
     float GetActionValue();
     std::vector<float> valueList_;
-    float lastValue_;
+    float lastValue_ {0};
 };
 } // namespace PowerMgr
 } // namespace OHOS

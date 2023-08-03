@@ -17,6 +17,7 @@
 #define THERMAL_ACTION_FACTORY_H
 
 #include <memory>
+#include <mutex>
 
 #include "ithermal_action.h"
 

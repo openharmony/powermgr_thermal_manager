@@ -73,7 +73,7 @@ private:
     std::string params_;
     static std::set<const sptr<IThermalLevelCallback>, classcomp> thermalLevelListeners_;
     static int32_t level_;
-    uint32_t lastValue_;
+    uint32_t lastValue_ {0};
 };
 } // namespace PowerMgr
 } // namespace OHOS
