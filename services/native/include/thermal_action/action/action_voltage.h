@@ -38,7 +38,7 @@ public:
 private:
     uint32_t GetActionValue();
     std::vector<uint32_t> valueList_;
-    uint32_t lastValue_;
+    uint32_t lastValue_ {0};
     std::string protocol_;
     static std::vector<ChargingLimit> chargeLimitList_;
 };

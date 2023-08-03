@@ -37,9 +37,11 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 std::map<std::string, std::shared_ptr<IThermalAction>> g_actionMap;
+std::mutex g_mutex;
 }
 void ThermalActionFactory::InitFactory()
 {
+    std::lock_guard<std::mutex> lock(g_mutex);
     g_actionMap.clear();
     g_actionMap.insert(std::make_pair(CPU_BIG_ACTION_NAME, std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME)));
     g_actionMap.insert(std::make_pair(CPU_MED_ACTION_NAME, std::make_shared<ActionCpuMed>(CPU_MED_ACTION_NAME)));
@@ -69,6 +71,7 @@ void ThermalActionFactory::InitFactory()
 std::shared_ptr<IThermalAction> ThermalActionFactory::Create(const std::string& actionName)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
+    std::lock_guard<std::mutex> lock(g_mutex);
     for (auto iter = g_actionMap.begin(); iter != g_actionMap.end(); ++iter) {
         if (StringOperation::Compare(actionName, iter->first)) {
             return iter->second;

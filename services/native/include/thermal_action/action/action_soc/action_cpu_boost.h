@@ -16,6 +16,8 @@
 #ifndef ACTION_CPU_BOOST_H
 #define ACTION_CPU_BOOST_H
 
+#include <mutex>
+
 #include "soc_action_base.h"
 
 namespace OHOS {
@@ -36,6 +38,7 @@ private:
     bool isAction_ {false};
     bool actionTag_ {false};
     bool lastTag_ {false};
+    std::mutex sceneMutex_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
