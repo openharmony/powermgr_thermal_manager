@@ -70,7 +70,7 @@ bool ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
     THERMAL_RETURN_IF_WITH_RET(work == nullptr, false);
     work->data = reinterpret_cast<void*>(this);
 
-    int32_t ret = uv_queue_work(
+    int32_t ret = uv_queue_work_with_qos(
         loop, work, [](uv_work_t* work) {},
         [](uv_work_t* work, int status) {
             ThermalLevelCallback* callback = reinterpret_cast<ThermalLevelCallback*>(work->data);
@@ -79,7 +79,8 @@ bool ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
             }
             delete work;
             work = nullptr;
-        });
+        },
+        uv_qos_utility);
     if (ret != ERR_OK) {
         delete work;
         work = nullptr;
