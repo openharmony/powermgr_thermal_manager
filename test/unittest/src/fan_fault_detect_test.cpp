@@ -43,11 +43,7 @@ const int32_t TEMP_LOW = 20000;
 
 class Watcher : public HiSysEventListener {
 public:
-    explicit Watcher(std::function<void(std::shared_ptr<HiSysEventRecord>)> func)
-    {
-        func_ = func;
-    }
-
+    explicit Watcher(std::function<void(std::shared_ptr<HiSysEventRecord>)> func) : func_(func) {}
     virtual ~Watcher() {}
 
     void OnEvent(std::shared_ptr<HiSysEventRecord> sysEvent) final
