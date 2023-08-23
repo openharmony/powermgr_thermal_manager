@@ -84,6 +84,16 @@ bool ChargerStateCollection::RegisterEvent()
         THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_BATTERY_CHANGED");
         return false;
     }
+
+    THERMAL_HILOGI(COMP_SVC, "start register battery change inner event");
+    EventHandle batteryChangedInnerHandler =
+        std::bind(&ChargerStateCollection::HandleChangerInnerStatusCompleted, this, std::placeholders::_1);
+    ret = receiver->Start(BatteryInfo::COMMON_EVENT_BATTERY_CHANGED_INNER, batteryChangedInnerHandler);
+    if (!ret) {
+        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_BATTERY_CHANGED_INNER");
+        return false;
+    }
+
     THERMAL_HILOGI(COMP_SVC, "start register thermal level change event");
     EventHandle thermalLevelHandler =
         std::bind(&ChargerStateCollection::HandleThermalLevelCompleted, this, std::placeholders::_1);
@@ -98,7 +108,6 @@ bool ChargerStateCollection::RegisterEvent()
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData& data)
 {
     g_cachedIdleState.soc = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CAPACITY, -1);
-    g_cachedIdleState.current = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_PLUGGED_NOW_CURRENT, -1);
     g_cachedIdleState.charging = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, -1);
     HandleChargeIdleState();
 
@@ -126,6 +135,12 @@ void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData&
         default:
             break;
     }
+}
+
+void ChargerStateCollection::HandleChangerInnerStatusCompleted(const CommonEventData& data)
+{
+    g_cachedIdleState.current = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_PLUGGED_NOW_CURRENT, -1);
+    HandleChargeIdleState();
 }
 
 void ChargerStateCollection::SetState()

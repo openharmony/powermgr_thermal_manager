@@ -65,6 +65,7 @@ public:
     std::string GetState() override;
     virtual bool DecideState(const std::string& value) override;
     void HandleChangerStatusCompleted(const EventFwk::CommonEventData& data);
+    void HandleChangerInnerStatusCompleted(const EventFwk::CommonEventData& data);
     void HandleThermalLevelCompleted(const EventFwk::CommonEventData& data);
     bool RegisterEvent();
 public:
