@@ -15,14 +15,14 @@
 
 #include "soc_action_base.h"
 
-#ifdef SOC_PERF_ENBALE
+#ifdef SOC_PERF_ENABLE
 #include "socperf_client.h"
 #endif
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-#ifdef SOC_PERF_ENBALE
+#ifdef SOC_PERF_ENABLE
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 constexpr int32_t ACTION_TYPE_CPU_BOOST_CMDID = 10028;
 #endif
@@ -30,7 +30,7 @@ constexpr int32_t ACTION_TYPE_CPU_BOOST_CMDID = 10028;
 
 void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 {
-#ifdef SOC_PERF_ENBALE
+#ifdef SOC_PERF_ENABLE
     std::vector<int32_t> tags;
     std::vector<int64_t> configs;
     tags.push_back(tag);
@@ -41,8 +41,8 @@ void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 
 void SocActionBase::SocPerfRequest(bool onOffTag)
 {
-#ifdef SOC_PERF_ENBALE
-    OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEX(ACTION_TYPE_CPU_BOOST_CMDID, onOffTag, "");
+#ifdef SOC_PERF_ENABLE
+    OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEx(ACTION_TYPE_CPU_BOOST_CMDID, onOffTag, "");
 #endif
 }
 } // namespace PowerMgr
