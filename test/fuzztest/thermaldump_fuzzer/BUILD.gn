@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -17,26 +17,16 @@ import("../../../thermalmgr.gni")
 
 module_output_path = "${thermalmgr_native_part_name}/thermal_native"
 
-deps_ex = [
-  "ipc:ipc_core",
-  "hilog:libhilog",
-  "safwk:system_ability_fwk",
-  "samgr:samgr_proxy",
-  "c_utils:utils",
-  "hdf_core:libhdi",
-  "hdf_core:libpub_utils",
-  "drivers_interface_thermal:libthermal_proxy_1.1",
-]
-
 ##############################fuzztest##########################################
-ohos_fuzztest("ThermalFuzzTest") {
+ohos_fuzztest("ThermalDumpFuzzTest") {
   module_out_path = module_output_path
-  fuzz_config_file = "${thermal_manager_path}/test/fuzztest/thermal_fuzzer"
+  fuzz_config_file = "${thermal_manager_path}/test/fuzztest/thermaldump_fuzzer"
 
   include_dirs = [
     "./",
     "${thermal_inner_api}/native/include",
     "${utils_path}/native/include",
+    "../thermal_utils",
   ]
 
   configs = [ "${utils_path}:coverage_flags" ]
@@ -47,26 +37,26 @@ ohos_fuzztest("ThermalFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "./thermal_fuzzer_test.cpp" ]
+  sources = [
+    "../thermal_utils/thermal_fuzzer_test.cpp",
+    "./thermaldump_fuzzer_test.cpp",
+  ]
   deps = [
-    "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
     "//third_party/libxml2:xml2",
   ]
-  external_deps = deps_ex
-}
 
-###############################################################################
-group("fuzztest") {
-  testonly = true
-  deps = []
-
-  deps += [
-    # deps file
-    ":ThermalFuzzTest",
+  external_deps = [
+    "c_utils:utils",
+    "drivers_interface_thermal:libthermal_proxy_1.1",
+    "hdf_core:libhdi",
+    "hdf_core:libpub_utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 }
-###############################################################################
