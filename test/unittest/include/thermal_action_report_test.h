@@ -27,10 +27,10 @@ namespace PowerMgr {
 class ThermalActionReportTest : public testing::Test, public ThermalTest {
 public:
     static void SetUpTestCase();
+    static void TearDownTestCase();
     void TearDown();
     static void ParserThermalSrvConfigFile();
     static int32_t SetCondition(int32_t value, const std::string& scene);
-    static void SetScene(const std::string& scene);
     static int32_t GetThermalLevel(int32_t expectValue);
     static std::string GetActionValue(const std::string& actionName, uint32_t level);
     static std::string ActionDecision(const std::string& actionName, std::vector<PolicyAction>& vAction);

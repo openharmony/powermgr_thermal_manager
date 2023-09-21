@@ -25,11 +25,9 @@
 #include "action_popup.h"
 #include "fan_callback.h"
 #include "fan_fault_detect.h"
+#include "hdi_service_status_listener.h"
 #include "ithermal_level_callback.h"
 #include "ithermal_temp_callback.h"
-#include "thermal_srv_sensor_info.h"
-#include "thermal_srv_stub.h"
-#include "hdi_service_status_listener.h"
 #include "state_machine.h"
 #include "thermal_action_manager.h"
 #include "thermal_callback.h"
@@ -39,6 +37,9 @@
 #include "thermal_policy.h"
 #include "thermal_sensor_info.h"
 #include "thermal_service_subscriber.h"
+#include "thermal_srv_config_parser.h"
+#include "thermal_srv_sensor_info.h"
+#include "thermal_srv_stub.h"
 #include "v1_1/ithermal_interface.h"
 #include "v1_1/thermal_types.h"
 
@@ -142,6 +143,11 @@ public:
         return fanFaultDetect_;
     }
 
+    ThermalSrvConfigParser& GetConfigParser()
+    {
+        return configParser_;
+    }
+
     std::string GetScene()
     {
         return scene_;
@@ -181,6 +187,7 @@ private:
     std::shared_ptr<StateMachine> state_ {nullptr};
     std::shared_ptr<ThermalActionManager> actionMgr_ {nullptr};
     std::shared_ptr<FanFaultDetect> fanFaultDetect_ {nullptr};
+    ThermalSrvConfigParser configParser_;
     bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};
     sptr<IServiceManager> hdiServiceMgr_ {nullptr};

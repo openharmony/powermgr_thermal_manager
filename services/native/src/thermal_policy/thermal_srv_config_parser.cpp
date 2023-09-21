@@ -30,12 +30,6 @@ const std::string TRUE_STR = "1";
 
 ThermalSrvConfigParser::ThermalSrvConfigParser() {};
 
-ThermalSrvConfigParser& ThermalSrvConfigParser::GetInstance()
-{
-    static ThermalSrvConfigParser instance;
-    return instance;
-}
-
 bool ThermalSrvConfigParser::ThermalSrvConfigInit(const std::string& path)
 {
     if (ParseXmlFile(path)) {

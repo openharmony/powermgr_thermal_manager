@@ -19,13 +19,25 @@
 #include "thermal_log.h"
 #include "thermal_mgr_client.h"
 
+#define private   public
+#define protected public
+#include "thermal_service.h"
+#include "thermal_srv_config_parser.h"
+#include "v1_1/ithermal_interface.h"
+#include "v1_1/thermal_types.h"
+#undef private
+#undef protected
+
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
+using namespace OHOS::HDI::Thermal::V1_1;
 
 namespace {
 static ThermalLevel g_thermalLevel = ThermalLevel::COOL;
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+sptr<ThermalService> g_service = nullptr;
 }
 
 void ThermalListenerTest::ThermalLevelTestEvent::OnThermalLevelResult(const ThermalLevel& level)
@@ -34,12 +46,22 @@ void ThermalListenerTest::ThermalLevelTestEvent::OnThermalLevelResult(const Ther
     g_thermalLevel = level;
 }
 
+void ThermalListenerTest::SetUpTestCase()
+{
+    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->OnStart();
+    g_service->InitStateMachine();
+    g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+}
+
+void ThermalListenerTest::TearDownTestCase()
+{
+    g_service->OnStop();
+}
+
 void ThermalListenerTest::TearDown()
 {
-    InitNode();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("");
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_service->SetScene("");
     g_thermalLevel = ThermalLevel::COOL;
 }
 
@@ -53,27 +75,32 @@ namespace {
 HWTEST_F(ThermalListenerTest, ThermalListenerTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalListenerTest001 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::shared_ptr<ThermalMgrListener> thermalListener = std::make_shared<ThermalMgrListener>();
     ASSERT_NE(thermalListener, nullptr);
     const std::shared_ptr<ThermalMgrListener::ThermalLevelEvent> thermalEvent =
         std::make_shared<ThermalListenerTest::ThermalLevelTestEvent>();
     ASSERT_NE(thermalEvent, nullptr);
-
     int32_t ret = thermalListener->SubscribeLevelEvent(thermalEvent);
-    EXPECT_EQ(true, ret == ERR_OK);
+    EXPECT_EQ(ret, ERR_OK);
 
-    g_thermalLevel = ThermalLevel::COOL;
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    sptr<IThermalLevelCallback> callback = new ThermalMgrListener::ThermalLevelCallback(thermalListener);
+    g_service->SubscribeThermalLevelCallback(callback);
+
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     EXPECT_TRUE(g_thermalLevel == ThermalLevel::HOT);
-    thermalListener->UnSubscribeLevelEvent();
 
-    ThermalLevel levelListener = thermalListener->GetThermalLevel();
-    ThermalLevel levelClient = ThermalMgrClient::GetInstance().GetThermalLevel();
-    EXPECT_EQ(levelListener, levelClient);
+    thermalListener->UnSubscribeLevelEvent();
+    g_service->UnSubscribeThermalLevelCallback(callback);
+
+    thermalListener->GetThermalLevel();
+    ThermalLevel level;
+    g_service->GetThermalLevel(level);
+    EXPECT_EQ(g_thermalLevel, level);
     THERMAL_HILOGD(LABEL_TEST, "ThermalListenerTest001 end");
 }
 

@@ -15,6 +15,10 @@
 
 #include "fan_fault_detect_test.h"
 
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+
 #include "hisysevent.h"
 #include "hisysevent_listener.h"
 #include "hisysevent_manager.h"
@@ -40,6 +44,10 @@ const int32_t FAN_SLOW_SPEED = 400;
 const int32_t FAN_FAST_SPEED = 1600;
 const int32_t TEMP_HIGH = 60000;
 const int32_t TEMP_LOW = 20000;
+const int64_t TIME_OUT = 2;
+std::mutex g_mutex;
+std::condition_variable g_callbackCV;
+std::atomic_bool g_eventTriggered = false;
 
 class Watcher : public HiSysEventListener {
 public:
@@ -99,6 +107,8 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
             return;
         }
         sysEvent->GetParamValue(TAG, faultId);
+        g_eventTriggered = true;
+        g_callbackCV.notify_one();
     });
 
     OHOS::HiviewDFX::ListenerRule listenerRule(DOMAIN, EVENT, OHOS::HiviewDFX::RuleType::WHOLE_WORD);
@@ -108,7 +118,11 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
     EXPECT_TRUE(ret == SUCCESS);
 
     fanFaultDetect->OnFanSensorInfoChanged(report);
-    sleep(1);
+    std::unique_lock<std::mutex> lock(g_mutex);
+    g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] {
+        return g_eventTriggered.load();
+    });
+    g_eventTriggered = false;
 
     ret = OHOS::HiviewDFX::HiSysEventManager::RemoveListener(watcher);
     EXPECT_TRUE(ret == SUCCESS);
