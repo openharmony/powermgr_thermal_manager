@@ -26,16 +26,14 @@
 #include <thread>
 #include <unistd.h>
 
+#include "config_policy_utils.h"
 #include "constants.h"
+#include "ffrt_utils.h"
 #include "permission.h"
 #include "sysparam.h"
 #include "thermal_common.h"
 #include "thermal_mgr_dumper.h"
-#include "thermal_srv_config_parser.h"
-#include "ffrt_utils.h"
 #include "xcollie/watchdog.h"
-
-#include "config_policy_utils.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -159,7 +157,7 @@ bool ThermalService::InitConfigFile()
     char buf[MAX_PATH_LEN];
     char* path = GetOneCfgFile(THERMAL_SERVICE_CONFIG_PATH.c_str(), buf, MAX_PATH_LEN);
     if (path != nullptr && *path != '\0') {
-        if (ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(path)) {
+        if (configParser_.ThermalSrvConfigInit(path)) {
             THERMAL_HILOGD(COMP_SVC, "match pliocy config file");
             return true;
         }
@@ -167,12 +165,12 @@ bool ThermalService::InitConfigFile()
         return false;
     }
 
-    if (ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(VENDOR_THERMAL_SERVICE_CONFIG_PATH)) {
+    if (configParser_.ThermalSrvConfigInit(VENDOR_THERMAL_SERVICE_CONFIG_PATH)) {
         THERMAL_HILOGD(COMP_SVC, "thermal service config init suc:VENDOR_CONFIG");
         return true;
     }
 
-    if (ThermalSrvConfigParser::GetInstance().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH)) {
+    if (configParser_.ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH)) {
         THERMAL_HILOGD(COMP_SVC, "thermal service config init suc:SYSTEM_CONFIG");
         return true;
     }

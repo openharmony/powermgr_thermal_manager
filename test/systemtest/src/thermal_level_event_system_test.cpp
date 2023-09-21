@@ -23,11 +23,20 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "mock_thermal_mgr_client.h"
+#include "battery_info.h"
 #include "thermal_level_info.h"
 #include "thermal_log.h"
 #include "thermal_mgr_client.h"
 #include "thermal_mgr_listener.h"
+
+#define private   public
+#define protected public
+#include "thermal_service.h"
+#include "thermal_srv_config_parser.h"
+#include "v1_1/ithermal_interface.h"
+#include "v1_1/thermal_types.h"
+#undef private
+#undef protected
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -35,15 +44,18 @@ using namespace OHOS;
 using namespace std;
 using namespace OHOS::AAFwk;
 using namespace OHOS::EventFwk;
+using namespace OHOS::HDI::Thermal::V1_1;
 
 namespace {
 std::condition_variable g_callbackCV;
 std::mutex g_mutex;
 constexpr int64_t TIME_OUT = 1;
 bool g_callbackTriggered = false;
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+sptr<ThermalService> g_service = nullptr;
 } // namespace
 
-void Notify()
+static void Notify()
 {
     std::unique_lock<std::mutex> lock(g_mutex);
     g_callbackTriggered = true;
@@ -51,12 +63,34 @@ void Notify()
     g_callbackCV.notify_one();
 }
 
-void Wait()
+static void Wait()
 {
     std::unique_lock<std::mutex> lock(g_mutex);
     g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] { return g_callbackTriggered; });
     EXPECT_TRUE(g_callbackTriggered);
     g_callbackTriggered = false;
+}
+
+static bool PublishChangedEvent(int32_t capacity, int32_t chargerCurrent)
+{
+    Want want;
+    want.SetParam(BatteryInfo::COMMON_EVENT_KEY_CAPACITY, capacity);
+    want.SetParam(
+        BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_ENABLE));
+    want.SetAction(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED);
+    CommonEventData data;
+    data.SetWant(want);
+    CommonEventPublishInfo publishInfo;
+    publishInfo.SetOrdered(false);
+    bool isSuccess = CommonEventManager::PublishCommonEvent(data, publishInfo);
+
+    Want wantInner;
+    wantInner.SetParam(BatteryInfo::COMMON_EVENT_KEY_PLUGGED_NOW_CURRENT, chargerCurrent);
+    wantInner.SetAction(BatteryInfo::COMMON_EVENT_BATTERY_CHANGED_INNER);
+    data.SetWant(wantInner);
+    bool isSuccessInner = CommonEventManager::PublishCommonEvent(data, publishInfo);
+
+    return isSuccess && isSuccessInner;
 }
 
 class CommonEventThermalLevel1Test : public CommonEventSubscriber {
@@ -279,14 +313,31 @@ shared_ptr<CommonEventThermalIdleFalseTest> CommonEventThermalIdleFalseTest::Reg
     return subscriberPtr;
 }
 
+void ThermalLevelEventSystemTest::SetUpTestCase()
+{
+    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->OnStart();
+    g_service->InitStateMachine();
+    g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+}
+
+void ThermalLevelEventSystemTest::TearDownTestCase()
+{
+    g_service->OnStop();
+}
+
 void ThermalLevelEventSystemTest::TearDown()
 {
-    InitNode();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("");
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_service->SetScene("");
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 0;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     g_callbackTriggered = false;
 }
+
 
 namespace {
 /*
@@ -297,14 +348,13 @@ namespace {
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest001: Start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     shared_ptr<CommonEventThermalLevel1Test> subscriber = CommonEventThermalLevel1Test::RegisterEvent();
-    int32_t batteryTemp = 40600;
-    int32_t ret = SetNodeValue(batteryTemp, BATTERY_PATH);
-    EXPECT_EQ(true, ret == ERR_OK);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40600;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest001: End");
@@ -318,14 +368,13 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest001, TestSize.
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest002, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest002: Start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     shared_ptr<CommonEventThermalLevel2Test> subscriber = CommonEventThermalLevel2Test::RegisterEvent();
-    int32_t batteryTemp = 43600;
-    int32_t ret = SetNodeValue(batteryTemp, BATTERY_PATH);
-    EXPECT_EQ(true, ret == ERR_OK);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43600;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest002: End");
@@ -339,14 +388,13 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest002, TestSize.
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest003, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest003: Start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     shared_ptr<CommonEventThermalLevel3Test> subscriber = CommonEventThermalLevel3Test::RegisterEvent();
-    int32_t batteryTemp = 46600;
-    int32_t ret = SetNodeValue(batteryTemp, BATTERY_PATH);
-    EXPECT_EQ(true, ret == ERR_OK);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46600;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest003: End");
@@ -360,22 +408,17 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest003, TestSize.
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest004: Start");
-    if (!IsMock(BATTERY_CAPACITY_PATH) || !IsMock(CHARGER_CURRENT_PATH) || IsVendor()) {
-        return;
-    }
-    shared_ptr<CommonEventThermalIdleTrueTest> subscriber = CommonEventThermalIdleTrueTest::RegisterEvent();
     int32_t batteryCapacity = 90;
-    int32_t ret = SetNodeValue(batteryCapacity, BATTERY_CAPACITY_PATH);
-    EXPECT_EQ(true, ret == ERR_OK);
-    
     int32_t chargerCurrent = 1100;
-    ret = SetNodeValue(chargerCurrent, CHARGER_CURRENT_PATH);
-    EXPECT_EQ(true, ret == ERR_OK);
-
-    system("hidumper -s 3302 -a -r");
-
+    int32_t invalid = 0;
+    system("hidumper -s 3302 -a -u");
+    EXPECT_TRUE(PublishChangedEvent(batteryCapacity, invalid));
+    sleep(TIME_OUT);
+    shared_ptr<CommonEventThermalIdleTrueTest> subscriber = CommonEventThermalIdleTrueTest::RegisterEvent();
+    EXPECT_TRUE(PublishChangedEvent(batteryCapacity, chargerCurrent));
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
+    system("hidumper -s 3302 -a -r");
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest004: End");
 }
 
@@ -387,23 +430,18 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest005, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest005: Start");
-    if (!IsMock(BATTERY_CAPACITY_PATH) || !IsMock(CHARGER_CURRENT_PATH) || IsVendor()) {
-        return;
-    }
-    shared_ptr<CommonEventThermalIdleFalseTest> subscriber = CommonEventThermalIdleFalseTest::RegisterEvent();
-
+    int32_t lastBatteryCapacity = 90;
+    int32_t lastChargerCurrent = 1100;
     int32_t batteryCapacity = 70;
-    int32_t ret = SetNodeValue(batteryCapacity, BATTERY_CAPACITY_PATH);
-    EXPECT_EQ(true, ret == ERR_OK);
-
     int32_t chargerCurrent = 900;
-    ret = SetNodeValue(chargerCurrent, CHARGER_CURRENT_PATH);
-    EXPECT_EQ(true, ret == ERR_OK);
-
     system("hidumper -s 3302 -a -u");
-
+    EXPECT_TRUE(PublishChangedEvent(lastBatteryCapacity, lastChargerCurrent));
+    sleep(TIME_OUT);
+    shared_ptr<CommonEventThermalIdleFalseTest> subscriber = CommonEventThermalIdleFalseTest::RegisterEvent();
+    EXPECT_TRUE(PublishChangedEvent(batteryCapacity, chargerCurrent));
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
+    system("hidumper -s 3302 -a -r");
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest005: End");
 }
 } // namespace

@@ -30,19 +30,26 @@
 #include "mock_socperf_action.h"
 #include "power_mgr_client.h"
 #include "thermal_service.h"
+#include "v1_1/ithermal_interface.h"
+#include "v1_1/thermal_types.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
+using namespace OHOS::HDI::Thermal::V1_1;
 
+namespace {
 static sptr<ThermalService> g_thermalSvc = nullptr;
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+}
 
 void ThermalMockActionTest::SetUpTestCase()
 {
     g_thermalSvc = DelayedSpSingleton<ThermalService>::GetInstance();
     g_thermalSvc->OnStart();
     g_thermalSvc->InitStateMachine();
+    g_thermalSvc->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
 }
 
 void ThermalMockActionTest::TearDownTestCase()
@@ -73,30 +80,32 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|L
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest001 start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     ThermalLevel level = ThermalLevel::COOL;
-    int32_t temp = 40100;
     int32_t expectLevel = 1;
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(1, MockSocPerfAction::GetBoostRequestCounter());
+    event.info.clear();
 
-    temp = 46100;
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     expectLevel = 3;
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(2, MockSocPerfAction::GetBoostRequestCounter());
+    event.info.clear();
 
-    temp = 43100;
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     expectLevel = 2;
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(3, MockSocPerfAction::GetBoostRequestCounter());
@@ -115,14 +124,14 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest002, Function|MediumTest|L
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest002 start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    int32_t temp = 46100;
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 3;
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(0, MockSocPerfAction::GetBoostRequestCounter());
@@ -141,14 +150,14 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest003, Function|MediumTest|L
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest003: start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    int32_t temp = 40100;
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 1;
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(1992000, MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID));
@@ -175,14 +184,14 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest004, Function|MediumTest|L
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest004: start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    int32_t temp = 43100;
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 2;
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(1991000, MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID));
@@ -209,14 +218,14 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest005, Function|MediumTest|L
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest005: start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    int32_t temp = 46100;
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 3;
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(1990000, MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID));
@@ -243,15 +252,15 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|L
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest006: start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    int32_t temp = 40100;
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_thermalSvc->SetScene("cam");
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 1;
-    g_thermalSvc->SetScene("cam");
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
@@ -276,15 +285,15 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest007, Function|MediumTest|L
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest007: start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    int32_t temp = 43100;
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_thermalSvc->SetScene("cam");
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 2;
-    g_thermalSvc->SetScene("cam");
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
@@ -309,15 +318,15 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest008, Function|MediumTest|L
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest008: start");
     ASSERT_NE(g_thermalSvc, nullptr);
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    int32_t temp = 46100;
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_thermalSvc->SetScene("cam");
+    g_thermalSvc->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 3;
-    g_thermalSvc->SetScene("cam");
-    SetNodeValue(temp, BATTERY_PATH);
-    g_thermalSvc->GetThermalInfo();
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
