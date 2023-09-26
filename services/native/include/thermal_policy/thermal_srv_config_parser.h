@@ -29,7 +29,6 @@ namespace PowerMgr {
 class ThermalSrvConfigParser {
 public:
     ThermalSrvConfigParser();
-    static ThermalSrvConfigParser& GetInstance();
     ~ThermalSrvConfigParser() = default;
     ThermalSrvConfigParser(const ThermalSrvConfigParser&) = delete;
     ThermalSrvConfigParser& operator=(const ThermalSrvConfigParser&) = delete;

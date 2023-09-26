@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 #include "thermal_action_report_test.h"
 
 #include "securec.h"
@@ -23,15 +22,24 @@
 
 #include "battery_srv_client.h"
 #include "battery_stats_client.h"
-#include "mock_thermal_mgr_client.h"
 #include "power_mgr_client.h"
 #include "thermal_config_file_parser.h"
 #include "thermal_mgr_client.h"
+
+#define private   public
+#define protected public
+#include "thermal_service.h"
+#include "thermal_srv_config_parser.h"
+#include "v1_1/ithermal_interface.h"
+#include "v1_1/thermal_types.h"
+#undef private
+#undef protected
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
+using namespace OHOS::HDI::Thermal::V1_1;
 
 namespace {
 static std::shared_ptr<ThermalConfigFileParser> g_configParser = nullptr;
@@ -40,7 +48,9 @@ static std::string g_sceneState;
 static const std::string POLICY_CFG_NAME = "base_safe";
 constexpr int32_t THERMAL_RATIO_BEGIN = 0;
 constexpr int32_t THERMAL_RATIO_LENGTH = 4;
-}
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+sptr<ThermalService> g_service = nullptr;
+} // namespace
 
 void ThermalActionReportTest::ParserThermalSrvConfigFile()
 {
@@ -52,27 +62,26 @@ void ThermalActionReportTest::ParserThermalSrvConfigFile()
     }
 }
 
-void ThermalActionReportTest::SetScene(const std::string& scene)
-{
-    g_sceneState = scene;
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene(g_sceneState);
-}
-
 int32_t ThermalActionReportTest::SetCondition(int32_t value, const std::string& scene)
 {
     THERMAL_HILOGD(LABEL_TEST, "battery = %{public}d, scene = %{public}s", value, scene.c_str());
-    int32_t ret = SetNodeValue(value, BATTERY_PATH);
-    SetScene(scene);
-    return ret;
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = value;
+    event.info.push_back(info1);
+    g_sceneState = scene;
+    g_service->SetScene(g_sceneState);
+    return g_service->HandleThermalCallbackEvent(event);
 }
 
 int32_t ThermalActionReportTest::GetThermalLevel(int32_t expectValue)
 {
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t value = static_cast<int32_t>(thermalMgrClient.GetThermalLevel());
+    ThermalLevel level;
+    g_service->GetThermalLevel(level);
+    int32_t value = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
-    EXPECT_EQ(true, value == expectValue) << "Thermal action policy failed";
+    EXPECT_EQ(value, expectValue) << "Thermal action policy failed";
     return value;
 }
 
@@ -98,8 +107,8 @@ std::string ThermalActionReportTest::ActionDecision(const std::string& actionNam
     }
 }
 
-std::string ThermalActionReportTest::ActionValueDecision(const std::string& actionName,
-    std::vector<PolicyAction>& vAction)
+std::string ThermalActionReportTest::ActionValueDecision(
+    const std::string& actionName, std::vector<PolicyAction>& vAction)
 {
     THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s", actionName.c_str());
     int32_t value = -1;
@@ -130,8 +139,7 @@ std::string ThermalActionReportTest::ActionValueDecision(const std::string& acti
     return strValue;
 }
 
-std::string ThermalActionReportTest::LcdValueDecision(const std::string& actionName,
-    std::vector<PolicyAction>& vAction)
+std::string ThermalActionReportTest::LcdValueDecision(const std::string& actionName, std::vector<PolicyAction>& vAction)
 {
     THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s", actionName.c_str());
     float value = -1.0;
@@ -177,10 +185,9 @@ bool ThermalActionReportTest::StateDecision(std::map<std::string, std::string>& 
     GetStateMap(stateMap);
     for (auto prop : actionPropMap) {
         auto stateIter = stateMap.find(prop.first);
-        THERMAL_HILOGD(LABEL_TEST, "state = %{public}s, value = %{public}s",
-            prop.first.c_str(), prop.second.c_str());
-        THERMAL_HILOGD(LABEL_TEST, "state iter = %{public}s, iter value = %{public}s",
-            stateIter->first.c_str(), stateIter->second.c_str());
+        THERMAL_HILOGD(LABEL_TEST, "state = %{public}s, value = %{public}s", prop.first.c_str(), prop.second.c_str());
+        THERMAL_HILOGD(LABEL_TEST, "state iter = %{public}s, iter value = %{public}s", stateIter->first.c_str(),
+            stateIter->second.c_str());
         if (stateIter != stateMap.end()) {
             if (stateIter->second.compare(prop.second) == 0) {
                 continue;
@@ -231,18 +238,18 @@ void ThermalActionReportTest::GetStateMap(std::map<std::string, std::string>& st
         stateMap.emplace(std::pair(stateIter.name, state));
     }
     for (auto iter : stateMap) {
-        THERMAL_HILOGD(LABEL_TEST, "stateMap name = %{public}s, value = %{public}s",
-            iter.first.c_str(), iter.second.c_str());
+        THERMAL_HILOGD(
+            LABEL_TEST, "stateMap name = %{public}s, value = %{public}s", iter.first.c_str(), iter.second.c_str());
     }
 }
 
-void ThermalActionReportTest::ThermalActionTriggered(const std::string& actionName, int32_t level,
-    const std::string& dumpInfo, bool isReversed)
+void ThermalActionReportTest::ThermalActionTriggered(
+    const std::string& actionName, int32_t level, const std::string& dumpInfo, bool isReversed)
 {
     bool enableEvent = g_configParser->GetActionEnableEvent(actionName);
     THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s, event flag = %{public}d", actionName.c_str(), enableEvent);
     if (!enableEvent) {
-        GTEST_LOG_(INFO) << __func__ << " action name: " << actionName <<" enalbe event flag is false, return";
+        GTEST_LOG_(INFO) << __func__ << " action name: " << actionName << " enalbe event flag is false, return";
         return;
     }
     std::string value = GetActionValue(actionName, level);
@@ -252,20 +259,20 @@ void ThermalActionReportTest::ThermalActionTriggered(const std::string& actionNa
         valueLabel = " Ratio = ";
     }
     expectedDumpInfo.append("Additional debug info: ")
-    .append("Event name = ACTION_TRIGGERED")
-    .append(" Action name = ")
-    .append(actionName)
-    .append(valueLabel)
-    .append(value);
+        .append("Event name = ACTION_TRIGGERED")
+        .append(" Action name = ")
+        .append(actionName)
+        .append(valueLabel)
+        .append(value);
     THERMAL_HILOGD(LABEL_TEST, "value: %{public}s", value.c_str());
-    GTEST_LOG_(INFO) << __func__ << " action name: " << actionName <<" expected debug info: " << expectedDumpInfo;
+    GTEST_LOG_(INFO) << __func__ << " action name: " << actionName << " expected debug info: " << expectedDumpInfo;
     auto index = dumpInfo.find(expectedDumpInfo);
     if (!isReversed) {
         EXPECT_TRUE(index != string::npos) << " Thermal action fail due to not found related debug info."
-            << " action name = " << actionName;
+                                           << " action name = " << actionName;
     } else {
         EXPECT_TRUE(index == string::npos) << " Thermal action fail due to not found related debug info."
-            << " action name = " << actionName;
+                                           << " action name = " << actionName;
     }
 }
 
@@ -273,14 +280,26 @@ void ThermalActionReportTest::SetUpTestCase()
 {
     ParserThermalSrvConfigFile();
     g_dumpArgs.push_back("-batterystats");
+    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->OnStart();
+    g_service->InitStateMachine();
+    g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+}
+
+void ThermalActionReportTest::TearDownTestCase()
+{
+    g_service->OnStop();
 }
 
 void ThermalActionReportTest::TearDown()
 {
-    InitNode();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("");
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_service->SetScene("");
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 0;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
 }
 
 namespace {
@@ -291,12 +310,9 @@ namespace {
  * @tc.cond: Set battery temp = 40100, scence = cam
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.001 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -305,9 +321,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
     std::string sceneState = "cam";
     int32_t expectLevel = 1;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
-
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -333,12 +347,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
  * @tc.cond: Set battery temp = 40100, scence = call
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.002 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -347,9 +358,7 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
     std::string sceneState = "call";
     int32_t expectLevel = 1;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
-
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -375,12 +384,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
  * @tc.cond: Set battery temp = 40100, scence = game
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.003 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -389,9 +395,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
     std::string sceneState = "game";
     int32_t expectLevel = 1;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -417,12 +422,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
  * @tc.cond: Set battery temp = 40100, scence = ""
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.004 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -431,9 +433,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
     std::string sceneState = "";
     int32_t expectLevel = 1;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -459,12 +460,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
  * @tc.cond: Set battery temp = 43100, scence = cam
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.005 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -473,9 +471,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
     std::string sceneState = "cam";
     int32_t expectLevel = 2;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -501,12 +498,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
  * @tc.cond: Set battery temp = 43100, scence = call
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.006 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -515,9 +509,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
     std::string sceneState = "call";
     int32_t expectLevel = 2;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -543,12 +536,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
  * @tc.cond: Set battery temp = 43100, scence = game
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.007 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -557,9 +547,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
     std::string sceneState = "game";
     int32_t expectLevel = 2;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -585,12 +574,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
  * @tc.cond: Set battery temp = 43100, scence = ""
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.008 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -599,9 +585,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
     std::string sceneState = "";
     int32_t expectLevel = 2;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -627,12 +612,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
  * @tc.cond: Set battery temp = 46100, scence = cam
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.009 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -641,9 +623,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
     std::string sceneState = "cam";
     int32_t expectLevel = 3;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -670,12 +651,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
  * @tc.cond: Set battery temp = 46100, scence = call
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.010 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -684,9 +662,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
     std::string sceneState = "call";
     int32_t expectLevel = 3;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -713,12 +690,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
  * @tc.cond: Set battery temp = 46100, scence = game
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.011 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -727,9 +701,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
     std::string sceneState = "game";
     int32_t expectLevel = 3;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -756,12 +729,9 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
  * @tc.cond: Set battery temp = 46100, scence = ""
  * @tc.result battery stats dump info
  */
-HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
+HWTEST_F(ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.012 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -770,9 +740,8 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
     std::string sceneState = "";
     int32_t expectLevel = 3;
     ret = SetCondition(batteryTemp, sceneState);
-    EXPECT_EQ(true, ret == ERR_OK) << " Thermal action fail due to set condition error";
+    EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
@@ -791,4 +760,4 @@ HWTEST_F (ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.012 end");
 }
-}
+} // namespace

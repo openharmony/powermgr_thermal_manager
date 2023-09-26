@@ -27,6 +27,8 @@ namespace OHOS {
 namespace PowerMgr {
 class ThermalActionHubTest : public testing::Test, public ThermalTest {
 public:
+    static void SetUpTestCase();
+    static void TearDownTestCase();
     void TearDown();
     void InitData();
 

@@ -25,6 +25,8 @@ namespace OHOS {
 namespace PowerMgr {
 class ThermalListenerTest : public testing::Test, public ThermalTest {
 public:
+    static void SetUpTestCase();
+    static void TearDownTestCase();
     void TearDown();
 
     class ThermalLevelTestEvent : public ThermalMgrListener::ThermalLevelEvent {
