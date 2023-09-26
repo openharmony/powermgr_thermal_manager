@@ -115,6 +115,7 @@ ohos_unittest("ThermalLevelEventTest") {
 
   sources = [
     "${thermal_manager_path}/test/common/src/thermal_test.cpp",
+    "src/thermal_config_file_parser.cpp",
     "src/thermal_level_event_test.cpp",
   ]
 
@@ -129,6 +130,7 @@ ohos_unittest("ThermalLevelEventTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//third_party/googletest:gtest_main",
+    "//third_party/libxml2:libxml2",
   ]
 
   external_deps = deps_ex

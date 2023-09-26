@@ -23,10 +23,20 @@
 #include "thermal_log.h"
 #include "thermal_mgr_client.h"
 
+#define private   public
+#define protected public
+#include "thermal_service.h"
+#include "thermal_srv_config_parser.h"
+#include "v1_1/ithermal_interface.h"
+#include "v1_1/thermal_types.h"
+#undef private
+#undef protected
+
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
+using namespace OHOS::HDI::Thermal::V1_1;
 
 namespace {
 std::vector<std::string> g_typeList;
@@ -34,6 +44,9 @@ std::condition_variable g_callbackCV;
 std::mutex g_mutex;
 constexpr int64_t TIME_OUT = 1;
 bool g_callbackTriggered = false;
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+sptr<ThermalService> g_service = nullptr;
+auto& g_thermalMgrClient = ThermalMgrClient::GetInstance();
 
 void Notify()
 {
@@ -46,7 +59,9 @@ void Notify()
 void Wait()
 {
     std::unique_lock<std::mutex> lock(g_mutex);
-    g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] { return g_callbackTriggered; });
+    g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] {
+        return g_callbackTriggered;
+    });
     EXPECT_TRUE(g_callbackTriggered);
     g_callbackTriggered = false;
 }
@@ -54,11 +69,20 @@ void Wait()
 
 void ThermalActionHubTest::TearDown()
 {
-    InitNode();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("");
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     g_callbackTriggered = false;
+}
+
+void ThermalActionHubTest::SetUpTestCase()
+{
+    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->OnStart();
+    g_service->InitStateMachine();
+    g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+}
+
+void ThermalActionHubTest::TearDownTestCase()
+{
+    g_service->OnStop();
 }
 
 void ThermalActionHubTest::InitData()
@@ -222,25 +246,23 @@ namespace {
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::vector<std::string> actionList;
     actionList.push_back("cpu_big");
     std::string desc = "";
     InitData();
-
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb1 = new ThermalActionTest1Callback();
-
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
-    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb1);
-
-    int32_t batteryTemp = 40100;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb1);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb1);
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
-    thermalMgrClient.UnSubscribeThermalActionCallback(cb1);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb1);
+    g_service->UnSubscribeThermalActionCallback(cb1);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
 }
 
@@ -252,26 +274,23 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
-
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb2 = new ThermalActionTest2Callback();
-
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start register");
-    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb2);
-
-    int32_t batteryTemp = 43100;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb2);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb2);
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
-    thermalMgrClient.UnSubscribeThermalActionCallback(cb2);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb2);
+    g_service->UnSubscribeThermalActionCallback(cb2);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 end");
 }
 
@@ -283,27 +302,24 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::vector<std::string> actionList;
     actionList.push_back("cpu_med");
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
-
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb3 = new ThermalActionTest3Callback();
-
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start register");
-    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb3);
-
-    int32_t batteryTemp = 46100;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb3);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb3);
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
-    thermalMgrClient.UnSubscribeThermalActionCallback(cb3);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb3);
+    g_service->UnSubscribeThermalActionCallback(cb3);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 end");
 }
 
@@ -315,27 +331,25 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
-
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb4 = new ThermalActionTest4Callback();
-
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start register");
-    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb4);
-
-    thermalMgrClient.SetScene("cam");
-    int32_t batteryTemp = 40100;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb4);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb4);
+    g_thermalMgrClient.SetScene("cam");
+    g_service->SetScene("cam");
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
-    thermalMgrClient.UnSubscribeThermalActionCallback(cb4);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb4);
+    g_service->UnSubscribeThermalActionCallback(cb4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 end");
 }
 
@@ -347,27 +361,25 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
-
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb5 = new ThermalActionTest5Callback();
-
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start register");
-    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb5);
-
-    thermalMgrClient.SetScene("call");
-    int32_t batteryTemp = 43100;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb5);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb5);
+    g_thermalMgrClient.SetScene("call");
+    g_service->SetScene("call");
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
-    thermalMgrClient.UnSubscribeThermalActionCallback(cb5);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb5);
+    g_service->UnSubscribeThermalActionCallback(cb5);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 end");
 }
 
@@ -379,27 +391,25 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
-
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cb6 = new ThermalActionTest6Callback();
-
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start register");
-    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb6);
-
-    thermalMgrClient.SetScene("game");
-    int32_t batteryTemp = 46100;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb6);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb6);
+    g_thermalMgrClient.SetScene("game");
+    g_service->SetScene("game");
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
-    thermalMgrClient.UnSubscribeThermalActionCallback(cb6);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb6);
+    g_service->UnSubscribeThermalActionCallback(cb6);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 end");
 }
 
@@ -412,26 +422,23 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest007 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::vector<std::string> actionList;
     actionList.push_back("boost");
-
     std::string desc = "";
     InitData();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cbBoost = new ThermalActionTest7Callback();
-
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
-    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cbBoost);
-
-    int32_t batteryTemp = 40100;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-    
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cbBoost);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cbBoost);
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
-    thermalMgrClient.UnSubscribeThermalActionCallback(cbBoost);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(cbBoost);
+    g_service->UnSubscribeThermalActionCallback(cbBoost);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
 }
 
@@ -443,26 +450,23 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest008, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     std::vector<std::string> actionList;
     actionList.push_back("isolate");
-
     std::string desc = "";
     InitData();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     const sptr<IThermalActionCallback> cbIsolateCpu = new ThermalActionTest8Callback();
-
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 start register");
-    thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
-
-    int32_t batteryTemp = 43100;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
-    thermalMgrClient.UnSubscribeThermalActionCallback(cbIsolateCpu);
+    g_thermalMgrClient.UnSubscribeThermalActionCallback(cbIsolateCpu);
+    g_service->UnSubscribeThermalActionCallback(cbIsolateCpu);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 end");
 }
 } // namespace

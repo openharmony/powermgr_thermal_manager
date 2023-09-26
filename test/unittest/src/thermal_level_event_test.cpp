@@ -23,10 +23,18 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "mock_thermal_mgr_client.h"
 #include "thermal_level_info.h"
 #include "thermal_log.h"
-#include "thermal_mgr_client.h"
+
+#define private   public
+#define protected public
+#include "thermal_config_file_parser.h"
+#include "thermal_service.h"
+#include "thermal_srv_config_parser.h"
+#include "v1_1/ithermal_interface.h"
+#include "v1_1/thermal_types.h"
+#undef private
+#undef protected
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -34,13 +42,17 @@ using namespace OHOS;
 using namespace std;
 using namespace OHOS::AAFwk;
 using namespace OHOS::EventFwk;
+using namespace OHOS::HDI::Thermal::V1_1;
 
 namespace {
 std::condition_variable g_callbackCV;
 std::mutex g_mutex;
-constexpr int64_t TIME_OUT = 1;
+constexpr int64_t TIME_OUT = 3;
 bool g_callbackTriggered = false;
 int32_t g_thermalLevel = -1;
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+sptr<ThermalService> g_service = nullptr;
+ThermalConfigFileParser g_parser;
 
 void Notify()
 {
@@ -53,7 +65,9 @@ void Notify()
 void Wait()
 {
     std::unique_lock<std::mutex> lock(g_mutex);
-    g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] { return g_callbackTriggered; });
+    g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] {
+        return g_callbackTriggered;
+    });
     EXPECT_TRUE(g_callbackTriggered);
     g_callbackTriggered = false;
 }
@@ -62,17 +76,18 @@ void Wait()
 class CommonEventThermalLevelTest : public CommonEventSubscriber {
 public:
     CommonEventThermalLevelTest() = default;
-    explicit CommonEventThermalLevelTest(const CommonEventSubscribeInfo &subscriberInfo);
+    explicit CommonEventThermalLevelTest(const CommonEventSubscribeInfo& subscriberInfo);
     virtual ~CommonEventThermalLevelTest() {};
-    virtual void OnReceiveEvent(const CommonEventData &data);
+    virtual void OnReceiveEvent(const CommonEventData& data);
     static shared_ptr<CommonEventThermalLevelTest> RegisterEvent();
 };
 
-CommonEventThermalLevelTest::CommonEventThermalLevelTest
-    (const CommonEventSubscribeInfo &subscriberInfo) : CommonEventSubscriber(subscriberInfo) {}
+CommonEventThermalLevelTest::CommonEventThermalLevelTest(const CommonEventSubscribeInfo& subscriberInfo)
+    : CommonEventSubscriber(subscriberInfo)
+{
+}
 
-
-void CommonEventThermalLevelTest::OnReceiveEvent(const CommonEventData &data)
+void CommonEventThermalLevelTest::OnReceiveEvent(const CommonEventData& data)
 {
     THERMAL_HILOGD(LABEL_TEST, "CommonEventThermalLevelTest: OnReceiveEvent Enter");
     int invalidLevel = -1;
@@ -108,12 +123,21 @@ shared_ptr<CommonEventThermalLevelTest> CommonEventThermalLevelTest::RegisterEve
 
 void ThermalLevelEventTest::TearDown()
 {
-    InitNode();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("");
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
     g_thermalLevel = -1;
     g_callbackTriggered = false;
+}
+
+void ThermalLevelEventTest::SetUpTestCase()
+{
+    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->OnStart();
+    g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+    g_parser.Init();
+}
+
+void ThermalLevelEventTest::TearDownTestCase()
+{
+    g_service->OnStop();
 }
 
 namespace {
@@ -125,14 +149,23 @@ namespace {
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest001: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    int32_t batteryTemp = 41000;
-    g_thermalLevel = 1;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_thermalLevel = 3;
+    GTEST_LOG_(INFO) << "test thermal level: " << g_thermalLevel;
+    g_service->HandleThermalCallbackEvent(event);
+    event.info.clear();
+
+    info1.type = "soc";
+    info1.temp = -10000;
+    event.info.push_back(info1);
+    g_thermalLevel = 0;
+    GTEST_LOG_(INFO) << "test thermal level: " << g_thermalLevel;
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest001: end");
@@ -146,15 +179,24 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest002: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    int32_t batteryTemp = 43100;
-    g_thermalLevel = 2;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    Wait();
+
+    auto levelItems = g_parser.GetLevelItems("base_safe", "battery");
+    for (auto item : levelItems) {
+        std::vector<PolicyAction> policy;
+        if (!g_parser.GetActionPolicy("base_safe", item.level, policy)) {
+            continue;
+        }
+        HdfThermalCallbackInfo event;
+        ThermalZoneInfo info;
+        info.type = "battery";
+        info.temp = item.threshold;
+        g_thermalLevel = item.level;
+        event.info.push_back(info);
+        GTEST_LOG_(INFO) << "test thermal level: " << g_thermalLevel << ", threshold: " << item.threshold;
+        g_service->HandleThermalCallbackEvent(event);
+        Wait();
+    }
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest002: end");
 }
@@ -167,14 +209,22 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest003: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    int32_t batteryTemp = 46100;
-    g_thermalLevel = 3;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 41000;
+    event.info.push_back(info1);
+
+    ThermalZoneInfo info2;
+    info2.type = "ambient";
+    info2.temp = 10000;
+    event.info.push_back(info2);
+
+    g_thermalLevel = 4;
+    GTEST_LOG_(INFO) << "test thermal level: " << g_thermalLevel;
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest003: end");
@@ -188,16 +238,22 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest004: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH) || IsVendor()) {
-        return;
-    }
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    int32_t paTemp = 41000;
-    int32_t amTemp = 10000;
-    g_thermalLevel = 4;
-    SetNodeValue(paTemp, PA_PATH);
-    SetNodeValue(amTemp, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 44000;
+    event.info.push_back(info1);
+
+    ThermalZoneInfo info2;
+    info2.type = "ambient";
+    info2.temp = 10000;
+    event.info.push_back(info2);
+
+    g_thermalLevel = 5;
+    GTEST_LOG_(INFO) << "test thermal level: " << g_thermalLevel;
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest004: end");
@@ -211,100 +267,28 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest005, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest005: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH) || IsVendor()) {
-        return;
-    }
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    int32_t paTemp = 44000;
-    int32_t amTemp = 10000;
-    g_thermalLevel = 5;
-    SetNodeValue(paTemp, PA_PATH);
-    SetNodeValue(amTemp, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "ap";
+    info1.temp = 78000;
+    event.info.push_back(info1);
+
+    ThermalZoneInfo info2;
+    info2.type = "ambient";
+    info2.temp = 1000;
+    event.info.push_back(info2);
+
+    ThermalZoneInfo info3;
+    info3.type = "shell";
+    info3.temp = 30000;
+    event.info.push_back(info3);
+
+    g_thermalLevel = 6;
+    GTEST_LOG_(INFO) << "test thermal level: " << g_thermalLevel;
+    g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest005: end");
 }
-
-/*
- * @tc.number: ThermalLevelEventTest006
- * @tc.name: ThermalLevelEventTest
- * @tc.desc: Verify the receive the level common event
- */
-HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest006, TestSize.Level0)
-{
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest006: start");
-    if (!IsMock(AP_PATH) || !IsMock(AMBIENT_PATH) || !IsMock(SHELL_PATH) || IsVendor()) {
-        return;
-    }
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    int32_t apTemp = 78000;
-    int32_t amTemp = 1000;
-    int32_t shellTemp = 30000;
-    g_thermalLevel = 6;
-    SetNodeValue(apTemp, AP_PATH);
-    SetNodeValue(amTemp, AMBIENT_PATH);
-    SetNodeValue(shellTemp, SHELL_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    Wait();
-    CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest006: end");
-}
-
-/*
- * @tc.number: ThermalLevelEventTest007
- * @tc.name: ThermalLevelEventTest
- * @tc.desc: Verify the receive the level common event
- */
-HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest007, TestSize.Level0)
-{
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest007: start");
-    if (!IsMock(BATTERY_PATH) || !IsMock(SOC_PATH) || IsVendor()) {
-        return;
-    }
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    int32_t batteryTemp = 46100;
-    g_thermalLevel = 3;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-
-    int32_t socTemp = -10000;
-    g_thermalLevel = 0;
-    SetNodeValue(socTemp, SOC_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    Wait();
-    CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest007: end");
-}
-
-/*
- * @tc.number: ThermalLevelEventTest008
- * @tc.name: ThermalLevelEventTest
- * @tc.desc: Verify the receive the level common event
- */
-HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest008, TestSize.Level0)
-{
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest008: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    bool result = false;
-    int32_t batteryTemp = 40100;
-    g_thermalLevel = 1;
-    SetNodeValue(batteryTemp, BATTERY_PATH);
-    shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
-    EXPECT_TRUE(MockThermalMgrClient::GetInstance().GetThermalInfo());
-    Wait();
-
-    CommonEventData stickyData;
-    CommonEventManager::GetStickyCommonEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, stickyData);
-    if (stickyData.GetWant().GetAction() != CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED) {
-        result = false;
-    } else {
-        THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest008: sticky event successfully");
-        result = true;
-    }
-    CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest008: end");
-}
-}
+} // namespace

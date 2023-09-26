@@ -31,6 +31,7 @@ deps_ex = [
   "appspawn:appspawn_socket_client",
   "ability_base:base",
   "ability_base:want",
+  "battery_manager:batterysrv_client",
   "hdf_core:libhdi",
   "bundle_framework:appexecfwk_base",
   "common_event_service:cesfwk_innerkits",
@@ -71,11 +72,13 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/libxml2:xml2",
   ]
   external_deps = deps_ex
 }

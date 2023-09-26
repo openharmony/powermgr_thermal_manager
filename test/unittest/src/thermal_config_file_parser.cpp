@@ -74,6 +74,18 @@ bool ThermalConfigFileParser::GetActionPolicy(const std::string& name, uint32_t 
     return false;
 }
 
+std::vector<LevelItem> ThermalConfigFileParser::GetLevelItems(const std::string& name, const std::string& sensor)
+{
+    auto sensorInfo = sensorInfoMap_.find(name);
+    if (sensorInfo != sensorInfoMap_.end()) {
+        auto levelInfo = sensorInfo->second.find(sensor);
+        if (levelInfo != sensorInfo->second.end()) {
+            return levelInfo->second;
+        }
+    }
+    return std::vector<LevelItem>{};
+}
+
 std::vector<StateItem> ThermalConfigFileParser::GetStateItem()
 {
     return stateItem_;
@@ -157,7 +169,7 @@ void ThermalConfigFileParser::ParseLevelNode(xmlNodePtr node)
             name = reinterpret_cast<char*>(xmlName);
             xmlFree(xmlName);
         }
-        ParseAuxSensorInfo(curNode, sc);
+        ParseAuxSensorInfo(name, curNode, sc);
         ParseSensorInfo(name, curNode, sc);
         xmlChar* desc = xmlGetProp(curNode, BAD_CAST("desc"));
         if (desc != nullptr) {
@@ -313,7 +325,8 @@ void ThermalConfigFileParser::ParseIdleNode(xmlNodePtr node)
                    idleState.level, idleState.soc, idleState.charging, idleState.current);
 }
 
-void ThermalConfigFileParser::ParseAuxSensorInfo(const xmlNode* cur, std::shared_ptr<ThermalConfigSensorCluster>& sc)
+void ThermalConfigFileParser::ParseAuxSensorInfo(
+    const std::string& name, const xmlNode* cur, std::shared_ptr<ThermalConfigSensorCluster>& sc)
 {
     xmlChar* auxSensorInfo = xmlGetProp(cur, BAD_CAST"aux_sensor");
     if (auxSensorInfo != nullptr) {
@@ -330,6 +343,7 @@ void ThermalConfigFileParser::ParseAuxSensorInfo(const xmlNode* cur, std::shared
             THERMAL_HILOGD(LABEL_TEST, "aux_sensor item: %{public}s", sensorType.c_str());
             auxSensorLevelInfo.emplace(sensorType, ParseAuxSensorSubnodeInfo(cur, auxSensorList, i));
         }
+        auxSensorInfoMap_.emplace(name, auxSensorLevelInfo);
         sc->SetAuxSensorLevelInfo(auxSensorLevelInfo);
         xmlFree(auxSensorInfo);
     }
