@@ -19,10 +19,12 @@
 #include <cstdlib>
 #include <dirent.h>
 #include <fcntl.h>
+#include <fstream>
+#include <securec.h>
 #include <sys/stat.h>
-#include "securec.h"
 
 #include "errors.h"
+#include "string_ex.h"
 #include "thermal_log.h"
 
 using namespace testing::ext;
@@ -49,29 +51,20 @@ int32_t ThermalTest::WriteFile(std::string path, std::string buf)
 
 int32_t ThermalTest::ReadFile(std::string path, std::string& buf)
 {
-    FILE *fp = fopen(path.c_str(), "r");
-    if (fp == nullptr) {
+    std::ifstream input(path);
+    if (!input.is_open()) {
         return ERR_INVALID_VALUE;
     }
-    std::vector<char> buffer;
-    fseek(fp, 0, SEEK_END);
-    int32_t fileSize = static_cast<int32_t>(ftell(fp));
-    buffer.resize(fileSize);
-    fseek(fp, 0, SEEK_SET);
-    size_t num = fread(&buffer[0], sizeof(char), fileSize, fp);
-    if (static_cast<int32_t>(num) != fileSize) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to fread %{public}s, num=%{public}zu", path.c_str(), num);
-        fclose(fp);
-        return ERR_INVALID_OPERATION;
-    }
-    buf = &buffer[0];
-    fclose(fp);
+    getline(input, buf);
+    input.close();
     return ERR_OK;
 }
 
 int32_t ThermalTest::ConvertInt(const std::string& value)
 {
-    return std::stoi(value);
+    int32_t result = -1;
+    StrToInt(value, result);
+    return result;
 }
 
 int32_t ThermalTest::InitNode()
