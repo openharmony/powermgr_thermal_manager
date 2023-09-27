@@ -65,13 +65,13 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest001, TestSize.Level0)
     MessageParcel reply;
     MessageOption option;
     sptr<ThermalActionCallbackStub> actionStub = new ThermalActionCallbackStub();
-    EXPECT_EQ(false, actionStub == nullptr);
+    ASSERT_FALSE(actionStub == nullptr);
     EXPECT_EQ(E_GET_THERMAL_SERVICE_FAILED, actionStub->OnRemoteRequest(code, data, reply, option));
     sptr<ThermalLevelCallbackStub> levelStub = new ThermalLevelCallbackStub();
-    EXPECT_EQ(false, levelStub == nullptr);
+    ASSERT_FALSE(levelStub == nullptr);
     EXPECT_EQ(E_GET_THERMAL_SERVICE_FAILED, levelStub->OnRemoteRequest(code, data, reply, option));
     sptr<ThermalTempCallbackStub> tempStub = new ThermalTempCallbackStub();
-    EXPECT_EQ(false, tempStub == nullptr);
+    ASSERT_FALSE(tempStub == nullptr);
     EXPECT_EQ(E_GET_THERMAL_SERVICE_FAILED, tempStub->OnRemoteRequest(code, data, reply, option));
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest001 end.");
 }

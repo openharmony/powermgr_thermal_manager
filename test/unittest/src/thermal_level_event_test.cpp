@@ -159,6 +159,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
     GTEST_LOG_(INFO) << "test thermal level: " << g_thermalLevel;
     g_service->HandleThermalCallbackEvent(event);
     event.info.clear();
+    Wait();
 
     info1.type = "soc";
     info1.temp = -10000;
