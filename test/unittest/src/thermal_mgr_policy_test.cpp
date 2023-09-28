@@ -17,21 +17,65 @@
 
 #include "battery_srv_client.h"
 #include "power_mgr_client.h"
-#include "thermal_service.h"
 #include "thermal_mgr_client.h"
 #include "mock_thermal_mgr_client.h"
+
+#define private   public
+#define protected public
+#include "thermal_service.h"
+#include "thermal_srv_config_parser.h"
+#include "thermal_srv_sensor_info.h"
+#include "v1_1/ithermal_interface.h"
+#include "v1_1/thermal_types.h"
+#undef private
+#undef protected
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
 
+namespace {
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+sptr<ThermalService> g_service = nullptr;
+const int32_t LEVEL_0 = 0;
+const int32_t LEVEL_1 = 1;
+const int32_t LEVEL_2 = 2;
+const int32_t LEVEL_3 = 3;
+const int32_t LEVEL_4 = 4;
+}
+
 void ThermalMgrPolicyTest::TearDown()
 {
-    InitNode();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("");
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_service->SetScene("");
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 0;
+    event.info.push_back(info1);
+    info1.type = "ap";
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    event.info.push_back(info1);
+    info1.type = "shell";
+    event.info.push_back(info1);
+    info1.type = "pa";
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+}
+
+void ThermalMgrPolicyTest::SetUpTestCase()
+{
+    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->OnStart();
+    g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+    g_service->InitStateMachine();
+    g_service->InitActionManager();
+}
+
+void ThermalMgrPolicyTest::TearDownTestCase()
+{
+    g_service->OnStop();
 }
 
 namespace {
@@ -45,14 +89,14 @@ namespace {
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest001, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest001: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest001 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest001 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest001: end");
 }
 
@@ -66,14 +110,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest001, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest002, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest002: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 2) << "ThermalMgrPolicyTest002 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_2) << "ThermalMgrPolicyTest002 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest002: end");
 }
 
@@ -87,14 +131,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest002, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest003, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest003: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 3) << "ThermalMgrPolicyTest003 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_3) << "ThermalMgrPolicyTest003 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest003: end");
 }
 
@@ -108,14 +152,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest003, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest004, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest004: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(48100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4) << "ThermalMgrPolicyTest004 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 48100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_4) << "ThermalMgrPolicyTest004 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest004: end");
 }
 
@@ -129,20 +173,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest004, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest005, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest005: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest005 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest005 failed";
+    event.info.clear();
 
-    SetNodeValue(48100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4) << "ThermalMgrPolicyTest005 failed";
+    info1.temp = 48100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_4) << "ThermalMgrPolicyTest005 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest005: end");
 }
 
@@ -156,20 +201,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest005, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest006, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest006: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 2) << "ThermalMgrPolicyTest006 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_2) << "ThermalMgrPolicyTest006 failed";
+    event.info.clear();
 
-    SetNodeValue(48100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4) << "ThermalMgrPolicyTest006 failed";
+    info1.temp = 48100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_4) << "ThermalMgrPolicyTest006 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest006: end");
 }
 
@@ -183,20 +229,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest006, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest007, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest007: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(48200, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4) << "ThermalMgrPolicyTest007 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 48200;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_4) << "ThermalMgrPolicyTest007 failed";
+    event.info.clear();
 
-    SetNodeValue(40900, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest007 failed";
+    info1.temp = 40900;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest007 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest007: end");
 }
 
@@ -210,20 +257,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest007, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest008, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest008: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 3) << "ThermalMgrPolicyTest008 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_3) << "ThermalMgrPolicyTest008 failed";
+    event.info.clear();
 
-    SetNodeValue(37000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    value = ConvertInt(ret);
-    EXPECT_TRUE(value == 0) << "ThermalMgrPolicyTest008 failed";
+    info1.temp = 37000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_0) << "ThermalMgrPolicyTest008 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest008: end");
 }
 
@@ -237,14 +285,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest008, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest009, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest009: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-10000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest009 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest009 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest009: end");
 }
 
@@ -258,14 +306,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest009, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest010, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest010: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-15000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 2) << "ThermalMgrPolicyTest010 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -15000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_2) << "ThermalMgrPolicyTest010 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest010: end");
 }
 
@@ -279,14 +327,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest010, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest011, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest011: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-20100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 3) << "ThermalMgrPolicyTest011 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -20100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_3) << "ThermalMgrPolicyTest011 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest011: end");
 }
 
@@ -300,14 +348,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest011, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest012, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest012: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-22000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4) << "ThermalMgrPolicyTest012 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -22000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_4) << "ThermalMgrPolicyTest012 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest012: end");
 }
 
@@ -321,20 +369,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest012, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest013, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest013: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-10000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest013 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest013 failed";
+    event.info.clear();
 
-    SetNodeValue(-22000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4) << "ThermalMgrPolicyTest013 failed";
+    info1.temp = -22000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_4) << "ThermalMgrPolicyTest013 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest013: end");
 }
 
@@ -348,20 +397,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest013, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest014, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest014: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-15000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 2) << "ThermalMgrPolicyTest014 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -15000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_2) << "ThermalMgrPolicyTest014 failed";
+    event.info.clear();
 
-    SetNodeValue(-22000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4) << "ThermalMgrPolicyTest014 failed";
+    info1.temp = -22000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_4) << "ThermalMgrPolicyTest014 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest014: end");
 }
 
@@ -375,20 +425,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest014, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest015, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest015: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-22000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4) << "ThermalMgrPolicyTest015 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -22000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_4) << "ThermalMgrPolicyTest015 failed";
+    event.info.clear();
 
-    SetNodeValue(-10000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest015 failed";
+    info1.temp = -10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest015 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest015: end");
 }
 
@@ -402,20 +453,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest015, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest016, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest016: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-19100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 3) << "ThermalMgrPolicyTest016 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -19100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_3) << "ThermalMgrPolicyTest016 failed";
+    event.info.clear();
 
-    SetNodeValue(-1000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    value = ConvertInt(ret);
-    EXPECT_TRUE(value == 0) << "ThermalMgrPolicyTest016 failed";
+    info1.temp = -1000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_0) << "ThermalMgrPolicyTest016 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest016: end");
 }
 
@@ -429,16 +481,17 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest016, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest017, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest017: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(41000, PA_PATH);
-    SetNodeValue(10000, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest017 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 41000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest017 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest017: end");
 }
 
@@ -452,16 +505,17 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest017, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest018, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest018: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(44000, PA_PATH);
-    SetNodeValue(10000, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 2) << "ThermalMgrPolicyTest018 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 44000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_2) << "ThermalMgrPolicyTest018 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest018: end");
 }
 
@@ -475,16 +529,17 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest018, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest019, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest019: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(44000, PA_PATH);
-    SetNodeValue(1000, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 0) << "ThermalMgrPolicyTest019 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 44000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 1000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_0) << "ThermalMgrPolicyTest019 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest019: end");
 }
 
@@ -498,17 +553,20 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest019, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest020, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest020: start");
-    if (!IsMock(AP_PATH) || !IsMock(AMBIENT_PATH) || !IsMock(SHELL_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(78000, AP_PATH);
-    SetNodeValue(1000, AMBIENT_PATH);
-    SetNodeValue(2000, SHELL_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest020 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "ap";
+    info1.temp = 78000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 1000;
+    event.info.push_back(info1);
+    info1.type = "shell";
+    info1.temp = 2000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest020 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest020: end");
 }
 
@@ -522,17 +580,20 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest020, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest021, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest021: start");
-    if (!IsMock(AP_PATH) || !IsMock(AMBIENT_PATH) || !IsMock(SHELL_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(78000, AP_PATH);
-    SetNodeValue(1000, AMBIENT_PATH);
-    SetNodeValue(-100, SHELL_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(CONFIG_LEVEL_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 0) << "ThermalMgrPolicyTest021 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "ap";
+    info1.temp = 78000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 1000;
+    event.info.push_back(info1);
+    info1.type = "shell";
+    info1.temp = -100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == LEVEL_0) << "ThermalMgrPolicyTest021 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest021: end");
 }
 
@@ -546,14 +607,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest021, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest022: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1800) << "ThermalMgrPolicyTest022 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 1800;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest022 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest022: end");
 }
 
@@ -568,16 +630,16 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest022, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest023: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("cam");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1200) << "ThermalMgrPolicyTest023 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->SetScene("cam");
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 1200;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest023 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest023: end");
 }
 
@@ -591,14 +653,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest023, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest024: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1500) << "ThermalMgrPolicyTest024 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 1500;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest024 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest024: end");
 }
 
@@ -613,16 +676,16 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest024, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest025: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("cam");
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1000) << "ThermalMgrPolicyTest025 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->SetScene("cam");
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 1000;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest025 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest025: end");
 }
 
@@ -636,14 +699,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest025, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest026: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1300) << "ThermalMgrPolicyTest026 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 1300;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest026 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest026: end");
 }
 
@@ -658,16 +722,16 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest026, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest027: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("cam");
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 800) << "ThermalMgrPolicyTest027 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->SetScene("cam");
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 800;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest027 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest027: end");
 }
 
@@ -681,14 +745,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest027, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest028: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-10000, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1850) << "ThermalMgrPolicyTest028 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 1850;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest028 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest028: end");
 }
 
@@ -702,14 +767,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest028, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest029: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-14100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1550) << "ThermalMgrPolicyTest029 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -14100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 1550;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest029 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest029: end");
 }
 
@@ -723,14 +789,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest029, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest030: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(-19100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BATTERY_CHARGER_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1150) << "ThermalMgrPolicyTest030 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = -19100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BATTERY_CHARGER_CURRENT_PATH));
+    int32_t currentNow = 1150;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest030 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest030: end");
 }
 
@@ -745,11 +812,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest030, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest031: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "1.0") << "ThermalMgrPolicyTest031 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest031: end");
@@ -766,11 +834,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest031, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest032: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "0.9") << "ThermalMgrPolicyTest032 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest032: end");
@@ -787,11 +856,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest032, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest033: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "0.8") << "ThermalMgrPolicyTest033 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest033: end");
@@ -808,13 +878,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest033, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest034: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(41000, PA_PATH);
-    SetNodeValue(10000, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 41000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "0.7") << "ThermalMgrPolicyTest034 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest034: end");
@@ -831,13 +903,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest034, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest035, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest035: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(44000, PA_PATH);
-    SetNodeValue(10000, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 44000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "0.6") << "ThermalMgrPolicyTest035 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest035: end");
@@ -853,24 +927,26 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest035, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest036: start");
-    if (!IsMock(AP_PATH) || !IsMock(AMBIENT_PATH) || !IsMock(SHELL_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(78000, AP_PATH);
-    SetNodeValue(1000, AMBIENT_PATH);
-    SetNodeValue(3000, SHELL_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(PROCESS_PATH);
-    int32_t value = ConvertInt(ret);
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "ap";
+    info1.temp = 78000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 10000;
+    event.info.push_back(info1);
+    info1.type = "shell";
+    info1.temp = 3000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(PROCESS_PATH));
     if (PowerMgrClient::GetInstance().IsScreenOn()) {
         EXPECT_TRUE(value == 3) << "ThermalMgrPolicyTest036 failed";
     } else {
         EXPECT_TRUE(value == 0) << "ThermalMgrPolicyTest036 failed";
     }
 
-    ret = GetNodeValue(SHUTDOWN_PATH);
-    value = ConvertInt(ret);
+    value = ConvertInt(GetNodeValue(SHUTDOWN_PATH));
     if (PowerMgrClient::GetInstance().IsScreenOn()) {
         EXPECT_EQ(true, value == 1) << "ThermalMgrPolicyTest036 failed";
     } else {
@@ -889,14 +965,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest036, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest037, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest037: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(PROCESS_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 3) << "ThermalMgrPolicyTest037 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(PROCESS_PATH));
+    EXPECT_TRUE(value == LEVEL_3) << "ThermalMgrPolicyTest037 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest037: end");
 }
 
@@ -910,14 +986,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest037, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest038: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(PROCESS_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 2) << "ThermalMgrPolicyTest038 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(PROCESS_PATH));
+    EXPECT_TRUE(value == LEVEL_2) << "ThermalMgrPolicyTest038 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest038: end");
 }
 
@@ -931,14 +1007,14 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest038, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest039, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest039: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(PROCESS_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1) << "ThermalMgrPolicyTest039 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(PROCESS_PATH));
+    EXPECT_TRUE(value == LEVEL_1) << "ThermalMgrPolicyTest039 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest039: end");
 }
 
@@ -952,16 +1028,18 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest039, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest040: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(41000, PA_PATH);
-    SetNodeValue(10000, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 41000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(PROCESS_PATH);
     int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 2) << "ThermalMgrPolicyTest040 failed";
+    EXPECT_TRUE(value == LEVEL_2) << "ThermalMgrPolicyTest040 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest040: end");
 }
 
@@ -975,16 +1053,17 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest040, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest041, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest041: start");
-    if (!IsMock(PA_PATH) || !IsMock(AMBIENT_PATH)) {
-        THERMAL_HILOGD(LABEL_TEST, "Thermal is not mock, return");
-        return;
-    }
-    SetNodeValue(44000, PA_PATH);
-    SetNodeValue(10000, AMBIENT_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(PROCESS_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 3) << "ThermalMgrPolicyTest041 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 44000;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 10000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(PROCESS_PATH));
+    EXPECT_TRUE(value == LEVEL_3) << "ThermalMgrPolicyTest041 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest041: end");
 }
 
@@ -998,14 +1077,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest041, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest042, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest042: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BUCK_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1200) << "ThermalMgrPolicyTest042 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BUCK_CURRENT_PATH));
+    int32_t currentNow = 1200;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest042 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest042: end");
 }
 
@@ -1019,14 +1099,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest042, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest043, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest043: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(SC_VOLTAGE_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 4000) << "ThermalMgrPolicyTest043 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(SC_VOLTAGE_PATH));
+    int32_t voltage = 4000;
+    EXPECT_TRUE(value == voltage) << "ThermalMgrPolicyTest043 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest043: end");
 }
 
@@ -1040,14 +1121,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest043, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest044: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BUCK_VOLTAGE_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 3000) << "ThermalMgrPolicyTest044 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BUCK_VOLTAGE_PATH));
+    int32_t voltage = 3000;
+    EXPECT_TRUE(value == voltage) << "ThermalMgrPolicyTest044 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest044: end");
 }
 
@@ -1061,14 +1143,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest044, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest045: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BUCK_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 1000) << "ThermalMgrPolicyTest045 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BUCK_CURRENT_PATH));
+    int32_t currentNow = 1000;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest045 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest045: end");
 }
 
@@ -1082,14 +1165,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest045, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest046: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(SC_VOLTAGE_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 3000) << "ThermalMgrPolicyTest046 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(SC_VOLTAGE_PATH));
+    int32_t voltage = 3000;
+    EXPECT_TRUE(value == voltage) << "ThermalMgrPolicyTest046 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest046: end");
 }
 
@@ -1103,14 +1187,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest046, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest047: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BUCK_VOLTAGE_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 2000) << "ThermalMgrPolicyTest047 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BUCK_VOLTAGE_PATH));
+    int32_t voltage = 2000;
+    EXPECT_TRUE(value == voltage) << "ThermalMgrPolicyTest047 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest047: end");
 }
 
@@ -1124,14 +1209,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest047, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest048: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    std::string ret = GetNodeValue(BUCK_CURRENT_PATH);
-    int32_t value = ConvertInt(ret);
-    EXPECT_TRUE(value == 800) << "ThermalMgrPolicyTest048 failed";
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(BUCK_CURRENT_PATH));
+    int32_t currentNow = 800;
+    EXPECT_TRUE(value == currentNow) << "ThermalMgrPolicyTest048 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest048: end");
 }
 
@@ -1145,11 +1231,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest048, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest049: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(SC_VOLTAGE_PATH);
     int32_t value = ConvertInt(ret);
     EXPECT_TRUE(value == 2000) << "ThermalMgrPolicyTest049 failed";
@@ -1166,11 +1253,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest049, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest050, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest050: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(BUCK_VOLTAGE_PATH);
     int32_t value = ConvertInt(ret);
     EXPECT_TRUE(value == 1000) << "ThermalMgrPolicyTest050 failed";
@@ -1188,13 +1276,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest050, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest053, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest053: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("cam");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->SetScene("cam");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.99") << "ThermalMgrPolicyTest053 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest053: end");
@@ -1211,13 +1299,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest053, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest054, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest054: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("cam");
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->SetScene("cam");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.89") << "ThermalMgrPolicyTest054 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest054: end");
@@ -1234,13 +1322,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest054, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest055, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest055: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("cam");
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->SetScene("cam");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.79") << "ThermalMgrPolicyTest055 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest055: end");
@@ -1257,13 +1345,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest055, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest056, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest056: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("call");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->SetScene("call");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.98") << "ThermalMgrPolicyTest056 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest056: end");
@@ -1280,13 +1368,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest056, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest057, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest057: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("call");
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->SetScene("call");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.88") << "ThermalMgrPolicyTest057 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest057: end");
@@ -1303,13 +1391,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest057, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest058, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest058: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("call");
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->SetScene("call");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.78") << "ThermalMgrPolicyTest058 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest058: end");
@@ -1326,13 +1414,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest058, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest059, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest059: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("game");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->SetScene("game");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.97") << "ThermalMgrPolicyTest059 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest059: end");
@@ -1349,13 +1437,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest059, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest060, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest060: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("game");
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->SetScene("game");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.87") << "ThermalMgrPolicyTest060 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest060: end");
@@ -1372,13 +1460,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest060, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest061, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest061: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("game");
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->SetScene("game");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.77") << "ThermalMgrPolicyTest061 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest061: end");
@@ -1395,13 +1483,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest061, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest062, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest062: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("test");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->SetScene("test");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.91") << "ThermalMgrPolicyTest062 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest062: end");
@@ -1418,18 +1506,20 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest062, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest063, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest063: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "1.0") << "ThermalMgrPolicyTest063 failed";
+    event.info.clear();
 
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("game");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_service->SetScene("game");
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.97") << "ThermalMgrPolicyTest063 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest063: end");
@@ -1446,19 +1536,21 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest063, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest064, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest064: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("call");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->SetScene("call");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.98") << "ThermalMgrPolicyTest064 failed";
+    event.info.clear();
 
-    thermalMgrClient.SetScene("");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    g_service->SetScene("");
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "1.0") << "ThermalMgrPolicyTest064 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest064: end");
@@ -1475,13 +1567,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest064, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest065, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest065: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("cam");
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->SetScene("cam");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.99") << "ThermalMgrPolicyTest065 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest065: end");
@@ -1498,13 +1590,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest065, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest066, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest066: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("call");
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->SetScene("call");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.88") << "ThermalMgrPolicyTest066 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest066: end");
@@ -1521,13 +1613,13 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest066, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest067, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest067: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    thermalMgrClient.SetScene("game");
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->SetScene("game");
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(LCD_PATH);
     EXPECT_TRUE(ret.substr(0, 4) == "0.77") << "ThermalMgrPolicyTest066 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest067: end");
@@ -1544,11 +1636,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest067, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest068, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest068: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(40100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(VOLUME_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "1.0") << "ThermalMgrPolicyTest068 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest068: end");
@@ -1565,11 +1658,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest068, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest069, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest069: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(43100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 43100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(VOLUME_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "0.8") << "ThermalMgrPolicyTest069 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest069: end");
@@ -1586,11 +1680,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest069, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest070, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest070: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    SetNodeValue(46100, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
     std::string ret = GetNodeValue(VOLUME_PATH);
     EXPECT_TRUE(ret.substr(0, 3) == "0.7") << "ThermalMgrPolicyTest070 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest070: end");
@@ -1607,15 +1702,15 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest070, Function|MediumTest|Lev
 HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest071, Function|MediumTest|Level2)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest071: start");
-    if (!IsMock(BATTERY_PATH) || IsVendor()) {
-        return;
-    }
-    int32_t temp = 40100;
-    SetNodeValue(temp, BATTERY_PATH);
-    MockThermalMgrClient::GetInstance().GetThermalInfo();
-    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
-    int32_t out = thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
-    EXPECT_EQ(true, temp == out);
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    ThermalSrvSensorInfo info;
+    g_service->GetThermalSrvSensorInfo(SensorType::BATTERY, info);
+    EXPECT_EQ(info1.temp, info.GetTemp());
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest071: end");
 }
 }

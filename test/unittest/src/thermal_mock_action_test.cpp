@@ -48,8 +48,9 @@ void ThermalMockActionTest::SetUpTestCase()
 {
     g_thermalSvc = DelayedSpSingleton<ThermalService>::GetInstance();
     g_thermalSvc->OnStart();
-    g_thermalSvc->InitStateMachine();
     g_thermalSvc->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+    g_thermalSvc->InitStateMachine();
+    g_thermalSvc->InitActionManager();
 }
 
 void ThermalMockActionTest::TearDownTestCase()

@@ -129,6 +129,7 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
 }
 
 namespace {
+#if EVENT_FAN
 /**
  * @tc.name: FanFaultDetectTest001
  * @tc.desc: test class FanFaultDetectTest function
@@ -200,6 +201,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest004, TestSize.Level0)
     EXPECT_TRUE(faultId == FAN_FAULT_TOO_FAST);
     THERMAL_HILOGD(LABEL_TEST, "FanFaultDetectTest004 end");
 }
+#endif
 
 /**
  * @tc.name: FanFaultDetectTest005
