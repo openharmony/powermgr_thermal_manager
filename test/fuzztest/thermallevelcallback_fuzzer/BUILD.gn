@@ -15,7 +15,7 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 import("../../../thermalmgr.gni")
 
-module_output_path = "${thermalmgr_native_part_name}/thermal_native"
+module_output_path = "thermal_manager/thermal_manager"
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ThermalLevelCallbackFuzzTest") {
