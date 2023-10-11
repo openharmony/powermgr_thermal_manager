@@ -79,10 +79,10 @@ void ThermalMgrClient::ThermalMgrDeathRecipient::OnRemoteDied(const wptr<IRemote
 
 void ThermalMgrClient::ResetProxy(const wptr<IRemoteObject>& remote)
 {
-     if (remote == nullptr) {
+    if (remote == nullptr) {
         THERMAL_HILOGE(COMP_FWK, "ThermalMgrDeathRecipient::OnRemoteDied failed, remote is nullptr.");
         return;
-     }
+    }
 
     std::lock_guard<std::mutex> lock(mutex_);
     THERMAL_RETURN_IF(thermalSrv_ == nullptr);
