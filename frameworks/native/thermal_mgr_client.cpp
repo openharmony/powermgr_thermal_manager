@@ -73,7 +73,7 @@ ErrCode ThermalMgrClient::Connect()
 
 void ThermalMgrClient::ThermalMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    THERMAL_HILOGI(COMP_FWK, "ThermalMgrDeathRecipient::Recv death notice.");
+    THERMAL_HILOGW(COMP_FWK, "ThermalMgrDeathRecipient::Recv death notice.");
     client_.ResetProxy(remote);
 }
 
