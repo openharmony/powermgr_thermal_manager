@@ -54,24 +54,36 @@ ErrCode ThermalMgrClient::Connect()
         return E_GET_THERMAL_SERVICE_FAILED;
     }
 
-    deathRecipient_ = sptr<IRemoteObject::DeathRecipient>(new ThermalMgrDeathRecipient());
-    if (deathRecipient_ == nullptr) {
+    sptr<IRemoteObject::DeathRecipient> drt = new(std::nothrow) ThermalMgrDeathRecipient(*this);
+    if (drt == nullptr) {
         THERMAL_HILOGE(COMP_FWK, "Failed to create ThermalMgrDeathRecipient!");
         return ERR_NO_MEMORY;
     }
 
-    if ((remoteObject_->IsProxyObject()) && (!remoteObject_->AddDeathRecipient(deathRecipient_))) {
+    if ((remoteObject_->IsProxyObject()) && (!remoteObject_->AddDeathRecipient(drt))) {
         THERMAL_HILOGE(COMP_FWK, "Add death recipient to PowerMgr service failed.");
         return E_ADD_DEATH_RECIPIENT_FAILED_THERMAL;
     }
 
     thermalSrv_ = iface_cast<IThermalSrv>(remoteObject_);
+    deathRecipient_=drt;
     THERMAL_HILOGI(COMP_FWK, "Connecting ThermalMgrService success.");
     return ERR_OK;
 }
 
+void ThermalMgrClient::ThermalMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
+{
+    THERMAL_HILOGW(COMP_FWK, "ThermalMgrDeathRecipient::Recv death notice.");
+    client_.ResetProxy(remote);
+}
+
 void ThermalMgrClient::ResetProxy(const wptr<IRemoteObject>& remote)
 {
+    if (remote == nullptr) {
+        THERMAL_HILOGE(COMP_FWK, "ThermalMgrDeathRecipient::OnRemoteDied failed, remote is nullptr.");
+        return;
+    }
+
     std::lock_guard<std::mutex> lock(mutex_);
     THERMAL_RETURN_IF(thermalSrv_ == nullptr);
 
@@ -80,17 +92,6 @@ void ThermalMgrClient::ResetProxy(const wptr<IRemoteObject>& remote)
         serviceRemote->RemoveDeathRecipient(deathRecipient_);
         thermalSrv_ = nullptr;
     }
-}
-
-void ThermalMgrClient::ThermalMgrDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
-{
-    if (remote == nullptr) {
-        THERMAL_HILOGE(COMP_FWK, "ThermalMgrDeathRecipient::OnRemoteDied failed, remote is nullptr.");
-        return;
-    }
-
-    ThermalMgrClient::GetInstance().ResetProxy(remote);
-    THERMAL_HILOGI(COMP_FWK, "ThermalMgrDeathRecipient::Recv death notice.");
 }
 
 bool ThermalMgrClient::SubscribeThermalTempCallback(

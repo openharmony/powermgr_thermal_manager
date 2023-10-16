@@ -36,7 +36,7 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_001, TestSize.Level0)
     EXPECT_EQ(thermalClient.Connect(), ERR_OK);
 
     std::shared_ptr<IRemoteObject::DeathRecipient> deathRecipient =
-        std::make_shared<ThermalMgrClient::ThermalMgrDeathRecipient>();
+        std::make_shared<ThermalMgrClient::ThermalMgrDeathRecipient>(thermalClient);
     wptr<IRemoteObject> remoteObj = nullptr;
     EXPECT_NE(deathRecipient, nullptr);
     deathRecipient->OnRemoteDied(remoteObj);
@@ -55,7 +55,7 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_002, TestSize.Level0)
     EXPECT_EQ(thermalClient.Connect(), ERR_OK);
 
     std::shared_ptr<IRemoteObject::DeathRecipient> deathRecipient =
-        std::make_shared<ThermalMgrClient::ThermalMgrDeathRecipient>();
+        std::make_shared<ThermalMgrClient::ThermalMgrDeathRecipient>(thermalClient);
     EXPECT_NE(deathRecipient, nullptr);
     sptr<IRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
