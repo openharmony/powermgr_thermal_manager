@@ -47,20 +47,21 @@ private:
 #endif
     class ThermalMgrDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
-        ThermalMgrDeathRecipient() = default;
+        explicit ThermalMgrDeathRecipient(ThermalMgrClient& client) : client_(client) {}
         ~ThermalMgrDeathRecipient() = default;
         void OnRemoteDied(const wptr<IRemoteObject>& remote);
 
     private:
         DISALLOW_COPY_AND_MOVE(ThermalMgrDeathRecipient);
+        ThermalMgrClient& client_;
     };
 
     ErrCode Connect();
+    void ResetProxy(const wptr<IRemoteObject>& remote);
     void GetLevel(ThermalLevel& level);
     bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo);
     sptr<IThermalSrv> thermalSrv_ {nullptr};
     sptr<IRemoteObject::DeathRecipient> deathRecipient_ {nullptr};
-    void ResetProxy(const wptr<IRemoteObject>& remote);
     std::mutex mutex_;
 };
 } // namespace PowerMgr
