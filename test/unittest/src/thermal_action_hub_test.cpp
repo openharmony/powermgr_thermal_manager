@@ -178,7 +178,7 @@ bool ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(Ac
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 4: end position
-            EXPECT_EQ(ter.second.substr(0, 4), lcd);
+            EXPECT_EQ(iter.second.substr(0, 4), lcd);
             isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
