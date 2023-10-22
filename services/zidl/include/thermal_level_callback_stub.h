@@ -32,13 +32,13 @@ public:
     ThermalLevelCallbackStub() = default;
     virtual ~ThermalLevelCallbackStub() = default;
     int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
-    bool GetThermalLevel(ThermalLevel __attribute__((unused)) level) override
+    bool OnThermalLevelChanged(ThermalLevel __attribute__((unused)) level) override
     {
         return true;
     }
 
 private:
-    int32_t GetThermalLevelStub(MessageParcel& data);
+    int32_t OnThermalLevelChangedStub(MessageParcel& data);
 };
 } // namespace PowerMgr
 } // namespace OHOS

@@ -45,7 +45,7 @@ int ThermalTempCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data,
     int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalLevelCallbackStub", DFX_DELAY_MS, nullptr, nullptr,
         HiviewDFX::XCOLLIE_FLAG_NOOP);
     int ret = ERR_OK;
-    if (code == static_cast<uint32_t>(PowerMgr::ThermalTempCallbackInterfaceCode::THERMAL_TEMPERATURE_CHANGD)) {
+    if (code == static_cast<uint32_t>(PowerMgr::ThermalTempCallbackInterfaceCode::THERMAL_TEMPERATURE_CHANGED)) {
         ret = OnThermalTempChangedStub(data);
     } else {
         ret = IPCObjectStub::OnRemoteRequest(code, data, reply, option);

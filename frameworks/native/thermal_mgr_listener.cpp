@@ -19,7 +19,7 @@
 
 namespace OHOS {
 namespace PowerMgr {
-bool ThermalMgrListener::ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrListener::ThermalLevelCallback::OnThermalLevelChanged(ThermalLevel level)
 {
     std::shared_ptr<ThermalMgrListener> listener = listener_.lock();
     if (listener == nullptr) {

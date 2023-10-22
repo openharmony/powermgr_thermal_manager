@@ -42,13 +42,13 @@ bool ThermalActionCallbackProxy::OnThermalActionChanged(ActionCallbackMap& actio
     THERMAL_WRITE_PARCEL_WITH_RET(data, Uint32, actionCbMap.size(), false);
     for (auto iter : actionCbMap) {
         THERMAL_HILOGD(COMP_SVC, "proxy type=%{public}s", iter.first.c_str());
-        THERMAL_HILOGD(COMP_SVC, "proxy temp=%{public}f", iter.second);
+        THERMAL_HILOGD(COMP_SVC, "proxy temp=%{public}s", iter.second.c_str());
         THERMAL_WRITE_PARCEL_WITH_RET(data, String, iter.first, false);
-        THERMAL_WRITE_PARCEL_WITH_RET(data, Float, iter.second, false);
+        THERMAL_WRITE_PARCEL_WITH_RET(data, String, iter.second, false);
     }
 
     int ret = remote->SendRequest(
-        static_cast<int>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGD),
+        static_cast<int>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGED),
         data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);

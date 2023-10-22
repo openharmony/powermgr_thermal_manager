@@ -90,13 +90,13 @@ HWTEST_F(ThermalMockProxyRemoteTest, ThermalMockProxyRemoteTest001, TestSize.Lev
     std::shared_ptr<ThermalActionCallbackProxy> actionProxy =
         std::make_shared<ThermalActionCallbackProxy>(sptrRemoteObj);
     EXPECT_FALSE(actionProxy == nullptr);
-    using ActionCallbackMap = std::map<std::string, float>;
+    using ActionCallbackMap = std::map<std::string, std::string>;
     ActionCallbackMap map;
     EXPECT_FALSE(actionProxy->OnThermalActionChanged(map));
     std::shared_ptr<ThermalLevelCallbackProxy> levalProxy = std::make_shared<ThermalLevelCallbackProxy>(sptrRemoteObj);
     EXPECT_FALSE(levalProxy == nullptr);
     ThermalLevel level = ThermalLevel::COOL;
-    EXPECT_FALSE(levalProxy->GetThermalLevel(level));
+    EXPECT_FALSE(levalProxy->OnThermalLevelChanged(level));
 
     std::shared_ptr<ThermalSrvProxy> srvProxy = std::make_shared<ThermalSrvProxy>(sptrRemoteObj);
     EXPECT_FALSE(srvProxy == nullptr);

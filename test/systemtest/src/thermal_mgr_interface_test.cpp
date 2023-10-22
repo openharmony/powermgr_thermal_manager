@@ -128,7 +128,7 @@ bool ThermalMgrInterfaceTest::ThermalTempTest2Callback::OnThermalTempChanged(Tem
     return true;
 }
 
-bool ThermalMgrInterfaceTest::ThermalLevelTest1Callback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrInterfaceTest::ThermalLevelTest1Callback::OnThermalLevelChanged(ThermalLevel level)
 {
     int assertMin = -1;
     int assertMax = 6;
@@ -139,7 +139,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest1Callback::GetThermalLevel(Thermal
     return true;
 }
 
-bool ThermalMgrInterfaceTest::ThermalLevelTest2Callback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrInterfaceTest::ThermalLevelTest2Callback::OnThermalLevelChanged(ThermalLevel level)
 {
     int assertMin = -1;
     int assertMax = 6;
@@ -150,7 +150,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest2Callback::GetThermalLevel(Thermal
     return true;
 }
 
-bool ThermalMgrInterfaceTest::ThermalLevelTest3Callback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrInterfaceTest::ThermalLevelTest3Callback::OnThermalLevelChanged(ThermalLevel level)
 {
     int assertMin = -1;
     int assertMax = 6;
@@ -161,7 +161,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest3Callback::GetThermalLevel(Thermal
     return true;
 }
 
-bool ThermalMgrInterfaceTest::ThermalLevelTest4Callback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrInterfaceTest::ThermalLevelTest4Callback::OnThermalLevelChanged(ThermalLevel level)
 {
     int assertMin = -1;
     int assertMax = 6;
@@ -173,7 +173,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest4Callback::GetThermalLevel(Thermal
     return true;
 }
 
-bool ThermalMgrInterfaceTest::ThermalLevelTest5Callback::GetThermalLevel(ThermalLevel level)
+bool ThermalMgrInterfaceTest::ThermalLevelTest5Callback::OnThermalLevelChanged(ThermalLevel level)
 {
     int assertMin = -1;
     int assertMax = 6;

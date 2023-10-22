@@ -29,7 +29,7 @@ const int32_t DELAY_TIME = 50000;
 }
 ThermalCommonEventReceiver::~ThermalCommonEventReceiver()
 {
-    if (subscriber_ == nullptr) {
+    if (subscriber_ != nullptr) {
         CommonEventManager::UnSubscribeCommonEvent(subscriber_);
     }
 }
