@@ -21,7 +21,7 @@
 
 namespace OHOS {
 namespace PowerMgr {
-bool ThermalLevelCallbackProxy::GetThermalLevel(ThermalLevel level)
+bool ThermalLevelCallbackProxy::OnThermalLevelChanged(ThermalLevel level)
 {
     sptr<IRemoteObject> remote = Remote();
     THERMAL_RETURN_IF_WITH_RET((remote == nullptr), false);
@@ -31,14 +31,14 @@ bool ThermalLevelCallbackProxy::GetThermalLevel(ThermalLevel level)
     MessageOption option;
 
     if (!data.WriteInterfaceToken(ThermalLevelCallbackProxy::GetDescriptor())) {
-        THERMAL_HILOGE(COMP_FWK, "ThermalLevelCallbackProxy::GetThermalLevel write descriptor failed!");
+        THERMAL_HILOGE(COMP_FWK, "ThermalLevelCallbackProxy::OnThermalLevelChanged write descriptor failed!");
         return false;
     }
 
     THERMAL_WRITE_PARCEL_WITH_RET(data, Int32, static_cast<int32_t>(level), false);
 
     int ret = remote->SendRequest(
-        static_cast<int>(PowerMgr::ThermalLevelCallbackInterfaceCode::GET_THERMAL_LEVEL), data, reply, option);
+        static_cast<int>(PowerMgr::ThermalLevelCallbackInterfaceCode::THERMAL_LEVEL_CHANGED), data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);
         return false;
