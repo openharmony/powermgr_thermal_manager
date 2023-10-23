@@ -130,7 +130,7 @@ bool ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
 bool ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
-    int32_t cpuMedFreq = 1989500;
+    std::string cpuMedFreq = "1989500";
     std::string lcd = "0.8";
     bool isFindCpuMed = false;
     bool isFindLcd = false;
