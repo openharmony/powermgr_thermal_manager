@@ -74,6 +74,7 @@ void ThermalObserver::InitSensorTypeMap()
             sensorType[i] = typeList[i];
         }
     }
+    typeMap_.clear();
     typeMap_.insert(std::make_pair(SensorType::SOC, sensorType[ARG_0]));
     typeMap_.insert(std::make_pair(SensorType::BATTERY, sensorType[ARG_1]));
     typeMap_.insert(std::make_pair(SensorType::SHELL, sensorType[ARG_2]));
