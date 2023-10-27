@@ -29,6 +29,7 @@ bool ThermalConfigBaseInfo::Init()
 
 void ThermalConfigBaseInfo::SetSensorsType()
 {
+    sensorsType_.clear();
     auto typesIter = baseItems_.find(SENSORS_TYPE_TAG);
     if (typesIter != baseItems_.end()) {
         sensorType_ = typesIter->second;

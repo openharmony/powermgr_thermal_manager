@@ -324,6 +324,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -361,6 +363,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
     ret = SetCondition(batteryTemp, sceneState);
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -399,6 +403,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -437,6 +443,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -475,6 +483,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -513,6 +523,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -551,6 +563,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -589,6 +603,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -627,6 +643,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -666,6 +684,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -705,6 +725,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
@@ -744,6 +766,8 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
     EXPECT_EQ(ret, ERR_OK) << " Thermal action fail due to set condition error";
 
     int32_t level = ThermalActionReportTest::GetThermalLevel(expectLevel);
+    // sleep 100ms for hisys_event handle
+    usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);

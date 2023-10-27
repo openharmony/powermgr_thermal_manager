@@ -71,6 +71,8 @@ void ThermalMgrPolicyTest::SetUpTestCase()
     g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
     g_service->InitStateMachine();
     g_service->InitActionManager();
+    g_service->GetBaseinfoObj()->Init();
+    g_service->GetObserver()->InitSensorTypeMap();
 }
 
 void ThermalMgrPolicyTest::TearDownTestCase()

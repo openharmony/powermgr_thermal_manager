@@ -93,6 +93,8 @@ void ThermalMgrInterfaceTest::SetUpTestCase()
     g_service = DelayedSpSingleton<ThermalService>::GetInstance();
     g_service->OnStart();
     g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+    g_service->GetBaseinfoObj()->Init();
+    g_service->GetObserver()->InitSensorTypeMap();
 }
 
 void ThermalMgrInterfaceTest::TearDownTestCase()
