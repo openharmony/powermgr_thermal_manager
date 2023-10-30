@@ -143,7 +143,7 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
         object->AddDeathRecipient(thermalLevelCBDeathRecipient_);
     }
     for (auto& listener : thermalLevelListeners_) {
-        listener->GetThermalLevel(static_cast<ThermalLevel>(level_));
+        listener->OnThermalLevelChanged(static_cast<ThermalLevel>(level_));
     }
     THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}d, insertOk=%{public}d",
         static_cast<unsigned int>(thermalLevelListeners_.size()), retIt.second);
@@ -194,7 +194,7 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
     // Call back all level listeners
     std::lock_guard lock(mutex_);
     for (auto& listener : thermalLevelListeners_) {
-        listener->GetThermalLevel(static_cast<ThermalLevel>(level_));
+        listener->OnThermalLevelChanged(static_cast<ThermalLevel>(level_));
     }
 
     // Notify thermal level change event to battery statistics

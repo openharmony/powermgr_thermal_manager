@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace PowerMgr {
 enum class ThermalLevelCallbackInterfaceCode {
-    GET_THERMAL_LEVEL = 0,
+    THERMAL_LEVEL_CHANGED = 0,
 };
 } // space PowerMgr
 } // namespace OHOS

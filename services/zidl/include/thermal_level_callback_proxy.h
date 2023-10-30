@@ -27,7 +27,7 @@ public:
     explicit ThermalLevelCallbackProxy(const sptr<IRemoteObject>& impl) : IRemoteProxy<IThermalLevelCallback>(impl) {}
     ~ThermalLevelCallbackProxy() = default;
     DISALLOW_COPY_AND_MOVE(ThermalLevelCallbackProxy);
-    virtual bool GetThermalLevel(ThermalLevel level) override;
+    virtual bool OnThermalLevelChanged(ThermalLevel level) override;
 
 private:
     static inline BrokerDelegator<ThermalLevelCallbackProxy> delegator_;

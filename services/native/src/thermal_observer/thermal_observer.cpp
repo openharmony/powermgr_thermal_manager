@@ -31,8 +31,8 @@ namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* TASK_UNREG_SENSOR_TEMP_CALLBACK = "SensorTemp_UnRegSensorTempCB";
 constexpr const char* TASK_UNREG_ACTION_CALLBACK = "Action_UnRegActionCB";
-std::map<sptr<IThermalActionCallback>, std::map<std::string, float>> g_actionLastCbMap;
-std::map<std::string, float> g_actionMap;
+std::map<sptr<IThermalActionCallback>, std::map<std::string, std::string>> g_actionLastCbMap;
+std::map<std::string, std::string> g_actionMap;
 }
 ThermalObserver::ThermalObserver(const wptr<ThermalService>& tms) : tms_(tms) {};
 ThermalObserver::~ThermalObserver() {};
@@ -207,12 +207,12 @@ void ThermalObserver::SetDecisionValue(const std::string& actionName, const std:
 {
     std::lock_guard lock(mutexActionMap_);
     THERMAL_HILOGD(
-        COMP_SVC, "actionName = %{public}s, actionValue = %{public}f", actionName.c_str(), std::stof(actionValue));
+        COMP_SVC, "actionName = %{public}s, actionValue = %{public}s", actionName.c_str(), actionValue.c_str());
     auto iter = g_actionMap.find(actionName);
     if (iter != g_actionMap.end()) {
-        iter->second = std::stof(actionValue);
+        iter->second = actionValue;
     } else {
-        g_actionMap.insert(std::make_pair(actionName, std::stof(actionValue)));
+        g_actionMap.insert(std::make_pair(actionName, actionValue));
     }
 }
 
