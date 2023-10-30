@@ -39,7 +39,7 @@ int ThermalActionCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
     int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalActionCallbackStub", DFX_DELAY_MS, nullptr, nullptr,
         HiviewDFX::XCOLLIE_FLAG_NOOP);
     int ret = ERR_OK;
-    if (code == static_cast<uint32_t>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGD)) {
+    if (code == static_cast<uint32_t>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGED)) {
         ret = OnThermalActionChangedStub(data);
     } else {
         ret = IPCObjectStub::OnRemoteRequest(code, data, reply, option);
@@ -50,14 +50,14 @@ int ThermalActionCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
 
 int32_t ThermalActionCallbackStub::OnThermalActionChangedStub(MessageParcel& data)
 {
-    std::map<std::string, float> actionMapCb;
+    std::map<std::string, std::string> actionMapCb;
     uint32_t size = 0;
     THERMAL_READ_PARCEL_WITH_RET(data, Uint32, size, E_READ_PARCEL_ERROR_THERMAL);
     for (uint32_t i = 0; i < size; i++) {
         std::string type;
-        float action = INVALID_ACTION_VALUE;
+        std::string action;
         THERMAL_READ_PARCEL_WITH_RET(data, String, type, E_READ_PARCEL_ERROR_THERMAL);
-        THERMAL_READ_PARCEL_WITH_RET(data, Float, action, E_READ_PARCEL_ERROR_THERMAL);
+        THERMAL_READ_PARCEL_WITH_RET(data, String, action, E_READ_PARCEL_ERROR_THERMAL);
         actionMapCb[type] = action;
     }
     OnThermalActionChanged(actionMapCb);

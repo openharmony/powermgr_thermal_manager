@@ -58,7 +58,7 @@ void ThermalLevelCallback::ReleaseCallback()
     env_ = nullptr;
 }
 
-bool ThermalLevelCallback::GetThermalLevel(ThermalLevel level)
+bool ThermalLevelCallback::OnThermalLevelChanged(ThermalLevel level)
 {
     std::lock_guard lock(mutex_);
     level_ = level;

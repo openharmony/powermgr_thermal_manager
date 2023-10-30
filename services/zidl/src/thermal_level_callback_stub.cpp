@@ -44,8 +44,8 @@ int ThermalLevelCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data
     int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalLevelCallbackStub", DFX_DELAY_MS, nullptr, nullptr,
         HiviewDFX::XCOLLIE_FLAG_NOOP);
     int ret = ERR_OK;
-    if (code == static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::GET_THERMAL_LEVEL)) {
-        ret = GetThermalLevelStub(data);
+    if (code == static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::THERMAL_LEVEL_CHANGED)) {
+        ret = OnThermalLevelChangedStub(data);
     } else {
         ret = IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -53,11 +53,11 @@ int ThermalLevelCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data
     return ret;
 }
 
-int32_t ThermalLevelCallbackStub::GetThermalLevelStub(MessageParcel& data)
+int32_t ThermalLevelCallbackStub::OnThermalLevelChangedStub(MessageParcel& data)
 {
     int32_t level;
     THERMAL_READ_PARCEL_WITH_RET(data, Int32, level, E_READ_PARCEL_ERROR_THERMAL);
-    GetThermalLevel(static_cast<ThermalLevel>(level));
+    OnThermalLevelChanged(static_cast<ThermalLevel>(level));
     return ERR_OK;
 }
 } // namespace PowerMgr

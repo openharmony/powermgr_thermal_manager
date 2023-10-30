@@ -49,7 +49,7 @@ bool ThermalTempCallbackProxy::OnThermalTempChanged(TempCallbackMap& tempCbMap)
 
     int ret =
         remote->SendRequest(
-            static_cast<int>(PowerMgr::ThermalTempCallbackInterfaceCode::THERMAL_TEMPERATURE_CHANGD),
+            static_cast<int>(PowerMgr::ThermalTempCallbackInterfaceCode::THERMAL_TEMPERATURE_CHANGED),
             data, reply, option);
     if (ret != ERR_OK) {
         THERMAL_HILOGE(COMP_FWK, "SendRequest is failed, error code: %{public}d", ret);

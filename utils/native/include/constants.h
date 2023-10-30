@@ -52,7 +52,6 @@ namespace PowerMgr {
     constexpr const char* SC_PROTOCOL = "sc";
     constexpr const char* BUCK_PROTOCOL = "buck";
     constexpr int32_t INVAILD_TEMP = -1000;
-    constexpr float INVALID_ACTION_VALUE = -3.1415926;
 
     // sensor type
     constexpr const char* BATTERY = "battery";

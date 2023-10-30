@@ -99,7 +99,7 @@ bool ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(Ac
     bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "cpu_big") {
-            EXPECT_EQ(iter.second, cpuBigFreq);
+            EXPECT_EQ(std::stoi(iter.second), cpuBigFreq);
             isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
@@ -117,7 +117,7 @@ bool ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 3: end position
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 3), lcd);
+            EXPECT_EQ(iter.second.substr(0, 3), lcd);
             isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
@@ -130,7 +130,7 @@ bool ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
 bool ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
-    int32_t cpuMedFreq = 1989500;
+    std::string cpuMedFreq = "1989500";
     std::string lcd = "0.8";
     bool isFindCpuMed = false;
     bool isFindLcd = false;
@@ -141,7 +141,7 @@ bool ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(Ac
         }
         if (iter.first == "lcd") {
             // 0： begin position; 3: end position
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 3), lcd);
+            EXPECT_EQ(iter.second.substr(0, 3), lcd);
             isFindLcd = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
@@ -160,7 +160,7 @@ bool ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(Ac
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 4: end position
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
+            EXPECT_EQ(iter.second.substr(0, 4), lcd);
             isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
@@ -178,7 +178,7 @@ bool ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(Ac
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 4: end position
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
+            EXPECT_EQ(iter.second.substr(0, 4), lcd);
             isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
@@ -196,7 +196,7 @@ bool ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(Ac
     for (auto iter : actionCbMap) {
         if (iter.first == "lcd") {
             // 0： begin position; 4: end position
-            EXPECT_EQ(std::to_string(iter.second).substr(0, 4), lcd);
+            EXPECT_EQ(iter.second.substr(0, 4), lcd);
             isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
@@ -212,7 +212,7 @@ bool ThermalActionHubTest::ThermalActionTest7Callback::OnThermalActionChanged(Ac
     bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "boost") {
-            EXPECT_TRUE(static_cast<bool>(iter.second));
+            EXPECT_TRUE(static_cast<bool>(std::stoi(iter.second)));
             isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;
@@ -228,7 +228,7 @@ bool ThermalActionHubTest::ThermalActionTest8Callback::OnThermalActionChanged(Ac
     bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "isolate") {
-            EXPECT_TRUE(static_cast<bool>(iter.second));
+            EXPECT_TRUE(static_cast<bool>(std::stoi(iter.second)));
             isFind = true;
         }
         GTEST_LOG_(INFO) << "actionName: " << iter.first << " actionValue: " << iter.second;

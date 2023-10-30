@@ -71,7 +71,7 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest002, 
 
     sptr<ThermalLevelCallbackStub> levelStub = new ThermalLevelCallbackStub();
     ThermalLevel level = ThermalLevel::COOL;
-    EXPECT_TRUE(levelStub->GetThermalLevel(level));
+    EXPECT_TRUE(levelStub->OnThermalLevelChanged(level));
 
     sptr<ThermalTempCallbackStub> tempStub = new ThermalTempCallbackStub();
     IThermalTempCallback::TempCallbackMap tempCbMap;
@@ -113,7 +113,7 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest003, 
 
 /**
  * @tc.name: ThermalMockStubGetdescriptorTest004
- * @tc.desc: stub ThermalTempCallbackStub OnRemoteRequest THERMAL_TEMPERATURE_CHANGD
+ * @tc.desc: stub ThermalTempCallbackStub OnRemoteRequest THERMAL_TEMPERATURE_CHANGED
  * @tc.type: FUNC
  */
 HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest004, TestSize.Level0)
@@ -121,7 +121,7 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest004, 
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest004 start.");
     sptr<ThermalTempCallbackStub> tempStub = new ThermalTempCallbackStub();
     uint32_t code =
-        static_cast<uint32_t>(PowerMgr::ThermalTempCallbackInterfaceCode::THERMAL_TEMPERATURE_CHANGD);
+        static_cast<uint32_t>(PowerMgr::ThermalTempCallbackInterfaceCode::THERMAL_TEMPERATURE_CHANGED);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -155,14 +155,14 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest004, 
 
 /**
  * @tc.name: ThermalMockStubGetdescriptorTest005
- * @tc.desc: stub ThermalActionCallbackStub OnRemoteRequest THERMAL_ACTION_CHANGD
+ * @tc.desc: stub ThermalActionCallbackStub OnRemoteRequest THERMAL_ACTION_CHANGED
  * @tc.type: FUNC
  */
 HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest005, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest005 start.");
     uint32_t code =
-        static_cast<uint32_t>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGD);
+        static_cast<uint32_t>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGED);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -198,14 +198,14 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest005, 
 
 /**
  * @tc.name: ThermalMockStubGetdescriptorTest006
- * @tc.desc: stub ThermalLevelCallbackStub OnRemoteRequest GET_THERMAL_LEVEL Read Int32 parcel error
+ * @tc.desc: stub ThermalLevelCallbackStub OnRemoteRequest THERMAL_LEVEL_CHANGED Read Int32 parcel error
  * @tc.type: FUNC
  */
 HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest006, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubGetdescriptorTest006 start.");
     uint32_t code =
-        static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::GET_THERMAL_LEVEL);
+        static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::THERMAL_LEVEL_CHANGED);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;

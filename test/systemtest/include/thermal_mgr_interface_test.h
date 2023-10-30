@@ -51,35 +51,35 @@ public:
     public:
         ThermalLevelTest1Callback() {};
         virtual ~ThermalLevelTest1Callback() {};
-        virtual bool GetThermalLevel(ThermalLevel level) override;
+        virtual bool OnThermalLevelChanged(ThermalLevel level) override;
     };
 
     class ThermalLevelTest2Callback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTest2Callback() {};
         virtual ~ThermalLevelTest2Callback() {};
-        virtual bool GetThermalLevel(ThermalLevel level) override;
+        virtual bool OnThermalLevelChanged(ThermalLevel level) override;
     };
 
     class ThermalLevelTest3Callback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTest3Callback() {};
         virtual ~ThermalLevelTest3Callback() {};
-        virtual bool GetThermalLevel(ThermalLevel level) override;
+        virtual bool OnThermalLevelChanged(ThermalLevel level) override;
     };
 
     class ThermalLevelTest4Callback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTest4Callback() {};
         virtual ~ThermalLevelTest4Callback() {};
-        virtual bool GetThermalLevel(ThermalLevel level) override;
+        virtual bool OnThermalLevelChanged(ThermalLevel level) override;
     };
 
     class ThermalLevelTest5Callback : public ThermalLevelCallbackStub {
     public:
         ThermalLevelTest5Callback() {};
         virtual ~ThermalLevelTest5Callback() {};
-        virtual bool GetThermalLevel(ThermalLevel level) override;
+        virtual bool OnThermalLevelChanged(ThermalLevel level) override;
     };
 };
 } // namespace PowerMgr
