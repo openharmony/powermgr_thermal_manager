@@ -710,4 +710,28 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest018, TestSize.Level0)
     EXPECT_EQ(level, ThermalLevel::EMERGENCY) << "ThermalMgrInterfaceTest018 Failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest018 end");
 }
+
+/**
+ * @tc.name: ThermalMgrInterfaceTest019
+ * @tc.desc: test get ESCAPE level
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest019, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest019 start");
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "pa";
+    info1.temp = 46100;
+    event.info.push_back(info1);
+    info1.type = "ambient";
+    info1.temp = 20000;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    g_thermalMgrClient.GetThermalLevel();
+    ThermalLevel level;
+    g_service->GetThermalLevel(level);
+    EXPECT_EQ(level, ThermalLevel::ESCAPE) << "ThermalMgrInterfaceTest019 Failed";
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest019 end");
+}
 } // namespace

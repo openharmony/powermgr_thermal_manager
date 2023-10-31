@@ -31,6 +31,7 @@
         <sensor_cluster name="warm_5G" sensor="pa" aux_sensor="ambient">
             <item level="1" threshold="40000" threshold_clr="38000" aux_trigger_range="5000_35000"/>
             <item level="2" threshold="43000" threshold_clr="41000" aux_trigger_range="5000_35000"/>
+            <item level="3" threshold="45000" threshold_clr="44000" aux_trigger_range="5000_35000"/>
         </sensor_cluster>
         <sensor_cluster name="warm_safe" sensor="ap,soc" aux_sensor="ambient,shell">
             <item level="1" threshold="75000,30000" threshold_clr="71000,28000" aux_trigger_range="0_900000,0_40000"/>
@@ -155,6 +156,9 @@
             <lcd>0.60</lcd>
             <process_ctrl>3</process_ctrl>
             <thermallevel>5</thermallevel>
+        </config>
+        <config name="warm_5G" level="3">
+            <thermallevel>7</thermallevel>
         </config>
         <config name="warm_safe" level="1">
             <process_ctrl screen="1">3</process_ctrl>
