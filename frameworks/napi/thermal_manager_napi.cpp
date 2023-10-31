@@ -152,6 +152,7 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
     napi_value overheated;
     napi_value warning;
     napi_value emergency;
+    napi_value escape;
 
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::COOL), &cool);
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::NORMAL), &normal);
@@ -160,6 +161,7 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::OVERHEATED), &overheated);
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::WARNING), &warning);
     napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::EMERGENCY), &emergency);
+    napi_create_uint32(env, static_cast<uint32_t>(ThermalLevel::ESCAPE), &escape);
 
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_STATIC_PROPERTY("COOL", cool),
@@ -169,6 +171,7 @@ napi_value ThermalManagerNapi::InitThermalLevel(napi_env env, napi_value exports
         DECLARE_NAPI_STATIC_PROPERTY("OVERHEATED", overheated),
         DECLARE_NAPI_STATIC_PROPERTY("WARNING", warning),
         DECLARE_NAPI_STATIC_PROPERTY("EMERGENCY", emergency),
+        DECLARE_NAPI_STATIC_PROPERTY("ESCAPE", escape),
     };
 
     napi_value result = nullptr;
