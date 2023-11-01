@@ -171,7 +171,7 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest005, 
     data.WriteInterfaceToken(ThermalActionCallbackStub::GetDescriptor());
     data.WriteUint32(1);
     data.WriteString("ThermalMockStubGetdescriptorTest005");
-    data.WriteFloat(3.14);
+    data.WriteString("3.14");
     int32_t ret = actionStub->OnRemoteRequest(code, data, reply, option);
     EXPECT_EQ(ret, ERR_OK) << "ret: " << ret << " code: " << code;
 

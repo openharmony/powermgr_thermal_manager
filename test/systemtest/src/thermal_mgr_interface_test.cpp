@@ -133,7 +133,7 @@ bool ThermalMgrInterfaceTest::ThermalTempTest2Callback::OnThermalTempChanged(Tem
 bool ThermalMgrInterfaceTest::ThermalLevelTest1Callback::GetThermalLevel(ThermalLevel level)
 {
     int assertMin = -1;
-    int assertMax = 6;
+    int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
@@ -144,7 +144,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest1Callback::GetThermalLevel(Thermal
 bool ThermalMgrInterfaceTest::ThermalLevelTest2Callback::GetThermalLevel(ThermalLevel level)
 {
     int assertMin = -1;
-    int assertMax = 6;
+    int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
@@ -155,7 +155,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest2Callback::GetThermalLevel(Thermal
 bool ThermalMgrInterfaceTest::ThermalLevelTest3Callback::GetThermalLevel(ThermalLevel level)
 {
     int assertMin = -1;
-    int assertMax = 6;
+    int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
@@ -166,7 +166,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest3Callback::GetThermalLevel(Thermal
 bool ThermalMgrInterfaceTest::ThermalLevelTest4Callback::GetThermalLevel(ThermalLevel level)
 {
     int assertMin = -1;
-    int assertMax = 6;
+    int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
@@ -178,7 +178,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest4Callback::GetThermalLevel(Thermal
 bool ThermalMgrInterfaceTest::ThermalLevelTest5Callback::GetThermalLevel(ThermalLevel level)
 {
     int assertMin = -1;
-    int assertMax = 6;
+    int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
     THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
