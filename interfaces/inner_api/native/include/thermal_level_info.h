@@ -52,10 +52,15 @@ enum class ThermalLevel : int32_t {
      */
         WARNING,
     /**
-     * @brief emergency level, it will make device shutdown
+     * @brief emergency level
      *
      */
         EMERGENCY,
+    /**
+     * @brief escape level
+     *
+     */
+        ESCAPE,
 };
 
 enum class ThermalCommonEventCode : uint32_t {
