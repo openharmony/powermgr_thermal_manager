@@ -198,9 +198,8 @@ HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
 {
-    bool ret = g_actionApplicationProcess->InitParams("");
-    EXPECT_TRUE(ret);
-    g_actionApplicationProcess->AddActionValue("");
+    g_actionApplicationProcess->InitParams("");
+    g_actionApplicationProcess->AddActionValue("1");
     g_actionApplicationProcess->Execute();
     g_actionApplicationProcess->KillApplicationAction("");
     g_actionApplicationProcess->KillProcess(0);
@@ -210,6 +209,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
     g_actionApplicationProcess->KillAllAppProcess();
     g_actionApplicationProcess->ProcessAppActionRequest(0);
     g_actionApplicationProcess->ProcessAppActionExecution(0);
+    EXPECT_TRUE(g_actionApplicationProcess->valueList_.empty());
 }
 
 /**
