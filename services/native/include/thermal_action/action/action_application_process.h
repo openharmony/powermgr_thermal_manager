@@ -39,7 +39,6 @@ public:
     void SetEnableEvent(bool enable) override;
     void AddActionValue(std::string value) override;
     void Execute() override;
-    bool Init();
     ErrCode KillApplicationAction(const std::string& bundleName);
     ErrCode GetRunningProcessInfo(std::vector<AppExecFwk::RunningProcessInfo>& info);
     AppExecFwk::RunningProcessInfo GetAppProcessInfoByName(const std::string& processName);

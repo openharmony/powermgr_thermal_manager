@@ -29,11 +29,13 @@
 #include "action_cpu_isolate.h"
 #include "action_display.h"
 #include "action_gpu.h"
+#include "action_node.h"
 #include "action_shutdown.h"
 #include "action_thermal_level.h"
 #include "action_popup.h"
 #include "action_volume.h"
 #include "action_voltage.h"
+#include "file_operation.h"
 #include "iremote_object.h"
 #include "mock_thermal_remote_object.h"
 #include "thermal_service.h"
@@ -44,6 +46,7 @@ using namespace OHOS;
 using namespace std;
 
 namespace {
+constexpr int32_t BUF_LEN = 32;
 static sptr<ThermalService> g_service = nullptr;
 std::shared_ptr<ActionApplicationProcess> g_actionApplicationProcess =
     std::make_shared<ActionApplicationProcess>("process_ctrl");
@@ -59,6 +62,7 @@ std::shared_ptr<ActionShutdown> g_actionShutdown = std::make_shared<ActionShutdo
 std::shared_ptr<ActionThermalLevel> g_actionThermalLevel = std::make_shared<ActionThermalLevel>("thermallevel");
 std::shared_ptr<ActionVolume> g_actionVolume = std::make_shared<ActionVolume>("volume");
 std::shared_ptr<ActionVoltage> g_actionVoltage = std::make_shared<ActionVoltage>("voltage");
+std::shared_ptr<ActionNode> g_actionNode = std::make_shared<ActionNode>("action_node");
 }
 
 void ThermalActionTest::SetUpTestCase()
@@ -275,5 +279,22 @@ HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
     g_actionCpuIsolate->AddActionValue("1.0");
     g_actionCpuIsolate->Execute();
     EXPECT_TRUE(g_actionCpuIsolate->valueList_.empty());
+}
+
+/**
+ * @tc.name: ThermalActionTest013
+ * @tc.desc: Action node Test
+ * @tc.type: FUNC
+  */
+HWTEST_F(ThermalActionTest, ThermalActionTest013, TestSize.Level0)
+{
+    std::string input = "1.0";
+    g_actionNode->InitParams("/data/service/el0/thermal/config/lcd");
+    g_actionNode->AddActionValue(input);
+    g_actionNode->Execute();
+    char buf[BUF_LEN];
+    FileOperation::ReadFile("/data/service/el0/thermal/config/lcd", buf, BUF_LEN)
+    std::string ret = buf;
+    EXPECT_EQ(input, ret);
 }
 } // namespace

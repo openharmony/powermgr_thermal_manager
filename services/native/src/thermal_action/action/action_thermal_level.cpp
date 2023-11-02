@@ -49,7 +49,9 @@ ActionThermalLevel::ActionThermalLevel(const std::string& actionName)
 
 void ActionThermalLevel::InitParams(const std::string& params)
 {
-    (void)params;
+    if (thermalLevelCBDeathRecipient_ == nullptr) {
+        thermalLevelCBDeathRecipient_ = new ThermalLevelCallbackDeathRecipient();
+    }
 }
 
 void ActionThermalLevel::SetStrict(bool enable)
@@ -100,16 +102,6 @@ uint32_t ActionThermalLevel::GetActionValue()
         }
     }
     return value;
-}
-
-bool ActionThermalLevel::Init()
-{
-    if (thermalLevelCBDeathRecipient_ == nullptr) {
-        thermalLevelCBDeathRecipient_ = new ThermalLevelCallbackDeathRecipient();
-    }
-
-    THERMAL_HILOGD(COMP_SVC, "Exit");
-    return true;
 }
 
 int32_t ActionThermalLevel::GetThermalLevel()
