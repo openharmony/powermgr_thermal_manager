@@ -28,72 +28,56 @@ const int MAX_PATH = 256;
 }
 bool ThermalActionManager::Init()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     ThermalActionFactory::InitFactory();
     for (auto item = vActionItem_.begin(); item != vActionItem_.end(); ++item) {
-        THERMAL_HILOGI(COMP_SVC, "ThermalActionManager name = %{public}s", item->name.c_str());
-        if (!item->protocol.empty()) {
-            std::vector<std::string> protocolList;
-            StringOperation::SplitString(item->protocol, protocolList, ",");
-            if (protocolList.empty()) {
-                THERMAL_HILOGW(COMP_SVC, "protocolList is empty");
-                continue;
-            }
-
-            for (auto& iter : protocolList) {
-                std::string str = item->name;
-                std::string combinedActionName = str.append("_").append(iter.c_str());
-                InsertActionMap(combinedActionName, iter, item->strict, item->enableEvent);
-            }
+        std::shared_ptr<IThermalAction> thermalAction = nullptr;
+        if (item->name == THERMAL_LEVEL_NAME) {
+            actionThermalLevel_ = std::make_shared<ActionThermalLevel>(THERMAL_LEVEL_NAME);
+            thermalAction = actionThermalLevel_;
+        } else if (!item->protocol.empty()) {
+            thermalAction = ThermalActionFactory::Create(item->protocol, item->name);
         } else {
-            InsertActionMap(item->name, item->protocol, item->strict, item->enableEvent);
+            thermalAction = ThermalActionFactory::Create(item->name, item->name);
         }
+        if (thermalAction == nullptr) {
+            THERMAL_HILOGE(COMP_SVC, "failed to create action, name: %{public}s", item->name.c_str());
+            continue;
+        }
+        thermalAction->InitParams(item->params);
+        thermalAction->SetStrict(item->strict);
+        thermalAction->SetEnableEvent(item->enableEvent);
+        actionMap_.emplace(item->name, thermalAction);
+        THERMAL_HILOGI(COMP_SVC, "add action, name: %{public}s", item->name.c_str());
     }
 
-    if (actionThermalLevel_ == nullptr) {
-        actionThermalLevel_ = std::make_shared<ActionThermalLevel>(THERMAL_LEVEL_NAME);
-        if (!actionThermalLevel_->Init()) {
-            THERMAL_HILOGE(COMP_SVC, "failed to create level action");
-        }
-    }
     CreateActionMockFile();
     return true;
 }
 
-void ThermalActionManager::InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict,
-    bool enableEvent)
-{
-    std::shared_ptr<IThermalAction> thermalAction = ThermalActionFactory::Create(actionName);
-    if (thermalAction == nullptr) {
-        THERMAL_HILOGE(COMP_SVC, "failed to create action");
-        return;
-    }
-    thermalAction->InitParams(protocol);
-    thermalAction->SetStrict(strict);
-    thermalAction->SetEnableEvent(enableEvent);
-    actionMap_.emplace(actionName, thermalAction);
-}
-
 void ThermalActionManager::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (actionThermalLevel_ != nullptr) {
         actionThermalLevel_->SubscribeThermalLevelCallback(callback);
+    } else {
+        THERMAL_HILOGE(COMP_SVC, "thermal level action is uninitialized");
     }
 }
 
 void ThermalActionManager::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (actionThermalLevel_ != nullptr) {
         actionThermalLevel_->UnSubscribeThermalLevelCallback(callback);
+    } else {
+        THERMAL_HILOGE(COMP_SVC, "thermal level action is uninitialized");
     }
 }
 
 uint32_t ThermalActionManager::GetThermalLevel()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    return actionThermalLevel_->GetThermalLevel();
+    if (actionThermalLevel_ != nullptr) {
+        return actionThermalLevel_->GetThermalLevel();
+    } 
+    return 0;
 }
 
 int32_t ThermalActionManager::CreateActionMockFile()

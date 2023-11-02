@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,32 @@
  * limitations under the License.
  */
 
-#ifndef THERMAL_ACTION_FACTORY_H
-#define THERMAL_ACTION_FACTORY_H
+#ifndef ACTION_NODE_H
+#define ACTION_NODE_H
 
-#include <functional>
-#include <memory>
+#include <string>
 
 #include "ithermal_action.h"
 
 namespace OHOS {
 namespace PowerMgr {
-using ActionFunc = std::function<std::shared_ptr<IThermalAction>(std::string)>;
-class ThermalActionFactory {
+class ActionNode : public IThermalAction {
 public:
-    static void InitFactory();
-    static std::shared_ptr<IThermalAction> Create(const std::string& actionClass, const std::string& actionName);
+    ActionNode(const std::string& actionName);
+    ~ActionNode() = default;
+
+    void InitParams(const std::string& params) override;
+    void SetStrict(bool enable) override;
+    void SetEnableEvent(bool enable) override;
+    void AddActionValue(std::string value) override;
+    void Execute() override;
+
+private:
+    std::string lastValue_;
+    std::string nodePath_;
+    std::string fallbackValue_;
+    std::vector<std::string> valueList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
-#endif // THERMAL_ACTION_FACTORY_H
+#endif // ACTION_NODE_H

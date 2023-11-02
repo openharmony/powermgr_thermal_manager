@@ -47,17 +47,11 @@ ActionApplicationProcess::ActionApplicationProcess(const std::string& actionName
     actionName_ = actionName;
 }
 
-bool ActionApplicationProcess::Init()
+void ActionApplicationProcess::InitParams(const std::string& params)
 {
     if (appMgrClient_ == nullptr) {
         appMgrClient_ = std::make_unique<AppMgrClient>();
     }
-    return true;
-}
-
-void ActionApplicationProcess::InitParams(const std::string& params)
-{
-    (void)params;
 }
 
 void ActionApplicationProcess::SetStrict(bool enable)
