@@ -198,7 +198,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
 {
-    bool ret = g_actionApplicationProcess->Init();
+    bool ret = g_actionApplicationProcess->InitParams("");
     EXPECT_TRUE(ret);
     g_actionApplicationProcess->AddActionValue("");
     g_actionApplicationProcess->Execute();
@@ -293,7 +293,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest013, TestSize.Level0)
     g_actionNode->AddActionValue(input);
     g_actionNode->Execute();
     char buf[BUF_LEN];
-    FileOperation::ReadFile("/data/service/el0/thermal/config/lcd", buf, BUF_LEN)
+    FileOperation::ReadFile("/data/service/el0/thermal/config/lcd", buf, BUF_LEN);
     std::string ret = buf;
     EXPECT_EQ(input, ret);
 }
