@@ -48,9 +48,13 @@ bool ThermalPolicy::Init()
 void ThermalPolicy::OnSensorInfoReported(const TypeTempMap& info)
 {
     typeTempMap_ = info;
-
     LevelDecision();
     WriteLevel();
+    PolicyDecision();
+}
+
+void ThermalPolicy::ExecutePolicy()
+{
     PolicyDecision();
 }
 

@@ -38,6 +38,7 @@ class StateMachine {
 public:
     using StateMachineMap = std::map<std::string, std::shared_ptr<IStateCollection>>;
     bool Init();
+    void UpdateState(std::string stateName, std::string stateValue);
     void DumpState(std::string& result);
     void DumpIdle(std::string& result);
     void SetStateItem(std::vector<StateItem>& vstateItem)

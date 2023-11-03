@@ -40,6 +40,7 @@
 #include "thermal_srv_config_parser.h"
 #include "thermal_srv_sensor_info.h"
 #include "thermal_srv_stub.h"
+#include "thermal_event_handler.h"
 #include "v1_1/ithermal_interface.h"
 #include "v1_1/thermal_types.h"
 
@@ -69,6 +70,7 @@ public:
     bool GetThermalLevel(ThermalLevel& level) override;
     bool GetThermalInfo() override;
     bool SetScene(const std::string& scene) override;
+    bool UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed = false) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
@@ -170,6 +172,7 @@ private:
     bool InitModules();
     bool InitConfigFile();
     bool InitConfigModule();
+    bool CreateEventRunner();
     bool CreateConfigModule();
     void RegisterHdiStatusListener();
     void RegisterThermalHdiCallback();
@@ -187,6 +190,7 @@ private:
     std::shared_ptr<StateMachine> state_ {nullptr};
     std::shared_ptr<ThermalActionManager> actionMgr_ {nullptr};
     std::shared_ptr<FanFaultDetect> fanFaultDetect_ {nullptr};
+    std::shared_ptr<ThermalEventHandler> eventHandler_ {nullptr};
     ThermalSrvConfigParser configParser_;
     bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};

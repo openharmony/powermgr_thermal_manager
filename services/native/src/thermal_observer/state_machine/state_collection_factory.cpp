@@ -18,6 +18,7 @@
 #include "charger_state_collection.h"
 #include "screen_state_collection.h"
 #include "scene_state_collection.h"
+#include "extend_state_collection.h"
 #include "constants.h"
 #include "thermal_common.h"
 
@@ -33,7 +34,7 @@ std::shared_ptr<IStateCollection> StateCollectionFactory::Create(std::string &st
     } else if (stateName == STATE_SCNEN) {
         return std::make_shared<SceneStateCollection>();
     } else {
-        return nullptr;
+        return std::make_shared<ExtendStateCollection>(stateName);
     }
 }
 } // namespace PowerMgr

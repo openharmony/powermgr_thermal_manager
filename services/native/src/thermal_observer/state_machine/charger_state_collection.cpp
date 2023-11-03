@@ -143,7 +143,7 @@ void ChargerStateCollection::HandleChangerInnerStatusCompleted(const CommonEvent
     HandleChargeIdleState();
 }
 
-void ChargerStateCollection::SetState()
+void ChargerStateCollection::SetState(const std::string& stateValue)
 {
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,32 +13,28 @@
  * limitations under the License.
  */
 
-#ifndef SCREEN_STATE_COLLECTION_H
-#define SCREEN_STATE_COLLECTION_H
+#ifndef EXTEND_STATE_COLLECTION_H
+#define EXTEND_STATE_COLLECTION_H
 
-#include <common_event_subscriber.h>
 #include "istate_collection.h"
+#include "thermal_timer.h"
 
-using IntentWant = OHOS::AAFwk::Want;
 namespace OHOS {
 namespace PowerMgr {
-class ScreenStateCollection : public IStateCollection {
+class ExtendStateCollection : public IStateCollection {
 public:
-    ScreenStateCollection() = default;
-    ~ScreenStateCollection() = default;
     bool Init() override;
     bool InitParam(std::string& params) override;
     std::string GetState() override;
-    virtual bool DecideState(const std::string& value) override;
-    void HandleScreenOnCompleted(const EventFwk::CommonEventData& data);
-    void HandleScreenOffCompleted(const EventFwk::CommonEventData& data);
-    bool RegisterEvent();
-    virtual void SetState(const std::string& stateValue) override;
+    void SetState(const std::string& stateValue) override;
+    bool DecideState(const std::string& value) override;
+public:
+    ExtendStateCollection(const std::string& stateName);
+    ~ExtendStateCollection() = default;
 private:
-    std::string params_;
-    std::string state_;
-    std::string mockState_;
+    std::string stateName_;
+    std::string stateValue_ = "-1";
 };
-}
-}
-#endif // SCREEN_STATE_COLLECTION_H
+} // namespace PowerMgr
+} // namespace OHOS
+#endif // EXTEND_STATE_COLLECTION_H
