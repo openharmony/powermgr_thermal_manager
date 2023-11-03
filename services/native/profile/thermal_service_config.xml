@@ -65,10 +65,10 @@
         <item name="isolate" event="1"/>
         <item name="lcd"/>
         <item name="volume" uid="2001,2002"/>
-        <item name="current_sc" protocol="current" event="1"/>
-        <item name="current_buck" protocol="current" event="1"/>
-        <item name="voltage_sc" protocol="voltage" event="1"/>
-        <item name="current_buck" protocol="voltage" event="1"/>
+        <item name="current_sc" protocol="current" param="sc" event="1"/>
+        <item name="current_buck" protocol="current" param="buck" event="1"/>
+        <item name="voltage_sc" protocol="voltage" param="sc" event="1"/>
+        <item name="voltage_buck" protocol="voltage" param="buck" event="1"/>
         <item name="process_ctrl" param="32,64,128,256" event=""/>
         <item name="shut_down" event="0"/>
         <item name="thermallevel" event="1"/>

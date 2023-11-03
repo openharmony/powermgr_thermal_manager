@@ -45,26 +45,15 @@ namespace PowerMgr {
     const std::string STATE_SCREEN = "screen";
     const std::string STATE_SCNEN = "scene";
 
-    // scene name
-    const std::string SCENE_CAMERA = "cam";
-    const std::string SCENE_CALL = "call";
-    const std::string SCENE_GAME = "game";
-    const int MIN = 0;
-    const int MAX = 3;
-    const int INTERVAL = 5000;
-    const std::string SC_PROTOCOL = "sc";
-    const std::string BUCK_PROTOCOL = "buck";
-    constexpr int32_t INVAILD_TEMP = -1000;
-
-    // sensor type
+    // scene sensor name
     const std::string BATTERY = "battery";
-    const std::string SHELL = "shell";
-    const std::string CPU = "cpu";
+    const std::string BUCK_PROTOCOL = "buck";
+    const std::string SC_PROTOCOL = "sc";
     const std::string SOC = "soc";
-    const std::string AP = "ap";
-    const std::string PA = "pa";
-    const std::string CHARGER = "charger";
-    const std::string AMBIENT = "ambient";
+    constexpr int32_t INVAILD_TEMP = -1000;
+    constexpr int32_t MIN = 0;
+    constexpr int32_t MAX = 3;
+    constexpr int32_t INTERVAL = 5000;
 
     constexpr int APP_FIRST_UID = 15000;
 

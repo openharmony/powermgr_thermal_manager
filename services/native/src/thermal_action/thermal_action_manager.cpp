@@ -76,7 +76,7 @@ uint32_t ThermalActionManager::GetThermalLevel()
 {
     if (actionThermalLevel_ != nullptr) {
         return actionThermalLevel_->GetThermalLevel();
-    } 
+    }
     return 0;
 }
 
