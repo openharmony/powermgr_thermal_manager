@@ -202,7 +202,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest006, TestSize.Level0)
     chargerState->RegisterEvent();
     CommonEventData data;
     chargerState->HandleChangerStatusCompleted(data);
-    chargerState->SetState();
+    chargerState->SetState("");
     chargerState->DecideState("1");
     chargerState->HandleChargeIdleState();
     chargerState->HandleThermalLevelCompleted(data);
@@ -220,7 +220,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest007, TestSize.Level0)
     string param = "game";
     bool ret = sceneState->InitParam(param);
     EXPECT_TRUE(ret);
-    sceneState->SetState();
+    sceneState->SetState("");
     sceneState->DecideState("game");
 }
 
@@ -241,7 +241,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
     CommonEventData data;
     screenState->HandleScreenOnCompleted(data);
     screenState->HandleScreenOffCompleted(data);
-    screenState->SetState();
+    screenState->SetState("");
     screenState->DecideState("0");
 }
 
