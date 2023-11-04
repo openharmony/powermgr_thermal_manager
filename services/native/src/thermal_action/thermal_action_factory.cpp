@@ -20,61 +20,67 @@
 #include "action_cpu_big.h"
 #include "action_cpu_boost.h"
 #include "action_cpu_isolate.h"
-#include "action_cpu_med.h"
 #include "action_cpu_lit.h"
-#include "action_gpu.h"
+#include "action_cpu_med.h"
 #include "action_display.h"
-#include "action_volume.h"
+#include "action_gpu.h"
+#include "action_node.h"
+#include "action_popup.h"
 #include "action_shutdown.h"
 #include "action_thermal_level.h"
-#include "action_popup.h"
 #include "action_voltage.h"
-#include "string_operation.h"
+#include "action_volume.h"
 #include "constants.h"
+#include "string_operation.h"
 #include "thermal_common.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-std::map<std::string, std::shared_ptr<IThermalAction>> g_actionMap;
-std::mutex g_mutex;
+std::map<std::string, ActionFunc> g_actionMap;
 }
 void ThermalActionFactory::InitFactory()
 {
-    std::lock_guard<std::mutex> lock(g_mutex);
-    g_actionMap.clear();
-    g_actionMap.insert(std::make_pair(CPU_BIG_ACTION_NAME, std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(CPU_MED_ACTION_NAME, std::make_shared<ActionCpuMed>(CPU_MED_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(CPU_LIT_ACTION_NAME, std::make_shared<ActionCpuLit>(CPU_LIT_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(GPU_ACTION_NAME, std::make_shared<ActionGpu>(GPU_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(LCD_ACTION_NAME, std::make_shared<ActionDisplay>(LCD_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(VOLUME_ACTION_NAME, std::make_shared<ActionVolume>(VOLUME_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(SHUTDOWN_ACTION_NAME, std::make_shared<ActionShutdown>(SHUTDOWN_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(THERMAL_LEVEL_NAME, std::make_shared<ActionThermalLevel>(THERMAL_LEVEL_NAME)));
-    g_actionMap.insert(std::make_pair(POPUP_ACTION_NAME, std::make_shared<ActionPopup>(POPUP_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(CURRENT_SC_ACTION_NAME, std::make_shared<ActionCharger>(CURRENT_SC_ACTION_NAME)));
-    g_actionMap.insert(
-        std::make_pair(CURRENT_BUCK_ACTION_NAME, std::make_shared<ActionCharger>(CURRENT_BUCK_ACTION_NAME)));
-    g_actionMap.insert(
-        std::make_pair(VOLATAGE_SC_ACTION_NAME, std::make_shared<ActionVoltage>(VOLATAGE_SC_ACTION_NAME)));
-    g_actionMap.insert(
-        std::make_pair(VOLATAGE_BUCK_ACTION_NAME, std::make_shared<ActionVoltage>(VOLATAGE_BUCK_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(CPU_BOOST_ACTION_NAME, std::make_shared<ActionCpuBoost>(CPU_BOOST_ACTION_NAME)));
-    g_actionMap.insert(std::make_pair(CPU_ISOLATE_ACTION_NAME,
-        std::make_shared<ActionCpuIsolate>(CPU_ISOLATE_ACTION_NAME)));
-    std::shared_ptr<ActionApplicationProcess> actionAppProcess =
-        std::make_shared<ActionApplicationProcess>(PROCESS_ACTION_NAME);
-    actionAppProcess->Init();
-    g_actionMap.insert(std::make_pair(PROCESS_ACTION_NAME, actionAppProcess));
+    g_actionMap = {
+        std::make_pair(CPU_BIG_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionCpuBig>(actionName); }),
+        std::make_pair(CPU_MED_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionCpuMed>(actionName); }),
+        std::make_pair(CPU_LIT_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionCpuLit>(actionName); }),
+        std::make_pair(GPU_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionGpu>(actionName); }),
+        std::make_pair(LCD_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionDisplay>(actionName); }),
+        std::make_pair(VOLUME_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionVolume>(actionName); }),
+        std::make_pair(SHUTDOWN_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionShutdown>(actionName); }),
+        std::make_pair(THERMAL_LEVEL_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionThermalLevel>(actionName); }),
+        std::make_pair(POPUP_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionPopup>(actionName); }),
+        std::make_pair(CURRENT_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionCharger>(actionName); }),
+        std::make_pair(VOLATAGE_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionVoltage>(actionName); }),
+        std::make_pair(CPU_BOOST_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionCpuBoost>(actionName); }),
+        std::make_pair(CPU_ISOLATE_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionCpuIsolate>(actionName); }),
+        std::make_pair(PROCESS_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionApplicationProcess>(actionName); }),
+        std::make_pair(NODE_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionNode>(actionName); }),
+    };
 }
 
-std::shared_ptr<IThermalAction> ThermalActionFactory::Create(const std::string& actionName)
+std::shared_ptr<IThermalAction> ThermalActionFactory::Create(const std::string& actionClass,
+    const std::string& actionName)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    std::lock_guard<std::mutex> lock(g_mutex);
     for (auto iter = g_actionMap.begin(); iter != g_actionMap.end(); ++iter) {
-        if (StringOperation::Compare(actionName, iter->first)) {
-            return iter->second;
+        if (StringOperation::Compare(actionClass, iter->first)) {
+            return iter->second(actionName);
         }
     }
 

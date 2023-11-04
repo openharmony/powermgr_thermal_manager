@@ -54,15 +54,10 @@ public:
     {
         return actionMap_;
     }
-    std::shared_ptr<ActionThermalLevel> GetActionThermalLevelObj()
-    {
-        return actionThermalLevel_;
-    }
 
     int32_t CreateActionMockFile();
     void DumpAction(std::string& result);
 private:
-    void InsertActionMap(const std::string& actionName, const std::string& protocol, bool strict, bool enableEvent);
     ThermalActionMap actionMap_;
     std::vector<std::string> actionNameList_;
     std::shared_ptr<ActionThermalLevel> actionThermalLevel_;
