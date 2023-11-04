@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,9 @@
  * limitations under the License.
  */
 
-#include "scene_state_collection.h"
-
-#include <algorithm>
+#include "extend_state_collection.h"
 
 #include "constants.h"
-#include "file_operation.h"
 #include "securec.h"
 #include "string_operation.h"
 #include "thermal_service.h"
@@ -29,34 +26,36 @@ namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
-bool SceneStateCollection::Init()
+ExtendStateCollection::ExtendStateCollection(const std::string& stateName)
+{
+    stateName_ = stateName;
+}
+bool ExtendStateCollection::Init()
 {
     return true;
 }
 
-bool SceneStateCollection::InitParam(std::string& params)
+bool ExtendStateCollection::InitParam(std::string& params)
 {
     return true;
 }
 
-std::string SceneStateCollection::GetState()
+std::string ExtendStateCollection::GetState()
 {
-    return "";
+    return stateValue_;
 }
 
-void SceneStateCollection::SetState(const std::string& stateValue)
+void ExtendStateCollection::SetState(const std::string& stateValue)
 {
+    stateValue_ = stateValue;
 }
 
-bool SceneStateCollection::DecideState(const std::string& value)
+bool ExtendStateCollection::DecideState(const std::string& value)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    if ((!g_service->GetScene().empty()) && (g_service->GetScene() == value)) {
-        std::string scene = g_service->GetScene();
-        THERMAL_HILOGD(COMP_SVC, "scene = %{public}s", scene.c_str());
+    if (stateValue_ == value) {
+        THERMAL_HILOGD(COMP_SVC, "stateValue = %{public}s", stateValue_.c_str());
         return true;
     }
-
     return false;
 }
 } // namespace PowerMgr

@@ -46,6 +46,7 @@ public:
 
     bool Init();
     void OnSensorInfoReported(const TypeTempMap& info);
+    void ExecutePolicy();
     void SetPolicyMap(PolicyConfigMap& pcm);
     void SetSensorClusterMap(SensorClusterMap& scm);
     void FindSubscribeActionValue();

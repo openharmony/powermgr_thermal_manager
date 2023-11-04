@@ -51,6 +51,7 @@ public:
     virtual bool GetThermalLevel(ThermalLevel& level) override;
     virtual bool GetThermalInfo() override;
     virtual bool SetScene(const std::string& scene) override;
+    virtual bool UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed = false) override;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
 private:

@@ -69,7 +69,7 @@ public:
     void HandleThermalLevelCompleted(const EventFwk::CommonEventData& data);
     bool RegisterEvent();
 public:
-    virtual void SetState() override;
+    virtual void SetState(const std::string& stateValue) override;
 #ifndef THERMAL_OBSERVER_UT_TEST
 private:
 #endif

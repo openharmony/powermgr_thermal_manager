@@ -30,6 +30,7 @@ enum class ThermalMgrInterfaceCode {
     GET_TEMP_LEVEL,
     GET_THERMAL_INFO,
     SET_SCENE,
+    UPDATE_THERMAL_STATE,
     SHELL_DUMP
 };
 } // space PowerMgr

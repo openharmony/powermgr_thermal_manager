@@ -38,6 +38,21 @@ bool StateMachine::Init()
     return true;
 }
 
+void StateMachine::UpdateState(std::string stateName, std::string stateValue)
+{
+    auto iter = stateCollectionMap_.find(stateName);
+    if (iter != stateCollectionMap_.end()) {
+        THERMAL_HILOGW(COMP_SVC, "StateMachine name = %{public}s exist", stateName.c_str());
+        iter->second->SetState(stateValue);
+        return;
+    }
+    vState_.push_back({stateName, "", false});
+    std::shared_ptr<IStateCollection> stateCollection = StateCollectionFactory::Create(stateName);
+    stateCollection->SetState(stateValue);
+    stateCollectionMap_.emplace(std::pair(stateName, stateCollection));
+    THERMAL_HILOGI(COMP_SVC, "StateMachine add state success");
+}
+
 void StateMachine::DumpState(std::string& result)
 {
     for (auto iter = vState_.begin(); iter != vState_.end(); ++iter) {

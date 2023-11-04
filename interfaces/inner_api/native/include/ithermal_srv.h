@@ -39,6 +39,7 @@ public:
     virtual bool GetThermalLevel(ThermalLevel& level) = 0;
     virtual bool GetThermalInfo() = 0;
     virtual bool SetScene(const std::string& scene) = 0;
+    virtual bool UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed = false) = 0;
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) = 0;
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalSrv");
 };
