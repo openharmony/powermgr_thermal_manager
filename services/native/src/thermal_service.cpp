@@ -38,7 +38,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const std::string THERMAL_EVENT_RUNNER = "thermal_event_runner";
 const std::string THERMAL_SERVICE_CONFIG_PATH = "etc/thermal_config/thermal_service_config.xml";
 const std::string VENDOR_THERMAL_SERVICE_CONFIG_PATH = "/vendor/etc/thermal_config/thermal_service_config.xml";
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
@@ -97,9 +96,6 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
 bool ThermalService::Init()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (!CreateEventRunner()) {
-        return false;
-    }
     if (!CreateConfigModule()) {
         return false;
     }
@@ -108,16 +104,6 @@ bool ThermalService::Init()
     }
     RegisterHdiStatusListener();
     THERMAL_HILOGD(COMP_SVC, "Init success");
-    return true;
-}
-
-bool ThermalService::CreateEventRunner()
-{
-    eventHandler_ = std::make_shared<ThermalEventHandler>(AppExecFwk::EventRunner::Create(THERMAL_EVENT_RUNNER));
-    if (!eventHandler_) {
-        THERMAL_HILOGE(COMP_SVC, "thermal event Runner create failed");
-        return false;
-    }
     return true;
 }
 
@@ -442,11 +428,11 @@ bool ThermalService::UpdateThermalState(const std::string& tag, const std::strin
         return false;
     }
     THERMAL_HILOGI(COMP_SVC, "tag %{public}s, val %{public}s", tag.c_str(), val.c_str());
-    std::shared_ptr<StateData> stateData = std::make_shared<StateData>();
-    stateData->tag = tag;
-    stateData->val = val;
-    stateData->isImmed = isImmed;
-    eventHandler_->SendEvent(THERMAL_STATE_CHANGED_EVENT, stateData);
+    std::lock_guard<std::mutex> lock(mutex_);
+    state_->UpdateState(tag, val);
+    if (isImmed) {
+        policy_->ExecutePolicy();
+    }
     return true;
 }
 
@@ -516,13 +502,14 @@ void ThermalService::RegisterThermalHdiCallback()
 
 int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event)
 {
-    std::shared_ptr<TemperatureData> temperatureData = std::make_shared<TemperatureData>();
+    TypeTempMap typeTempMap;
     if (!event.info.empty()) {
         for (auto iter = event.info.begin(); iter != event.info.end(); iter++) {
-            temperatureData->typeTempMap.insert(std::make_pair(iter->type, iter->temp));
+            typeTempMap.insert(std::make_pair(iter->type, iter->temp));
         }
     }
-    eventHandler_->SendEvent(THERMAL_TEMPERATURE_CHANGED_EVENT, temperatureData);
+    std::lock_guard<std::mutex> lock(mutex_);
+    serviceSubscriber_->OnTemperatureChanged(typeTempMap);
     return ERR_OK;
 }
 
