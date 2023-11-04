@@ -40,7 +40,6 @@
 #include "thermal_srv_config_parser.h"
 #include "thermal_srv_sensor_info.h"
 #include "thermal_srv_stub.h"
-#include "thermal_event_handler.h"
 #include "v1_1/ithermal_interface.h"
 #include "v1_1/thermal_types.h"
 
@@ -172,7 +171,6 @@ private:
     bool InitModules();
     bool InitConfigFile();
     bool InitConfigModule();
-    bool CreateEventRunner();
     bool CreateConfigModule();
     void RegisterHdiStatusListener();
     void RegisterThermalHdiCallback();

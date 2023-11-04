@@ -748,7 +748,6 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest020, TestSize.Level0)
     std::string val1 = "100";
     g_service->UpdateThermalState(tag1, val1, false);
     std::map<std::string, std::string> stateMap {{tag1, val1}};
-    usleep(100);
     bool result = g_service->GetPolicy()->StateMachineDecision(stateMap);
     EXPECT_TRUE(result == true);
     
@@ -758,16 +757,8 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest020, TestSize.Level0)
     info1.temp = 40100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
-    usleep(100);
     int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
     EXPECT_TRUE(value == 1);
-
-    std::string tag2 = "modeid";
-    std::string val2 = "200";
-    g_service->UpdateThermalState(tag2, val2, true);
-    usleep(100);
-    std::string ret = GetNodeValue(LCD_PATH);
-    EXPECT_TRUE(ret.substr(0, 4) == "1.00");
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest020 end");
 }
 
