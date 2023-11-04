@@ -188,7 +188,6 @@ private:
     std::shared_ptr<StateMachine> state_ {nullptr};
     std::shared_ptr<ThermalActionManager> actionMgr_ {nullptr};
     std::shared_ptr<FanFaultDetect> fanFaultDetect_ {nullptr};
-    std::shared_ptr<ThermalEventHandler> eventHandler_ {nullptr};
     ThermalSrvConfigParser configParser_;
     bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};
