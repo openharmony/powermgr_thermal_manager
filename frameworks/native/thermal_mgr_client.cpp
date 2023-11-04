@@ -178,6 +178,13 @@ bool ThermalMgrClient::SetScene(const std::string& scene)
     return thermalSrv_->SetScene(scene);
 }
 
+bool ThermalMgrClient::UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed)
+{
+    THERMAL_HILOGD(COMP_FWK, "Enter");
+    THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, false);
+    return thermalSrv_->UpdateThermalState(tag, val, isImmed);
+}
+
 ThermalLevel ThermalMgrClient::GetThermalLevel()
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");

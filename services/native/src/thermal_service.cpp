@@ -422,6 +422,20 @@ bool ThermalService::SetScene(const std::string& scene)
     return true;
 }
 
+bool ThermalService::UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed)
+{
+    if (!Permission::IsSystem()) {
+        return false;
+    }
+    THERMAL_HILOGI(COMP_SVC, "tag %{public}s, val %{public}s", tag.c_str(), val.c_str());
+    std::lock_guard<std::mutex> lock(mutex_);
+    state_->UpdateState(tag, val);
+    if (isImmed) {
+        policy_->ExecutePolicy();
+    }
+    return true;
+}
+
 void ThermalService::RegisterHdiStatusListener()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
@@ -494,6 +508,7 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
             typeTempMap.insert(std::make_pair(iter->type, iter->temp));
         }
     }
+    std::lock_guard<std::mutex> lock(mutex_);
     serviceSubscriber_->OnTemperatureChanged(typeTempMap);
     return ERR_OK;
 }

@@ -91,7 +91,7 @@ void ScreenStateCollection::HandleScreenOffCompleted(const CommonEventData& data
     state_ = ToString(SCREEN_OFF);
 }
 
-void ScreenStateCollection::SetState()
+void ScreenStateCollection::SetState(const std::string& stateValue)
 {
 }
 

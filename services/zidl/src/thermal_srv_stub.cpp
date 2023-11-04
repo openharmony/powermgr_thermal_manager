@@ -84,6 +84,9 @@ int32_t ThermalSrvStub::CheckRequestCode(const uint32_t code, MessageParcel& dat
         case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::SET_SCENE): {
             return SetSceneStub(data);
         }
+        case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::UPDATE_THERMAL_STATE): {
+            return UpdateThermalStateStub(data);
+        }
         case static_cast<int>(PowerMgr::ThermalMgrInterfaceCode::SHELL_DUMP): {
             return ShellDumpStub(data, reply);
         }
@@ -220,6 +223,19 @@ int32_t ThermalSrvStub::SetSceneStub(MessageParcel& data)
 
     THERMAL_READ_PARCEL_WITH_RET(data, String, scene, E_READ_PARCEL_ERROR_THERMAL);
     SetScene(scene);
+    return ERR_OK;
+}
+
+int32_t ThermalSrvStub::UpdateThermalStateStub(MessageParcel& data)
+{
+    THERMAL_HILOGD(COMP_SVC, "Enter");
+    std::string tag;
+    std::string val;
+    bool isImmed = false;
+    THERMAL_READ_PARCEL_WITH_RET(data, String, tag, E_READ_PARCEL_ERROR_THERMAL);
+    THERMAL_READ_PARCEL_WITH_RET(data, String, val, E_READ_PARCEL_ERROR_THERMAL);
+    THERMAL_READ_PARCEL_WITH_RET(data, Bool, isImmed, E_READ_PARCEL_ERROR_THERMAL);
+    UpdateThermalState(tag, val, isImmed);
     return ERR_OK;
 }
 

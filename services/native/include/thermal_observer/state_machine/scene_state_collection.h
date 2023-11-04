@@ -26,7 +26,7 @@ public:
     bool Init() override;
     bool InitParam(std::string& params) override;
     std::string GetState() override;
-    virtual void SetState() override;
+    virtual void SetState(const std::string& stateValue) override;
     virtual bool DecideState(const std::string& value) override;
 public:
     SceneStateCollection() = default;

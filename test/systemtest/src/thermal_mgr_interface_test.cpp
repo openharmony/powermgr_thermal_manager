@@ -734,4 +734,32 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest019, TestSize.Level0)
     EXPECT_EQ(level, ThermalLevel::ESCAPE) << "ThermalMgrInterfaceTest019 Failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest019 end");
 }
+
+/**
+ * @tc.name: ThermalMgrInterfaceTest020
+ * @tc.desc: Update Thermal State
+ * @tc.type: FUNC
+ * @tc.result: state changed
+ */
+HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest020, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest020 start");
+    std::string tag1 = "modeid";
+    std::string val1 = "100";
+    g_service->UpdateThermalState(tag1, val1, false);
+    std::map<std::string, std::string> stateMap {{tag1, val1}};
+    bool result = g_service->GetPolicy()->StateMachineDecision(stateMap);
+    EXPECT_TRUE(result == true);
+    
+    HdfThermalCallbackInfo event;
+    ThermalZoneInfo info1;
+    info1.type = "battery";
+    info1.temp = 40100;
+    event.info.push_back(info1);
+    g_service->HandleThermalCallbackEvent(event);
+    int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
+    EXPECT_TRUE(value == 1);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest020 end");
+}
+
 } // namespace
