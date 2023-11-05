@@ -104,10 +104,11 @@ void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string
     auto retIt = sensorTempListeners_.insert(callback);
     if (retIt.second) {
         object->AddDeathRecipient(sensorTempCBDeathRecipient_);
+        callbackTypeMap_.insert(std::make_pair(callback, typeList));
+        THERMAL_HILOGI(COMP_SVC, "add new temp listener, listeners.size=%{public}zu", sensorTempListeners_.size());
+    } else {
+        THERMAL_HILOGW(COMP_SVC, "subscribe failed, temp callback duplicate subscription!");
     }
-    callbackTypeMap_.insert(std::make_pair(callback, typeList));
-    THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}d, insertOk=%{public}d",
-        static_cast<unsigned int>(sensorTempListeners_.size()), retIt.second);
 }
 
 void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
@@ -125,8 +126,8 @@ void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
     if (eraseNum != 0) {
         object->RemoveDeathRecipient(sensorTempCBDeathRecipient_);
     }
-    THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}d, eraseNum=%{public}zu",
-        static_cast<unsigned int>(sensorTempListeners_.size()), eraseNum);
+    THERMAL_HILOGI(COMP_SVC, "erase temp listener, listeners.size=%{public}zu, eraseNum=%{public}zu",
+        sensorTempListeners_.size(), eraseNum);
 }
 
 void ThermalObserver::SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
@@ -140,10 +141,11 @@ void ThermalObserver::SubscribeThermalActionCallback(const std::vector<std::stri
     auto retIt = actionListeners_.insert(callback);
     if (retIt.second) {
         object->AddDeathRecipient(actionCBDeathRecipient_);
+        callbackActionMap_.insert(std::make_pair(callback, actionList));
+        THERMAL_HILOGI(COMP_SVC, "add new action listener, listeners.size=%{public}zu", actionListeners_.size());
+    } else {
+        THERMAL_HILOGW(COMP_SVC, "subscribe failed, action callback duplicate subscription!");
     }
-    callbackActionMap_.insert(std::make_pair(callback, actionList));
-    THERMAL_HILOGD(COMP_SVC, "listeners.size=%{public}u, insertOk=%{public}d",
-        static_cast<uint32_t>(actionListeners_.size()), retIt.second);
 }
 
 void ThermalObserver::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
@@ -161,8 +163,8 @@ void ThermalObserver::UnSubscribeThermalActionCallback(const sptr<IThermalAction
     if (eraseNum != 0) {
         object->RemoveDeathRecipient(actionCBDeathRecipient_);
     }
-    THERMAL_HILOGD(COMP_SVC, "listeners.size=%{public}u, eraseNum=%{public}zu",
-        static_cast<uint32_t>(actionListeners_.size()), eraseNum);
+    THERMAL_HILOGI(COMP_SVC, "erase action listener, listeners.size=%{public}zu, eraseNum=%{public}zu",
+        actionListeners_.size(), eraseNum);
 }
 
 void ThermalObserver::FindSubscribeActionValue()
