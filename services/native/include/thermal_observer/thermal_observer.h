@@ -105,9 +105,9 @@ private:
     sptr<IRemoteObject::DeathRecipient> sensorTempCBDeathRecipient_;
     sptr<IRemoteObject::DeathRecipient> actionCBDeathRecipient_;
     std::set<const sptr<IThermalTempCallback>, classcomp> sensorTempListeners_;
-    std::map<const sptr<IThermalTempCallback>, std::vector<std::string>> callbackTypeMap_;
+    std::map<const sptr<IThermalTempCallback>, std::vector<std::string>, classcomp> callbackTypeMap_;
     std::set<const sptr<IThermalActionCallback>, ClassActionComp> actionListeners_;
-    std::map<const sptr<IThermalActionCallback>, std::vector<std::string>> callbackActionMap_;
+    std::map<const sptr<IThermalActionCallback>, std::vector<std::string>, ClassActionComp> callbackActionMap_;
     Callback callback_;
     std::map<SensorType, std::string> typeMap_;
 };

@@ -34,6 +34,7 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 constexpr const char* TASK_UNREG_THERMAL_LEVEL_CALLBACK = "ThermalLevel_UnRegThermalLevelpCB";
+constexpr int32_t MAX_THERMAL_LEVEL = static_cast<int32_t>(ThermalLevel::ESCAPE);
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::COOL);
@@ -111,9 +112,10 @@ int32_t ActionThermalLevel::GetThermalLevel()
 
 uint32_t ActionThermalLevel::LevelRequest(int32_t level)
 {
-    THERMAL_HILOGD(COMP_SVC, "level = %{public}d", level);
+    if (level > MAX_THERMAL_LEVEL) {
+        level = MAX_THERMAL_LEVEL;
+    }
     if (level_ != level) {
-        THERMAL_HILOGI(COMP_SVC, "level changed, notify");
         NotifyThermalLevelChanged(level);
     }
     return ERR_OK;
@@ -133,9 +135,7 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
     auto retIt = thermalLevelListeners_.insert(callback);
     if (retIt.second) {
         object->AddDeathRecipient(thermalLevelCBDeathRecipient_);
-    }
-    for (auto& listener : thermalLevelListeners_) {
-        listener->OnThermalLevelChanged(static_cast<ThermalLevel>(level_));
+        callback->OnThermalLevelChanged(static_cast<ThermalLevel>(level_));
     }
     THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}d, insertOk=%{public}d",
         static_cast<unsigned int>(thermalLevelListeners_.size()), retIt.second);
@@ -177,9 +177,9 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
 {
     THERMAL_HILOGD(COMP_SVC, "level = %{public}d, listeners.size = %{public}d",
         level, static_cast<unsigned int>(thermalLevelListeners_.size()));
-    // Get Thermal Level
+    THERMAL_HILOGI(COMP_SVC, "thermal level changed, new lev: %{public}d, old lev: %{public}d", level, level_);
     level_ = level;
-    THERMAL_HILOGI(COMP_SVC, "level = %{public}d", level_);
+    
     // Send Notification event
     PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, level_);
 

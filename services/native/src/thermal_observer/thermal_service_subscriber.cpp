@@ -91,7 +91,7 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
     if (magnification_ != 0) {
         sec = static_cast<int32_t>(difftime(endTime_, startTime_)) / magnification_;
     }
-    THERMAL_HILOGI(COMP_SVC, "SetHistoryTypeTempMap: sec=%{public}d", sec);
+    THERMAL_HILOGD(COMP_SVC, "SetHistoryTypeTempMap: sec=%{public}d", sec);
     for (auto history : typeHistoryMap_) {
         const auto& item = history.second;
         // The initial value of the sum is 0
