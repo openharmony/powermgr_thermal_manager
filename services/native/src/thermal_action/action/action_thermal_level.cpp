@@ -179,7 +179,7 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
         level, static_cast<unsigned int>(thermalLevelListeners_.size()));
     THERMAL_HILOGI(COMP_SVC, "thermal level changed, new lev: %{public}d, old lev: %{public}d", level, level_);
     level_ = level;
-    
+
     // Send Notification event
     PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, level_);
 
