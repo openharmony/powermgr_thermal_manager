@@ -746,6 +746,8 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest020, TestSize.Level0)
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest020 start");
     std::string tag1 = "modeid";
     std::string val1 = "100";
+    bool ret = g_thermalMgrClient.UpdateThermalState(tag1, val1, false);
+    EXPECT_TRUE(ret == true);
     g_service->UpdateThermalState(tag1, val1, false);
     std::map<std::string, std::string> stateMap {{tag1, val1}};
     bool result = g_service->GetPolicy()->StateMachineDecision(stateMap);
