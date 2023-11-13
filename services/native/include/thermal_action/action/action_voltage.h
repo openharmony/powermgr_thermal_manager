@@ -17,11 +17,11 @@
 #define ACTION_VOLATEG_H
 
 #include "ithermal_action.h"
-#include "v1_2/types.h"
+#include "v2_0/types.h"
 
 namespace OHOS {
 namespace PowerMgr {
-using namespace OHOS::HDI::Battery::V1_2;
+using namespace OHOS::HDI::Battery::V2_0;
 class ActionVoltage : public IThermalAction {
 public:
     ActionVoltage(const std::string& actionName);
