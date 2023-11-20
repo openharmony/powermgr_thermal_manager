@@ -29,9 +29,6 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-constexpr const char* TASK_UNREG_SENSOR_TEMP_CALLBACK = "SensorTemp_UnRegSensorTempCB";
-constexpr const char* TASK_UNREG_ACTION_CALLBACK = "Action_UnRegActionCB";
-std::map<sptr<IThermalActionCallback>, std::map<std::string, std::string>> g_actionLastCbMap;
 std::map<std::string, std::string> g_actionMap;
 }
 ThermalObserver::ThermalObserver(const wptr<ThermalService>& tms) : tms_(tms) {};
@@ -39,7 +36,6 @@ ThermalObserver::~ThermalObserver() {};
 
 bool ThermalObserver::Init()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (sensorTempCBDeathRecipient_ == nullptr) {
         sensorTempCBDeathRecipient_ = new SensorTempCallbackDeathRecipient();
     }
@@ -49,13 +45,12 @@ bool ThermalObserver::Init()
     }
 
     InitSensorTypeMap();
-    THERMAL_HILOGD(COMP_SVC, "Exit");
+    THERMAL_HILOGI(COMP_SVC, "ThermalObserver init succ");
     return true;
 }
 
 void ThermalObserver::InitSensorTypeMap()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::vector<std::string> sensorType(TYPE_MAX_SIZE);
     auto baseInfo = g_service->GetBaseinfoObj();
     if (baseInfo == nullptr) return;
@@ -85,7 +80,6 @@ void ThermalObserver::InitSensorTypeMap()
     typeMap_.insert(std::make_pair(SensorType::SENSOR5, sensorType[ARG_7]));
     typeMap_.insert(std::make_pair(SensorType::SENSOR6, sensorType[ARG_8]));
     typeMap_.insert(std::make_pair(SensorType::SENSOR7, sensorType[ARG_9]));
-    THERMAL_HILOGD(COMP_SVC, "Exit");
 }
 
 void ThermalObserver::SetRegisterCallback(Callback& callback)
@@ -96,7 +90,6 @@ void ThermalObserver::SetRegisterCallback(Callback& callback)
 void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string>& typeList,
     const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard<std::mutex> lock(mutexTempCallback_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -113,7 +106,6 @@ void ThermalObserver::SubscribeThermalTempCallback(const std::vector<std::string
 
 void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lock(mutexTempCallback_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -133,7 +125,6 @@ void ThermalObserver::UnSubscribeThermalTempCallback(const sptr<IThermalTempCall
 void ThermalObserver::SubscribeThermalActionCallback(const std::vector<std::string>& actionList,
     const std::string& desc, const sptr<IThermalActionCallback>& callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard<std::mutex> lock(mutexActionCallback_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -150,7 +141,6 @@ void ThermalObserver::SubscribeThermalActionCallback(const std::vector<std::stri
 
 void ThermalObserver::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lock(mutexActionCallback_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
@@ -167,16 +157,30 @@ void ThermalObserver::UnSubscribeThermalActionCallback(const sptr<IThermalAction
         actionListeners_.size(), eraseNum);
 }
 
+void ThermalObserver::PrintAction()
+{
+    std::string thermalActionLog;
+    for (auto actionIter = g_actionMap.begin(); actionIter != g_actionMap.end(); ++actionIter) {
+        thermalActionLog.append(actionIter->first).append("=").append(actionIter->second).append("|");
+    }
+    THERMAL_HILOGD(COMP_SVC, "execute action {listener:%{public}zu|%{public}zu} {%{public}s}.",
+        sensorTempListeners_.size(), actionListeners_.size(), thermalActionLog.c_str());
+}
+
 void ThermalObserver::FindSubscribeActionValue()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lock(mutexActionCallback_);
-    IThermalActionCallback::ActionCallbackMap newActionCbMap;
+    if (g_actionMap.empty()) {
+        THERMAL_HILOGD(COMP_SVC, "no action");
+        return;
+    }
+    PrintAction();
     if (actionListeners_.empty()) {
-        THERMAL_HILOGD(COMP_SVC, "no subscribe.");
+        THERMAL_HILOGD(COMP_SVC, "no subscribe");
         return;
     }
 
+    IThermalActionCallback::ActionCallbackMap newActionCbMap;
     for (auto& listener : actionListeners_) {
         auto actionIter = callbackActionMap_.find(listener);
         if (actionIter != callbackActionMap_.end()) {
@@ -184,9 +188,9 @@ void ThermalObserver::FindSubscribeActionValue()
             DecisionActionValue(actionIter->second, newActionCbMap);
         }
 
-        NotifyActionChanged(listener, newActionCbMap);
-        g_actionLastCbMap.insert(std::make_pair(listener, newActionCbMap));
+        listener->OnThermalActionChanged(newActionCbMap);
     }
+    g_actionMap.clear();
 }
 
 void ThermalObserver::DecisionActionValue(const std::vector<std::string>& actionList,
@@ -195,14 +199,13 @@ void ThermalObserver::DecisionActionValue(const std::vector<std::string>& action
     std::lock_guard lock(mutexActionMap_);
     for (const auto& action : actionList) {
         THERMAL_HILOGD(COMP_SVC, "subscribe action is %{public}s.", action.c_str());
-        for (auto xmlIter = g_actionMap.begin(); xmlIter != g_actionMap.end(); ++xmlIter) {
-            THERMAL_HILOGD(COMP_SVC, "xml action is %{public}s.", xmlIter->first.c_str());
-            if (action == xmlIter->first) {
-                newActionCbMap.insert(std::make_pair(action, xmlIter->second));
+        for (auto actionIter = g_actionMap.begin(); actionIter != g_actionMap.end(); ++actionIter) {
+            THERMAL_HILOGD(COMP_SVC, "xml action is %{public}s.", actionIter->first.c_str());
+            if (action == actionIter->first) {
+                newActionCbMap.insert(std::make_pair(action, actionIter->second));
             }
         }
     }
-    g_actionMap.clear();
 }
 
 void ThermalObserver::SetDecisionValue(const std::string& actionName, const std::string& actionValue)
@@ -218,55 +221,17 @@ void ThermalObserver::SetDecisionValue(const std::string& actionName, const std:
     }
 }
 
-void ThermalObserver::NotifyActionChanged(const sptr<IThermalActionCallback>& listener,
-    IThermalActionCallback::ActionCallbackMap& newActionCbMap)
-{
-    IThermalActionCallback::ActionCallbackMap tmpCb;
-    if (g_actionLastCbMap.empty()) {
-        listener->OnThermalActionChanged(newActionCbMap);
-        return;
-    }
-
-    auto iter = g_actionLastCbMap.find(listener);
-    if (iter != g_actionLastCbMap.end()) {
-        tmpCb = iter->second;
-    }
-
-    if (!CompareActionCallbackMap(newActionCbMap, tmpCb)) {
-        listener->OnThermalActionChanged(newActionCbMap);
-        return;
-    }
-}
-
-bool ThermalObserver::CompareActionCallbackMap(const IThermalActionCallback::ActionCallbackMap& map1,
-    const IThermalActionCallback::ActionCallbackMap& map2)
-{
-    if (map1.size() != map2.size()) {
-        return false;
-    }
-
-    auto iter1 = map1.begin();
-    auto iter2 = map2.begin();
-
-    for (; iter1 != map1.end(); ++iter1, ++iter2) {
-        if ((iter1->first != iter2->first) || (iter1->second != iter2->second)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 void ThermalObserver::NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap& tempCbMap)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     std::lock_guard lockTempCallback(mutexTempCallback_);
     static std::map<std::string, int32_t> preSensor;
     IThermalTempCallback::TempCallbackMap newTempCbMap;
-    THERMAL_HILOGI(COMP_SVC,
-        "listeners.size = %{public}d, callbackTypeMap.size = %{public}zu",
-        static_cast<unsigned int>(sensorTempListeners_.size()), callbackTypeMap_.size());
-    if (sensorTempListeners_.empty()) return;
+    THERMAL_HILOGD(COMP_SVC,
+        "listeners.size = %{public}zu, callbackTypeMap.size = %{public}zu",
+        sensorTempListeners_.size(), callbackTypeMap_.size());
+    if (sensorTempListeners_.empty()) {
+        return;
+    }
     for (auto& listener : sensorTempListeners_) {
         auto callbackIter = callbackTypeMap_.find(listener);
         if (callbackIter != callbackTypeMap_.end()) {
@@ -289,7 +254,7 @@ void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap& info)
         std::lock_guard lock(mutexCallbackInfo_);
         callbackinfo_ = info;
     }
-    THERMAL_HILOGI(COMP_SVC, "callbackinfo_ size = %{public}zu", callbackinfo_.size());
+    THERMAL_HILOGD(COMP_SVC, "callbackinfo_ size = %{public}zu", callbackinfo_.size());
 
     if (callback_ != nullptr) {
         callback_(callbackinfo_);
@@ -300,8 +265,6 @@ void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap& info)
 
 bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter type=%{public}d", static_cast<uint32_t>(type));
-
     for (auto iter : typeMap_) {
         THERMAL_HILOGD(COMP_SVC, "configType=%{public}s", iter.second.c_str());
     }
@@ -336,7 +299,6 @@ int32_t ThermalObserver::GetTemp(const SensorType& type)
 
 void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
@@ -352,7 +314,6 @@ void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<
 
 void ThermalObserver::ActionCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }

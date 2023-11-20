@@ -77,7 +77,8 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest001, TestSize.Level0)
 {
     EventHandle handlerOn = std::bind(&ThermalObserverTest::HandleScreenOnCompleted, this, std::placeholders::_1);
     auto receiver = std::make_shared<ThermalCommonEventReceiver>();
-    bool on = receiver->Start(CommonEventSupport::COMMON_EVENT_SCREEN_ON, handlerOn);
+    receiver->AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON, handlerOn);
+    bool on = receiver->Register();
     EXPECT_TRUE(on);
     CommonEventData data;
     receiver->HandleEventChanged(data);
@@ -110,27 +111,6 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
     typeList.push_back("cpu_med");
     typeList.push_back("cpu_lit");
     observer->DecisionActionValue(typeList, actionCbMap);
-    IThermalActionCallback::ActionCallbackMap map1;
-    IThermalActionCallback::ActionCallbackMap map2;
-    map1.insert(std::make_pair("lcd", "1.0"));
-    map2.insert(std::make_pair("lcd", "1.0"));
-    bool ret = observer->CompareActionCallbackMap(map1, map2);
-    EXPECT_TRUE(ret);
-    map1.clear();
-    map2.clear();
-    ret = observer->CompareActionCallbackMap(map1, map2);
-    map1.insert(std::make_pair("lcd", "1.0"));
-    map2.insert(std::make_pair("cpu", "2.0"));
-    ret = observer->CompareActionCallbackMap(map1, map2);
-    IThermalTempCallback::TempCallbackMap tempCbMap;
-    observer->NotifySensorTempChanged(tempCbMap);
-    TypeTempMap info;
-    observer->OnReceivedSensorInfo(info);
-    SensorType type = SensorType::SOC;
-    ThermalSrvSensorInfo sensorInfo;
-    observer->GetThermalSrvSensorInfo(type, sensorInfo);
-    observer->GetTemp(type);
-    observer->NotifyActionChanged(actionCb, map1);
 }
 
 /**
