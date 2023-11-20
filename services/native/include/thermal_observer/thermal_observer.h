@@ -48,11 +48,7 @@ public:
         const std::string& desc, const sptr<IThermalActionCallback>& callback);
     void UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback);
     void FindSubscribeActionValue();
-    void NotifyActionChanged(const sptr<IThermalActionCallback>& listener,
-        IThermalActionCallback::ActionCallbackMap& newActionCbMap);
     void NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap& tempCbMap);
-    bool CompareActionCallbackMap(const IThermalActionCallback::ActionCallbackMap& map1,
-        const IThermalActionCallback::ActionCallbackMap& map2);
     void DecisionActionValue(const std::vector<std::string>& actionList,
         IThermalActionCallback::ActionCallbackMap& newActionCbMap);
     bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo);
@@ -80,7 +76,9 @@ public:
         virtual void OnRemoteDied(const wptr<IRemoteObject>& remote);
         virtual ~ActionCallbackDeathRecipient() = default;
     };
+
 private:
+    void PrintAction();
     void InitSensorTypeMap();
     struct classcomp {
         bool operator() (const sptr<IThermalTempCallback>& l, const sptr<IThermalTempCallback>& r) const
