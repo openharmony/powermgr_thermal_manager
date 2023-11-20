@@ -36,7 +36,7 @@ ActionNode::ActionNode(const std::string& actionName)
 void ActionNode::InitParams(const std::string& params)
 {
     std::vector<std::string> paramList;
-    StringOperation::SplitString(params, paramList, ";");
+    StringOperation::SplitString(params, paramList, "|");
     int32_t paramNum = static_cast<int32_t>(paramList.size());
     if (paramNum > FALLBACK_IDX) {
         nodePath_ = paramList[PATH_IDX];

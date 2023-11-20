@@ -144,14 +144,14 @@ bool ChargerStateCollection::DecideState(const std::string& value)
 
 void ChargerStateCollection::HandleChargeIdleState()
 {
-    THERMAL_HILOGI(COMP_SVC, "soc=%{public}d, charging==%{public}d, current==%{public}d, level==%{public}d",
-                   g_cachedIdleState.soc, g_cachedIdleState.charging, g_cachedIdleState.current,
-                   g_cachedIdleState.level);
     bool isIdle = ((g_cachedIdleState.soc >= g_idleStateConfig.soc) &&
                    (g_cachedIdleState.charging == g_idleStateConfig.charging) &&
                    (g_cachedIdleState.current >= g_idleStateConfig.current) &&
                    (g_cachedIdleState.level <= g_idleStateConfig.level));
     if (isIdle != g_isChargeIdle) {
+        THERMAL_HILOGI(COMP_SVC, "soc=%{public}d, charging==%{public}d, current==%{public}d, level==%{public}d",
+            g_cachedIdleState.soc, g_cachedIdleState.charging, g_cachedIdleState.current,
+            g_cachedIdleState.level);
         THERMAL_HILOGI(COMP_SVC, "idle state changed, start to broadcast event");
         PublishIdleEvent(isIdle, CommonEventSupport::COMMON_EVENT_CHARGE_IDLE_MODE_CHANGED);
         g_isChargeIdle = isIdle;
