@@ -21,7 +21,9 @@
 #include <unistd.h>
 
 #include "battery_srv_client.h"
+#ifdef BATTERY_STATS_ENABLE
 #include "battery_stats_client.h"
+#endif
 #include "power_mgr_client.h"
 #include "thermal_config_file_parser.h"
 #include "thermal_mgr_client.h"
@@ -303,6 +305,7 @@ void ThermalActionReportTest::TearDown()
     g_service->HandleThermalCallbackEvent(event);
 }
 
+#ifdef BATTERY_STATS_ENABLE
 namespace {
 /**
  * @tc.name: ThermalActionReportTest001
@@ -786,3 +789,4 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
     THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.012 end");
 }
 } // namespace
+#endif // BATTERY_STATS_ENABLE
