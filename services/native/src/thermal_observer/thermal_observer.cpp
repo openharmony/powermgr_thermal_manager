@@ -163,7 +163,7 @@ void ThermalObserver::PrintAction()
     for (auto actionIter = g_actionMap.begin(); actionIter != g_actionMap.end(); ++actionIter) {
         thermalActionLog.append(actionIter->first).append("=").append(actionIter->second).append("|");
     }
-    THERMAL_HILOGD(COMP_SVC, "execute action {listener:%{public}zu|%{public}zu} {%{public}s}.",
+    THERMAL_HILOGI(COMP_SVC, "exec act {listener:%{public}zu|%{public}zu} {%{public}s}",
         sensorTempListeners_.size(), actionListeners_.size(), thermalActionLog.c_str());
 }
 

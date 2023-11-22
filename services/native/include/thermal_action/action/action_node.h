@@ -36,7 +36,7 @@ public:
 private:
     std::string lastValue_;
     std::string nodePath_;
-    std::string fallbackValue_;
+    std::string fallbackValue_ = "0";
     std::vector<std::string> valueList_;
 };
 } // namespace PowerMgr
