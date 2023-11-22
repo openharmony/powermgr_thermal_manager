@@ -16,7 +16,9 @@
 #include "charger_state_collection.h"
 
 #include "battery_info.h"
+#ifdef BATTERY_MANAGER_ENABLE
 #include "battery_srv_client.h"
+#endif
 #include "common_event_subscriber.h"
 #include "common_event_data.h"
 #include "common_event_manager.h"
@@ -149,6 +151,7 @@ void ChargerStateCollection::SetState(const std::string& stateValue)
 
 bool ChargerStateCollection::DecideState(const std::string& value)
 {
+#ifdef BATTERY_MANAGER_ENABLE
     THERMAL_HILOGD(COMP_SVC, "Enter");
     auto& batterySrvClient = BatterySrvClient::GetInstance();
     BatteryChargeState chargeState = batterySrvClient.GetChargingStatus();
@@ -157,6 +160,8 @@ bool ChargerStateCollection::DecideState(const std::string& value)
         return true;
     }
     return false;
+#endif
+    return true;
 }
 
 void ChargerStateCollection::HandleChargeIdleState()
