@@ -43,7 +43,6 @@ void ActionNode::InitParams(const std::string& params)
         fallbackValue_ = paramList[FALLBACK_IDX];
     } else if (paramNum > PATH_IDX) {
         nodePath_ = paramList[PATH_IDX];
-        fallbackValue_ = "0";
     }
 }
 

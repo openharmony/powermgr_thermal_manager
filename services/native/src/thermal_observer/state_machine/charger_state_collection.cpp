@@ -90,8 +90,11 @@ bool ChargerStateCollection::RegisterEvent()
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData& data)
 {
     g_cachedIdleState.soc = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CAPACITY, -1);
-    g_cachedIdleState.charging = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, -1);
-    THERMAL_HILOGI(COMP_SVC, "received charge status event, state: %{public}d", g_cachedIdleState.charging);
+    int32_t chargeState = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, -1);
+    if (g_cachedIdleState.charging != chargeState) {
+        g_cachedIdleState.charging = chargeState;
+        THERMAL_HILOGI(COMP_SVC, "received charge status event, state: %{public}d", g_cachedIdleState.charging);
+    }
     HandleChargeIdleState();
 
     switch (g_cachedIdleState.charging) {
