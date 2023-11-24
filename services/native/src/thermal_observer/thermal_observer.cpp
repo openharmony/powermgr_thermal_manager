@@ -177,6 +177,7 @@ void ThermalObserver::FindSubscribeActionValue()
     PrintAction();
     if (actionListeners_.empty()) {
         THERMAL_HILOGD(COMP_SVC, "no subscribe");
+        g_actionMap.clear();
         return;
     }
 
