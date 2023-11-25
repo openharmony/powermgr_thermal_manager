@@ -18,10 +18,12 @@
 #include "file_operation.h"
 #include "string_operation.h"
 #include "thermal_common.h"
+#include "thermal_service.h"
 
 namespace OHOS {
 namespace PowerMgr {
 namespace {
+auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr int32_t PATH_IDX = 0;
 constexpr int32_t FALLBACK_IDX = 1;
 }
@@ -34,14 +36,13 @@ ActionNode::ActionNode(const std::string& actionName)
 void ActionNode::InitParams(const std::string& params)
 {
     std::vector<std::string> paramList;
-    StringOperation::SplitString(params, paramList, ",");
+    StringOperation::SplitString(params, paramList, "|");
     int32_t paramNum = static_cast<int32_t>(paramList.size());
     if (paramNum > FALLBACK_IDX) {
         nodePath_ = paramList[PATH_IDX];
         fallbackValue_ = paramList[FALLBACK_IDX];
     } else if (paramNum > PATH_IDX) {
         nodePath_ = paramList[PATH_IDX];
-        fallbackValue_ = "0";
     }
 }
 
@@ -74,7 +75,10 @@ void ActionNode::Execute()
         }
     }
     if (value != lastValue_) {
-        FileOperation::WriteFile(nodePath_, value, value.length());
+        if (!nodePath_.empty()) {
+            FileOperation::WriteFile(nodePath_, value, value.length());
+        }
+        g_service->GetObserver()->SetDecisionValue(actionName_, value);
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}s}", actionName_.c_str(), lastValue_.c_str());
     }

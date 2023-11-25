@@ -34,10 +34,14 @@ ThermalCommonEventReceiver::~ThermalCommonEventReceiver()
     }
 }
 
-bool ThermalCommonEventReceiver::Start(std::string eventName, EventHandle callback)
+void ThermalCommonEventReceiver::AddEvent(std::string eventName, EventHandle callback)
 {
-    THERMAL_HILOGD(COMP_SVC, "eventName=%{public}s", eventName.c_str());
+    THERMAL_HILOGI(COMP_SVC, "add common event: %{public}s", eventName.c_str());
     InitEventHandles(eventName, callback);
+}
+
+bool ThermalCommonEventReceiver::Register()
+{
     return RegisterSubscriber(GetSubscribeInfo());
 }
 
@@ -96,7 +100,7 @@ void ThermalCommonEventReceiver::EventSubscriber::HandleEvent(const OHOS::EventF
         THERMAL_HILOGE(COMP_SVC, "Ignore event: %{public}s", action.c_str());
         return;
     }
-    THERMAL_HILOGI(COMP_SVC, "Handle Event: %{public}s", action.c_str());
+    THERMAL_HILOGD(COMP_SVC, "Handle Event: %{public}s", action.c_str());
     it->second(data);
 }
 } // namespace PowerMgr
