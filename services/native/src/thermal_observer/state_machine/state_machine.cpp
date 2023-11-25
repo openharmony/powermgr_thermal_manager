@@ -35,6 +35,9 @@ bool StateMachine::Init()
         stateCollection->Init();
         stateCollectionMap_.emplace(std::pair(state->name, stateCollection));
     }
+    if (!receiver_->Register()) {
+        THERMAL_HILOGE(COMP_SVC, "ThermalCommonEventReceiver register failed!");
+    }
     return true;
 }
 

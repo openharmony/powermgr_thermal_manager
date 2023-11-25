@@ -59,35 +59,29 @@ std::string ScreenStateCollection::GetState()
 bool ScreenStateCollection::RegisterEvent()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (g_service == nullptr) return false;
+    if (g_service == nullptr) {
+        return false;
+    }
     auto receiver = g_service->GetStateMachineObj()->GetCommonEventReceiver();
-    if (receiver == nullptr) return false;
-    THERMAL_HILOGI(COMP_SVC, "register screen on event");
+    if (receiver == nullptr) {
+        return false;
+    }
     EventHandle handlerOn = std::bind(&ScreenStateCollection::HandleScreenOnCompleted, this, std::placeholders::_1);
-    bool on = receiver->Start(CommonEventSupport::COMMON_EVENT_SCREEN_ON, handlerOn);
-    if (!on) {
-        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_SCREEN_ON");
-        return false;
-    }
-    THERMAL_HILOGI(COMP_SVC, "register screen off event");
+    receiver->AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON, handlerOn);
     EventHandle handlerOff = std::bind(&ScreenStateCollection::HandleScreenOffCompleted, this, std::placeholders::_1);
-    bool off = receiver->Start(CommonEventSupport::COMMON_EVENT_SCREEN_OFF, handlerOff);
-    if (!off) {
-        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_SCREEN_OFF");
-        return false;
-    }
+    receiver->AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_OFF, handlerOff);
     return true;
 }
 
 void ScreenStateCollection::HandleScreenOnCompleted(const CommonEventData& data __attribute__((__unused__)))
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
+    THERMAL_HILOGI(COMP_SVC, "received screen on event");
     state_ = ToString(SCREEN_ON);
 }
 
 void ScreenStateCollection::HandleScreenOffCompleted(const CommonEventData& data __attribute__((__unused__)))
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
+    THERMAL_HILOGI(COMP_SVC, "received screen off event");
     state_ = ToString(SCREEN_OFF);
 }
 

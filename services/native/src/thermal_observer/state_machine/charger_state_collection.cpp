@@ -72,45 +72,31 @@ bool ChargerStateCollection::RegisterEvent()
     if (g_service == nullptr) {
         return false;
     }
-
     auto receiver = g_service->GetStateMachineObj()->GetCommonEventReceiver();
     if (receiver == nullptr) {
         return false;
     }
-    bool ret;
-    THERMAL_HILOGI(COMP_SVC, "start register battery change event");
+
     EventHandle batteryChangedHandler =
         std::bind(&ChargerStateCollection::HandleChangerStatusCompleted, this, std::placeholders::_1);
-    ret = receiver->Start(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED, batteryChangedHandler);
-    if (!ret) {
-        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_BATTERY_CHANGED");
-        return false;
-    }
-
-    THERMAL_HILOGI(COMP_SVC, "start register battery change inner event");
+    receiver->AddEvent(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED, batteryChangedHandler);
     EventHandle batteryChangedInnerHandler =
         std::bind(&ChargerStateCollection::HandleChangerInnerStatusCompleted, this, std::placeholders::_1);
-    ret = receiver->Start(BatteryInfo::COMMON_EVENT_BATTERY_CHANGED_INNER, batteryChangedInnerHandler);
-    if (!ret) {
-        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_BATTERY_CHANGED_INNER");
-        return false;
-    }
-
-    THERMAL_HILOGI(COMP_SVC, "start register thermal level change event");
+    receiver->AddEvent(BatteryInfo::COMMON_EVENT_BATTERY_CHANGED_INNER, batteryChangedInnerHandler);
     EventHandle thermalLevelHandler =
         std::bind(&ChargerStateCollection::HandleThermalLevelCompleted, this, std::placeholders::_1);
-    ret = receiver->Start(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, thermalLevelHandler);
-    if (!ret) {
-        THERMAL_HILOGE(COMP_SVC, "fail to COMMON_EVENT_THERMAL_LEVEL_CHANGED");
-        return false;
-    }
+    receiver->AddEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, thermalLevelHandler);
     return true;
 }
 
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData& data)
 {
     g_cachedIdleState.soc = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CAPACITY, -1);
-    g_cachedIdleState.charging = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, -1);
+    int32_t chargeState = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, -1);
+    if (g_cachedIdleState.charging != chargeState) {
+        g_cachedIdleState.charging = chargeState;
+        THERMAL_HILOGI(COMP_SVC, "received charge status event, state: %{public}d", g_cachedIdleState.charging);
+    }
     HandleChargeIdleState();
 
     switch (g_cachedIdleState.charging) {
@@ -166,14 +152,14 @@ bool ChargerStateCollection::DecideState(const std::string& value)
 
 void ChargerStateCollection::HandleChargeIdleState()
 {
-    THERMAL_HILOGI(COMP_SVC, "soc=%{public}d, charging==%{public}d, current==%{public}d, level==%{public}d",
-                   g_cachedIdleState.soc, g_cachedIdleState.charging, g_cachedIdleState.current,
-                   g_cachedIdleState.level);
     bool isIdle = ((g_cachedIdleState.soc >= g_idleStateConfig.soc) &&
                    (g_cachedIdleState.charging == g_idleStateConfig.charging) &&
                    (g_cachedIdleState.current >= g_idleStateConfig.current) &&
                    (g_cachedIdleState.level <= g_idleStateConfig.level));
     if (isIdle != g_isChargeIdle) {
+        THERMAL_HILOGI(COMP_SVC, "soc=%{public}d, charging==%{public}d, current==%{public}d, level==%{public}d",
+            g_cachedIdleState.soc, g_cachedIdleState.charging, g_cachedIdleState.current,
+            g_cachedIdleState.level);
         THERMAL_HILOGI(COMP_SVC, "idle state changed, start to broadcast event");
         PublishIdleEvent(isIdle, CommonEventSupport::COMMON_EVENT_CHARGE_IDLE_MODE_CHANGED);
         g_isChargeIdle = isIdle;

@@ -101,7 +101,6 @@ void ActionDisplay::RequestDisplay(float factor)
         THERMAL_HILOGE(COMP_SVC, "failed to discount brightness");
         return;
     }
-    THERMAL_HILOGI(COMP_SVC, "action execute: {%{public}s = %{public}f}", actionName_.c_str(), factor);
 }
 
 void ActionDisplay::ExecuteMock(float factor)

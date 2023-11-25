@@ -36,7 +36,8 @@ public:
     ThermalCommonEventReceiver() = default;
     ~ThermalCommonEventReceiver();
 
-    bool Start(std::string eventName, EventHandle callback);
+    void AddEvent(std::string eventName, EventHandle callback);
+    bool Register();
 
 #ifndef THERMAL_OBSERVER_UT_TEST
 private:
