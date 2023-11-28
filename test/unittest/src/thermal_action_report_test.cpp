@@ -188,9 +188,9 @@ bool ThermalActionReportTest::StateDecision(std::map<std::string, std::string>& 
     for (auto prop : actionPropMap) {
         auto stateIter = stateMap.find(prop.first);
         THERMAL_HILOGD(LABEL_TEST, "state = %{public}s, value = %{public}s", prop.first.c_str(), prop.second.c_str());
-        THERMAL_HILOGD(LABEL_TEST, "state iter = %{public}s, iter value = %{public}s", stateIter->first.c_str(),
-            stateIter->second.c_str());
         if (stateIter != stateMap.end()) {
+            THERMAL_HILOGD(LABEL_TEST, "state iter = %{public}s, iter value = %{public}s", stateIter->first.c_str(),
+                stateIter->second.c_str());
             if (stateIter->second.compare(prop.second) == 0) {
                 continue;
             } else {
