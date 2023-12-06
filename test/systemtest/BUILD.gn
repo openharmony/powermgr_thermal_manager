@@ -31,7 +31,6 @@ deps_ex = [
   "appspawn:appspawn_socket_client",
   "ability_base:base",
   "ability_base:want",
-  "battery_manager:batterysrv_client",
   "hdf_core:libhdi",
   "bundle_framework:appexecfwk_base",
   "common_event_service:cesfwk_innerkits",
@@ -161,6 +160,14 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
     "${thermal_manager_path}/test/common/src/thermal_test.cpp",
     "src/thermal_level_event_system_test.cpp",
   ]
+
+  defines = []
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.powermgr_battery_manager)) {
+    defines += [ "BATTERY_MANAGER_ENABLE" ]
+    deps_ex += [ "battery_manager:batterysrv_client" ]
+  }
 
   configs = [
     "${utils_path}:utils_config",
