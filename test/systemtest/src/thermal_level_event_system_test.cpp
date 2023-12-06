@@ -22,8 +22,9 @@
 #include <common_event_support.h>
 #include <condition_variable>
 #include <mutex>
-
+#ifdef BATTERY_MANAGER_ENABLE
 #include "battery_info.h"
+#endif
 #include "thermal_level_info.h"
 #include "thermal_log.h"
 #include "thermal_mgr_client.h"
@@ -73,6 +74,7 @@ static void Wait()
 
 static bool PublishChangedEvent(int32_t capacity, int32_t chargerCurrent)
 {
+#ifdef BATTERY_MANAGER_ENABLE
     Want want;
     want.SetParam(BatteryInfo::COMMON_EVENT_KEY_CAPACITY, capacity);
     want.SetParam(
@@ -91,6 +93,8 @@ static bool PublishChangedEvent(int32_t capacity, int32_t chargerCurrent)
     bool isSuccessInner = CommonEventManager::PublishCommonEvent(data, publishInfo);
 
     return isSuccess && isSuccessInner;
+#endif
+    return true;
 }
 
 class CommonEventThermalLevel1Test : public CommonEventSubscriber {
