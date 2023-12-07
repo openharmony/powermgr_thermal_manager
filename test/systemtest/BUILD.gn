@@ -161,14 +161,6 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
     "src/thermal_level_event_system_test.cpp",
   ]
 
-  defines = []
-
-  if (defined(global_parts_info) &&
-      defined(global_parts_info.powermgr_battery_manager)) {
-    defines += [ "BATTERY_MANAGER_ENABLE" ]
-    deps_ex += [ "battery_manager:batterysrv_client" ]
-  }
-
   configs = [
     "${utils_path}:utils_config",
     ":module_private_config",
@@ -182,6 +174,13 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
     "//third_party/googletest:gtest_main",
   ]
   external_deps = deps_ex
+
+  defines = []
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.powermgr_battery_manager)) {
+    defines += [ "BATTERY_MANAGER_ENABLE" ]
+    external_deps += [ "battery_manager:batterysrv_client" ]
+  }
 }
 
 group("systemtest") {
