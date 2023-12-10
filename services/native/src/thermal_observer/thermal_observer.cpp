@@ -163,8 +163,9 @@ void ThermalObserver::PrintAction()
     for (auto actionIter = g_actionMap.begin(); actionIter != g_actionMap.end(); ++actionIter) {
         thermalActionLog.append(actionIter->first).append("=").append(actionIter->second).append("|");
     }
-    THERMAL_HILOGI(COMP_SVC, "exec act {listener:%{public}zu|%{public}zu} {%{public}s}",
-        sensorTempListeners_.size(), actionListeners_.size(), thermalActionLog.c_str());
+    THERMAL_HILOGI(COMP_SVC, "sub {%{public}zu|%{public}zu} pol {%{public}s}",
+        sensorTempListeners_.size(), actionListeners_.size(), policyState_.c_str());
+    THERMAL_HILOGI(COMP_SVC, "exec act {%{public}s}", thermalActionLog.c_str());
 }
 
 void ThermalObserver::FindSubscribeActionValue()
@@ -266,10 +267,7 @@ void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap& info)
 
 bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo)
 {
-    for (auto iter : typeMap_) {
-        THERMAL_HILOGD(COMP_SVC, "configType=%{public}s", iter.second.c_str());
-    }
-    THERMAL_HILOGI(COMP_SVC, "typeMap_=%{public}s", typeMap_[type].c_str());
+    THERMAL_HILOGD(COMP_SVC, "typeMap_=%{public}s", typeMap_[type].c_str());
 
     std::lock_guard lock(mutexCallbackInfo_);
     auto iter = callbackinfo_.find(typeMap_[type]);

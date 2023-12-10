@@ -181,10 +181,9 @@ int32_t ThermalSrvStub::GetThermalSrvSensorInfoStub(MessageParcel& data, Message
 {
     ThermalSrvSensorInfo sensorInfo;
     uint32_t type = 0;
-    THERMAL_HILOGD(COMP_SVC, "Enter");
 
     THERMAL_READ_PARCEL_WITH_RET(data, Uint32, type, E_READ_PARCEL_ERROR_THERMAL);
-    THERMAL_HILOGI(COMP_SVC, "type is %{public}d", type);
+    THERMAL_HILOGD(COMP_SVC, "type is %{public}d", type);
     bool ret = GetThermalSrvSensorInfo(static_cast<SensorType>(type), sensorInfo);
     if (ret) {
         if (!reply.WriteParcelable(&sensorInfo)) {
