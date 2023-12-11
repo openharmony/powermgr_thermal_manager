@@ -330,7 +330,7 @@ bool ThermalService::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvS
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!(observer_->GetThermalSrvSensorInfo(type, sensorInfo))) {
-        THERMAL_HILOGW(COMP_SVC, "failed to get sensor temp, type enum: %{public}zu", static_cast<uint32_t>(type));
+        THERMAL_HILOGW(COMP_SVC, "failed to get sensor temp, type enum: %{public}u", static_cast<uint32_t>(type));
         return false;
     }
     return true;
