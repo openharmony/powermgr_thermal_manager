@@ -15,7 +15,6 @@
 
 #include "thermal_mgr_policy_test.h"
 
-#include "battery_srv_client.h"
 #include "power_mgr_client.h"
 #include "thermal_mgr_client.h"
 #include "mock_thermal_mgr_client.h"
