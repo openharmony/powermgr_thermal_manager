@@ -19,8 +19,9 @@
 #include <fcntl.h>
 #include <string>
 #include <unistd.h>
-
+#ifdef BATTERY_MANAGER_ENABLE
 #include "battery_srv_client.h"
+#endif
 #ifdef BATTERY_STATS_ENABLE
 #include "battery_stats_client.h"
 #endif
@@ -215,6 +216,7 @@ std::string ThermalActionReportTest::GetScreenState()
 std::string ThermalActionReportTest::GetChargeState()
 {
     std::string state = "";
+#ifdef BATTERY_MANAGER_ENABLE
     auto& batterySrvClient = BatterySrvClient::GetInstance();
     BatteryChargeState chargeState = batterySrvClient.GetChargingStatus();
     if (chargeState == BatteryChargeState::CHARGE_STATE_ENABLE) {
@@ -222,6 +224,7 @@ std::string ThermalActionReportTest::GetChargeState()
     } else if (chargeState == BatteryChargeState::CHARGE_STATE_NONE) {
         state = "0";
     }
+#endif
     return state;
 }
 

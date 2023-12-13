@@ -37,7 +37,6 @@ deps_ex = [
   "ability_base:want",
   "ability_runtime:ability_manager",
   "ability_runtime:app_manager",
-  "battery_manager:batterysrv_client",
   "bundle_framework:appexecfwk_base",
   "c_utils:utils",
   "config_policy:configpolicy_util",
@@ -83,6 +82,12 @@ ohos_unittest("ThermalMockActionTest") {
   ]
 
   external_deps = deps_ex
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.powermgr_battery_manager)) {
+    defines += [ "BATTERY_MANAGER_ENABLE" ]
+    external_deps += [ "battery_manager:batterysrv_client" ]
+  }
 }
 
 # thermal policy test
@@ -211,6 +216,8 @@ ohos_unittest("ThermalActionReportTest") {
     "//third_party/libxml2:libxml2",
   ]
 
+  defines = []
+
   if (defined(global_parts_info) &&
       defined(global_parts_info.powermgr_battery_statistics)) {
     defines = [ "BATTERY_STATS_ENABLE" ]
@@ -219,6 +226,12 @@ ohos_unittest("ThermalActionReportTest") {
     external_deps += deps_ex
   } else {
     external_deps = deps_ex
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.powermgr_battery_manager)) {
+    defines += [ "BATTERY_MANAGER_ENABLE" ]
+    external_deps += [ "battery_manager:batterysrv_client" ]
   }
 }
 
@@ -501,7 +514,6 @@ ohos_unittest("ThermalClientTest") {
     "ability_base:base",
     "ability_base:want",
     "appspawn:appspawn_socket_client",
-    "battery_manager:batterysrv_client",
     "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
