@@ -101,7 +101,10 @@ void ThermalCommonEventReceiver::EventSubscriber::HandleEvent(const OHOS::EventF
         return;
     }
     THERMAL_HILOGD(COMP_SVC, "Handle Event: %{public}s", action.c_str());
-    it->second(data);
+    auto func = it->second;
+    if (func) {
+        it->second(data);
+    }
 }
 } // namespace PowerMgr
 } // namespace OHOS
