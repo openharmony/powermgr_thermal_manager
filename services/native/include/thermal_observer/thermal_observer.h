@@ -55,9 +55,11 @@ public:
     void SetRegisterCallback(Callback& callback);
     void SetSensorTemp(const std::string& type, const int32_t& temp);
     void SetDecisionValue(const std::string& actionName, const std::string& actionValue);
-    /**
-     * Get related function
-     */
+
+    void UpdatePolicyState(std::string& state)
+    {
+        policyState_ = state;
+    }
     int32_t GetTemp(const SensorType& type);
     std::map<SensorType, std::string> GetSensorType()
     {
@@ -94,6 +96,7 @@ private:
         }
     };
 
+    std::string policyState_;
     const wptr<ThermalService> tms_;
     std::mutex mutexActionCallback_;
     std::mutex mutexTempCallback_;
