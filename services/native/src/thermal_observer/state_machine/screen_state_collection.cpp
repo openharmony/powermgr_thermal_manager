@@ -75,13 +75,13 @@ bool ScreenStateCollection::RegisterEvent()
 
 void ScreenStateCollection::HandleScreenOnCompleted(const CommonEventData& data __attribute__((__unused__)))
 {
-    THERMAL_HILOGI(COMP_SVC, "received screen on event");
+    THERMAL_HILOGD(COMP_SVC, "received screen on event");
     state_ = ToString(SCREEN_ON);
 }
 
 void ScreenStateCollection::HandleScreenOffCompleted(const CommonEventData& data __attribute__((__unused__)))
 {
-    THERMAL_HILOGI(COMP_SVC, "received screen off event");
+    THERMAL_HILOGD(COMP_SVC, "received screen off event");
     state_ = ToString(SCREEN_OFF);
 }
 
