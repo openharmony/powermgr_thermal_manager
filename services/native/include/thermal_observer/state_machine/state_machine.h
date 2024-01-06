@@ -66,6 +66,8 @@ public:
         return receiver_;
     }
 private:
+    std::mutex stateMutex_;
+    bool initFlag_ {false};
     StateMachineMap stateCollectionMap_;
     std::vector<StateItem> vState_;
     std::shared_ptr<ThermalCommonEventReceiver> receiver_;

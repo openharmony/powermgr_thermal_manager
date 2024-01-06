@@ -22,6 +22,14 @@ namespace PowerMgr {
 bool StateMachine::Init()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
+
+    std::lock_guard<std::mutex> lock(stateMutex_);
+    if (initFlag_) {
+        THERMAL_HILOGI(COMP_SVC, "state machine already init");
+        return true;
+    }
+    initFlag_ = true;
+
     if (receiver_ == nullptr) {
         receiver_ = std::make_shared<ThermalCommonEventReceiver>();
     }
@@ -43,6 +51,7 @@ bool StateMachine::Init()
 
 void StateMachine::UpdateState(std::string stateName, std::string stateValue)
 {
+    std::lock_guard<std::mutex> lock(stateMutex_);
     auto iter = stateCollectionMap_.find(stateName);
     if (iter != stateCollectionMap_.end()) {
         THERMAL_HILOGW(COMP_SVC, "StateMachine name = %{public}s exist", stateName.c_str());
@@ -58,6 +67,7 @@ void StateMachine::UpdateState(std::string stateName, std::string stateValue)
 
 void StateMachine::DumpState(std::string& result)
 {
+    std::lock_guard<std::mutex> lock(stateMutex_);
     for (auto iter = vState_.begin(); iter != vState_.end(); ++iter) {
         result.append("name: ");
         result.append(iter->name);
