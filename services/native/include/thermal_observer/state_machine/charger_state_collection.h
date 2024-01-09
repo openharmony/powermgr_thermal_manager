@@ -78,6 +78,7 @@ private:
     std::string state_;
     std::string params_;
     std::string mockState_;
+    std::mutex mutex_;
     sptr<IThermalLevelCallback> callback_ {nullptr};
 };
 } // namespace PowerMgr
