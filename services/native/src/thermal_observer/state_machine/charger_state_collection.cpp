@@ -91,6 +91,7 @@ bool ChargerStateCollection::RegisterEvent()
 
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData& data)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     g_cachedIdleState.soc = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CAPACITY, -1);
     int32_t chargeState = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, -1);
     if (g_cachedIdleState.charging != chargeState) {
@@ -127,6 +128,7 @@ void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData&
 
 void ChargerStateCollection::HandleChangerInnerStatusCompleted(const CommonEventData& data)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     g_cachedIdleState.current = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_PLUGGED_NOW_CURRENT, -1);
     HandleChargeIdleState();
 }
@@ -183,6 +185,7 @@ void ChargerStateCollection::PublishIdleEvent(bool isIdle, const std::string com
 
 void ChargerStateCollection::HandleThermalLevelCompleted(const CommonEventData& data)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     std::string key = ToString(static_cast<int32_t>(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED));
     int32_t level = data.GetWant().GetIntParam(key, -1);
     g_cachedIdleState.level =level;
