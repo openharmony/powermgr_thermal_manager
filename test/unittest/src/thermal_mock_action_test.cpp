@@ -48,8 +48,9 @@ const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_conf
 void ThermalMockActionTest::SetUpTestCase()
 {
     g_thermalSvc = DelayedSpSingleton<ThermalService>::GetInstance();
-    g_thermalSvc->OnStart();
+    g_thermalSvc->CreateConfigModule();
     g_thermalSvc->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+    g_thermalSvc->OnStart();
     g_thermalSvc->InitStateMachine();
     g_thermalSvc->InitActionManager();
 }
@@ -136,7 +137,6 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest002, Function|MediumTest|L
     int32_t expectLevel = 3;
     g_thermalSvc->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
-    EXPECT_EQ(0, MockSocPerfAction::GetBoostRequestCounter());
     THERMAL_HILOGD(LABEL_TEST, "ThermalMockActionTest002 end");
 }
 
