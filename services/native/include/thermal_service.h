@@ -70,6 +70,7 @@ public:
     bool GetThermalInfo() override;
     bool SetScene(const std::string& scene) override;
     bool UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed = false) override;
+    bool CreateConfigModule();
     virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
 
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
@@ -171,7 +172,6 @@ private:
     bool InitModules();
     bool InitConfigFile();
     bool InitConfigModule();
-    bool CreateConfigModule();
     void RegisterHdiStatusListener();
     void RegisterThermalHdiCallback();
     void RegisterFanHdiCallback();
