@@ -49,8 +49,9 @@ void ThermalListenerTest::ThermalLevelTestEvent::OnThermalLevelResult(const Ther
 void ThermalListenerTest::SetUpTestCase()
 {
     g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-    g_service->OnStart();
+    g_service->CreateConfigModule();
     g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+    g_service->OnStart();
     g_service->InitStateMachine();
 }
 
