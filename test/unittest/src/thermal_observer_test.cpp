@@ -41,6 +41,7 @@ static sptr<ThermalService> g_service = nullptr;
 void ThermalObserverTest::SetUpTestCase()
 {
     g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->InitSystemTestModules();
     g_service->OnStart();
 }
 
