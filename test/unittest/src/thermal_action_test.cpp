@@ -68,6 +68,7 @@ std::shared_ptr<ActionNode> g_actionNode = std::make_shared<ActionNode>("action_
 void ThermalActionTest::SetUpTestCase()
 {
     g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->InitSystemTestModules();
     g_service->OnStart();
 }
 

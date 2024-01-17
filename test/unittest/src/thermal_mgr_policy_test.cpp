@@ -66,8 +66,7 @@ void ThermalMgrPolicyTest::TearDown()
 void ThermalMgrPolicyTest::SetUpTestCase()
 {
     g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-    g_service->CreateConfigModule();
-    g_service->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+    g_service->InitSystemTestModules();
     g_service->OnStart();
     g_service->InitStateMachine();
     g_service->InitActionManager();
