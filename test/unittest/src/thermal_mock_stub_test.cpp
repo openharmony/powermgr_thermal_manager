@@ -47,6 +47,7 @@ sptr<ThermalService> g_service = nullptr;
 void ThermalMockStubTest::SetUpTestCase()
 {
     g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->InitSystemTestModules();
     g_service->OnStart();
 }
 

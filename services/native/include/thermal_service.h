@@ -195,6 +195,7 @@ private:
     sptr<HdiServiceStatusListener::IServStatListener> hdiServStatListener_ {nullptr};
     std::shared_ptr<ActionPopup> popup_;
     std::string scene_;
+    std::atomic<bool> serviceConfigParsed {false};
 };
 } // namespace PowerMgr
 } // namespace OHOS
