@@ -154,6 +154,10 @@ bool ThermalService::CreateConfigModule()
 
 bool ThermalService::InitConfigFile()
 {
+    if (serviceConfigParsed) {
+        THERMAL_HILOGI(COMP_SVC, "system config file has parsed.");
+        return true;
+    }
     char buf[MAX_PATH_LEN];
     char* path = GetOneCfgFile(THERMAL_SERVICE_CONFIG_PATH.c_str(), buf, MAX_PATH_LEN);
     if (path != nullptr && *path != '\0') {
@@ -186,10 +190,13 @@ bool ThermalService::InitConfigModule()
         THERMAL_HILOGD(COMP_SVC, "CreateConfigModule fail");
     }
 
-    if (!InitConfigFile()) {
+    if (!configParser_.ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH)) {
+        THERMAL_HILOGE(COMP_SVC, "system thermal service config init failed.");
         return false;
     }
+    serviceConfigParsed = true;
 
+    THERMAL_HILOGE(COMP_SVC, "system thermal service config init suc.");
     return true;
 }
 

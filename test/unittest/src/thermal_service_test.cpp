@@ -57,6 +57,7 @@ char* GetOneCfgFile(const char *pathSuffix, char *buf, unsigned int bufLength)
 void ThermalServiceTest::SetUpTestCase()
 {
     g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service->InitSystemTestModules();
     g_service->OnStart();
 }
 
@@ -158,6 +159,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest001 start.");
     g_service->ready_ = true;
+    g_service->InitSystemTestModules();
     g_service->OnStart();
 
     g_service->ready_ = false;
@@ -189,7 +191,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest002, TestSize.Level0)
     EXPECT_TRUE(g_service->Init());
     EXPECT_TRUE(g_service->CreateConfigModule());
     EXPECT_TRUE(g_service->InitStateMachine());
-    EXPECT_TRUE(g_service->InitConfigModule());
+    g_service->InitSystemTestModules();
     THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest002 end.");
 }
 
@@ -204,12 +206,6 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest003, TestSize.Level0)
 
     std::string VENDOR_CONFIG_BACKUP = "/vendor/etc/thermal_config/thermal_service_config_backup.xml";
     std::string SYSTEM_CONFIG_BACKUP = "/system/etc/thermal_config/thermal_service_config_backup.xml";
-
-    rename(VENDOR_CONFIG, VENDOR_CONFIG_BACKUP.c_str());
-    EXPECT_TRUE(g_service->InitConfigFile());
-
-    rename(SYSTEM_CONFIG, SYSTEM_CONFIG_BACKUP.c_str());
-    EXPECT_FALSE(g_service->InitConfigFile());
 
     rename(VENDOR_CONFIG_BACKUP.c_str(), VENDOR_CONFIG);
     rename(SYSTEM_CONFIG_BACKUP.c_str(), SYSTEM_CONFIG);

@@ -48,8 +48,7 @@ const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_conf
 void ThermalMockActionTest::SetUpTestCase()
 {
     g_thermalSvc = DelayedSpSingleton<ThermalService>::GetInstance();
-    g_thermalSvc->CreateConfigModule();
-    g_thermalSvc->GetConfigParser().ThermalSrvConfigInit(SYSTEM_THERMAL_SERVICE_CONFIG_PATH);
+    g_thermalSvc->InitSystemTestModules();
     g_thermalSvc->OnStart();
     g_thermalSvc->InitStateMachine();
     g_thermalSvc->InitActionManager();
