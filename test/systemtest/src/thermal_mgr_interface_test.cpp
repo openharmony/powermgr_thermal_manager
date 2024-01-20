@@ -196,6 +196,7 @@ namespace {
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest001, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest001 start");
+    sleep(1);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
