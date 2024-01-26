@@ -20,10 +20,38 @@ using namespace testing::ext;
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
+using namespace Security::AccessToken;
+using Security::AccessToken::AccessTokenID;
 
-void ThermalMgrDialogTest::SetUpTestCase() {}
+const char *g_perms[] = { "ohos.permission.START_INVISIBLE_ABILITY" };
+uint64_t g_token;
+AccessTokenID ThermalMgrDialogTest::tokenID_ = 0;
 
-void ThermalMgrDialogTest::TearDownTestCase() {}
+NativeTokenInfoParams infoInstance = {
+    .dcapsNum = 0,
+    .permsNum = 1,
+    .aclsNum = 0,
+    .dcaps = nullptr,
+    .perms = g_perms,
+    .acls = nullptr,
+    .processName = "ThermalMgrDialogTest",
+    .aplStr = "system_basic",
+};
+
+void ThermalMgrDialogTest::SetUpTestCase()
+{
+    g_token = GetSelfTokenID();
+    tokenID_ = GetAccessTokenId(&infoInstance);
+    ASSERT_NE(0, tokenID_);
+    ASSERT_EQ(0, SetSelfTokenID(tokenID_));
+    AccessTokenKit::ReloadNativeTokenInfo();
+}
+
+void ThermalMgrDialogTest::TearDownTestCase()
+{
+    AccessTokenKit::DeleteToken(tokenID_);
+    SetSelfTokenID(g_token);
+}
 
 void ThermalMgrDialogTest::SetUp() {}
 

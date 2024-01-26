@@ -17,6 +17,9 @@
 #define THERMAL_MGR_DIALOG_TEST_H
 
 #include <gtest/gtest.h>
+#include "accesstoken_kit.h"
+#include "nativetoken_kit.h"
+#include "token_setproc.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -26,6 +29,8 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+private:
+    static Security::AccessToken::AccessTokenID tokenID_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
