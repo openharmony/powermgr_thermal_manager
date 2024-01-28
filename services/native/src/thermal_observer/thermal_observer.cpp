@@ -29,7 +29,6 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-std::map<std::string, std::string> g_actionMap;
 }
 ThermalObserver::ThermalObserver(const wptr<ThermalService>& tms) : tms_(tms) {};
 ThermalObserver::~ThermalObserver() {};
@@ -134,6 +133,10 @@ void ThermalObserver::SubscribeThermalActionCallback(const std::vector<std::stri
         object->AddDeathRecipient(actionCBDeathRecipient_);
         callbackActionMap_.insert(std::make_pair(callback, actionList));
         THERMAL_HILOGI(COMP_SVC, "add new action listener, listeners.size=%{public}zu", actionListeners_.size());
+        IThermalActionCallback::ActionCallbackMap actionCbMap;
+        DecisionActionValue(actionList, actionCbMap, actionCache_);
+        callback->OnThermalActionChanged(actionCbMap);
+        THERMAL_HILOGI(COMP_SVC, "current action callback completed");
     } else {
         THERMAL_HILOGW(COMP_SVC, "subscribe failed, action callback duplicate subscription!");
     }
@@ -160,7 +163,7 @@ void ThermalObserver::UnSubscribeThermalActionCallback(const sptr<IThermalAction
 void ThermalObserver::PrintAction()
 {
     std::string thermalActionLog;
-    for (auto actionIter = g_actionMap.begin(); actionIter != g_actionMap.end(); ++actionIter) {
+    for (auto actionIter = actionMap_.begin(); actionIter != actionMap_.end(); ++actionIter) {
         thermalActionLog.append(actionIter->first).append("=").append(actionIter->second).append("|");
     }
     THERMAL_HILOGI(COMP_SVC, "sub {%{public}zu|%{public}zu} pol {%{public}s}",
@@ -171,14 +174,15 @@ void ThermalObserver::PrintAction()
 void ThermalObserver::FindSubscribeActionValue()
 {
     std::lock_guard lock(mutexActionCallback_);
-    if (g_actionMap.empty()) {
+    if (actionMap_.empty()) {
         THERMAL_HILOGD(COMP_SVC, "no action");
         return;
     }
     PrintAction();
+    actionCache_ = actionMap_;
     if (actionListeners_.empty()) {
         THERMAL_HILOGD(COMP_SVC, "no subscribe");
-        g_actionMap.clear();
+        actionMap_.clear();
         return;
     }
 
@@ -187,24 +191,24 @@ void ThermalObserver::FindSubscribeActionValue()
         auto actionIter = callbackActionMap_.find(listener);
         if (actionIter != callbackActionMap_.end()) {
             THERMAL_HILOGD(COMP_SVC, "find callback.");
-            DecisionActionValue(actionIter->second, newActionCbMap);
+            DecisionActionValue(actionIter->second, newActionCbMap, actionMap_);
         }
 
         listener->OnThermalActionChanged(newActionCbMap);
     }
-    g_actionMap.clear();
+    actionMap_.clear();
 }
 
 void ThermalObserver::DecisionActionValue(const std::vector<std::string>& actionList,
-    IThermalActionCallback::ActionCallbackMap& newActionCbMap)
+    IThermalActionCallback::ActionCallbackMap& filteredMap, const std::map<std::string, std::string>& actionMap)
 {
     std::lock_guard lock(mutexActionMap_);
     for (const auto& action : actionList) {
         THERMAL_HILOGD(COMP_SVC, "subscribe action is %{public}s.", action.c_str());
-        for (auto actionIter = g_actionMap.begin(); actionIter != g_actionMap.end(); ++actionIter) {
+        for (const auto actionIter = actionMap.begin(); actionIter != actionMap.end(); ++actionIter) {
             THERMAL_HILOGD(COMP_SVC, "xml action is %{public}s.", actionIter->first.c_str());
             if (action == actionIter->first) {
-                newActionCbMap.insert(std::make_pair(action, actionIter->second));
+                filteredMap.insert(std::make_pair(action, actionIter->second));
             }
         }
     }
@@ -215,11 +219,11 @@ void ThermalObserver::SetDecisionValue(const std::string& actionName, const std:
     std::lock_guard lock(mutexActionMap_);
     THERMAL_HILOGD(
         COMP_SVC, "actionName = %{public}s, actionValue = %{public}s", actionName.c_str(), actionValue.c_str());
-    auto iter = g_actionMap.find(actionName);
-    if (iter != g_actionMap.end()) {
+    auto iter = actionMap_.find(actionName);
+    if (iter != actionMap_.end()) {
         iter->second = actionValue;
     } else {
-        g_actionMap.insert(std::make_pair(actionName, actionValue));
+        actionMap_.insert(std::make_pair(actionName, actionValue));
     }
 }
 

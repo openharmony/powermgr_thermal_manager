@@ -48,6 +48,10 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
         return false;
     }
 
+    if (!tms->GetSimulationXml()) {
+        return true;
+    }
+
     if (args[0] == ARGS_DIALOG) {
         tms->GetActionPopup()->ShowThermalDialog(ActionPopup::TempStatus::HIGHER_TEMP);
         return true;
