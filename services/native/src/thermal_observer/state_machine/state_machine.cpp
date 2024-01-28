@@ -54,7 +54,6 @@ void StateMachine::UpdateState(std::string stateName, std::string stateValue)
     std::lock_guard<std::mutex> lock(stateMutex_);
     auto iter = stateCollectionMap_.find(stateName);
     if (iter != stateCollectionMap_.end()) {
-        THERMAL_HILOGW(COMP_SVC, "StateMachine name = %{public}s exist", stateName.c_str());
         iter->second->SetState(stateValue);
         return;
     }
