@@ -205,7 +205,7 @@ void ThermalObserver::DecisionActionValue(const std::vector<std::string>& action
     std::lock_guard lock(mutexActionMap_);
     for (const auto& action : actionList) {
         THERMAL_HILOGD(COMP_SVC, "subscribe action is %{public}s.", action.c_str());
-        for (const auto actionIter = actionMap.begin(); actionIter != actionMap.end(); ++actionIter) {
+        for (auto actionIter = actionMap.begin(); actionIter != actionMap.end(); ++actionIter) {
             THERMAL_HILOGD(COMP_SVC, "xml action is %{public}s.", actionIter->first.c_str());
             if (action == actionIter->first) {
                 filteredMap.insert(std::make_pair(action, actionIter->second));
