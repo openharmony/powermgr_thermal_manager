@@ -63,6 +63,11 @@ void ThermalConfigSensorCluster::UpdateThermalLevel(const TypeTempMap& typeTempI
 {
     std::vector<uint32_t> levelList;
 
+    if (!CheckState()) {
+        latestLevel_ = 0;
+        return;
+    }
+
     CalculateSensorLevel(typeTempInfo, levelList);
 
     if (levelList.empty()) {
@@ -71,6 +76,27 @@ void ThermalConfigSensorCluster::UpdateThermalLevel(const TypeTempMap& typeTempI
 
     latestLevel_ = *std::max_element(levelList.begin(), levelList.end());
     THERMAL_HILOGD(COMP_SVC, "final latestLevel = %{public}u", latestLevel_);
+}
+
+bool ThermalConfigSensorCluster::CheckState()
+{
+    if (stateMap_.empty()) {
+        return true;
+    }
+    for (auto prop = stateMap_.begin(); prop != stateMap_.end(); prop++) {
+        StateMachine::StateMachineMap stateMachineMap = g_service->GetStateMachineObj()->GetStateCollectionMap();
+        auto stateIter = stateMachineMap.find(prop->first);
+        if (stateIter == stateMachineMap.end() || stateIter->second == nullptr) {
+            THERMAL_HILOGE(COMP_SVC, "can't find state machine [%{public}s]", prop->first.c_str());
+            return false;
+        }
+        if (stateIter->second->DecideState(prop->second)) {
+            continue;
+        } else {
+            return false;
+        }
+    }
+    return true;
 }
 
 void ThermalConfigSensorCluster::CalculateSensorLevel(const TypeTempMap& typeTempInfo,
