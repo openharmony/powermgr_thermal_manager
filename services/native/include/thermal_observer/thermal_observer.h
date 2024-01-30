@@ -50,7 +50,7 @@ public:
     void FindSubscribeActionValue();
     void NotifySensorTempChanged(IThermalTempCallback::TempCallbackMap& tempCbMap);
     void DecisionActionValue(const std::vector<std::string>& actionList,
-        IThermalActionCallback::ActionCallbackMap& filteredMap, const std::map<std::string, std::string>& actionMap);
+        IThermalActionCallback::ActionCallbackMap& filteredMap);
     bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo);
     void SetRegisterCallback(Callback& callback);
     void SetSensorTemp(const std::string& type, const int32_t& temp);
@@ -82,6 +82,8 @@ public:
 private:
     void PrintAction();
     void InitSensorTypeMap();
+    void DecisionActionValue(const std::vector<std::string>& actionList,
+        IThermalActionCallback::ActionCallbackMap& filteredMap, const std::map<std::string, std::string>& actionMap);
     struct classcomp {
         bool operator() (const sptr<IThermalTempCallback>& l, const sptr<IThermalTempCallback>& r) const
         {
