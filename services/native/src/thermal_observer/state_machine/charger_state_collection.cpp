@@ -144,7 +144,7 @@ bool ChargerStateCollection::DecideState(const std::string& value)
     auto& batterySrvClient = BatterySrvClient::GetInstance();
     BatteryChargeState chargeState = batterySrvClient.GetChargingStatus();
     if ((value == CHARGER_ON && chargeState == BatteryChargeState::CHARGE_STATE_ENABLE) ||
-        (value == CHARGER_OFF && chargeState == BatteryChargeState::CHARGE_STATE_NONE)) {
+        (value == CHARGER_OFF && chargeState != BatteryChargeState::CHARGE_STATE_ENABLE)) {
         return true;
     }
     return false;
