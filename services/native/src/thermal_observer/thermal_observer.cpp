@@ -200,6 +200,12 @@ void ThermalObserver::FindSubscribeActionValue()
 }
 
 void ThermalObserver::DecisionActionValue(const std::vector<std::string>& actionList,
+    IThermalActionCallback::ActionCallbackMap& filteredMap)
+{
+    DecisionActionValue(actionList, filteredMap, actionMap_);
+}
+
+void ThermalObserver::DecisionActionValue(const std::vector<std::string>& actionList,
     IThermalActionCallback::ActionCallbackMap& filteredMap, const std::map<std::string, std::string>& actionMap)
 {
     std::lock_guard lock(mutexActionMap_);

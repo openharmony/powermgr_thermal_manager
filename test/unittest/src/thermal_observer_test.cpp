@@ -107,13 +107,11 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
     observer->UnSubscribeThermalActionCallback(actionCb);
     observer->FindSubscribeActionValue();
     IThermalActionCallback::ActionCallbackMap actionCbMap;
-    std::map<std::string, std::string> actionMap;
-    actionMap["cpu_big"] = "160000";
-    observer->DecisionActionValue(typeList, actionCbMap, actionMap);
+    observer->DecisionActionValue(typeList, actionCbMap);
     typeList.push_back("cpu_big");
     typeList.push_back("cpu_med");
     typeList.push_back("cpu_lit");
-    observer->DecisionActionValue(typeList, actionCbMap, actionMap);
+    observer->DecisionActionValue(typeList, actionCbMap);
 }
 
 /**
