@@ -254,7 +254,6 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cb1 = new ThermalActionTest1Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
-    g_service->SubscribeThermalActionCallback(actionList, desc, cb1);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
