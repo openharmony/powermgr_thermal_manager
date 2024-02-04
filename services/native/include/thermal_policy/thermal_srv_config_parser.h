@@ -43,6 +43,7 @@ private:
     bool ParseActionNode(const xmlNodePtr& node);
     bool ParsePolicyNode(const xmlNodePtr& node);
     bool ParseIdleNode(const xmlNodePtr& node);
+    bool ParseLevelState(const xmlNodePtr& cur, SensorClusterPtr& sc);
     bool ParseAuxSensorInfo(const xmlNodePtr& cur, SensorClusterPtr& sc);
     bool ParseSensorInfo(const xmlNodePtr& cur, SensorClusterPtr& sc);
     bool ParseAuxSensorLevInfo(const xmlNodePtr& cur, std::vector<std::string>& auxsensors,
