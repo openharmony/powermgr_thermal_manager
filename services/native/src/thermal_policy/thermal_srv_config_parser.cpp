@@ -154,7 +154,7 @@ bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
             THERMAL_HILOGE(COMP_SVC, "level cluster name is null");
             return false;
         }
-        if (!ParseAuxSensorInfo(cur, sc) || !ParseSensorInfo(cur, sc)) {
+        if (!ParseLevelState(cur, sc) || !ParseAuxSensorInfo(cur, sc) || !ParseSensorInfo(cur, sc)) {
             THERMAL_HILOGE(COMP_SVC, "parse sensor info failed, cluster name: %{public}s", name.c_str());
             return false;
         }
@@ -174,6 +174,30 @@ bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
         cur = cur->next;
     }
     g_service->GetPolicy()->SetSensorClusterMap(msc);
+    return true;
+}
+
+bool ThermalSrvConfigParser::ParseLevelState(const xmlNodePtr& cur, SensorClusterPtr& sc)
+{
+    for (xmlNodePtr subNode = cur->xmlChildrenNode; subNode != nullptr; subNode = subNode->next) {
+        if (xmlStrcmp(subNode->name, BAD_CAST"state") || (subNode->properties == nullptr)) {
+            continue;
+        }
+        for (auto levStateProp = subNode->properties; levStateProp != nullptr; levStateProp = levStateProp->next) {
+            std::string propName = reinterpret_cast<const char*>(levStateProp->name);
+            xmlChar* xmlPropValue = xmlGetProp(subNode, levStateProp->name);
+            if (xmlPropValue != nullptr) {
+                std::string propValue = reinterpret_cast<char*>(xmlPropValue);
+                THERMAL_HILOGD(COMP_SVC, "level state: %{public}s, value: %{public}s",
+                    propName.c_str(), propValue.c_str());
+                sc->AddState(propName, propValue);
+                xmlFree(xmlPropValue);
+            } else {
+                THERMAL_HILOGE(COMP_SVC, "level state prop [%{public}s] value is null", propName.c_str());
+                return false;
+            }
+        }
+    }
     return true;
 }
 

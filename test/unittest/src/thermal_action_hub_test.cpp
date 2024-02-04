@@ -17,6 +17,7 @@
 
 #include <condition_variable>
 #include <mutex>
+#include <unistd.h>
 
 #include "constants.h"
 #include "mock_thermal_mgr_client.h"
@@ -43,10 +44,10 @@ std::vector<std::string> g_typeList;
 std::condition_variable g_callbackCV;
 std::mutex g_mutex;
 constexpr int64_t TIME_OUT = 1;
+constexpr int32_t DELAY_TIME = 500000;
 bool g_callbackTriggered = false;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
 sptr<ThermalService> g_service = nullptr;
-auto& g_thermalMgrClient = ThermalMgrClient::GetInstance();
 
 void Notify()
 {
@@ -253,16 +254,15 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cb1 = new ThermalActionTest1Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb1);
-    g_service->SubscribeThermalActionCallback(actionList, desc, cb1);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
     info1.temp = 40100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
+    usleep(DELAY_TIME);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb1);
     Wait();
-    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb1);
     g_service->UnSubscribeThermalActionCallback(cb1);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
 }
@@ -281,16 +281,15 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cb2 = new ThermalActionTest2Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start register");
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb2);
-    g_service->SubscribeThermalActionCallback(actionList, desc, cb2);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
     info1.temp = 43100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
+    usleep(DELAY_TIME);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb2);
     Wait();
-    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb2);
     g_service->UnSubscribeThermalActionCallback(cb2);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 end");
 }
@@ -310,16 +309,15 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cb3 = new ThermalActionTest3Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start register");
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb3);
-    g_service->SubscribeThermalActionCallback(actionList, desc, cb3);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
     info1.temp = 46100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
+    usleep(DELAY_TIME);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb3);
     Wait();
-    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb3);
     g_service->UnSubscribeThermalActionCallback(cb3);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 end");
 }
@@ -338,9 +336,6 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cb4 = new ThermalActionTest4Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start register");
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb4);
-    g_service->SubscribeThermalActionCallback(actionList, desc, cb4);
-    g_thermalMgrClient.SetScene("cam");
     g_service->SetScene("cam");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -348,8 +343,9 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
     info1.temp = 40100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
+    usleep(DELAY_TIME);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb4);
     Wait();
-    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb4);
     g_service->UnSubscribeThermalActionCallback(cb4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 end");
 }
@@ -368,9 +364,6 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cb5 = new ThermalActionTest5Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start register");
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb5);
-    g_service->SubscribeThermalActionCallback(actionList, desc, cb5);
-    g_thermalMgrClient.SetScene("call");
     g_service->SetScene("call");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -378,8 +371,9 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
     info1.temp = 43100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
+    usleep(DELAY_TIME);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb5);
     Wait();
-    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb5);
     g_service->UnSubscribeThermalActionCallback(cb5);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 end");
 }
@@ -398,9 +392,6 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cb6 = new ThermalActionTest6Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start register");
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cb6);
-    g_service->SubscribeThermalActionCallback(actionList, desc, cb6);
-    g_thermalMgrClient.SetScene("game");
     g_service->SetScene("game");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -408,8 +399,9 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
     info1.temp = 46100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
+    usleep(DELAY_TIME);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cb6);
     Wait();
-    g_thermalMgrClient.UnSubscribeThermalActionCallback(cb6);
     g_service->UnSubscribeThermalActionCallback(cb6);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 end");
 }
@@ -429,16 +421,15 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cbBoost = new ThermalActionTest7Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cbBoost);
-    g_service->SubscribeThermalActionCallback(actionList, desc, cbBoost);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
     info1.temp = 40100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
+    usleep(DELAY_TIME);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cbBoost);
     Wait();
-    g_thermalMgrClient.UnSubscribeThermalActionCallback(cbBoost);
     g_service->UnSubscribeThermalActionCallback(cbBoost);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
 }
@@ -457,16 +448,15 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest008, TestSize.Level0)
     InitData();
     const sptr<IThermalActionCallback> cbIsolateCpu = new ThermalActionTest8Callback();
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 start register");
-    g_thermalMgrClient.SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
-    g_service->SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
     info1.temp = 43100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
+    usleep(DELAY_TIME);
+    g_service->SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
     Wait();
-    g_thermalMgrClient.UnSubscribeThermalActionCallback(cbIsolateCpu);
     g_service->UnSubscribeThermalActionCallback(cbIsolateCpu);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 end");
 }

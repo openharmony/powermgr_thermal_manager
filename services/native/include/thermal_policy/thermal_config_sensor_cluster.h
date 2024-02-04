@@ -51,8 +51,13 @@ public:
     void SetDescFlag(bool descflag);
     void SetAuxFlag(bool auxflag);
     void SetRateFlag(bool rateFlag);
+    void AddState(std::string& state, std::string& val)
+    {
+        stateMap_.emplace(state, val);
+    }
 
 private:
+    bool CheckState();
     void CalculateSensorLevel(const TypeTempMap& typeTempInfo, std::vector<uint32_t>& levelList);
     void AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
     void DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
@@ -66,6 +71,7 @@ private:
     uint32_t latestLevel_ {0};
     SensorInfoMap sensorInfolist_;
     AuxSensorInfoMap auxSensorInfolist_;
+    std::map<std::string, std::string> stateMap_;
 };
 
 using SensorClusterPtr = std::shared_ptr<ThermalConfigSensorCluster>;

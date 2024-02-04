@@ -55,6 +55,7 @@ void ThermalPolicy::OnSensorInfoReported(const TypeTempMap& info)
 
 void ThermalPolicy::ExecutePolicy()
 {
+    LevelDecision();
     PolicyDecision();
 }
 
@@ -99,6 +100,9 @@ void ThermalPolicy::LevelDecision()
 
 void ThermalPolicy::WriteLevel()
 {
+    if (!g_service->GetSimulationXml()) {
+        return;
+    }
     std::list<uint32_t> levelList;
     int32_t ret = -1;
     char levelBuf[MAX_PATH] = {0};
