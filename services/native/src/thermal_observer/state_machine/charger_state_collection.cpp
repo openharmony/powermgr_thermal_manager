@@ -15,8 +15,8 @@
 
 #include "charger_state_collection.h"
 
-#include "battery_info.h"
 #ifdef BATTERY_MANAGER_ENABLE
+#include "battery_info.h"
 #include "battery_srv_client.h"
 #endif
 #include "common_event_subscriber.h"
@@ -82,7 +82,9 @@ bool ChargerStateCollection::RegisterEvent()
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED, batteryChangedHandler);
     EventHandle batteryChangedInnerHandler =
         std::bind(&ChargerStateCollection::HandleChangerInnerStatusCompleted, this, std::placeholders::_1);
+#ifdef BATTERY_MANAGER_ENABLE
     receiver->AddEvent(BatteryInfo::COMMON_EVENT_BATTERY_CHANGED_INNER, batteryChangedInnerHandler);
+#endif
     EventHandle thermalLevelHandler =
         std::bind(&ChargerStateCollection::HandleThermalLevelCompleted, this, std::placeholders::_1);
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, thermalLevelHandler);
@@ -92,14 +94,17 @@ bool ChargerStateCollection::RegisterEvent()
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData& data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+#ifdef BATTERY_MANAGER_ENABLE
     g_cachedIdleState.soc = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CAPACITY, -1);
     int32_t chargeState = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE, -1);
+#endif
     if (g_cachedIdleState.charging != chargeState) {
         g_cachedIdleState.charging = chargeState;
         THERMAL_HILOGI(COMP_SVC, "received charge status event, state: %{public}d", g_cachedIdleState.charging);
     }
     HandleChargeIdleState();
 
+#ifdef BATTERY_MANAGER_ENABLE
     switch (g_cachedIdleState.charging) {
         case static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_DISABLE): {
             state_ = ToString(DISABLE);
@@ -124,12 +129,15 @@ void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData&
         default:
             break;
     }
+#endif
 }
 
 void ChargerStateCollection::HandleChangerInnerStatusCompleted(const CommonEventData& data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+#ifdef BATTERY_MANAGER_ENABLE
     g_cachedIdleState.current = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_PLUGGED_NOW_CURRENT, -1);
+#endif
     HandleChargeIdleState();
 }
 
