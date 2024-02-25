@@ -15,7 +15,7 @@
 
 #include "thermal_mgr_dumper.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "constants.h"
 #include "thermal_common.h"
@@ -26,7 +26,6 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 constexpr const char* ARGS_HELP = "-h";
-constexpr const char* ARGS_DIALOG = "-d";
 constexpr const char* ARGS_THERMALINFO = "-t";
 constexpr const char* ARGS_SCENE = "-s";
 constexpr const char* ARGS_LEVEL = "-l";
@@ -36,6 +35,7 @@ constexpr const char* ARGS_IDLE = "-i";
 constexpr const char* ARGS_TEMP_REPORT = "-st";
 constexpr const char* ARGS_STOP_TEMP_FLAG = "0";
 constexpr const char* ARGS_TEMP_EMULATION = "-te";
+constexpr int32_t TEMP_EMUL_PARAM_NUM = 2;
 }
 
 bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& result)
@@ -54,18 +54,22 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
     }
 
     if (args[0] == ARGS_TEMP_REPORT) {
-        SwitchTempReport(result, args);
+        if (CheckTempReport(args)) {
+            tms->SetTempReportSwitch(true);
+            result.append("Temperature reporting has been started.\n");
+        } else {
+            tms->SetTempReportSwitch(false);
+            result.append("Temperature reporting has been stopped.\n");
+        }
         return true;
     } else if (args[0] == ARGS_TEMP_EMULATION) {
-        return EmulateTempReport(result, args);
+        TypeTempMap tempMap;
+        EmulateTempReport(result, args, tempMap);
+        tms->HandleTempEmulation(tempMap);
+        return 
     }
 
     if (!tms->GetSimulationXml()) {
-        return true;
-    }
-
-    if (args[0] == ARGS_DIALOG) {
-        tms->GetActionPopup()->ShowThermalDialog(ActionPopup::TempStatus::HIGHER_TEMP);
         return true;
     }
 
@@ -94,38 +98,31 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
     return true;
 }
 
-void ThermalMgrDumper::SwitchTempReport(std::string& result, const std::vector<std::string>& args)
+bool ThermalMgrDumper::CheckTempReport(const std::vector<std::string>& args)
 {
-    if (args.size() < 2) {
-        tms->SetTempReportSwitch(true);
-        result.append("Temperature reporting has been started.\n");
-        return;
+    if (args.size() < TEMP_EMUL_PARAM_NUM) {
+        return true;
     }
     if (args[1] == ARGS_STOP_TEMP_FLAG) {
-        tms->SetTempReportSwitch(false);
-        result.append("Temperature reporting has been stopped.\n");
-        return;
-    }
-    tms->SetTempReportSwitch(true);
-    result.append("Temperature reporting has been started.\n");
+        return false;
+    } 
+    return true;
 }
 
-bool ThermalMgrDumper::EmulateTempReport(std::string& result, const std::vector<std::string>& args)
+void ThermalMgrDumper::EmulateTempReport(std::string& result,
+    const std::vector<std::string>& args, TypeTempMap& tempMap)
 {
-    if (args.size() < 3) {
+    if (args.size() <= TEMP_EMUL_PARAM_NUM) {
         result.append("[Error] Insufficient input parameters!\n");
-        return false;
+        return;
     }
-    TypeTempMap tempMap;
-    for (size_t i = 1; (2 * i) < args.size(); ++i) {
-        tempMap.emplace(args[2 * i - 1], atoi(args[2 * i].c_str()));
+    for (size_t i = 1; (TEMP_EMUL_PARAM_NUM * i) < args.size(); ++i) {
+        tempMap.emplace(args[TEMP_EMUL_PARAM_NUM * i - 1], atoi(args[TEMP_EMUL_PARAM_NUM * i].c_str()));
         result.append("Report temperature [ ")
-            .append(args[2 * i - 1])
+            .append(args[TEMP_EMUL_PARAM_NUM * i - 1])
             .append(" ]: ")
-            .append(args[2 * i]);
+            .append(args[TEMP_EMUL_PARAM_NUM * i]);
     }
-    tms->HandleTempEmulation(tempMap);
-    return true;
 }
 
 void ThermalMgrDumper::ShowThermalZoneInfo(std::string& result)
