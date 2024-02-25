@@ -15,6 +15,8 @@
 
 #include "thermal_mgr_dumper.h"
 
+#include <stdlib.h>
+
 #include "constants.h"
 #include "thermal_common.h"
 #include "thermal_service.h"
@@ -31,6 +33,9 @@ constexpr const char* ARGS_LEVEL = "-l";
 constexpr const char* ARGS_ACTION = "-a";
 constexpr const char* ARGS_POLICY = "-p";
 constexpr const char* ARGS_IDLE = "-i";
+constexpr const char* ARGS_TEMP_REPORT = "-st";
+constexpr const char* ARGS_STOP_TEMP_FLAG = "0";
+constexpr const char* ARGS_TEMP_EMULATION = "-te";
 }
 
 bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& result)
@@ -46,6 +51,13 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
     auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
     if (tms == nullptr) {
         return false;
+    }
+
+    if (args[0] == ARGS_TEMP_REPORT) {
+        SwitchTempReport(result, args);
+        return true;
+    } else if (args[0] == ARGS_TEMP_EMULATION) {
+        return EmulateTempReport(result, args);
     }
 
     if (!tms->GetSimulationXml()) {
@@ -79,6 +91,40 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
             break;
         }
     }
+    return true;
+}
+
+void ThermalMgrDumper::SwitchTempReport(std::string& result, const std::vector<std::string>& args)
+{
+    if (args.size() < 2) {
+        tms->SetTempReportSwitch(true);
+        result.append("Temperature reporting has been started.\n");
+        return;
+    }
+    if (args[1] == ARGS_STOP_TEMP_FLAG) {
+        tms->SetTempReportSwitch(false);
+        result.append("Temperature reporting has been stopped.\n");
+        return;
+    }
+    tms->SetTempReportSwitch(true);
+    result.append("Temperature reporting has been started.\n");
+}
+
+bool ThermalMgrDumper::EmulateTempReport(std::string& result, const std::vector<std::string>& args)
+{
+    if (args.size() < 3) {
+        result.append("[Error] Insufficient input parameters!\n");
+        return false;
+    }
+    TypeTempMap tempMap;
+    for (size_t i = 1; (2 * i) < args.size(); ++i) {
+        tempMap.emplace(args[2 * i - 1], atoi(args[2 * i].c_str()));
+        result.append("Report temperature [ ")
+            .append(args[2 * i - 1])
+            .append(" ]: ")
+            .append(args[2 * i]);
+    }
+    tms->HandleTempEmulation(tempMap);
     return true;
 }
 

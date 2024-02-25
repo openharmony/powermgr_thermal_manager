@@ -29,6 +29,8 @@ public:
     static bool Dump(const std::vector<std::string>& args, std::string& result);
 
 private:
+    static void SwitchTempReport(std::string& result, const std::vector<std::string>& args);
+    static bool EmulateTempReport(std::string& result, const std::vector<std::string>& args);
     static void DumpRunningLockInfo(std::string& result);
     static void ShowUsage(std::string& result);
     static void ShowThermalZoneInfo(std::string& result);
