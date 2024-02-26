@@ -75,7 +75,7 @@ public:
 
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
     int32_t HandleFanCallbackEvent(const HdfThermalCallbackInfo& event);
-    void HandleTempEmulation(const TypeTempMap& typeTempMap);
+    bool HandleTempEmulation(const TypeTempMap& typeTempMap);
 
     void SetTempReportSwitch(bool enable)
     {
