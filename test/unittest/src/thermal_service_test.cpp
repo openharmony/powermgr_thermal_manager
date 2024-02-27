@@ -135,6 +135,44 @@ HWTEST_F(ThermalServiceTest, ThermalMgrDumperTest004, TestSize.Level0)
 }
 
 /**
+ * @tc.name: ThermalMgrDumperTest005
+ * @tc.desc: test dump switch temp report
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalMgrDumperTest005, TestSize.Level0)
+{
+    std::vector<std::string> args;
+    std::string result;
+
+    args.push_back("-st");
+    args.push_back("0");
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+    args.clear();
+    args.push_back("-st");
+    args.push_back("1");
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+}
+
+/**
+ * @tc.name: ThermalMgrDumperTest006
+ * @tc.desc: test dump temp emul
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalServiceTest, ThermalMgrDumperTest006, TestSize.Level0)
+{
+    std::vector<std::string> args;
+    std::string result;
+
+    args.push_back("-te");
+    args.push_back("battery");
+    args.push_back("43000");
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+    args.clear();
+    args.push_back("-te");
+    EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
+}
+
+/**
  * @tc.name: ThermalServiceTest000
  * @tc.desc: test OnAddSystemAbility
  * @tc.type: FUNC

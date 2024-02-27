@@ -527,13 +527,11 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
 
 bool ThermalService::HandleTempEmulation(const TypeTempMap& typeTempMap)
 {
-#ifndef THERMAL_USER_VERSION
     if (isTempReport_) {
         return false;
     }
     std::lock_guard<std::mutex> lock(mutex_);
     serviceSubscriber_->OnTemperatureChanged(typeTempMap);
-#endif
     return true;
 }
 
