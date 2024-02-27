@@ -67,6 +67,7 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
 void ThermalMgrDumper::SwitchTempReport(const std::vector<std::string>& args,
     std::string& result, sptr<ThermalService>& tms)
 {
+#ifndef THERMAL_USER_VERSION
     if (args.size() >= TEMP_EMUL_PARAM_NUM && args[1] == ARGS_STOP_TEMP_FLAG) {
         tms->SetTempReportSwitch(false);
         result.append("Temperature reporting has been stopped.\n");
@@ -74,11 +75,15 @@ void ThermalMgrDumper::SwitchTempReport(const std::vector<std::string>& args,
         tms->SetTempReportSwitch(true);
         result.append("Temperature reporting has been started.\n");
     }
+#else
+    result.append("[Failed] User version is not supported.\n");
+#endif
 }
 
 void ThermalMgrDumper::EmulateTempReport(const std::vector<std::string>& args,
     std::string& result, sptr<ThermalService>& tms)
 {
+#ifndef THERMAL_USER_VERSION
     if (args.size() <= TEMP_EMUL_PARAM_NUM) {
         result.append("[Error] Insufficient input parameters!\n");
         return;
@@ -95,6 +100,9 @@ void ThermalMgrDumper::EmulateTempReport(const std::vector<std::string>& args,
     if (!tms->HandleTempEmulation(tempMap)) {
         result.append("[Error] Original temperature reporting has not been closed! You need to close it first.\n");
     }
+#else
+    result.append("[Failed] User version is not supported.\n");
+#endif
 }
 
 bool ThermalMgrDumper::DumpPolicy(const std::vector<std::string>& args,
