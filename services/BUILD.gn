@@ -132,7 +132,10 @@ ohos_shared_library("thermalservice") {
   if (defined(global_parts_info) &&
       defined(global_parts_info.powermgr_battery_manager)) {
     defines += [ "BATTERY_MANAGER_ENABLE" ]
-    external_deps += [ "battery_manager:batterysrv_client" ]
+    external_deps += [
+      "battery_manager:batterysrv_client",
+      "battery_manager:battery_info",
+    ]
   }
 
   subsystem_name = "powermgr"
