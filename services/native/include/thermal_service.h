@@ -75,6 +75,12 @@ public:
 
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
     int32_t HandleFanCallbackEvent(const HdfThermalCallbackInfo& event);
+    bool HandleTempEmulation(const TypeTempMap& typeTempMap);
+
+    void SetTempReportSwitch(bool enable)
+    {
+        isTempReport_ = enable;
+    }
 
     void SetFlag(bool flag)
     {
@@ -179,6 +185,7 @@ private:
     bool ready_ {false};
     static std::atomic_bool isBootCompleted_;
     bool isSimulation_ {false};
+    bool isTempReport_ {true};
     std::mutex mutex_;
     std::shared_ptr<ThermalServiceSubscriber> serviceSubscriber_ {nullptr};
     std::shared_ptr<ThermalObserver> observer_ {nullptr};

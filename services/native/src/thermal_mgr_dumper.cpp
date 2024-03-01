@@ -15,6 +15,8 @@
 
 #include "thermal_mgr_dumper.h"
 
+#include <cstdlib>
+
 #include "constants.h"
 #include "thermal_common.h"
 #include "thermal_service.h"
@@ -31,14 +33,16 @@ constexpr const char* ARGS_LEVEL = "-l";
 constexpr const char* ARGS_ACTION = "-a";
 constexpr const char* ARGS_POLICY = "-p";
 constexpr const char* ARGS_IDLE = "-i";
+constexpr const char* ARGS_TEMP_REPORT = "-st";
+constexpr const char* ARGS_STOP_TEMP_FLAG = "0";
+constexpr const char* ARGS_TEMP_EMULATION = "-te";
+constexpr int32_t TEMP_EMUL_PARAM_NUM = 2;
 }
 
 bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& result)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
     result.clear();
-    auto argc = args.size();
-    if ((argc == 0) || (args[0] == ARGS_HELP)) {
+    if ((args.size() == 0) || (args[0] == ARGS_HELP)) {
         ShowUsage(result);
         return true;
     }
@@ -48,33 +52,79 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
         return false;
     }
 
-    if (!tms->GetSimulationXml()) {
-        return true;
+    if (args[0] == ARGS_TEMP_REPORT) {
+        SwitchTempReport(args, result, tms);
+    } else if (args[0] == ARGS_TEMP_EMULATION) {
+        EmulateTempReport(args, result, tms);
+    } else if (args[0] == ARGS_THERMALINFO) {
+        ShowThermalZoneInfo(result);
+    } else {
+        return DumpPolicy(args, result, tms);
     }
+    return true;
+}
 
-    if (args[0] == ARGS_DIALOG) {
-        tms->GetActionPopup()->ShowThermalDialog(ActionPopup::TempStatus::HIGHER_TEMP);
-        return true;
+void ThermalMgrDumper::SwitchTempReport(const std::vector<std::string>& args,
+    std::string& result, sptr<ThermalService>& tms)
+{
+#ifndef THERMAL_USER_VERSION
+    if (args.size() >= TEMP_EMUL_PARAM_NUM && args[1] == ARGS_STOP_TEMP_FLAG) {
+        tms->SetTempReportSwitch(false);
+        result.append("Temperature reporting has been stopped.\n");
+    } else {
+        tms->SetTempReportSwitch(true);
+        result.append("Temperature reporting has been started.\n");
+    }
+#else
+    result.append("[Failed] User version is not supported.\n");
+#endif
+}
+
+void ThermalMgrDumper::EmulateTempReport(const std::vector<std::string>& args,
+    std::string& result, sptr<ThermalService>& tms)
+{
+#ifndef THERMAL_USER_VERSION
+    if (args.size() <= TEMP_EMUL_PARAM_NUM) {
+        result.append("[Error] Insufficient input parameters!\n");
+        return;
+    }
+    TypeTempMap tempMap;
+    for (size_t i = 1; (TEMP_EMUL_PARAM_NUM * i) < args.size(); ++i) {
+        tempMap.emplace(args[TEMP_EMUL_PARAM_NUM * i - 1], atoi(args[TEMP_EMUL_PARAM_NUM * i].c_str()));
+        result.append("Report temperature [ ")
+            .append(args[TEMP_EMUL_PARAM_NUM * i - 1])
+            .append(" ]: ")
+            .append(args[TEMP_EMUL_PARAM_NUM * i])
+            .append("\n");
+    }
+    if (!tms->HandleTempEmulation(tempMap)) {
+        result.append("[Error] Original temperature reporting has not been closed! You need to close it first.\n");
+    }
+#else
+    result.append("[Failed] User version is not supported.\n");
+#endif
+}
+
+bool ThermalMgrDumper::DumpPolicy(const std::vector<std::string>& args,
+    std::string& result, sptr<ThermalService>& tms)
+{
+    if (!tms->GetSimulationXml()) {
+        return false;
     }
 
     for (auto it = args.begin(); it != args.end(); it++) {
-        if (*it == ARGS_THERMALINFO) {
-            ShowThermalZoneInfo(result);
+        if (*it == ARGS_DIALOG) {
+            tms->GetActionPopup()->ShowThermalDialog(ActionPopup::TempStatus::HIGHER_TEMP);
         } else if (*it == ARGS_SCENE) {
-            std::shared_ptr<StateMachine> state = tms->GetStateMachineObj();
-            state->DumpState(result);
+            tms->GetStateMachineObj()->DumpState(result);
         } else if (*it == ARGS_LEVEL) {
-            std::shared_ptr<ThermalPolicy> policy = tms->GetPolicy();
-            policy->DumpLevel(result);
+            tms->GetPolicy()->DumpLevel(result);
         } else if (*it == ARGS_ACTION) {
-            std::shared_ptr<ThermalActionManager> action = tms->GetActionManagerObj();
-            action->DumpAction(result);
+            tms->GetActionManagerObj()->DumpAction(result);
         } else if (*it == ARGS_POLICY) {
-            std::shared_ptr<ThermalPolicy> policy = tms->GetPolicy();
-            policy->DumpPolicy(result);
+            tms->GetPolicy()->DumpPolicy(result);
         } else if (*it == ARGS_IDLE) {
-            std::shared_ptr<StateMachine> state = tms->GetStateMachineObj();
-            state->DumpIdle(result);
+            tms->GetStateMachineObj()->DumpIdle(result);
         } else {
             break;
         }
@@ -106,8 +156,11 @@ void ThermalMgrDumper::ShowUsage(std::string& result)
         .append("  [-h] \n")
         .append("  description of the cmd option:\n")
         .append("    -h: show this help.\n")
-        .append("    -d: show thermal level dialog.\n")
         .append("    -t: show thermal zone data.\n")
+        .append("  only for engineer:\n")
+        .append("    -st: switch temperature report, 0: stop, 1: start.\n")
+        .append("    -te: temperature emulation.\n")
+        .append("    -d: show thermal level dialog.\n")
         .append("    -s: show thermal scene data.\n")
         .append("    -l: show thermal level data.\n")
         .append("    -a: show thermal action data.\n")

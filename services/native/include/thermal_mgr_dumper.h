@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+#include "thermal_service.h"
+
 namespace OHOS {
 namespace PowerMgr {
 class ThermalMgrDumper {
@@ -29,7 +31,9 @@ public:
     static bool Dump(const std::vector<std::string>& args, std::string& result);
 
 private:
-    static void DumpRunningLockInfo(std::string& result);
+    static void SwitchTempReport(const std::vector<std::string>& args, std::string& result, sptr<ThermalService>& tms);
+    static void EmulateTempReport(const std::vector<std::string>& args, std::string& result, sptr<ThermalService>& tms);
+    static bool DumpPolicy(const std::vector<std::string>& args, std::string& result, sptr<ThermalService>& tms);
     static void ShowUsage(std::string& result);
     static void ShowThermalZoneInfo(std::string& result);
 };

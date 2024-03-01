@@ -509,6 +509,11 @@ void ThermalService::RegisterThermalHdiCallback()
 
 int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event)
 {
+#ifndef THERMAL_USER_VERSION
+    if (!isTempReport_) {
+        return ERR_OK;
+    }
+#endif
     TypeTempMap typeTempMap;
     if (!event.info.empty()) {
         for (auto iter = event.info.begin(); iter != event.info.end(); iter++) {
@@ -518,6 +523,16 @@ int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo&
     std::lock_guard<std::mutex> lock(mutex_);
     serviceSubscriber_->OnTemperatureChanged(typeTempMap);
     return ERR_OK;
+}
+
+bool ThermalService::HandleTempEmulation(const TypeTempMap& typeTempMap)
+{
+    if (isTempReport_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    serviceSubscriber_->OnTemperatureChanged(typeTempMap);
+    return true;
 }
 
 void ThermalService::RegisterFanHdiCallback()
