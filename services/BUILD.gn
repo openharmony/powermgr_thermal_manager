@@ -135,6 +135,10 @@ ohos_shared_library("thermalservice") {
     external_deps += [ "battery_manager:batterysrv_client" ]
   }
 
+  if (build_variant == "user") {
+    defines += [ "THERMAL_USER_VERSION" ]
+  }
+
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }
