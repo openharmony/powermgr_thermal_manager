@@ -47,7 +47,7 @@ constexpr int64_t TIME_OUT = 1;
 constexpr int32_t DELAY_TIME = 500000;
 bool g_callbackTriggered = false;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-sptr<ThermalService> g_service = nullptr;
+shared_ptr<ThermalService> g_service = nullptr;
 
 void Notify()
 {
