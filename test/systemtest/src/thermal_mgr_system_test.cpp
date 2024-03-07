@@ -43,7 +43,7 @@ using namespace std;
 using namespace testing::ext;
 
 namespace {
-static sptr<ThermalService> g_service;
+static shared_ptr<ThermalService> g_service;
 static std::map<std::string, SensorInfoMap> g_sensorInfoMap;
 static int32_t g_temp = 0;
 std::unique_ptr<ThermalConfigFileParser> g_parser;

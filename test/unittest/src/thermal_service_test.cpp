@@ -43,7 +43,7 @@ using namespace testing::ext;
 using namespace std;
 
 namespace {
-sptr<ThermalService> g_service = nullptr;
+shared_ptr<ThermalService> g_service = nullptr;
 constexpr const char* VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
 } // namespace

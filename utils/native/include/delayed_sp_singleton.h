@@ -25,35 +25,35 @@ namespace OHOS {
 namespace PowerMgr {
 #define DECLARE_DELAYED_SP_SINGLETON(MyClass) \
 public: \
+    MyClass(); \
     ~MyClass(); \
 private: \
-    friend DelayedSpSingleton<MyClass>; \
-    MyClass();
+    friend DelayedSpSingleton<MyClass>;
 
 template<typename T>
 class DelayedSpSingleton : public NoCopyable {
 public:
-    static sptr<T> GetInstance();
+    static std::shared_ptr<T> GetInstance();
     static void DestroyInstance();
 
 private:
-    static sptr<T> instance_;
+    static std::shared_ptr<T> instance_;
     static std::mutex mutex_;
 };
 
 template<typename T>
-sptr<T> DelayedSpSingleton<T>::instance_ = nullptr;
+std::shared_ptr<T> DelayedSpSingleton<T>::instance_ = nullptr;
 
 template<typename T>
 std::mutex DelayedSpSingleton<T>::mutex_;
 
 template<typename T>
-sptr<T> DelayedSpSingleton<T>::GetInstance()
+std::shared_ptr<T> DelayedSpSingleton<T>::GetInstance()
 {
-    if (!instance_) {
+    if (instance_ == nullptr) {
         std::lock_guard<std::mutex> lock(mutex_);
         if (instance_ == nullptr) {
-            instance_ = new T();
+            instance_ = std::make_shared<T>();
         }
     }
 
@@ -65,7 +65,7 @@ void DelayedSpSingleton<T>::DestroyInstance()
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (instance_) {
-        instance_.clear();
+        instance_.reset();
         instance_ = nullptr;
     }
 }

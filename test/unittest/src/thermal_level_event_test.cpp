@@ -51,7 +51,7 @@ constexpr int64_t TIME_OUT = 3;
 bool g_callbackTriggered = false;
 int32_t g_thermalLevel = -1;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-sptr<ThermalService> g_service = nullptr;
+shared_ptr<ThermalService> g_service = nullptr;
 ThermalConfigFileParser g_parser;
 
 void Notify()

@@ -52,7 +52,7 @@ static const std::string POLICY_CFG_NAME = "base_safe";
 constexpr int32_t THERMAL_RATIO_BEGIN = 0;
 constexpr int32_t THERMAL_RATIO_LENGTH = 4;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-sptr<ThermalService> g_service = nullptr;
+shared_ptr<ThermalService> g_service = nullptr;
 } // namespace
 
 void ThermalActionReportTest::ParserThermalSrvConfigFile()

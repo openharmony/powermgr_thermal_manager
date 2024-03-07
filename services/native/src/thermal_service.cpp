@@ -46,7 +46,7 @@ constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 FFRTQueue g_queue("thermal_service");
 constexpr uint32_t RETRY_TIME = 1000;
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.GetRefPtr());
+const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.get());
 SysParam::BootCompletedCallback g_bootCompletedCallback;
 } // namespace
 std::atomic_bool ThermalService::isBootCompleted_ = false;
@@ -68,7 +68,7 @@ void ThermalService::OnStart()
     }
 
     AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
-    if (!Publish(DelayedSpSingleton<ThermalService>::GetInstance())) {
+    if (!Publish(this)) {
         THERMAL_HILOGE(COMP_SVC, "OnStart register to system ability manager failed.");
         return;
     }
@@ -235,7 +235,7 @@ bool ThermalService::InitThermalObserver()
 
     THERMAL_HILOGD(COMP_SVC, "Enter");
     if (observer_ == nullptr) {
-        observer_ = std::make_shared<ThermalObserver>(g_service);
+        observer_ = std::make_shared<ThermalObserver>();
         if (!(observer_->Init())) {
             THERMAL_HILOGE(COMP_SVC, "InitThermalObserver: thermal observer start fail");
             return false;
