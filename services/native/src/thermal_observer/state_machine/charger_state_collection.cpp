@@ -128,9 +128,7 @@ void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData&
             break;
     }
 }
-#endif
 
-#ifdef BATTERY_MANAGER_ENABLE
 void ChargerStateCollection::HandleChangerInnerStatusCompleted(const CommonEventData& data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
