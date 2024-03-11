@@ -37,7 +37,7 @@ using namespace OHOS::HDI::Thermal::V1_1;
 namespace {
 static ThermalLevel g_thermalLevel = ThermalLevel::COOL;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-sptr<ThermalService> g_service = nullptr;
+shared_ptr<ThermalService> g_service = nullptr;
 }
 
 void ThermalListenerTest::ThermalLevelTestEvent::OnThermalLevelResult(const ThermalLevel& level)

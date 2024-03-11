@@ -47,7 +47,7 @@ using namespace std;
 
 namespace {
 constexpr int32_t BUF_LEN = 32;
-static sptr<ThermalService> g_service = nullptr;
+static shared_ptr<ThermalService> g_service = nullptr;
 std::shared_ptr<ActionApplicationProcess> g_actionApplicationProcess =
     std::make_shared<ActionApplicationProcess>("process_ctrl");
 std::shared_ptr<ActionCharger> g_actionCharger = std::make_shared<ActionCharger>("current_sc");

@@ -41,7 +41,7 @@ namespace {
 MessageParcel g_data;
 MessageParcel g_reply;
 MessageOption g_option;
-sptr<ThermalService> g_service = nullptr;
+shared_ptr<ThermalService> g_service = nullptr;
 } // namespace
 
 void ThermalMockStubTest::SetUpTestCase()
