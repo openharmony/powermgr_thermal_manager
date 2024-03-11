@@ -35,7 +35,7 @@ using namespace std;
 using namespace OHOS::EventFwk;
 
 namespace {
-static sptr<ThermalService> g_service = nullptr;
+static shared_ptr<ThermalService> g_service = nullptr;
 }
 
 void ThermalObserverTest::SetUpTestCase()
@@ -92,7 +92,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
 {
-    auto observer = std::make_shared<ThermalObserver>(g_service);
+    auto observer = std::make_shared<ThermalObserver>();
     std::vector<std::string> typeList;
     sptr<IThermalTempCallback> tempCallback;
     observer->Init();

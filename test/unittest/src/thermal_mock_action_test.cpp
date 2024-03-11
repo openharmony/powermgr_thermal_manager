@@ -41,7 +41,7 @@ using namespace std;
 using namespace OHOS::HDI::Thermal::V1_1;
 
 namespace {
-static sptr<ThermalService> g_thermalSvc = nullptr;
+static shared_ptr<ThermalService> g_thermalSvc = nullptr;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
 }
 

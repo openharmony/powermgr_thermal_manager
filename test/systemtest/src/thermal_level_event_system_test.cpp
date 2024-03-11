@@ -53,7 +53,7 @@ std::mutex g_mutex;
 constexpr int64_t TIME_OUT = 1;
 bool g_callbackTriggered = false;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-sptr<ThermalService> g_service = nullptr;
+shared_ptr<ThermalService> g_service = nullptr;
 } // namespace
 
 static void Notify()
