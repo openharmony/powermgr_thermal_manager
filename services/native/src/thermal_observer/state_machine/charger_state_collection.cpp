@@ -15,8 +15,8 @@
 
 #include "charger_state_collection.h"
 
-#include "battery_info.h"
 #ifdef BATTERY_MANAGER_ENABLE
+#include "battery_info.h"
 #include "battery_srv_client.h"
 #endif
 #include "common_event_subscriber.h"
@@ -77,18 +77,21 @@ bool ChargerStateCollection::RegisterEvent()
         return false;
     }
 
+#ifdef BATTERY_MANAGER_ENABLE
     EventHandle batteryChangedHandler =
         std::bind(&ChargerStateCollection::HandleChangerStatusCompleted, this, std::placeholders::_1);
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED, batteryChangedHandler);
     EventHandle batteryChangedInnerHandler =
         std::bind(&ChargerStateCollection::HandleChangerInnerStatusCompleted, this, std::placeholders::_1);
     receiver->AddEvent(BatteryInfo::COMMON_EVENT_BATTERY_CHANGED_INNER, batteryChangedInnerHandler);
+#endif
     EventHandle thermalLevelHandler =
         std::bind(&ChargerStateCollection::HandleThermalLevelCompleted, this, std::placeholders::_1);
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, thermalLevelHandler);
     return true;
 }
 
+#ifdef BATTERY_MANAGER_ENABLE
 void ChargerStateCollection::HandleChangerStatusCompleted(const CommonEventData& data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -132,6 +135,7 @@ void ChargerStateCollection::HandleChangerInnerStatusCompleted(const CommonEvent
     g_cachedIdleState.current = data.GetWant().GetIntParam(BatteryInfo::COMMON_EVENT_KEY_PLUGGED_NOW_CURRENT, -1);
     HandleChargeIdleState();
 }
+#endif
 
 void ChargerStateCollection::SetState(const std::string& stateValue)
 {
@@ -152,6 +156,7 @@ bool ChargerStateCollection::DecideState(const std::string& value)
     return true;
 }
 
+#ifdef BATTERY_MANAGER_ENABLE
 void ChargerStateCollection::HandleChargeIdleState()
 {
     bool isIdle = ((g_cachedIdleState.soc >= g_idleStateConfig.soc) &&
@@ -167,6 +172,7 @@ void ChargerStateCollection::HandleChargeIdleState()
         g_isChargeIdle = isIdle;
     }
 }
+#endif
 
 void ChargerStateCollection::PublishIdleEvent(bool isIdle, const std::string commonEventSupport)
 {
@@ -189,7 +195,9 @@ void ChargerStateCollection::HandleThermalLevelCompleted(const CommonEventData& 
     std::string key = ToString(static_cast<int32_t>(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED));
     int32_t level = data.GetWant().GetIntParam(key, -1);
     g_cachedIdleState.level =level;
+#ifdef BATTERY_MANAGER_ENABLE
     HandleChargeIdleState();
+#endif
 }
 } // namespace PowerMgr
 } // namespace OHOS
