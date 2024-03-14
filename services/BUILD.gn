@@ -13,10 +13,6 @@
 
 import("../thermalmgr.gni")
 
-config("thermalsrv_private_config") {
-  include_dirs = [ "${ability_runtime_services_path}/appmgr/include" ]
-}
-
 config("thermalsrv_public_config") {
   include_dirs = [
     "native/include/",
@@ -76,7 +72,6 @@ ohos_shared_library("thermalservice") {
 
   configs = [
     "${utils_path}:utils_config",
-    ":thermalsrv_private_config",
     "${utils_path}:coverage_flags",
   ]
 
@@ -88,7 +83,6 @@ ohos_shared_library("thermalservice") {
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
-    "//third_party/libxml2:xml2",
   ]
 
   external_deps = [ "power_manager:power_permission" ]
@@ -115,6 +109,7 @@ ohos_shared_library("thermalservice") {
     "image_framework:image_native",
     "init:libbegetutil",
     "ipc:ipc_core",
+    "libxml2:libxml2",
     "power_manager:power_ffrt",
     "power_manager:power_sysparam",
     "power_manager:powermgr_client",

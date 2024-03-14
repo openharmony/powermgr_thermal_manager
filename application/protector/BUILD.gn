@@ -47,13 +47,13 @@ ohos_executable("thermal_protector") {
 
   deps = [
     "${utils_path}:thermal_utils",
-    "//third_party/libxml2:xml2",
   ]
 
   external_deps = [
     "c_utils:utils",
     "config_policy:configpolicy_util",
     "hilog:libhilog",
+    "libxml2:libxml2",
   ]
 
   install_enable = true
