@@ -45,9 +45,7 @@ ohos_executable("thermal_protector") {
     "${utils_path}:coverage_flags",
   ]
 
-  deps = [
-    "${utils_path}:thermal_utils",
-  ]
+  deps = [ "${utils_path}:thermal_utils" ]
 
   external_deps = [
     "c_utils:utils",
