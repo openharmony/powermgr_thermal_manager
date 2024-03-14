@@ -17,7 +17,6 @@ config("module_private_config") {
   include_dirs = [
     "include",
     "${thermal_service_zidl}/include",
-    "${ability_runtime_services_path}/appmgr/include",
     "${thermal_inner_api}/native/include",
   ]
 }
@@ -34,6 +33,7 @@ ohos_shared_library("mock_thermalsrv_client") {
   deps = [ "${thermal_service_zidl}:thermalmgr_proxy" ]
 
   external_deps = [
+    "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "hilog:libhilog",
