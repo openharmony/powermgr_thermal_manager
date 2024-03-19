@@ -45,15 +45,13 @@ ohos_executable("thermal_protector") {
     "${utils_path}:coverage_flags",
   ]
 
-  deps = [
-    "${utils_path}:thermal_utils",
-    "//third_party/libxml2:xml2",
-  ]
+  deps = [ "${utils_path}:thermal_utils" ]
 
   external_deps = [
     "c_utils:utils",
     "config_policy:configpolicy_util",
     "hilog:libhilog",
+    "libxml2:libxml2",
   ]
 
   install_enable = true
