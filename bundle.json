@@ -17,10 +17,7 @@
     "subsystem": "powermgr",
     "syscap": ["SystemCapability.PowerManager.ThermalManager"],
     "features": [],
-    "adapted_system_type": [
-        "small",
-        "standard"
-    ],
+    "adapted_system_type": ["standard"],
     "hisysevent_config": [
         "//base/powermgr/thermal_manager/thermalmgr.yaml"
     ],
@@ -57,9 +54,6 @@
         "soc_perf",
         "time_service",
         "window_manager"
-      ],
-      "third_party": [
-        "libxml2"
       ]
     },
     "build": {

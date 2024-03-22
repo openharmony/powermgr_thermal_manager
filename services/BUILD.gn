@@ -97,12 +97,10 @@ ohos_shared_library("thermalservice") {
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "appspawn:appspawn_socket_client",
-    "audio_framework:audio_client",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "config_policy:configpolicy_util",
-    "display_manager:displaymgr",
     "drivers_interface_battery:libbattery_proxy_2.0",
     "drivers_interface_thermal:libthermal_proxy_1.1",
     "ffrt:libffrt",
@@ -122,6 +120,14 @@ ohos_shared_library("thermalservice") {
     "time_service:time_client",
     "window_manager:libdm",
   ]
+
+  if (has_thermal_audio_framework_part) {
+    external_deps += [ "audio_framework:audio_client" ]
+  }
+
+  if (has_thermal_display_manager_part) {
+    external_deps += [ "display_manager:displaymgr" ]
+  }
 
   if (defined(global_parts_info) &&
       defined(global_parts_info.resourceschedule_soc_perf)) {
