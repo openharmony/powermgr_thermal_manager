@@ -38,6 +38,7 @@ deps_ex = [
   "bundle_framework:appexecfwk_base",
   "common_event_service:cesfwk_innerkits",
   "c_utils:utils",
+  "libxml2:libxml2",
   "drivers_interface_thermal:libthermal_proxy_1.1",
   "hilog:libhilog",
   "ipc:ipc_core",
@@ -80,7 +81,6 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "${thermal_service_zidl}:thermalmgr_stub",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:xml2",
   ]
   external_deps = deps_ex
 }
@@ -118,7 +118,6 @@ ohos_systemtest("ThermalMgrSystemTest") {
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:xml2",
   ]
   external_deps = deps_ex
 }
@@ -151,7 +150,6 @@ ohos_systemtest("ThermalMgrDialogTest") {
     "${utils_path}:thermal_utils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:xml2",
   ]
   external_deps = deps_ex
 }
