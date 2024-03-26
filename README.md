@@ -7,7 +7,7 @@
 
 ## Introduction<a name="section0056945901"></a>
 
-The Thermal Manager module provides the device temperature management and control capabilities to ensure the thermal safety and experience of the entire system.testyanshi3
+The Thermal Manager module provides the device temperature management and control capabilities to ensure the thermal safety and experience of the entire system.
 
 **Figure 1** Architecture of the Thermal Manager module
 
