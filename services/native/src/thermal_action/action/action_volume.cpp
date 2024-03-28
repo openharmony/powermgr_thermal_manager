@@ -15,15 +15,19 @@
 #include "action_volume.h"
 
 #include <algorithm>
+#ifdef HAS_THERMAL_AUDIO_FRAMEWORK_PART
 #include "audio_system_manager.h"
 #include "audio_stream_manager.h"
+#endif
 #include "file_operation.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "securec.h"
 #include "string_operation.h"
 
+#ifdef HAS_THERMAL_AUDIO_FRAMEWORK_PART
 using namespace OHOS::AudioStandard;
+#endif
 namespace OHOS {
 namespace PowerMgr {
 namespace {
@@ -108,18 +112,23 @@ int32_t ActionVolume::VolumeRequest(float volume)
     uid = (item != g_actionInfo.end()) ? item->uid : uid;
 
     StringOperation::SplitString(uid, uidList, ",");
+#ifdef HAS_THERMAL_AUDIO_FRAMEWORK_PART
     std::vector<std::unique_ptr<AudioRendererChangeInfo>> audioInfos;
     auto instance = AudioStreamManager::GetInstance();
+#endif
     int32_t ret = -1;
+#ifdef HAS_THERMAL_AUDIO_FRAMEWORK_PART
     if (instance == nullptr) {
         THERMAL_HILOGW(COMP_SVC, "instance is nullptr");
         return ret;
     }
 
     ret = instance->GetCurrentRendererChangeInfos(audioInfos);
+#endif
     if (ret < ERR_OK) {
         return ret;
     }
+#ifdef HAS_THERMAL_AUDIO_FRAMEWORK_PART
     if (audioInfos.size() <= 0) {
         THERMAL_HILOGD(COMP_SVC, "audioRendererChangeInfos: No Active Streams");
         return ERR_OK;
@@ -135,6 +144,7 @@ int32_t ActionVolume::VolumeRequest(float volume)
             }
         }
     }
+#endif
     return ERR_OK;
 }
 

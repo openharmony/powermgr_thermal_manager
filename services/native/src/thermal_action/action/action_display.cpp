@@ -18,12 +18,16 @@
 #include <cmath>
 
 #include "constants.h"
+#ifdef HAS_THERMAL_DISPLAY_MANAGER_PART
 #include "display_power_mgr_client.h"
+#endif
 #include "file_operation.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
 
+#ifdef HAS_THERMAL_DISPLAY_MANAGER_PART
 using namespace OHOS::DisplayPowerMgr;
+#endif
 namespace OHOS {
 namespace PowerMgr {
 namespace {
@@ -97,10 +101,12 @@ float ActionDisplay::GetActionValue()
 
 void ActionDisplay::RequestDisplay(float factor)
 {
+#ifdef HAS_THERMAL_DISPLAY_MANAGER_PART
     if (!DisplayPowerMgrClient::GetInstance().DiscountBrightness(factor)) {
         THERMAL_HILOGE(COMP_SVC, "failed to discount brightness");
         return;
     }
+#endif
 }
 
 void ActionDisplay::ExecuteMock(float factor)

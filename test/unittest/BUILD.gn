@@ -44,6 +44,7 @@ deps_ex = [
   "hdf_core:libhdi",
   "hdf_core:libpub_utils",
   "hilog:libhilog",
+  "libxml2:libxml2",
   "power_manager:powermgr_client",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
@@ -137,7 +138,6 @@ ohos_unittest("ThermalLevelEventTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:libxml2",
   ]
 
   external_deps = deps_ex
@@ -213,7 +213,6 @@ ohos_unittest("ThermalActionReportTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:libxml2",
   ]
 
   defines = []
@@ -507,7 +506,6 @@ ohos_unittest("ThermalClientTest") {
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "//third_party/googletest:gtest_main",
-    "//third_party/libxml2:libxml2",
   ]
 
   external_deps = [
@@ -523,6 +521,7 @@ ohos_unittest("ThermalClientTest") {
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "ipc:ipc_core",
+    "libxml2:libxml2",
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
