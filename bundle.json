@@ -86,7 +86,8 @@
             "name": "//base/powermgr/thermal_manager/interfaces/inner_api:thermalmgr_listener",
             "header": {
               "header_files": [
-                "thermal_mgr_listener.h"
+                "thermal_mgr_listener.h",
+                "thermal_level_callback_stub.h"
               ],
               "header_base": "//base/powermgr/thermal_manager/interfaces/inner_api/native/include"
             }
