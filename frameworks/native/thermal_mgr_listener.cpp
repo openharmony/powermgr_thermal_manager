@@ -23,7 +23,7 @@ bool ThermalMgrListener::ThermalLevelCallback::OnThermalLevelChanged(ThermalLeve
 {
     std::shared_ptr<ThermalMgrListener> listener = listener_.lock();
     if (listener == nullptr) {
-        THERMAL_HILOGI(COMP_FWK, "listener is nullptr");
+        THERMAL_HILOGE(COMP_FWK, "listener is null!");
         return false;
     }
     listener->levelEvent_->OnThermalLevelResult(level);
@@ -33,20 +33,20 @@ bool ThermalMgrListener::ThermalLevelCallback::OnThermalLevelChanged(ThermalLeve
 void ThermalMgrListener::RegisterServiceEvent()
 {
     callback_ = new ThermalLevelCallback(shared_from_this());
-    THERMAL_HILOGD(COMP_FWK, "start register");
+    THERMAL_HILOGI(COMP_FWK, "register listener for thermal level");
     ThermalMgrClient::GetInstance().SubscribeThermalLevelCallback(callback_);
 }
 
 void ThermalMgrListener::UnRegisterServiceEvent()
 {
-    THERMAL_HILOGD(COMP_FWK, "Enter");
+    THERMAL_HILOGI(COMP_FWK, "unregister listener");
     ThermalMgrClient::GetInstance().UnSubscribeThermalLevelCallback(callback_);
 }
 
 int32_t ThermalMgrListener::SubscribeLevelEvent(const std::shared_ptr<ThermalLevelEvent>& levelEvent)
 {
-    THERMAL_HILOGD(COMP_FWK, "Enter");
     if (levelEvent == nullptr) {
+        THERMAL_HILOGE(COMP_FWK, "level event is null!");
         return ERR_INVALID_VALUE;
     }
     levelEvent_ = levelEvent;
@@ -56,6 +56,10 @@ int32_t ThermalMgrListener::SubscribeLevelEvent(const std::shared_ptr<ThermalLev
 
 int32_t ThermalMgrListener::UnSubscribeLevelEvent()
 {
+    if (callback_ == nullptr) {
+        THERMAL_HILOGE(COMP_FWK, "callback is null!");
+        return ERR_INVALID_VALUE;
+    }
     UnRegisterServiceEvent();
     return ERR_OK;
 }
