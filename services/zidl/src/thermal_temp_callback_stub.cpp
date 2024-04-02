@@ -28,6 +28,7 @@
 
 namespace OHOS {
 namespace PowerMgr {
+constexpr uint32_t MAX_TEMP_MAP_NUM = 2000;
 int ThermalTempCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
@@ -59,6 +60,10 @@ int32_t ThermalTempCallbackStub::OnThermalTempChangedStub(MessageParcel& data)
     std::map<std::string, int32_t> tempTypeCb;
     uint32_t size = 0;
     THERMAL_READ_PARCEL_WITH_RET(data, Uint32, size, E_READ_PARCEL_ERROR_THERMAL);
+    if (size <= 0 || size > MAX_TEMP_MAP_NUM) {
+        THERMAL_HILOGW(COMP_SVC, "size exceed limit, size=%{public}d", size);
+        return E_EXCEED_PARAM_LIMIT;
+    }
     for (uint32_t i = 0; i < size; i++) {
         std::string type;
         int32_t temp = INVAILD_TEMP;
