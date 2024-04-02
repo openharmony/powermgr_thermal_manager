@@ -47,7 +47,10 @@ ohos_shared_library("thermalsrv_client") {
 }
 
 ohos_shared_library("thermalmgr_listener") {
-  sources = [ "${thermal_frameworks}/native/thermal_mgr_listener.cpp" ]
+  sources = [
+    "${thermal_frameworks}/native/thermal_level_callback_stub.cpp",
+    "${thermal_frameworks}/native/thermal_mgr_listener.cpp",
+  ]
 
   configs = [
     "${utils_path}:utils_config",
