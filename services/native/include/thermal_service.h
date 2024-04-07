@@ -169,6 +169,7 @@ private:
     bool Init();
     bool InitThermalDriver();
     bool InitThermalObserver();
+    bool InitThermalSubscriber();
     bool InitThermalAction();
     bool InitThermalPolicy();
     bool InitBaseInfo();
@@ -180,6 +181,7 @@ private:
     bool InitConfigModule();
     void RegisterHdiStatusListener();
     void RegisterThermalHdiCallback();
+    void UnRegisterThermalHdiCallback();
     void RegisterFanHdiCallback();
     void RegisterBootCompletedCallback();
     bool ready_ {false};

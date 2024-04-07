@@ -224,6 +224,11 @@ bool ThermalService::InitModules()
         THERMAL_HILOGE(COMP_SVC, "thermal policy start fail");
         return false;
     }
+
+    if (!InitThermalSubscriber()) {
+        THERMAL_HILOGE(COMP_SVC, "thermal subscriber init fail");
+        return false;
+    }
     return true;
 }
 
@@ -284,6 +289,18 @@ bool ThermalService::InitThermalPolicy()
     if (!policy_->Init()) {
         THERMAL_HILOGE(COMP_SVC, "InitThermalPolicy: policy init failed");
         return false;
+    }
+    return true;
+}
+
+bool ThermalService::InitThermalSubscriber()
+{
+    if (serviceSubscriber_ == nullptr) {
+        serviceSubscriber_ = std::make_shared<ThermalServiceSubscriber>();
+        if (!(serviceSubscriber_->Init())) {
+            THERMAL_HILOGE(COMP_SVC, "InitThermalSubscriber: thermal subscriber init failed");
+            return false;
+        }
     }
     return true;
 }
@@ -487,12 +504,6 @@ void ThermalService::RegisterHdiStatusListener()
 
 void ThermalService::RegisterThermalHdiCallback()
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (serviceSubscriber_ == nullptr) {
-        serviceSubscriber_ = std::make_shared<ThermalServiceSubscriber>();
-        THERMAL_RETURN_IF_WITH_LOG(!(serviceSubscriber_->Init()), "thermal service suvscriber start fail");
-    }
-
     THERMAL_HILOGD(COMP_SVC, "register thermal hdi callback");
     if (thermalInterface_ == nullptr) {
         thermalInterface_ = IThermalInterface::Get();
@@ -505,6 +516,20 @@ void ThermalService::RegisterThermalHdiCallback()
     ThermalCallback::RegisterThermalEvent(eventCb);
     int32_t ret = thermalInterface_->Register(callback);
     THERMAL_HILOGI(COMP_SVC, "register thermal hdi callback end, ret: %{public}d", ret);
+}
+
+void ThermalService::UnRegisterThermalHdiCallback()
+{
+    if (thermalInterface_ == nullptr) {
+        FFRTTask retryTask = [this] {
+            return UnRegisterThermalHdiCallback();
+        };
+        FFRTUtils::SubmitDelayTask(retryTask, RETRY_TIME, g_queue);
+        THERMAL_HILOGW(COMP_SVC, "thermalInterface_ is nullptr, try again after %{public}u ms", RETRY_TIME);
+        return;
+    }
+    int32_t ret = thermalInterface_->Unregister();
+    THERMAL_HILOGI(COMP_SVC, "unregister thermal hdi callback end, ret: %{public}d", ret);
 }
 
 int32_t ThermalService::HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event)
