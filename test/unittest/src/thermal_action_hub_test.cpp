@@ -45,6 +45,7 @@ std::condition_variable g_callbackCV;
 std::mutex g_mutex;
 constexpr int64_t TIME_OUT = 1;
 constexpr int32_t DELAY_TIME = 500000;
+constexpr int32_t WAIT_BOOT_COMPLETE_TIME = 3;
 bool g_callbackTriggered = false;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
 shared_ptr<ThermalService> g_service = nullptr;
@@ -80,6 +81,8 @@ void ThermalActionHubTest::SetUpTestCase()
     g_service->OnStart();
     g_service->InitStateMachine();
     g_service->InitActionManager();
+    g_service->UnRegisterThermalHdiCallback();
+    sleep(WAIT_BOOT_COMPLETE_TIME);
 }
 
 void ThermalActionHubTest::TearDownTestCase()
