@@ -122,6 +122,7 @@ ohos_shared_library("thermalservice") {
   ]
 
   if (has_thermal_audio_framework_part) {
+    defines += [ "HAS_THERMAL_AUDIO_FRAMEWORK_PART" ]
     external_deps += [ "audio_framework:audio_client" ]
   }
 
