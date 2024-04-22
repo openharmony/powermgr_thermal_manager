@@ -23,7 +23,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr uint32_t AUX_SENSOR_RANGE_LEN = 2;
 const std::string TRUE_STR = "1";
 }
@@ -118,20 +117,21 @@ bool ThermalSrvConfigParser::ParseBaseNode(const xmlNodePtr& node)
         cur = cur->next;
         THERMAL_HILOGD(COMP_SVC, "tag: %{public}s, value: %{public}s", bi.tag.c_str(), bi.value.c_str());
     }
-    g_service->GetBaseinfoObj()->SetBaseInfo(baseInfoMap);
+    auto tms = ThermalService::GetInstance();
+    tms->GetBaseinfoObj()->SetBaseInfo(baseInfoMap);
     auto iter = baseInfoMap.find("sim_tz");
     if (iter != baseInfoMap.end()) {
         if (iter->second == "") {
-            g_service->SetSimulationXml(false);
+            tms->SetSimulationXml(false);
             return true;
         }
         if (iter->second == "0" || iter->second == "1") {
-            g_service->SetSimulationXml(static_cast<bool>(std::stoi(iter->second)));
+            tms->SetSimulationXml(static_cast<bool>(std::stoi(iter->second)));
             return true;
         }
         return false;
     }
-    g_service->SetSimulationXml(false);
+    tms->SetSimulationXml(false);
     return true;
 }
 
@@ -173,7 +173,8 @@ bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
         msc.emplace(std::pair(name, sc));
         cur = cur->next;
     }
-    g_service->GetPolicy()->SetSensorClusterMap(msc);
+    auto tms = ThermalService::GetInstance();
+    tms->GetPolicy()->SetSensorClusterMap(msc);
     return true;
 }
 
@@ -436,7 +437,8 @@ bool ThermalSrvConfigParser::ParseStateNode(const xmlNodePtr& node)
         THERMAL_HILOGD(COMP_SVC, "state: %{public}s, params: %{public}s", si.name.c_str(), si.params.c_str());
         cur = cur->next;
     }
-    g_service->GetStateMachineObj()->SetStateItem(stateItems);
+    auto tms = ThermalService::GetInstance();
+    tms->GetStateMachineObj()->SetStateItem(stateItems);
     return true;
 }
 
@@ -464,7 +466,8 @@ bool ThermalSrvConfigParser::ParseActionNode(const xmlNodePtr& node)
         actionItems.push_back(ai);
         cur = cur->next;
     }
-    g_service->GetActionManagerObj()->SetActionItem(actionItems);
+    auto tms = ThermalService::GetInstance();
+    tms->GetActionManagerObj()->SetActionItem(actionItems);
     return true;
 }
 
@@ -545,7 +548,8 @@ bool ThermalSrvConfigParser::ParsePolicyNode(const xmlNodePtr& node)
         }
         cur = cur->next;
     }
-    g_service->GetPolicy()->SetPolicyMap(clusterPolicyMap);
+    auto tms = ThermalService::GetInstance();
+    tms->GetPolicy()->SetPolicyMap(clusterPolicyMap);
     return true;
 }
 
@@ -628,7 +632,8 @@ bool ThermalSrvConfigParser::ParseIdleNode(const xmlNodePtr& node)
     }
     THERMAL_HILOGI(COMP_SVC, "level=%{public}d, soc=%{public}d, charging=%{public}d, current=%{public}d",
                    idleState.level, idleState.soc, idleState.charging, idleState.current);
-    g_service->GetStateMachineObj()->SetIdleStateConfig(idleState);
+    auto tms = ThermalService::GetInstance();
+    tms->GetStateMachineObj()->SetIdleStateConfig(idleState);
     return true;
 }
 
@@ -657,7 +662,8 @@ bool ThermalSrvConfigParser::ParseFanNode(const xmlNodePtr &node)
         cur = cur->next;
     }
 
-    g_service->GetFanFaultDetect()->SetFaultInfoMap(fanFaultInfoMap);
+    auto tms = ThermalService::GetInstance();
+    tms->GetFanFaultDetect()->SetFaultInfoMap(fanFaultInfoMap);
     return true;
 }
 

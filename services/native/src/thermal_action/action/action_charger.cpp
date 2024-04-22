@@ -29,7 +29,6 @@ namespace {
 constexpr const char* SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_current";
 constexpr const char* BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
 const int MAX_PATH = 256;
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 std::vector<ChargingLimit> ActionCharger::chargeLimitList_;
 
@@ -63,13 +62,14 @@ void ActionCharger::AddActionValue(std::string value)
 
 void ActionCharger::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
         ChargerRequest(value);
         WriteSimValue(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
@@ -78,7 +78,8 @@ void ActionCharger::Execute()
 
 uint32_t ActionCharger::GetActionValue()
 {
-    std::string scene = g_service->GetScene();
+    auto tms = ThermalService::GetInstance();
+    std::string scene = tms->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {
         return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
@@ -102,7 +103,8 @@ int32_t ActionCharger::ChargerRequest(int32_t current)
     chargingLimit.value = current;
     chargeLimitList_.push_back(chargingLimit);
 
-    auto thermalInterface = g_service->GetThermalInterface();
+    auto tms = ThermalService::GetInstance();
+    auto thermalInterface = tms->GetThermalInterface();
     if (thermalInterface != nullptr) {
         int32_t ret = thermalInterface->SetBatteryCurrent(current);
         if (ret != ERR_OK) {

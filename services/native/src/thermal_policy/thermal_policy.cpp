@@ -30,7 +30,6 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* LEVEL_PATH = "/data/service/el0/thermal/config/configLevel";
 const int MAX_PATH = 256;
 }
@@ -38,7 +37,8 @@ const int MAX_PATH = 256;
 bool ThermalPolicy::Init()
 {
     SortLevel();
-    if (g_service == nullptr) {
+    auto tms = ThermalService::GetInstance();
+    if (tms == nullptr) {
         return false;
     }
     RegisterObserver();
@@ -85,7 +85,8 @@ void ThermalPolicy::SortLevel()
 void ThermalPolicy::RegisterObserver()
 {
     ThermalObserver::Callback callback = std::bind(&ThermalPolicy::OnSensorInfoReported, this, std::placeholders::_1);
-    g_service->GetObserver()->SetRegisterCallback(callback);
+    auto tms = ThermalService::GetInstance();
+    tms->GetObserver()->SetRegisterCallback(callback);
 }
 
 void ThermalPolicy::LevelDecision()
@@ -100,7 +101,8 @@ void ThermalPolicy::LevelDecision()
 
 void ThermalPolicy::WriteLevel()
 {
-    if (!g_service->GetSimulationXml()) {
+    auto tms = ThermalService::GetInstance();
+    if (!tms->GetSimulationXml()) {
         return;
     }
     std::list<uint32_t> levelList;
@@ -156,8 +158,9 @@ void ThermalPolicy::PolicyDecision()
 
 void ThermalPolicy::ActionDecision(const std::vector<PolicyAction>& actionList)
 {
+    auto tms = ThermalService::GetInstance();
     for (auto action = actionList.begin(); action != actionList.end(); action++) {
-        ThermalActionManager::ThermalActionMap actionMap = g_service->GetActionManagerObj()->GetActionMap();
+        ThermalActionManager::ThermalActionMap actionMap = tms->GetActionManagerObj()->GetActionMap();
         auto actionIter = actionMap.find(action->actionName);
         if (actionIter == actionMap.end() || actionIter->second == nullptr) {
             THERMAL_HILOGE(COMP_SVC, "can't find action [%{public}s] ability", action->actionName.c_str());
@@ -181,22 +184,24 @@ void ThermalPolicy::ActionDecision(const std::vector<PolicyAction>& actionList)
 void ThermalPolicy::FindSubscribeActionValue()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (g_service == nullptr) {
-        THERMAL_HILOGI(COMP_SVC, "g_service is nullptr");
+    auto tms = ThermalService::GetInstance();
+    if (tms == nullptr) {
+        THERMAL_HILOGI(COMP_SVC, "tms is nullptr");
         return;
     }
-    if (g_service->GetObserver() ==nullptr) {
-        THERMAL_HILOGI(COMP_SVC, "g_service->GetObserver() is nullptr");
+    if (tms->GetObserver() ==nullptr) {
+        THERMAL_HILOGI(COMP_SVC, "tms->GetObserver() is nullptr");
         return;
     }
 
-    g_service->GetObserver()->FindSubscribeActionValue();
+    tms->GetObserver()->FindSubscribeActionValue();
 }
 
 bool ThermalPolicy::StateMachineDecision(const std::map<std::string, std::string>& stateMap)
 {
+    auto tms = ThermalService::GetInstance();
     for (auto prop = stateMap.begin(); prop != stateMap.end(); prop++) {
-        StateMachine::StateMachineMap stateMachineMap = g_service->GetStateMachineObj()->GetStateCollectionMap();
+        StateMachine::StateMachineMap stateMachineMap = tms->GetStateMachineObj()->GetStateCollectionMap();
         auto stateIter = stateMachineMap.find(prop->first);
         if (stateIter == stateMachineMap.end() || stateIter->second == nullptr) {
             THERMAL_HILOGE(COMP_SVC, "can't find state machine [%{public}s]", prop->first.c_str());
@@ -213,7 +218,8 @@ bool ThermalPolicy::StateMachineDecision(const std::map<std::string, std::string
 
 bool ThermalPolicy::ActionExecution()
 {
-    auto actionMgr = g_service->GetActionManagerObj();
+    auto tms = ThermalService::GetInstance();
+    auto actionMgr = tms->GetActionManagerObj();
     if (actionMgr == nullptr) {
         return false;
     }
@@ -235,7 +241,8 @@ void ThermalPolicy::PrintPolicyState()
     for (auto clusterIter = clusterLevelMap_.begin(); clusterIter != clusterLevelMap_.end(); clusterIter++) {
         levInfo.append(clusterIter->first).append("-").append(std::to_string(clusterIter->second)).append(" ");
     }
-    g_service->GetObserver()->UpdatePolicyState(levInfo);
+    auto tms = ThermalService::GetInstance();
+    tms->GetObserver()->UpdatePolicyState(levInfo);
     THERMAL_HILOGD(COMP_SVC, "current level: %{public}s", levInfo.c_str());
 }
 

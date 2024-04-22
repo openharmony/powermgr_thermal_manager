@@ -53,7 +53,7 @@ std::mutex g_mutex;
 constexpr int64_t TIME_OUT = 1;
 bool g_callbackTriggered = false;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-shared_ptr<ThermalService> g_service = nullptr;
+sptr<ThermalService> g_service = nullptr;
 } // namespace
 
 static void Notify()
@@ -319,7 +319,7 @@ shared_ptr<CommonEventThermalIdleFalseTest> CommonEventThermalIdleFalseTest::Reg
 
 void ThermalLevelEventSystemTest::SetUpTestCase()
 {
-    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
     g_service->OnStart();
     g_service->InitStateMachine();

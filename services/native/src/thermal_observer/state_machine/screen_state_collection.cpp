@@ -30,7 +30,6 @@ namespace PowerMgr {
 namespace {
 const uint32_t SCREEN_ON = 1;
 const uint32_t SCREEN_OFF = 0;
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 bool ScreenStateCollection::Init()
 {
@@ -49,7 +48,8 @@ bool ScreenStateCollection::InitParam(std::string& params)
 std::string ScreenStateCollection::GetState()
 {
     THERMAL_HILOGD(COMP_SVC, "screen state = %{public}s", mockState_.c_str());
-    if (!g_service->GetFlag()) {
+    auto tms = ThermalService::GetInstance();
+    if (!tms->GetFlag()) {
         return mockState_;
     } else {
         return state_;
@@ -59,10 +59,11 @@ std::string ScreenStateCollection::GetState()
 bool ScreenStateCollection::RegisterEvent()
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (g_service == nullptr) {
+    auto tms = ThermalService::GetInstance();
+    if (tms == nullptr) {
         return false;
     }
-    auto receiver = g_service->GetStateMachineObj()->GetCommonEventReceiver();
+    auto receiver = tms->GetStateMachineObj()->GetCommonEventReceiver();
     if (receiver == nullptr) {
         return false;
     }

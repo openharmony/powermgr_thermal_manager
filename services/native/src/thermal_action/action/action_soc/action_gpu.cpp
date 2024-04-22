@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
 ActionGpu::ActionGpu(const std::string& actionName)
@@ -55,12 +54,13 @@ void ActionGpu::AddActionValue(std::string value)
 
 void ActionGpu::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
         SocLimitRequest(LIM_GPU_ID, value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
@@ -69,7 +69,8 @@ void ActionGpu::Execute()
 
 uint32_t ActionGpu::GetActionValue()
 {
-    std::string scene = g_service->GetScene();
+    auto tms = ThermalService::GetInstance();
+    std::string scene = tms->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {
         return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));

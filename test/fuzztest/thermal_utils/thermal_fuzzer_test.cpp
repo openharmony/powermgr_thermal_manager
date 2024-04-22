@@ -32,7 +32,7 @@ const int32_t REWIND_READ_DATA = 0;
 
 ThermalFuzzerTest::ThermalFuzzerTest()
 {
-    service_ = DelayedSpSingleton<ThermalService>::GetInstance();
+    service_ = ThermalService::GetInstance();
     service_->OnStart();
 }
 
