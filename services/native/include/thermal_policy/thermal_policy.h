@@ -20,7 +20,6 @@
 #include <string>
 #include <vector>
 
-#include "delayed_sp_singleton.h"
 #include "thermal_srv_sensor_info.h"
 #include "thermal_config_sensor_cluster.h"
 

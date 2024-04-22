@@ -36,7 +36,7 @@ using namespace std;
 
 namespace {
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-shared_ptr<ThermalService> g_service = nullptr;
+sptr<ThermalService> g_service = nullptr;
 const int32_t LEVEL_0 = 0;
 const int32_t LEVEL_1 = 1;
 const int32_t LEVEL_2 = 2;
@@ -65,7 +65,7 @@ void ThermalMgrPolicyTest::TearDown()
 
 void ThermalMgrPolicyTest::SetUpTestCase()
 {
-    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
     g_service->OnStart();
     g_service->InitStateMachine();

@@ -23,7 +23,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr int32_t PATH_IDX = 0;
 constexpr int32_t FALLBACK_IDX = 1;
 }
@@ -78,7 +77,8 @@ void ActionNode::Execute()
         if (!nodePath_.empty()) {
             FileOperation::WriteFile(nodePath_, value, value.length());
         }
-        g_service->GetObserver()->SetDecisionValue(actionName_, value);
+        auto tms = ThermalService::GetInstance();
+        tms->GetObserver()->SetDecisionValue(actionName_, value);
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}s}", actionName_.c_str(), lastValue_.c_str());
     }

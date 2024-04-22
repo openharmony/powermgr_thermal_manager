@@ -21,7 +21,6 @@
 #include <time.h>
 #include "thermal_sensor_info.h"
 #include "thermal_observer.h"
-#include "delayed_sp_singleton.h"
 
 namespace OHOS {
 namespace PowerMgr {

@@ -27,13 +27,13 @@ namespace {
 const int32_t COUNT_MAX = 6;
 const int32_t SEC_MIN_NUM = 60;
 const int32_t THOUSAND_UNIT = 1000;
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 ThermalServiceSubscriber::ThermalServiceSubscriber() { }
 
 bool ThermalServiceSubscriber::Init()
 {
-    historyCount_ = g_service->GetBaseinfoObj()->GetHistoryTempCount();
+    auto tms = ThermalService::GetInstance();
+    historyCount_ = tms->GetBaseinfoObj()->GetHistoryTempCount();
     return true;
 }
 
@@ -52,9 +52,9 @@ void ThermalServiceSubscriber::OnTemperatureChanged(TypeTempMap typeTempMap)
     for (auto it : typeTempMap) {
         typeTempMap_[it.first] = it.second;
     }
-
-    g_service->GetSensorInfo()->SetTypeTempMap(typeTempMap_);
-    g_service->GetSensorInfo()->NotifyObserver();
+    auto tms = ThermalService::GetInstance();
+    tms->GetSensorInfo()->SetTypeTempMap(typeTempMap_);
+    tms->GetSensorInfo()->NotifyObserver();
 
     if (count_ == 0) {
         startTime_ = time(NULL);

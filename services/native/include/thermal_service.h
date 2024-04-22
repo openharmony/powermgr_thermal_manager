@@ -18,7 +18,6 @@
 
 #include <atomic>
 #include <memory>
-#include "delayed_sp_singleton.h"
 #include "iremote_object.h"
 #include "system_ability.h"
 
@@ -50,9 +49,11 @@ using namespace OHOS::HDI::Thermal::V1_1;
 using namespace OHOS::HDI::ServiceManager::V1_0;
 class ThermalService final : public SystemAbility, public ThermalSrvStub {
     DECLARE_SYSTEM_ABILITY(ThermalService);
-    DECLARE_DELAYED_SP_SINGLETON(ThermalService);
+    DISALLOW_COPY_AND_MOVE(ThermalService);
 
 public:
+    ThermalService();
+    virtual ~ThermalService();
     virtual void OnStart() override;
     virtual void OnStop() override;
     virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
@@ -76,6 +77,8 @@ public:
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
     int32_t HandleFanCallbackEvent(const HdfThermalCallbackInfo& event);
     bool HandleTempEmulation(const TypeTempMap& typeTempMap);
+    static sptr<ThermalService> GetInstance();
+    static void DestroyInstance();
 
     void SetTempReportSwitch(bool enable)
     {
@@ -205,6 +208,8 @@ private:
     std::shared_ptr<ActionPopup> popup_;
     std::string scene_;
     std::atomic<bool> serviceConfigParsed {false};
+    static sptr<ThermalService> instance_;
+    static std::mutex singletonMutex_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
