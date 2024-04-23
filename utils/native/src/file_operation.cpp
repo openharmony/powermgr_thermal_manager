@@ -101,7 +101,7 @@ int32_t FileOperation::ReadFile(const char *path, char *buf, size_t size)
     }
 
     close(fd);
-    buf[size - 1] = '\0';
+    buf[(size > 0) ? (size - 1) : 0] = '\0';
     return ERR_OK;
 }
 
