@@ -59,6 +59,15 @@ public:
 private:
     bool CheckState();
     void CalculateSensorLevel(const TypeTempMap& typeTempInfo, std::vector<uint32_t>& levelList);
+    void AscendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp);
+    void DescendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp);
+    void DescendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp);
+    void AscendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp);
+    void LevelUpwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp);
+    void LevelDownwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp);
+    void LevelDownwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp);
+    void LevelUpwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level,
+        uint32_t end, int32_t curTemp);
     void AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
     void DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
     void CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level);
