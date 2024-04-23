@@ -71,7 +71,7 @@ void ActionShutdown::Execute()
     THERMAL_RETURN_IF (g_service == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
-        if (!g_service->GetFlag()) {
+        if (g_service->GetSimulationXml()) {
             ShutdownExecution(static_cast<bool>(value));
         } else {
             ShutdownRequest(static_cast<bool>(value));

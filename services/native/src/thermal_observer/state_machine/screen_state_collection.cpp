@@ -49,7 +49,7 @@ bool ScreenStateCollection::InitParam(std::string& params)
 std::string ScreenStateCollection::GetState()
 {
     THERMAL_HILOGD(COMP_SVC, "screen state = %{public}s", mockState_.c_str());
-    if (!g_service->GetFlag()) {
+    if (!g_service->GetSimulationXml()) {
         return mockState_;
     } else {
         return state_;

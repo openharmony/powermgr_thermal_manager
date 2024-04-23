@@ -60,7 +60,7 @@ bool ChargerStateCollection::InitParam(std::string& params)
 std::string ChargerStateCollection::GetState()
 {
     THERMAL_HILOGD(COMP_SVC, "charger state = %{public}s", mockState_.c_str());
-    if (!g_service->GetFlag()) {
+    if (!g_service->GetSimulationXml()) {
         return mockState_;
     } else {
         return state_;
