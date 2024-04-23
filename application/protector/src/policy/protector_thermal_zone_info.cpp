@@ -92,7 +92,7 @@ void ProtectorThermalZoneInfo::HandleAscCurDownTemp(uint32_t &level, int32_t cur
 {
     for (uint32_t i = level; i >= 1; i--) {
         if (curTemp < tzItemList_.at(i - 1).thresholdClr) {
-            level = tzItemList_.at(i - 1).level - 1;
+            level = (tzItemList_.at(i - 1).level > 0) ? (tzItemList_.at(i - 1).level - 1) : 0;
         } else {
             break;
         }
@@ -106,7 +106,7 @@ void ProtectorThermalZoneInfo::HandleAscMaxSizeTemp(uint32_t &level, int32_t cur
     if (curTemp < curDownTemp) {
         for (uint32_t i = level; i >= 1; i--) {
             if (curTemp < tzItemList_.at(i - 1).thresholdClr) {
-                level = tzItemList_.at(i - 1).level - 1;
+                level = (tzItemList_.at(i - 1).level > 0) ? (tzItemList_.at(i - 1).level - 1) : 0;
             } else {
                 break;
             }
@@ -148,7 +148,7 @@ void ProtectorThermalZoneInfo::HandleDescCurDownTemp(uint32_t &level, int32_t cu
 {
     for (uint32_t i = level; i >= 1; i--) {
         if (curTemp > tzItemList_.at(i - 1).thresholdClr) {
-            level = tzItemList_.at(i - 1).level - 1;
+            level = (tzItemList_.at(i - 1).level > 0) ? (tzItemList_.at(i - 1).level - 1) : 0;
         } else {
             break;
         }
@@ -162,7 +162,7 @@ void ProtectorThermalZoneInfo::HandleDescMaxSizeTemp(uint32_t &level, int32_t cu
     if (curTemp > curDownTemp) {
         for (uint32_t i = level; i >= 1; i--) {
             if (curTemp > tzItemList_.at(i - 1).thresholdClr) {
-                level = tzItemList_.at(i - 1).level - 1;
+                level = (tzItemList_.at(i - 1).level > 0) ? (tzItemList_.at(i - 1).level - 1) : 0;
             } else {
                 break;
             }
