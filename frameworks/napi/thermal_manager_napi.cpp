@@ -71,7 +71,10 @@ bool ThermalLevelCallback::OnThermalLevelChanged(ThermalLevel level)
     work->data = reinterpret_cast<void*>(this);
 
     int32_t ret = uv_queue_work_with_qos(
-        loop, work, [](uv_work_t* work) {},
+        loop, work,
+        [](uv_work_t* work) {
+            THERMAL_HILOGD(COMP_FWK, "uv_queue_work callback function is called");
+        },
         [](uv_work_t* work, int status) {
             ThermalLevelCallback* callback = reinterpret_cast<ThermalLevelCallback*>(work->data);
             if (callback != nullptr) {
