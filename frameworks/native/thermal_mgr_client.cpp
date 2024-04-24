@@ -150,6 +150,10 @@ bool ThermalMgrClient::GetThermalSrvSensorInfo(const SensorType& type, ThermalSr
         return false;
     }
     THERMAL_HILOGD(COMP_FWK, "Enter");
+    if (thermalSrv_ == nullptr) {
+        THERMAL_HILOGI(COMP_FWK, "the thermal pointer is null");
+        return false;
+    }
     bool ret = thermalSrv_->GetThermalSrvSensorInfo(type, sensorInfo);
     return ret;
 }
