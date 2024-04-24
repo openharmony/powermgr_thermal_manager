@@ -24,7 +24,7 @@ void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
     MockSocPerfAction::LimitRequest(tag, value);
 }
 
-void SocActionBase::SocPerfRequest(bool onOffTag)
+void SocActionBase::SetSocPerfThermalLevel(int32_t level)
 {
     (void)onOffTag;
     MockSocPerfAction::BoostRequest();
