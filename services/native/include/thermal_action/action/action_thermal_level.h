@@ -69,7 +69,7 @@ private:
     std::vector<uint32_t> valueList_;
     std::string params_;
     std::set<const sptr<IThermalLevelCallback>, classcomp> thermalLevelListeners_;
-    int32_t lastValue_ {0};
+    int32_t lastValue_ {INT_MIN};
 };
 } // namespace PowerMgr
 } // namespace OHOS

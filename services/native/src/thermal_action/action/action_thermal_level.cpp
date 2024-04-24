@@ -41,7 +41,6 @@ auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 ActionThermalLevel::ActionThermalLevel(const std::string& actionName)
 {
     actionName_ = actionName;
-    LevelRequest(lastValue_);
 }
 
 void ActionThermalLevel::InitParams(const std::string& params)
@@ -85,7 +84,7 @@ void ActionThermalLevel::Execute()
 
 int32_t ActionThermalLevel::GetActionValue()
 {
-    int32_t value = FALLBACK_VALUE_UINT_ZERO;
+    int32_t value = MIN_THERMAL_LEVEL;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());

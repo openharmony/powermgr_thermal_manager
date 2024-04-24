@@ -34,11 +34,9 @@ public:
     void Execute() override;
 
 private:
-    bool GetActionValue();
-    bool isAction_ {false};
-    bool actionTag_ {false};
-    bool lastTag_ {false};
-    std::mutex sceneMutex_;
+    uint32_t GetActionValue();
+    uint32_t lastValue_ {UINT_MAX};
+    std::vector<uint32_t> valueList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

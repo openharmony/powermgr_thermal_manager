@@ -58,7 +58,7 @@ void ActionCpuIsolate::Execute()
     THERMAL_RETURN_IF (g_service == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
-        RequestCpuIsolate(value);
+        SocIsolateRequest(isolateNum > 0);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
@@ -69,11 +69,6 @@ void ActionCpuIsolate::Execute()
 
 uint32_t ActionCpuIsolate::GetActionValue()
 {
-    std::string scene = g_service->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
-    }
     uint32_t value = FALLBACK_VALUE_UINT_ZERO;
     if (!valueList_.empty()) {
         if (isStrict_) {
@@ -83,19 +78,6 @@ uint32_t ActionCpuIsolate::GetActionValue()
         }
     }
     return value;
-}
-
-void ActionCpuIsolate::RequestCpuIsolate(uint32_t isolateNum)
-{
-    auto thermalInterface = g_service->GetThermalInterface();
-    if (thermalInterface != nullptr) {
-        int32_t ret = thermalInterface->IsolateCpu(isolateNum);
-        if (ret != ERR_OK) {
-            THERMAL_HILOGE(COMP_SVC, "failed to isolate cpu %u to thermal hdi", isolateNum);
-            return;
-        }
-    }
-    return;
 }
 } // namespace PowerMgr
 } // namespace OHOS
