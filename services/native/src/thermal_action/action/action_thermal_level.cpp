@@ -37,6 +37,7 @@ constexpr int32_t MIN_THERMAL_LEVEL = static_cast<int32_t>(ThermalLevel::COOL);
 constexpr int32_t MAX_THERMAL_LEVEL = static_cast<int32_t>(ThermalLevel::ESCAPE);
 auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
+int32_t ActionThermalLevel::lastValue_ = INT_MIN;
 
 ActionThermalLevel::ActionThermalLevel(const std::string& actionName)
 {

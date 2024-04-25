@@ -58,7 +58,7 @@ void ActionCpuIsolate::Execute()
     THERMAL_RETURN_IF (g_service == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
-        SocIsolateRequest(isolateNum > 0);
+        SocIsolateRequest(value > 0);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;

@@ -60,11 +60,11 @@ void ActionCpuBoost::Execute()
     if (value != lastValue_) {
         SetSocPerfThermalLevel(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(tag));
-        lastTag_ = value;
-        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastTag_);
+        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastValue_);
     }
-    isAction_ = false;
+    valueList_.clear();
 }
 
 uint32_t ActionCpuBoost::GetActionValue()
