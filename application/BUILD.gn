@@ -13,9 +13,14 @@
 
 import("//build/ohos.gni")
 
+declare_args() {
+  thermal_protector = false
+}
 group("thermal_application") {
-  deps = [
-    "init:thermal_protector.cfg",
-    "protector:thermal_protector_group",
-  ]
+  if (thermal_protector) {
+    deps = [
+      "init:thermal_protector.cfg",
+      "protector:thermal_protector_group",
+    ]
+  }
 }
