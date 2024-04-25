@@ -20,7 +20,7 @@
 
 namespace OHOS {
 namespace PowerMgr {
-class ActionCpuIsolate : public IThermalAction {
+class ActionCpuIsolate : public IThermalAction, public SocActionBase {
 public:
     ActionCpuIsolate(const std::string& actionName);
     ~ActionCpuIsolate() = default;
