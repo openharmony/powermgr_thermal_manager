@@ -54,7 +54,6 @@ void ActionCpuBoost::AddActionValue(std::string value)
 
 void ActionCpuBoost::Execute()
 {
-
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
