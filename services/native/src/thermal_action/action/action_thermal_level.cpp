@@ -35,7 +35,6 @@ namespace PowerMgr {
 namespace {
 constexpr const char* TASK_UNREG_THERMAL_LEVEL_CALLBACK = "ThermalLevel_UnRegThermalLevelpCB";
 constexpr int32_t MAX_THERMAL_LEVEL = static_cast<int32_t>(ThermalLevel::ESCAPE);
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::COOL);
 std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> ActionThermalLevel::thermalLevelListeners_;
@@ -75,12 +74,13 @@ void ActionThermalLevel::AddActionValue(std::string value)
 
 void ActionThermalLevel::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
         LevelRequest(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
@@ -89,7 +89,8 @@ void ActionThermalLevel::Execute()
 
 uint32_t ActionThermalLevel::GetActionValue()
 {
-    std::string scene = g_service->GetScene();
+    auto tms = ThermalService::GetInstance();
+    std::string scene = tms->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {
         return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
@@ -160,7 +161,7 @@ void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const 
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
+    auto tms = ThermalService::GetInstance();
     if (tms == nullptr) {
         return;
     }

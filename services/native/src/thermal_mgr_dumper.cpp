@@ -47,7 +47,7 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
         return true;
     }
 
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
+    auto tms = ThermalService::GetInstance();
     if (tms == nullptr) {
         return false;
     }
@@ -65,7 +65,7 @@ bool ThermalMgrDumper::Dump(const std::vector<std::string>& args, std::string& r
 }
 
 void ThermalMgrDumper::SwitchTempReport(const std::vector<std::string>& args,
-    std::string& result, std::shared_ptr<ThermalService>& tms)
+    std::string& result, sptr<ThermalService>& tms)
 {
 #ifndef THERMAL_USER_VERSION
     if (args.size() >= TEMP_EMUL_PARAM_NUM && args[1] == ARGS_STOP_TEMP_FLAG) {
@@ -81,7 +81,7 @@ void ThermalMgrDumper::SwitchTempReport(const std::vector<std::string>& args,
 }
 
 void ThermalMgrDumper::EmulateTempReport(const std::vector<std::string>& args,
-    std::string& result, std::shared_ptr<ThermalService>& tms)
+    std::string& result, sptr<ThermalService>& tms)
 {
 #ifndef THERMAL_USER_VERSION
     if (args.size() <= TEMP_EMUL_PARAM_NUM) {
@@ -106,7 +106,7 @@ void ThermalMgrDumper::EmulateTempReport(const std::vector<std::string>& args,
 }
 
 bool ThermalMgrDumper::DumpPolicy(const std::vector<std::string>& args,
-    std::string& result, std::shared_ptr<ThermalService>& tms)
+    std::string& result, sptr<ThermalService>& tms)
 {
     if (!tms->GetSimulationXml()) {
         return false;
@@ -134,7 +134,7 @@ bool ThermalMgrDumper::DumpPolicy(const std::vector<std::string>& args,
 
 void ThermalMgrDumper::ShowThermalZoneInfo(std::string& result)
 {
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
+    auto tms = ThermalService::GetInstance();
     if (tms == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "thermal service is nullptr");
         return;

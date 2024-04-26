@@ -21,7 +21,6 @@
 #include <map>
 #include <functional>
 #include <set>
-#include "delayed_sp_singleton.h"
 
 #include "ithermal_action_callback.h"
 #include "ithermal_temp_callback.h"

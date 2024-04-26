@@ -24,7 +24,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
 bool ThermalConfigSensorCluster::CheckStandard()
@@ -83,8 +82,9 @@ bool ThermalConfigSensorCluster::CheckState()
     if (stateMap_.empty()) {
         return true;
     }
+    auto tms = ThermalService::GetInstance();
     for (auto prop = stateMap_.begin(); prop != stateMap_.end(); prop++) {
-        StateMachine::StateMachineMap stateMachineMap = g_service->GetStateMachineObj()->GetStateCollectionMap();
+        StateMachine::StateMachineMap stateMachineMap = tms->GetStateMachineObj()->GetStateCollectionMap();
         auto stateIter = stateMachineMap.find(prop->first);
         if (stateIter == stateMachineMap.end() || stateIter->second == nullptr) {
             THERMAL_HILOGE(COMP_SVC, "can't find state machine [%{public}s]", prop->first.c_str());
@@ -282,7 +282,8 @@ bool ThermalConfigSensorCluster::IsTempRateTrigger(uint32_t& level)
     if (level == 0) {
         return true;
     }
-    const auto& rateMap = g_service->GetSubscriber()->GetSensorsRate();
+    auto tms = ThermalService::GetInstance();
+    const auto& rateMap = tms->GetSubscriber()->GetSensorsRate();
     for (auto sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
         auto rateIter = rateMap.find(sensorInfo->first);
         if (rateIter == rateMap.end()) {
