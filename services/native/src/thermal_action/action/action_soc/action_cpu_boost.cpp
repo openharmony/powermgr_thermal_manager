@@ -50,7 +50,7 @@ void ActionCpuBoost::AddActionValue(std::string value)
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
+    valueList_.push_back(static_cast<uint32_t>(atoi(value.c_str())));
 }
 
 void ActionCpuBoost::Execute()
