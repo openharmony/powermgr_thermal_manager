@@ -34,7 +34,6 @@ using namespace OHOS::EventFwk;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 IdleState g_idleStateConfig {};
 IdleState g_cachedIdleState {};
 bool g_isChargeIdle = true;
@@ -43,7 +42,8 @@ const std::string CHARGER_OFF = "0";
 }
 bool ChargerStateCollection::Init()
 {
-    g_idleStateConfig = g_service->GetStateMachineObj()->GetIdleStateConfig();
+    auto tms = ThermalService::GetInstance();
+    g_idleStateConfig = tms->GetStateMachineObj()->GetIdleStateConfig();
     if (!RegisterEvent()) {
         return false;
     }
@@ -60,7 +60,8 @@ bool ChargerStateCollection::InitParam(std::string& params)
 std::string ChargerStateCollection::GetState()
 {
     THERMAL_HILOGD(COMP_SVC, "charger state = %{public}s", mockState_.c_str());
-    if (!g_service->GetSimulationXml()) {
+    auto tms = ThermalService::GetInstance();
+    if (!tms->GetSimulationXml()) {
         return mockState_;
     } else {
         return state_;
@@ -69,10 +70,11 @@ std::string ChargerStateCollection::GetState()
 
 bool ChargerStateCollection::RegisterEvent()
 {
-    if (g_service == nullptr) {
+    auto tms = ThermalService::GetInstance();
+    if (tms == nullptr) {
         return false;
     }
-    auto receiver = g_service->GetStateMachineObj()->GetCommonEventReceiver();
+    auto receiver = tms->GetStateMachineObj()->GetCommonEventReceiver();
     if (receiver == nullptr) {
         return false;
     }

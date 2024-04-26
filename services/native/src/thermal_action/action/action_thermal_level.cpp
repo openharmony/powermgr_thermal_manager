@@ -35,7 +35,6 @@ namespace PowerMgr {
 namespace {
 constexpr int32_t MIN_THERMAL_LEVEL = static_cast<int32_t>(ThermalLevel::COOL);
 constexpr int32_t MAX_THERMAL_LEVEL = static_cast<int32_t>(ThermalLevel::ESCAPE);
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 int32_t ActionThermalLevel::lastValue_ = INT_MIN;
 
@@ -71,12 +70,13 @@ void ActionThermalLevel::AddActionValue(std::string value)
 
 void ActionThermalLevel::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     int32_t value = GetActionValue();
     if (value != lastValue_) {
         LevelRequest(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
@@ -146,7 +146,7 @@ void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const 
     if (remote == nullptr || remote.promote() == nullptr) {
         return;
     }
-    auto tms = DelayedSpSingleton<ThermalService>::GetInstance();
+    auto tms = ThermalService::GetInstance();
     if (tms == nullptr) {
         return;
     }

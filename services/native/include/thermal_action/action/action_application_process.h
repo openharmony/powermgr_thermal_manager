@@ -18,7 +18,6 @@
 
 #include "ithermal_action.h"
 
-#include "delayed_sp_singleton.h"
 #include "running_process_info.h"
 #include "app_mgr_client.h"
 

@@ -24,7 +24,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+auto g_service = ThermalService::GetInstance();
 }
 ExtendStateCollection::ExtendStateCollection(const std::string& stateName)
 {

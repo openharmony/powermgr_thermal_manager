@@ -48,7 +48,7 @@ constexpr int32_t DELAY_TIME = 500000;
 constexpr int32_t WAIT_BOOT_COMPLETE_TIME = 3;
 bool g_callbackTriggered = false;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-shared_ptr<ThermalService> g_service = nullptr;
+sptr<ThermalService> g_service = nullptr;
 
 void Notify()
 {
@@ -76,7 +76,7 @@ void ThermalActionHubTest::TearDown()
 
 void ThermalActionHubTest::SetUpTestCase()
 {
-    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
     g_service->OnStart();
     g_service->InitStateMachine();

@@ -20,7 +20,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
 TypeTempMap ThermalSensorInfo::GetTypeTempMap()
@@ -55,7 +54,8 @@ std::list<int> ThermalSensorInfo::GetHistoryTemperature(std::string type)
 
 void ThermalSensorInfo::NotifyObserver()
 {
-    g_service->GetObserver()->OnReceivedSensorInfo(GetTypeTempMap());
+    auto tms = ThermalService::GetInstance();
+    tms->GetObserver()->OnReceivedSensorInfo(GetTypeTempMap());
 }
 } // PowerMgr
 } // OHOS

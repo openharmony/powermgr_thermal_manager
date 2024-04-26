@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
 ActionCpuBoost::ActionCpuBoost(const std::string& actionName)
@@ -55,12 +54,14 @@ void ActionCpuBoost::AddActionValue(std::string value)
 
 void ActionCpuBoost::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
         SetSocPerfThermalLevel(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastValue_);
     }

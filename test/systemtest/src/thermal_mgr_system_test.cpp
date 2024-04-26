@@ -43,7 +43,7 @@ using namespace std;
 using namespace testing::ext;
 
 namespace {
-static shared_ptr<ThermalService> g_service;
+static sptr<ThermalService> g_service;
 static std::map<std::string, SensorInfoMap> g_sensorInfoMap;
 static int32_t g_temp = 0;
 std::unique_ptr<ThermalConfigFileParser> g_parser;
@@ -127,7 +127,7 @@ void ThermalMgrSystemTest::SetUpTestCase()
 {
     system("setenforce 0");
     system("mount -o rw,remount /vendor");
-    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
     g_parser = std::make_unique<ThermalConfigFileParser>();
     g_parser->ParseXmlFile(SYSTEM_CONFIG);

@@ -43,7 +43,7 @@ using namespace testing::ext;
 using namespace std;
 
 namespace {
-shared_ptr<ThermalService> g_service = nullptr;
+sptr<ThermalService> g_service = nullptr;
 constexpr const char* VENDOR_CONFIG = "/vendor/etc/thermal_config/thermal_service_config.xml";
 constexpr const char* SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_service_config.xml";
 } // namespace
@@ -56,7 +56,7 @@ char* GetOneCfgFile(const char *pathSuffix, char *buf, unsigned int bufLength)
 
 void ThermalServiceTest::SetUpTestCase()
 {
-    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
     g_service->OnStart();
 }

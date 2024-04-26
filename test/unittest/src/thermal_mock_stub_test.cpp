@@ -41,12 +41,12 @@ namespace {
 MessageParcel g_data;
 MessageParcel g_reply;
 MessageOption g_option;
-shared_ptr<ThermalService> g_service = nullptr;
+sptr<ThermalService> g_service = nullptr;
 } // namespace
 
 void ThermalMockStubTest::SetUpTestCase()
 {
-    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
     g_service->OnStart();
 }
