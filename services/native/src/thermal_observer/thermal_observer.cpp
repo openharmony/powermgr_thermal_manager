@@ -28,7 +28,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 ThermalObserver::ThermalObserver(const wptr<ThermalService>& tms) : tms_(tms) {};
 ThermalObserver::~ThermalObserver() {};
@@ -50,8 +49,9 @@ bool ThermalObserver::Init()
 
 void ThermalObserver::InitSensorTypeMap()
 {
+    auto tms = ThermalService::GetInstance();
     std::vector<std::string> sensorType(TYPE_MAX_SIZE);
-    auto baseInfo = g_service->GetBaseinfoObj();
+    auto baseInfo = tms->GetBaseinfoObj();
     if (baseInfo == nullptr) return;
     auto typeList = baseInfo->GetSensorsType();
 
@@ -312,7 +312,7 @@ void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<
         return;
     }
     THERMAL_HILOGI(COMP_SVC, "ThermalSensorTemp::OnRemoteDied remote");
-    auto pms = DelayedSpSingleton<ThermalService>::GetInstance();
+    auto pms = ThermalService::GetInstance();
     if (pms == nullptr) {
         return;
     }
@@ -327,7 +327,7 @@ void ThermalObserver::ActionCallbackDeathRecipient::OnRemoteDied(const wptr<IRem
         return;
     }
     THERMAL_HILOGI(COMP_SVC, "ThermalAction::OnRemoteDied remote");
-    auto pms = DelayedSpSingleton<ThermalService>::GetInstance();
+    auto pms = ThermalService::GetInstance();
     if (pms == nullptr) {
         return;
     }

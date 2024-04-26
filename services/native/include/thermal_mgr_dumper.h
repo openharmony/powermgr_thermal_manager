@@ -32,11 +32,11 @@ public:
 
 private:
     static void SwitchTempReport(const std::vector<std::string>& args, std::string& result,
-        std::shared_ptr<ThermalService>& tms);
+        sptr<ThermalService>& tms);
     static void EmulateTempReport(const std::vector<std::string>& args, std::string& result,
-        std::shared_ptr<ThermalService>& tms);
+        sptr<ThermalService>& tms);
     static bool DumpPolicy(const std::vector<std::string>& args, std::string& result,
-        std::shared_ptr<ThermalService>& tms);
+        sptr<ThermalService>& tms);
     static void ShowUsage(std::string& result);
     static void ShowThermalZoneInfo(std::string& result);
 };

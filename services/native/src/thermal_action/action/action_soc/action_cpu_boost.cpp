@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
 ActionCpuBoost::ActionCpuBoost(const std::string& actionName)
@@ -56,12 +55,13 @@ void ActionCpuBoost::AddActionValue(std::string value)
 
 void ActionCpuBoost::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     bool tag = GetActionValue();
     if (tag != lastTag_) {
         SocPerfRequest(tag);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, static_cast<int32_t>(tag));
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(tag));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(tag));
         lastTag_ = tag;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastTag_);
     }
@@ -70,8 +70,9 @@ void ActionCpuBoost::Execute()
 
 bool ActionCpuBoost::GetActionValue()
 {
+    auto tms = ThermalService::GetInstance();
     std::lock_guard<std::mutex> lock(sceneMutex_);
-    std::string scene = g_service->GetScene();
+    std::string scene = tms->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {
         return static_cast<bool>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
