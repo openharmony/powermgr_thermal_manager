@@ -60,7 +60,7 @@ private:
         }
     };
 
-    static int32_t lastValue_ {INT_MIN};
+    static int32_t lastValue_;
 
     int32_t GetActionValue();
     void LevelRequest(int32_t level);
