@@ -48,7 +48,7 @@ std::atomic_bool g_callbackTriggered = false;
 std::atomic_bool g_levelCallBack4 = false;
 std::atomic_bool g_levelCallBack5 = false;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-shared_ptr<ThermalService> g_service = nullptr;
+sptr<ThermalService> g_service = nullptr;
 auto& g_thermalMgrClient = ThermalMgrClient::GetInstance();
 
 void Notify()
@@ -90,7 +90,7 @@ void ThermalMgrInterfaceTest::TearDown()
 
 void ThermalMgrInterfaceTest::SetUpTestCase()
 {
-    g_service = DelayedSpSingleton<ThermalService>::GetInstance();
+    g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
     g_service->OnStart();
     g_service->GetBaseinfoObj()->Init();

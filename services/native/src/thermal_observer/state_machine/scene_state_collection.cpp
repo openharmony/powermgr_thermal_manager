@@ -27,7 +27,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 bool SceneStateCollection::Init()
 {
@@ -51,8 +50,9 @@ void SceneStateCollection::SetState(const std::string& stateValue)
 bool SceneStateCollection::DecideState(const std::string& value)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if ((!g_service->GetScene().empty()) && (g_service->GetScene() == value)) {
-        std::string scene = g_service->GetScene();
+    auto tms = ThermalService::GetInstance();
+    if ((!tms->GetScene().empty()) && (tms->GetScene() == value)) {
+        std::string scene = tms->GetScene();
         THERMAL_HILOGD(COMP_SVC, "scene = %{public}s", scene.c_str());
         return true;
     }

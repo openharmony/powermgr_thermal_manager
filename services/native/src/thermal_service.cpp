@@ -37,6 +37,8 @@
 
 namespace OHOS {
 namespace PowerMgr {
+sptr<ThermalService> ThermalService::instance_ = nullptr;
+std::mutex ThermalService::singletonMutex_;
 namespace {
 const std::string THERMAL_SERVICE_CONFIG_PATH = "etc/thermal_config/thermal_service_config.xml";
 const std::string VENDOR_THERMAL_SERVICE_CONFIG_PATH = "/vendor/etc/thermal_config/thermal_service_config.xml";
@@ -45,14 +47,25 @@ constexpr const char* THMERMAL_SERVICE_NAME = "ThermalService";
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 FFRTQueue g_queue("thermal_service");
 constexpr uint32_t RETRY_TIME = 1000;
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
-const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.get());
+auto g_service = ThermalService::GetInstance();
+const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.GetRefPtr());
 SysParam::BootCompletedCallback g_bootCompletedCallback;
 } // namespace
 std::atomic_bool ThermalService::isBootCompleted_ = false;
 ThermalService::ThermalService() : SystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, true) {}
 
 ThermalService::~ThermalService() {}
+
+sptr<ThermalService> ThermalService::GetInstance()
+{
+    if (instance_ == nullptr) {
+        std::lock_guard<std::mutex> lock(singletonMutex_);
+        if (instance_ == nullptr) {
+            instance_ = new ThermalService();
+        }
+    }
+    return instance_;
+}
 
 void ThermalService::OnStart()
 {
@@ -68,7 +81,7 @@ void ThermalService::OnStart()
     }
 
     AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
-    if (!Publish(this)) {
+    if (!Publish(ThermalService::GetInstance())) {
         THERMAL_HILOGE(COMP_SVC, "OnStart register to system ability manager failed.");
         return;
     }
@@ -631,6 +644,15 @@ int32_t ThermalService::Dump(int fd, const std::vector<std::u16string>& args)
         return ERR_OK;
     }
     return ERR_OK;
+}
+
+void ThermalService::DestroyInstance()
+{
+    std::lock_guard<std::mutex> lock(singletonMutex_);
+    if (instance_) {
+        instance_.clear();
+        instance_ = nullptr;
+    }
 }
 } // namespace PowerMgr
 } // namespace OHOS

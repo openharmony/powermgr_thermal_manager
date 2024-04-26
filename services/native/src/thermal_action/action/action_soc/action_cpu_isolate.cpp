@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
 ActionCpuIsolate::ActionCpuIsolate(const std::string& actionName)
@@ -55,12 +54,13 @@ void ActionCpuIsolate::AddActionValue(std::string value)
 
 void ActionCpuIsolate::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
         SocIsolateRequest(value > 0);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }

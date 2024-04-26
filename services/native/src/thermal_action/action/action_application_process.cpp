@@ -37,7 +37,6 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 const int32_t SIGNAL_KILL = 9;
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* PROCESS_PATH = "/data/service/el0/thermal/config/process_ctrl";
 const int MAX_PATH = 256;
 }
@@ -74,16 +73,17 @@ void ActionApplicationProcess::AddActionValue(std::string value)
 
 void ActionApplicationProcess::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
-        if (!g_service->GetSimulationXml()) {
+        if (!tms->GetSimulationXml()) {
             ProcessAppActionRequest(value);
         } else {
             ProcessAppActionExecution(value);
         }
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
     }
     valueList_.clear();
@@ -91,7 +91,8 @@ void ActionApplicationProcess::Execute()
 
 uint32_t ActionApplicationProcess::GetActionValue()
 {
-    std::string scene = g_service->GetScene();
+    auto tms = ThermalService::GetInstance();
+    std::string scene = tms->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {
         return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));

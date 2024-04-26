@@ -16,6 +16,7 @@
 #include "soc_action_base.h"
 
 #include "mock_socperf_action.h"
+#include "thermal_log.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -26,6 +27,7 @@ void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 
 void SocActionBase::SetSocPerfThermalLevel(uint32_t level)
 {
+    THERMAL_HILOGE(LABEL_TEST, "cjw test Enter SocPerfRequest");
     MockSocPerfAction::BoostRequest();
 }
 } // namespace PowerMgr

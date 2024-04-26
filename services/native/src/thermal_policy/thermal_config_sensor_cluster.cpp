@@ -24,7 +24,6 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 }
 
 bool ThermalConfigSensorCluster::CheckStandard()
@@ -83,8 +82,9 @@ bool ThermalConfigSensorCluster::CheckState()
     if (stateMap_.empty()) {
         return true;
     }
+    auto tms = ThermalService::GetInstance();
     for (auto prop = stateMap_.begin(); prop != stateMap_.end(); prop++) {
-        StateMachine::StateMachineMap stateMachineMap = g_service->GetStateMachineObj()->GetStateCollectionMap();
+        StateMachine::StateMachineMap stateMachineMap = tms->GetStateMachineObj()->GetStateCollectionMap();
         auto stateIter = stateMachineMap.find(prop->first);
         if (stateIter == stateMachineMap.end() || stateIter->second == nullptr) {
             THERMAL_HILOGE(COMP_SVC, "can't find state machine [%{public}s]", prop->first.c_str());
@@ -124,47 +124,117 @@ void ThermalConfigSensorCluster::CalculateSensorLevel(const TypeTempMap& typeTem
     }
 }
 
+void ThermalConfigSensorCluster::AscendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level,
+    uint32_t end, int32_t curTemp)
+{
+    for (uint32_t i = level; i < end; i++) {
+        if (curTemp < levItems.at(i).threshold) {
+            break;
+        }
+        level = levItems.at(i).level;
+    }
+}
+
+void ThermalConfigSensorCluster::DescendLevelToThresholdClr(std::vector<LevelItem>& levItems,
+    uint32_t& level, int32_t curTemp)
+{
+    for (uint32_t i = level; i >= 1; i--) {
+        if (curTemp >= levItems.at(i - 1).thresholdClr) {
+            break;
+        }
+        level = (levItems.at(i - 1).level > 0) ? (levItems.at(i - 1).level - 1) : 0;
+    }
+}
+
+void ThermalConfigSensorCluster::DescendLevelToThreshold(std::vector<LevelItem>& levItems,
+    uint32_t& level, int32_t curTemp)
+{
+    for (uint32_t i = level; i >= 1; i--) {
+        if (curTemp < levItems.at(i - 1).thresholdClr) {
+            level = (levItems.at(i - 1).level > 0) ? (levItems.at(i - 1).level - 1) : 0;
+        } else {
+            break;
+        }
+    }
+}
+
+void ThermalConfigSensorCluster::AscendLevelToThresholdClr(std::vector<LevelItem>& levItems,
+    uint32_t& level, uint32_t end, int32_t curTemp)
+{
+    for (uint32_t i = level; i < end; i++) {
+        if (curTemp >= levItems.at(i).threshold) {
+            level = levItems.at(i).level;
+        } else {
+            break;
+        }
+    }
+}
+
+void ThermalConfigSensorCluster::LevelUpwardsSearch(std::vector<LevelItem>& levItems,
+    uint32_t& level, uint32_t end, int32_t curTemp)
+{
+    for (uint32_t i = level; i < end; i++) {
+        if (curTemp > levItems.at(i).threshold) {
+            break;
+        }
+        level = levItems.at(i).level;
+    }
+}
+
+void ThermalConfigSensorCluster::LevelDownwardsSearch(std::vector<LevelItem>& levItems,
+    uint32_t& level, int32_t curTemp)
+{
+    for (uint32_t i = level; i >= 1; i--) {
+        if (curTemp <= levItems.at(i - 1).thresholdClr) {
+            break;
+        }
+        level = (levItems.at(i - 1).level > 0) ? (levItems.at(i - 1).level - 1) : 0;
+    }
+}
+
+void ThermalConfigSensorCluster::LevelDownwardsSearchWithThreshold(std::vector<LevelItem>& levItems,
+    uint32_t& level, int32_t curTemp)
+{
+    for (uint32_t i = level; i >= 1; i--) {
+        if (curTemp > levItems.at(i - 1).thresholdClr) {
+            level = (levItems.at(i - 1).level > 0) ? (levItems.at(i - 1).level - 1) : 0;
+        } else {
+            break;
+        }
+    }
+}
+
+void ThermalConfigSensorCluster::LevelUpwardsSearchWithThreshold(std::vector<LevelItem>& levItems,
+    uint32_t& level, uint32_t end, int32_t curTemp)
+{
+    for (uint32_t i = level; i < end; i++) {
+        if (curTemp <= levItems.at(i).threshold) {
+            level = levItems.at(i).level;
+        } else {
+            break;
+        }
+    }
+}
+
 void ThermalConfigSensorCluster::AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level)
 {
     if (level > 0 && level < levItems.size()) {
         int32_t curDownTemp = levItems.at(level - 1).thresholdClr;
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp >= nextUptemp) {
-            for (uint32_t i = level; i < levItems.size(); i++) {
-                if (curTemp < levItems.at(i).threshold) {
-                    break;
-                }
-                level = levItems.at(i).level;
-            }
+            AscendLevelToThreshold(levItems, level, levItems.size(), curTemp);
         } else if (curTemp < curDownTemp) {
-            for (uint32_t i = level; i >= 1; i--) {
-                if (curTemp >= levItems.at(i - 1).thresholdClr) {
-                    break;
-                }
-                level = levItems.at(i - 1).level - 1;
-            }
+            DescendLevelToThresholdClr(levItems, level, curTemp);
         }
     } else if (level == levItems.size()) {
         int32_t curDownTemp = levItems.at(level - 1).thresholdClr;
         if (curTemp < curDownTemp) {
-            for (uint32_t i = level; i >= 1; i--) {
-                if (curTemp < levItems.at(i - 1).thresholdClr) {
-                    level = levItems.at(i - 1).level - 1;
-                } else {
-                    break;
-                }
-            }
+            DescendLevelToThreshold(levItems, level, curTemp);
         }
     } else {
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp >= nextUptemp) {
-            for (uint32_t i = level; i < levItems.size(); i++) {
-                if (curTemp >= levItems.at(i).threshold) {
-                    level = levItems.at(i).level;
-                } else {
-                    break;
-                }
-            }
+            AscendLevelToThresholdClr(levItems, level, levItems.size(), curTemp);
         }
     }
 }
@@ -175,41 +245,19 @@ void ThermalConfigSensorCluster::DescJudgment(std::vector<LevelItem>& levItems, 
         int32_t curDownTemp = levItems.at(level - 1).thresholdClr;
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp <= nextUptemp) {
-            for (uint32_t i = level; i < levItems.size(); i++) {
-                if (curTemp > levItems.at(i).threshold) {
-                    break;
-                }
-                level = levItems.at(i).level;
-            }
+            LevelUpwardsSearch(levItems, level, levItems.size(), curTemp);
         } else if (curTemp > curDownTemp) {
-            for (uint32_t i = level; i >= 1; i--) {
-                if (curTemp <= levItems.at(i - 1).thresholdClr) {
-                    break;
-                }
-                level = levItems.at(i - 1).level - 1;
-            }
+            LevelDownwardsSearch(levItems, level, curTemp);
         }
     } else if (level == levItems.size()) {
         int32_t curDownTemp = levItems.at(level - 1).thresholdClr;
         if (curTemp > curDownTemp) {
-            for (uint32_t i = level; i >= 1; i--) {
-                if (curTemp > levItems.at(i - 1).thresholdClr) {
-                    level = levItems.at(i - 1).level - 1;
-                } else {
-                    break;
-                }
-            }
+            LevelDownwardsSearchWithThreshold(levItems, level, curTemp);
         }
     } else {
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp <= nextUptemp) {
-            for (uint32_t i = level; i < levItems.size(); i++) {
-                if (curTemp <= levItems.at(i).threshold) {
-                    level = levItems.at(i).level;
-                } else {
-                    break;
-                }
-            }
+            LevelUpwardsSearchWithThreshold(levItems, level, levItems.size(), curTemp);
         }
     }
 }
@@ -234,7 +282,8 @@ bool ThermalConfigSensorCluster::IsTempRateTrigger(uint32_t& level)
     if (level == 0) {
         return true;
     }
-    const auto& rateMap = g_service->GetSubscriber()->GetSensorsRate();
+    auto tms = ThermalService::GetInstance();
+    const auto& rateMap = tms->GetSubscriber()->GetSensorsRate();
     for (auto sensorInfo = sensorInfolist_.begin(); sensorInfo != sensorInfolist_.end(); ++sensorInfo) {
         auto rateIter = rateMap.find(sensorInfo->first);
         if (rateIter == rateMap.end()) {

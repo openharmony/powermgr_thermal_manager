@@ -31,7 +31,6 @@ using namespace OHOS::AudioStandard;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 constexpr const char* VOLUME_PATH = "/data/service/el0/thermal/config/volume";
 const int MAX_PATH = 256;
 std::vector<ActionItem> g_actionInfo;
@@ -67,16 +66,17 @@ void ActionVolume::AddActionValue(std::string value)
 
 void ActionVolume::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     float value = GetActionValue();
     if (fabs(value - lastValue_) > FLOAT_ACCURACY) {
-        if (!g_service->GetSimulationXml()) {
+        if (!tms->GetSimulationXml()) {
             VolumeRequest(value);
         } else {
             VolumeExecution(value);
         }
         WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}f}", actionName_.c_str(), lastValue_);
     }
@@ -85,7 +85,8 @@ void ActionVolume::Execute()
 
 float ActionVolume::GetActionValue()
 {
-    std::string scene = g_service->GetScene();
+    auto tms = ThermalService::GetInstance();
+    std::string scene = tms->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {
         return static_cast<float>(strtof(iter->second.c_str(), nullptr));
@@ -103,9 +104,10 @@ float ActionVolume::GetActionValue()
 
 int32_t ActionVolume::VolumeRequest(float volume)
 {
+    auto tms = ThermalService::GetInstance();
     std::string uid;
     std::vector<std::string> uidList;
-    g_actionInfo = g_service->GetActionManagerObj()->GetActionItem();
+    g_actionInfo = tms->GetActionManagerObj()->GetActionItem();
     const auto& item = std::find_if(g_actionInfo.begin(), g_actionInfo.end(), [](const auto& info) {
         return info.name == "volume";
     });

@@ -31,7 +31,6 @@ using namespace OHOS::DisplayPowerMgr;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-auto g_service = DelayedSpSingleton<ThermalService>::GetInstance();
 const std::string LCD_MOCK_PATH = "/data/service/el0/thermal/config/lcd";
 }
 
@@ -65,16 +64,17 @@ void ActionDisplay::AddActionValue(std::string value)
 
 void ActionDisplay::Execute()
 {
-    THERMAL_RETURN_IF (g_service == nullptr);
+    auto tms = ThermalService::GetInstance();
+    THERMAL_RETURN_IF (tms == nullptr);
     float value = GetActionValue();
     if (fabs(value - lastValue_) > FLOAT_ACCURACY) {
-        if (!g_service->GetSimulationXml()) {
+        if (!tms->GetSimulationXml()) {
             RequestDisplay(value);
         } else {
             ExecuteMock(value);
         }
         WriteActionTriggeredHiSysEventWithRatio(enableEvent_, actionName_, value);
-        g_service->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}f}", actionName_.c_str(), lastValue_);
     }
@@ -83,7 +83,8 @@ void ActionDisplay::Execute()
 
 float ActionDisplay::GetActionValue()
 {
-    std::string scene = g_service->GetScene();
+    auto tms = ThermalService::GetInstance();
+    std::string scene = tms->GetScene();
     auto iter = g_sceneMap.find(scene);
     if (iter != g_sceneMap.end()) {
         return static_cast<float>(strtof(iter->second.c_str(), nullptr));
