@@ -158,26 +158,22 @@ void ThermalPolicy::PolicyDecision()
 
 void ThermalPolicy::ActionDecision(const std::vector<PolicyAction>& actionList)
 {
-    auto tms = ThermalService::GetInstance();
+    std::map<std::string, std::string> actionPolicyMap;
     for (auto action = actionList.begin(); action != actionList.end(); action++) {
-        ThermalActionManager::ThermalActionMap actionMap = tms->GetActionManagerObj()->GetActionMap();
-        auto actionIter = actionMap.find(action->actionName);
-        if (actionIter == actionMap.end() || actionIter->second == nullptr) {
-            THERMAL_HILOGE(COMP_SVC, "can't find action [%{public}s] ability", action->actionName.c_str());
+        if (action->isProp && !StateMachineDecision(action->actionPropMap)) {
             continue;
         }
-        if (action->isProp) {
-            if (!StateMachineDecision(action->actionPropMap)) {
-                continue;
-            }
-            actionIter->second->AddActionValue(action->actionValue);
-            auto it = action->actionPropMap.find(STATE_SCNEN);
-            if (it != action->actionPropMap.end()) {
-                actionIter->second->SetXmlScene(it->second, action->actionValue);
-            }
-        } else {
-            actionIter->second->AddActionValue(action->actionValue);
+        actionPolicyMap.emplace(action.actionName, actionName.actionValue);
+    }
+    auto tms = ThermalService::GetInstance();
+    ThermalActionManager::ThermalActionMap actionMap = tms->GetActionManagerObj()->GetActionMap();
+    for (auto& actionPolicy : actionPolicyMap) {
+        auto actionIter = actionMap.find(actionPolicy.first);
+        if (actionIter == actionMap.end() || actionIter->second == nullptr) {
+            THERMAL_HILOGE(COMP_SVC, "can't find action [%{public}s] ability", actionPolicy.first.c_str());
+            continue;
         }
+        actionIter->second->AddActionValue(actionPolicy.second);
     }
 }
 
