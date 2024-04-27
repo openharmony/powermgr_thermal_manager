@@ -25,6 +25,7 @@ namespace PowerMgr {
 namespace {
 constexpr int32_t PATH_IDX = 0;
 constexpr int32_t FALLBACK_IDX = 1;
+constexpr size_t MIN_PATH_LENGTH = 9;
 }
 
 ActionNode::ActionNode(const std::string& actionName)
@@ -74,7 +75,7 @@ void ActionNode::Execute()
         }
     }
     if (value != lastValue_) {
-        if (!nodePath_.empty()) {
+        if (nodePath_.size() > MIN_PATH_LENGTH) {
             FileOperation::WriteFile(nodePath_, value, value.length());
         }
         auto tms = ThermalService::GetInstance();
