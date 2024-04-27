@@ -25,10 +25,9 @@ void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
     MockSocPerfAction::LimitRequest(tag, value);
 }
 
-void SocActionBase::SocPerfRequest(bool onOffTag)
+void SocActionBase::SetSocPerfThermalLevel(uint32_t level)
 {
     THERMAL_HILOGE(LABEL_TEST, "cjw test Enter SocPerfRequest");
-    (void)onOffTag;
     MockSocPerfAction::BoostRequest();
 }
 } // namespace PowerMgr

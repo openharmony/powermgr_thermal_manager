@@ -49,7 +49,7 @@ std::string ScreenStateCollection::GetState()
 {
     THERMAL_HILOGD(COMP_SVC, "screen state = %{public}s", mockState_.c_str());
     auto tms = ThermalService::GetInstance();
-    if (!tms->GetFlag()) {
+    if (!tms->GetSimulationXml()) {
         return mockState_;
     } else {
         return state_;

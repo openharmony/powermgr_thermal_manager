@@ -85,16 +85,6 @@ public:
         isTempReport_ = enable;
     }
 
-    void SetFlag(bool flag)
-    {
-        flag_ = flag;
-    }
-
-    bool GetFlag()
-    {
-        return flag_;
-    }
-
     bool IsServiceReady() const
     {
         return ready_;
@@ -201,7 +191,6 @@ private:
     std::shared_ptr<ThermalActionManager> actionMgr_ {nullptr};
     std::shared_ptr<FanFaultDetect> fanFaultDetect_ {nullptr};
     ThermalSrvConfigParser configParser_;
-    bool flag_ {false};
     sptr<IThermalInterface> thermalInterface_ {nullptr};
     sptr<IServiceManager> hdiServiceMgr_ {nullptr};
     sptr<HdiServiceStatusListener::IServStatListener> hdiServStatListener_ {nullptr};

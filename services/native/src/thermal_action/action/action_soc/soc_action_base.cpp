@@ -24,7 +24,7 @@ namespace PowerMgr {
 namespace {
 #ifdef SOC_PERF_ENABLE
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
-constexpr int32_t ACTION_TYPE_CPU_BOOST_CMDID = 10028;
+constexpr int32_t ACTION_TYPE_CPU_ISOLATE_CMDID = 12361;
 #endif
 }
 
@@ -39,10 +39,17 @@ void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 #endif
 }
 
-void SocActionBase::SocPerfRequest(bool onOffTag)
+void SocActionBase::SetSocPerfThermalLevel(uint32_t level)
 {
 #ifdef SOC_PERF_ENABLE
-    OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEx(ACTION_TYPE_CPU_BOOST_CMDID, onOffTag, "");
+    OHOS::SOCPERF::SocPerfClient::GetInstance().SetThermalLevel(level);
+#endif
+}
+
+void SocActionBase::SocIsolateRequest(bool enable)
+{
+#ifdef SOC_PERF_ENABLE
+    OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEx(ACTION_TYPE_CPU_ISOLATE_CMDID, enable, "");
 #endif
 }
 } // namespace PowerMgr

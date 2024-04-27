@@ -61,7 +61,7 @@ std::string ChargerStateCollection::GetState()
 {
     THERMAL_HILOGD(COMP_SVC, "charger state = %{public}s", mockState_.c_str());
     auto tms = ThermalService::GetInstance();
-    if (!tms->GetFlag()) {
+    if (!tms->GetSimulationXml()) {
         return mockState_;
     } else {
         return state_;

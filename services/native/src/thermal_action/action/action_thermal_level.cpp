@@ -33,14 +33,10 @@ using namespace OHOS::HiviewDFX;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-constexpr const char* TASK_UNREG_THERMAL_LEVEL_CALLBACK = "ThermalLevel_UnRegThermalLevelpCB";
+constexpr int32_t MIN_THERMAL_LEVEL = static_cast<int32_t>(ThermalLevel::COOL);
 constexpr int32_t MAX_THERMAL_LEVEL = static_cast<int32_t>(ThermalLevel::ESCAPE);
 }
-int32_t ActionThermalLevel::level_ = static_cast<int32_t>(ThermalLevel::COOL);
-std::set<const sptr<IThermalLevelCallback>, ActionThermalLevel::classcomp> ActionThermalLevel::thermalLevelListeners_;
-
-ActionThermalLevel::ActionThermalLevel(const wptr<ThermalService>& tms) : tms_(tms), lastValue_(UINT_MAX) {}
-ActionThermalLevel::~ActionThermalLevel() {}
+int32_t ActionThermalLevel::lastValue_ = INT_MIN;
 
 ActionThermalLevel::ActionThermalLevel(const std::string& actionName)
 {
@@ -76,7 +72,7 @@ void ActionThermalLevel::Execute()
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    uint32_t value = GetActionValue();
+    int32_t value = GetActionValue();
     if (value != lastValue_) {
         LevelRequest(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
@@ -87,15 +83,9 @@ void ActionThermalLevel::Execute()
     valueList_.clear();
 }
 
-uint32_t ActionThermalLevel::GetActionValue()
+int32_t ActionThermalLevel::GetActionValue()
 {
-    auto tms = ThermalService::GetInstance();
-    std::string scene = tms->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
-    }
-    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
+    int32_t value = MIN_THERMAL_LEVEL;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
@@ -108,25 +98,20 @@ uint32_t ActionThermalLevel::GetActionValue()
 
 int32_t ActionThermalLevel::GetThermalLevel()
 {
-    return level_;
+    return lastValue_;
 }
 
-uint32_t ActionThermalLevel::LevelRequest(int32_t level)
+void ActionThermalLevel::LevelRequest(int32_t level)
 {
     if (level > MAX_THERMAL_LEVEL) {
         level = MAX_THERMAL_LEVEL;
     }
-    if (level_ != level) {
-        NotifyThermalLevelChanged(level);
+    if (level < MIN_THERMAL_LEVEL) {
+        level = MIN_THERMAL_LEVEL;
     }
-    return ERR_OK;
+    NotifyThermalLevelChanged(level);
 }
 
-/**
- * @brief Callback of subscription temp level
- *
- * @param callback Thermal level callback object
- */
 void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
     std::lock_guard lock(mutex_);
@@ -136,10 +121,10 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
     auto retIt = thermalLevelListeners_.insert(callback);
     if (retIt.second) {
         object->AddDeathRecipient(thermalLevelCBDeathRecipient_);
-        callback->OnThermalLevelChanged(static_cast<ThermalLevel>(level_));
+        callback->OnThermalLevelChanged(static_cast<ThermalLevel>(lastValue_));
     }
-    THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}d, insertOk=%{public}d",
-        static_cast<unsigned int>(thermalLevelListeners_.size()), retIt.second);
+    THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}zu, insertOk=%{public}d",
+        thermalLevelListeners_.size(), retIt.second);
 }
 
 void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
@@ -152,8 +137,8 @@ void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLeve
     if (eraseNum != 0) {
         object->RemoveDeathRecipient(thermalLevelCBDeathRecipient_);
     }
-    THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}d, eraseNum=%{public}zu",
-        static_cast<unsigned int>(thermalLevelListeners_.size()), eraseNum);
+    THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}zu, eraseNum=%{public}zu",
+        thermalLevelListeners_.size(), eraseNum);
 }
 
 void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
@@ -169,25 +154,18 @@ void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const 
     FFRTTask task = std::bind(&ThermalService::UnSubscribeThermalLevelCallback, tms, callback);
     FFRTUtils::SubmitTask(task);
 }
-/**
- * @brief notify level
- *
- * @param level
- */
+
 void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
 {
-    THERMAL_HILOGD(COMP_SVC, "level = %{public}d, listeners.size = %{public}d",
-        level, static_cast<unsigned int>(thermalLevelListeners_.size()));
-    THERMAL_HILOGI(COMP_SVC, "thermal level changed, new lev: %{public}d, old lev: %{public}d", level, level_);
-    level_ = level;
+    THERMAL_HILOGI(COMP_SVC, "thermal level changed, new lev: %{public}d, old lev: %{public}d", level, lastValue_);
 
     // Send Notification event
-    PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, level_);
+    PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, level);
 
     // Call back all level listeners
     std::lock_guard lock(mutex_);
     for (auto& listener : thermalLevelListeners_) {
-        listener->OnThermalLevelChanged(static_cast<ThermalLevel>(level_));
+        listener->OnThermalLevelChanged(static_cast<ThermalLevel>(level));
     }
 
     // Notify thermal level change event to battery statistics

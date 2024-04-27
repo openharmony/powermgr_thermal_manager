@@ -49,35 +49,35 @@ void ActionCpuBoost::AddActionValue(std::string value)
     if (value.empty()) {
         return;
     }
-    actionTag_ = static_cast<bool>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC));
-    isAction_ = true;
+    valueList_.push_back(static_cast<uint32_t>(atoi(value.c_str())));
 }
 
 void ActionCpuBoost::Execute()
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    bool tag = GetActionValue();
-    if (tag != lastTag_) {
-        SocPerfRequest(tag);
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, static_cast<int32_t>(tag));
-        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(tag));
-        lastTag_ = tag;
-        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastTag_);
+    uint32_t value = GetActionValue();
+    if (value != lastValue_) {
+        SetSocPerfThermalLevel(value);
+        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
+        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        lastValue_ = value;
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastValue_);
     }
-    isAction_ = false;
+    valueList_.clear();
 }
 
-bool ActionCpuBoost::GetActionValue()
+uint32_t ActionCpuBoost::GetActionValue()
 {
-    auto tms = ThermalService::GetInstance();
-    std::lock_guard<std::mutex> lock(sceneMutex_);
-    std::string scene = tms->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        return static_cast<bool>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
+    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
     }
-    return isAction_ ? actionTag_ : false;
+    return value;
 }
 } // namespace PowerMgr
 } // namespace OHOS

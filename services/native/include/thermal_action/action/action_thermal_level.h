@@ -34,8 +34,7 @@ class ThermalService;
 class ActionThermalLevel : public IThermalAction {
 public:
     ActionThermalLevel(const std::string& actionName);
-    ~ActionThermalLevel();
-    explicit ActionThermalLevel(const wptr<ThermalService>& tms);
+    ~ActionThermalLevel() = default;
 
     void InitParams(const std::string& params) override;
     void SetStrict(bool enable) override;
@@ -44,11 +43,8 @@ public:
     void Execute() override;
     void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
-    int32_t GetThermalLevel();
-    uint32_t LevelRequest(int32_t level);
+    static int32_t GetThermalLevel();
 
-    void NotifyThermalLevelChanged(int32_t level);
-    bool PublishLevelChangedEvents(ThermalCommonEventCode code, int32_t level);
 public:
     class ThermalLevelCallbackDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
@@ -63,16 +59,18 @@ private:
             return l->AsObject() < r->AsObject();
         }
     };
-private:
-    uint32_t GetActionValue();
-    const wptr<ThermalService> tms_;
+
+    static int32_t lastValue_;
+
+    int32_t GetActionValue();
+    void LevelRequest(int32_t level);
+    void NotifyThermalLevelChanged(int32_t level);
+    bool PublishLevelChangedEvents(ThermalCommonEventCode code, int32_t level);
     std::mutex mutex_;
     sptr<IRemoteObject::DeathRecipient> thermalLevelCBDeathRecipient_;
     std::vector<uint32_t> valueList_;
     std::string params_;
-    static std::set<const sptr<IThermalLevelCallback>, classcomp> thermalLevelListeners_;
-    static int32_t level_;
-    uint32_t lastValue_ {0};
+    std::set<const sptr<IThermalLevelCallback>, classcomp> thermalLevelListeners_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
