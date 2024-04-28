@@ -32,19 +32,6 @@ public:
     virtual void InitParams(const std::string& params) = 0;
     virtual void SetStrict(bool enable) = 0;
     virtual void SetEnableEvent(bool enable) = 0;
-    virtual void SetXmlScene(const std::string& scene, const std::string& value)
-    {
-        for (auto iter = g_sceneMap.begin(); iter != g_sceneMap.end(); ++iter) {
-            if (iter->first == scene) {
-                if (iter->second != value) {
-                    iter->second = value;
-                }
-                return;
-            }
-        }
-        g_sceneMap.insert(std::make_pair(scene, value));
-    }
-
     virtual void AddActionValue(std::string value) = 0;
     virtual void Execute() = 0;
 
@@ -52,7 +39,6 @@ protected:
     bool isStrict_ {true};
     bool enableEvent_ {false};
     std::string actionName_ = "";
-    std::map<std::string, std::string> g_sceneMap;
 };
 } // namespace PowerMgr
 } // namespace OHOS

@@ -85,12 +85,6 @@ void ActionVolume::Execute()
 
 float ActionVolume::GetActionValue()
 {
-    auto tms = ThermalService::GetInstance();
-    std::string scene = tms->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        return static_cast<float>(strtof(iter->second.c_str(), nullptr));
-    }
     float value = FALLBACK_VALUE_FLOAT;
     if (!valueList_.empty()) {
         if (isStrict_) {

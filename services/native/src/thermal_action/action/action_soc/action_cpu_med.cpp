@@ -69,12 +69,6 @@ void ActionCpuMed::Execute()
 
 uint32_t ActionCpuMed::GetActionValue()
 {
-    auto tms = ThermalService::GetInstance();
-    std::string scene = tms->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
-    }
     uint32_t value = FALLBACK_VALUE_UINT_SOC;
     if (!valueList_.empty()) {
         if (isStrict_) {
