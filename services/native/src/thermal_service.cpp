@@ -646,6 +646,12 @@ int32_t ThermalService::Dump(int fd, const std::vector<std::u16string>& args)
     return ERR_OK;
 }
 
+void ThermalService::EnableMock(const std::string& actionName, void* mockObject)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    actionMgr_->EnableMock(actionName, mockObject);
+}
+
 void ThermalService::DestroyInstance()
 {
     std::lock_guard<std::mutex> lock(singletonMutex_);

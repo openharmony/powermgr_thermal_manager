@@ -140,5 +140,19 @@ void ThermalActionManager::DumpAction(std::string& result)
     result.append("\n");
     }
 }
+
+void ThermalActionManager::EnableMock(const std::string& actionName, void* mockAction)
+{
+    THERMAL_HILOGI(COMP_SVC, "EnableMock [%{public}s] ability", actionName.c_str());
+    auto action = static_cast<IThermalAction*>(mockAction);
+    auto actionIter = actionMap_.find(actionName);
+    if (actionIter == actionMap_.end() || actionIter->second == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "can't find action [%{public}s] ability", actionName.c_str());
+        return;
+    }
+    std::unique_ptr<IThermalAction> mock(action);
+    actionIter->second.reset();
+    actionIter->second = std::move(mock);
+}
 } // namespace PowerMgr
 } // namespace OHOS

@@ -177,6 +177,7 @@ private:
     void UnRegisterThermalHdiCallback();
     void RegisterFanHdiCallback();
     void RegisterBootCompletedCallback();
+    void EnableMock(const std::string& actionName, void* mockObject);
     bool ready_ {false};
     static std::atomic_bool isBootCompleted_;
     bool isSimulation_ {false};
