@@ -163,7 +163,7 @@ void ThermalPolicy::ActionDecision(const std::vector<PolicyAction>& actionList)
         if (action->isProp && !StateMachineDecision(action->actionPropMap)) {
             continue;
         }
-        actionPolicyMap.emplace(action->actionName, action->actionValue);
+        actionPolicyMap[action->actionName] = action->actionValue;
     }
     auto tms = ThermalService::GetInstance();
     ThermalActionManager::ThermalActionMap actionMap = tms->GetActionManagerObj()->GetActionMap();
