@@ -59,6 +59,7 @@ private:
     bool ParseFanNode(const xmlNodePtr& cur);
     bool ParseFanFaultInfo(const xmlNodePtr& cur,
         std::vector<std::string> &sensors, FanFaultInfoMap &fanFaultInfoMap);
+    bool DecryptConfig(const std::string& path, std::string& result);
 };
 } // namespace PowerMgr
 } // namespace OHOS
