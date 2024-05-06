@@ -149,15 +149,16 @@ public:
         return configParser_;
     }
 
-    std::string GetScene()
-    {
-        return scene_;
-    }
-
     void InitSystemTestModules()
     {
         InitConfigModule();
     }
+
+    static const std::string& GetScene()
+    {
+        return scene_;
+    }
+
 private:
     bool Init();
     bool InitThermalDriver();
@@ -195,8 +196,8 @@ private:
     sptr<IServiceManager> hdiServiceMgr_ {nullptr};
     sptr<HdiServiceStatusListener::IServStatListener> hdiServStatListener_ {nullptr};
     std::shared_ptr<ActionPopup> popup_;
-    std::string scene_;
     std::atomic<bool> serviceConfigParsed {false};
+    static std::string scene_;
     static sptr<ThermalService> instance_;
     static std::mutex singletonMutex_;
 };
