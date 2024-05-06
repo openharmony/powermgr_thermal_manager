@@ -52,6 +52,7 @@ const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.G
 SysParam::BootCompletedCallback g_bootCompletedCallback;
 } // namespace
 std::atomic_bool ThermalService::isBootCompleted_ = false;
+std::string ThermalService::scene_;
 ThermalService::ThermalService() : SystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, true) {}
 
 ThermalService::~ThermalService() {}

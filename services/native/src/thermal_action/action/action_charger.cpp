@@ -78,12 +78,6 @@ void ActionCharger::Execute()
 
 uint32_t ActionCharger::GetActionValue()
 {
-    auto tms = ThermalService::GetInstance();
-    std::string scene = tms->GetScene();
-    auto iter = g_sceneMap.find(scene);
-    if (iter != g_sceneMap.end()) {
-        return static_cast<uint32_t>(strtol(iter->second.c_str(), nullptr, STRTOL_FORMART_DEC));
-    }
     uint32_t value = FALLBACK_VALUE_UINT_ZERO;
     if (!valueList_.empty()) {
         if (isStrict_) {
