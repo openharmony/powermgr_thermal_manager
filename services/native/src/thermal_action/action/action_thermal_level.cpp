@@ -85,7 +85,7 @@ void ActionThermalLevel::Execute()
 
 int32_t ActionThermalLevel::GetActionValue()
 {
-    int32_t value = MIN_THERMAL_LEVEL;
+    uint32_t value = MIN_THERMAL_LEVEL;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
