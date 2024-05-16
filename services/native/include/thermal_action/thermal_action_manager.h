@@ -57,6 +57,7 @@ public:
 
     int32_t CreateActionMockFile();
     void DumpAction(std::string& result);
+    void EnableMock(const std::string& actionName, void* mockAction);
 private:
     ThermalActionMap actionMap_;
     std::vector<std::string> actionNameList_;
