@@ -62,7 +62,6 @@ ohos_unittest("ThermalMockActionTest") {
 
   sources = [
     "${thermal_manager_path}/test/common/src/thermal_test.cpp",
-    "${thermal_manager_path}/test/unittest/mock_action/src/mock_soc_action_base.cpp",
     "${thermal_manager_path}/test/unittest/mock_action/src/mock_socperf_action.cpp",
     "src/thermal_mock_action_test.cpp",
   ]
