@@ -25,12 +25,13 @@
 #include "thermal_mgr_client.h"
 #include "thermal_srv_sensor_info.h"
 #include "thermal_temp_callback_proxy.h"
+#include "thermal_mgr_listener.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 using namespace std;
-
+const int32_t INVAILID_VALUE = -1;
 namespace {
 int32_t MockEventCb(const HdfThermalCallbackInfo& event)
 {
@@ -117,6 +118,12 @@ HWTEST_F(ThermalClientTest, ThermalClientTest003, TestSize.Level0)
     THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest003 end.");
 }
 
+/**
+ * @tc.name: ThermalClientTest004
+ * @tc.desc: ThermalSrvSensorInfo Marshalling and Unmarshalling test
+ * @tc.type: FUNC
+ * @tc.require: issueI5YZQ2
+ */
 HWTEST_F(ThermalClientTest, ThermalClientTest004, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest004 start.");
@@ -125,5 +132,28 @@ HWTEST_F(ThermalClientTest, ThermalClientTest004, TestSize.Level0)
     info->Unmarshalling(parcel);
     EXPECT_TRUE(info->Marshalling(parcel));
     THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest004 end.");
+}
+
+/**
+ * @tc.name: ThermalClientTest005
+ * @tc.desc: thermalListener additional test
+ * @tc.type: FUNC
+ * @tc.require: issueI5YZQ2
+ */
+HWTEST_F(ThermalClientTest, ThermalClientTest005, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest005 start.");
+    std::shared_ptr<ThermalMgrListener> thermalListener = std::make_shared<ThermalMgrListener>();
+    ASSERT_NE(thermalListener, nullptr);
+    int32_t ret = thermalListener->SubscribeLevelEvent(nullptr);
+    EXPECT_NE(ret, ERR_OK);
+    ret = thermalListener->UnSubscribeLevelEvent();
+    EXPECT_NE(ret, ERR_OK);
+    ThermalLevel level = thermalListener->GetThermalLevel();
+    EXPECT_NE(static_cast<int32_t>(level), INVAILID_VALUE);
+    sptr<IThermalLevelCallback> callback = new ThermalMgrListener::ThermalLevelCallback(nullptr);
+    bool result = callback->OnThermalLevelChanged(level);
+    EXPECT_EQ(result, false);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest005 end.");
 }
 } // namespace
