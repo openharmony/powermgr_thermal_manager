@@ -20,11 +20,17 @@
 #include "thermal_service.h"
 #include "string_ex.h"
 
+#include <dlfcn.h>
+
 namespace OHOS {
 namespace PowerMgr {
 namespace {
 constexpr uint32_t AUX_SENSOR_RANGE_LEN = 2;
 const std::string TRUE_STR = "1";
+constexpr const char* GET_THERMAL_EXT_CONGIH_FUNC = "GetThermalExtConfig";
+constexpr const char* THERMAL_CONFIG_LIBRARY_PATH = "/system/lib64/libthermal_config_ext.z.so";
+constexpr int32_t THERMAL_SERVICE_CONFIG_INDEX = 3;
+typedef int32_t(*Func)(int32_t, std::string&);
 }
 
 ThermalSrvConfigParser::ThermalSrvConfigParser() {};
@@ -37,10 +43,49 @@ bool ThermalSrvConfigParser::ThermalSrvConfigInit(const std::string& path)
     return false;
 }
 
+bool ThermalSrvConfigParser::DecryptConfig(const std::string& path, std::string& result)
+{
+    THERMAL_HILOGI(COMP_SVC, "start DecryptConfig");
+    void *handler = dlopen(THERMAL_CONFIG_LIBRARY_PATH, RTLD_LAZY);
+    if (handler == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "dlopen failed, reason : %{public}s", dlerror());
+        return false;
+    }
+
+    Func getDecryptConfig = reinterpret_cast<Func>(dlsym(handler, GET_THERMAL_EXT_CONGIH_FUNC));
+    if (getDecryptConfig == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "find function %{public}s failed, reason : %{public}s",
+            GET_THERMAL_EXT_CONGIH_FUNC, dlerror());
+        dlclose(handler);
+        return false;
+    }
+
+    int32_t ret = getDecryptConfig(THERMAL_SERVICE_CONFIG_INDEX, result);
+    if (ret != 0) {
+        THERMAL_HILOGE(COMP_SVC, "decrypt config failed, ret:%{public}d", ret);
+        dlclose(handler);
+        return false;
+    }
+
+    dlclose(handler);
+    THERMAL_HILOGI(COMP_SVC, "end DecryptConfig");
+    return true;
+}
+
 bool ThermalSrvConfigParser::ParseXmlFile(const std::string& path)
 {
-    std::unique_ptr<xmlDoc, decltype(&xmlFreeDoc)> docPtr(
-        xmlReadFile(path.c_str(), nullptr, XML_PARSE_NOBLANKS), xmlFreeDoc);
+    xmlDocPtr docParse;
+    std::string result;
+    if (DecryptConfig(path, result)) {
+        // Initialize configuration file through the decrypt results
+        docParse = xmlReadMemory(
+            result.c_str(), int(result.size()), NULL, NULL, XML_PARSE_NOBLANKS);
+    } else {
+        THERMAL_HILOGI(COMP_SVC, "don't need decrypt");
+        docParse = xmlReadFile(path.c_str(), nullptr, XML_PARSE_NOBLANKS);
+    }
+
+    std::unique_ptr<xmlDoc, decltype(&xmlFreeDoc)> docPtr(docParse, xmlFreeDoc);
     if (docPtr == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "init failed, read file failed");
         return false;
