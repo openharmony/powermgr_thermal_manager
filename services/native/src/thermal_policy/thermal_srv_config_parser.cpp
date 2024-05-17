@@ -29,7 +29,8 @@ constexpr uint32_t AUX_SENSOR_RANGE_LEN = 2;
 const std::string TRUE_STR = "1";
 constexpr const char* GET_THERMAL_EXT_CONGIH_FUNC = "GetThermalExtConfig";
 constexpr const char* THERMAL_CONFIG_LIBRARY_PATH = "/system/lib64/libthermal_config_ext.z.so";
-constexpr int32_t THERMAL_SERVICE_CONFIG_INDEX = 3;
+const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+constexpr int32_t THERMAL_SERVICE_CONFIG_INDEX = 2;
 typedef int32_t(*Func)(int32_t, std::string&);
 }
 
@@ -45,6 +46,9 @@ bool ThermalSrvConfigParser::ThermalSrvConfigInit(const std::string& path)
 
 bool ThermalSrvConfigParser::DecryptConfig(const std::string& path, std::string& result)
 {
+    if (path == SYSTEM_THERMAL_SERVICE_CONFIG_PATH) {
+        return false;
+    }
     THERMAL_HILOGI(COMP_SVC, "start DecryptConfig");
     void *handler = dlopen(THERMAL_CONFIG_LIBRARY_PATH, RTLD_LAZY);
     if (handler == nullptr) {
