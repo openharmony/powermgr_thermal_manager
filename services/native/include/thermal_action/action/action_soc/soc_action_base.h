@@ -26,9 +26,9 @@ public:
     ~SocActionBase() = default;
 
 protected:
-    void SocLimitRequest(int32_t tag, int64_t value);
-    void SetSocPerfThermalLevel(uint32_t level);
-    void SocIsolateRequest(bool enable);
+    virtual void SocLimitRequest(int32_t tag, int64_t value);
+    virtual void SetSocPerfThermalLevel(uint32_t level);
+    virtual void SocIsolateRequest(bool enable);
 };
 } // namespace PowerMgr
 } // namespace OHOS

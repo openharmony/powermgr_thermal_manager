@@ -33,6 +33,11 @@
 #include "thermal_service.h"
 #include "v1_1/ithermal_interface.h"
 #include "v1_1/thermal_types.h"
+#include "action_cpu_boost.h"
+#include "action_cpu_big.h"
+#include "action_cpu_med.h"
+#include "action_cpu_lit.h"
+#include "action_gpu.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -45,6 +50,96 @@ static sptr<ThermalService> g_service = nullptr;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
 }
 
+class MockActionCpuBoost : public ActionCpuBoost {
+public:
+    MockActionCpuBoost() : ActionCpuBoost("boost") {}
+    virtual ~MockActionCpuBoost() = default;
+
+    virtual void SocLimitRequest(int32_t tag, int64_t value);
+    virtual void SetSocPerfThermalLevel(uint32_t level);
+};
+
+class MockActionCpuBig : public ActionCpuBig {
+public:
+    MockActionCpuBig() : ActionCpuBig("cpu_big") {}
+    virtual ~MockActionCpuBig() = default;
+
+    virtual void SocLimitRequest(int32_t tag, int64_t value);
+};
+
+class MockActionCpuMed : public ActionCpuMed {
+public:
+    MockActionCpuMed() : ActionCpuMed("cpu_med") {}
+    virtual ~MockActionCpuMed() = default;
+
+    virtual void SocLimitRequest(int32_t tag, int64_t value);
+};
+
+class MockActionCpuLit : public ActionCpuLit {
+public:
+    MockActionCpuLit() : ActionCpuLit("cpu_lit") {}
+    virtual ~MockActionCpuLit() = default;
+
+    virtual void SocLimitRequest(int32_t tag, int64_t value);
+};
+
+class MockActionGpu : public ActionGpu {
+public:
+    MockActionGpu() : ActionGpu("gpu") {}
+    virtual ~MockActionGpu() = default;
+
+    virtual void SocLimitRequest(int32_t tag, int64_t value);
+};
+
+void MockActionCpuBig::SocLimitRequest(int32_t tag, int64_t value)
+{
+    MockSocPerfAction::LimitRequest(tag, value);
+}
+
+void MockActionCpuMed::SocLimitRequest(int32_t tag, int64_t value)
+{
+    MockSocPerfAction::LimitRequest(tag, value);
+}
+
+void MockActionCpuLit::SocLimitRequest(int32_t tag, int64_t value)
+{
+    MockSocPerfAction::LimitRequest(tag, value);
+}
+
+void MockActionGpu::SocLimitRequest(int32_t tag, int64_t value)
+{
+    MockSocPerfAction::LimitRequest(tag, value);
+}
+
+void MockActionCpuBoost::SocLimitRequest(int32_t tag, int64_t value)
+{
+    MockSocPerfAction::LimitRequest(tag, value);
+}
+
+void MockActionCpuBoost::SetSocPerfThermalLevel(uint32_t level)
+{
+    MockSocPerfAction::BoostRequest();
+}
+
+void EnableMock()
+{
+    const string needMockBoost = "boost";
+    const string needMockBig = "cpu_big";
+    const string needMockMed = "cpu_med";
+    const string needMockLit = "cpu_lit";
+    const string needMockGpu = "gpu";
+    MockActionCpuBoost *mockActionCpuBoost = new MockActionCpuBoost();
+    MockActionCpuBig *mockActionCpuBig = new MockActionCpuBig();
+    MockActionCpuMed *mockActionCpuMed = new MockActionCpuMed();
+    MockActionCpuLit *mockActionCpuLit = new MockActionCpuLit();
+    MockActionGpu *mockActionGpu = new MockActionGpu();
+    g_service->EnableMock(needMockBoost, mockActionCpuBoost);
+    g_service->EnableMock(needMockBig, mockActionCpuBig);
+    g_service->EnableMock(needMockMed, mockActionCpuMed);
+    g_service->EnableMock(needMockLit, mockActionCpuLit);
+    g_service->EnableMock(needMockGpu, mockActionGpu);
+}
+
 void ThermalMockActionTest::SetUpTestCase()
 {
     g_service = ThermalService::GetInstance();
@@ -52,6 +147,7 @@ void ThermalMockActionTest::SetUpTestCase()
     g_service->OnStart();
     g_service->InitStateMachine();
     g_service->InitActionManager();
+    EnableMock();
 }
 
 void ThermalMockActionTest::TearDownTestCase()
