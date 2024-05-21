@@ -31,7 +31,7 @@ ActionCpuBig::ActionCpuBig(const std::string& actionName)
 
 void ActionCpuBig::InitParams(const std::string& params)
 {
-    (void)params;
+    params_ = params;
 }
 
 void ActionCpuBig::SetStrict(bool enable)
@@ -58,6 +58,11 @@ void ActionCpuBig::Execute()
     THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
+        if (params_ == "pc") {
+        SocLimitRequest(LIM_CPU_BIG2_ID, value);
+        SocLimitRequest(LIM_CPU_BIG3_ID, value);
+        SocLimitRequest(LIM_CPU_BIG4_ID, value);
+        }
         SocLimitRequest(LIM_CPU_BIG_ID, value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
