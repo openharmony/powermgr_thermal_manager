@@ -87,6 +87,9 @@ namespace PowerMgr {
 
     //socperf resource id
     constexpr int32_t LIM_CPU_BIG_ID = 1005;
+    constexpr int32_t LIM_CPU_BIG_ID = 1102;
+    constexpr int32_t LIM_CPU_BIG_ID = 1104;
+    constexpr int32_t LIM_CPU_BIG_ID = 1106;
     constexpr int32_t LIM_CPU_MED_ID = 1003;
     constexpr int32_t LIM_CPU_LIT_ID = 1001;
     constexpr int32_t LIM_GPU_ID = 1021;
