@@ -35,6 +35,7 @@ private:
     uint32_t GetActionValue();
     uint32_t lastValue_ {0};
     std::vector<uint32_t> valueList_;
+    std::string params_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
