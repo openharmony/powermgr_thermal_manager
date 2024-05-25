@@ -35,7 +35,7 @@ private:
     uint32_t GetActionValue();
     uint32_t lastValue_ {0};
     std::vector<uint32_t> valueList_;
-    bool flag_ {false};
+    bool multiCoreflag_ {false};
 };
 } // namespace PowerMgr
 } // namespace OHOS
