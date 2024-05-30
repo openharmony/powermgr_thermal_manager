@@ -60,18 +60,24 @@ bool ThermalSrvConfigParser::DecryptConfig(const std::string& path, std::string&
     if (getDecryptConfig == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "find function %{public}s failed, reason : %{public}s",
             GET_THERMAL_EXT_CONGIH_FUNC, dlerror());
+#ifndef FUZZ_TEST
         dlclose(handler);
+#endif
         return false;
     }
 
     int32_t ret = getDecryptConfig(THERMAL_SERVICE_CONFIG_INDEX, result);
     if (ret != 0) {
         THERMAL_HILOGE(COMP_SVC, "decrypt config failed, ret:%{public}d", ret);
+#ifndef FUZZ_TEST
         dlclose(handler);
+#endif
         return false;
     }
 
+#ifndef FUZZ_TEST
     dlclose(handler);
+#endif
     THERMAL_HILOGI(COMP_SVC, "end DecryptConfig");
     return true;
 }
