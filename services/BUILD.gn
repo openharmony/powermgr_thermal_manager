@@ -82,6 +82,10 @@ ohos_shared_library("thermalservice") {
 
   defines = []
 
+  if (use_libfuzzer) {
+    defines += [ "FUZZ_TEST" ]
+  }
+
   public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
