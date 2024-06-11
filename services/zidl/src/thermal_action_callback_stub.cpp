@@ -36,8 +36,8 @@ int ThermalActionCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &dat
             descriptor is not matched!");
         return E_GET_THERMAL_SERVICE_FAILED;
     }
-    const int DFX_DELAY_MS = 10000;
-    int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalActionCallbackStub", DFX_DELAY_MS, nullptr, nullptr,
+    const int DFX_DELAY_S = 10;
+    int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalActionCallbackStub", DFX_DELAY_S, nullptr, nullptr,
         HiviewDFX::XCOLLIE_FLAG_NOOP);
     int ret = ERR_OK;
     if (code == static_cast<uint32_t>(PowerMgr::ThermalActionCallbackInterfaceCode::THERMAL_ACTION_CHANGED)) {
