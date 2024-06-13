@@ -28,5 +28,6 @@ group("fuzztest") {
     "thermaldump_fuzzer:ThermalDumpFuzzTest",
     "thermallevelcallback_fuzzer:ThermalLevelCallbackFuzzTest",
     "thermaltempcallback_fuzzer:ThermalTempCallbackFuzzTest",
+    "updatethermalstate_fuzzer:UpdateThermalStateFuzzTest",
   ]
 }
