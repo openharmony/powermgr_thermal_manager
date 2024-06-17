@@ -50,12 +50,12 @@ int32_t FileOperation::CreateNodeFile(std::string filePath)
     if (access(filePath.c_str(), 0) != 0) {
         int32_t fd = open(filePath.c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP| S_IROTH);
         if (fd < ERR_OK) {
-            THERMAL_HILOGE(COMP_SVC, "open failed to file.");
+            THERMAL_HILOGE(COMP_SVC, "open failed to file. path=%{public}s", filePath.c_str());
             return fd;
         }
         close(fd);
     } else {
-        THERMAL_HILOGI(COMP_SVC, "the file already exists.");
+        THERMAL_HILOGI(COMP_SVC, "the file already exists. path=%{public}s", filePath.c_str());
     }
     return ERR_OK;
 }

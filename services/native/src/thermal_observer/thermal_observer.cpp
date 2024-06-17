@@ -64,7 +64,7 @@ void ThermalObserver::InitSensorTypeMap()
 
     if (!typeList.empty()) {
         for (uint32_t i = 0; i < typeList.size(); i++) {
-            THERMAL_HILOGI(COMP_SVC, "sensorType = %{public}s", typeList[i].c_str());
+            THERMAL_HILOGI(COMP_SVC, "InitSensorTypeMap id=%{public}u sensorType=%{public}s", i, typeList[i].c_str());
             sensorType[i] = typeList[i];
         }
     }
