@@ -19,7 +19,7 @@
 namespace OHOS {
 namespace PowerMgr {
 std::map<ThermalErrors, std::string> NapiErrors::errorTable_ = {
-    {ThermalErrors::ERR_CONNECTION_FAIL,   "Connecting to the service failed."},
+    {ThermalErrors::ERR_CONNECTION_FAIL,   "Failed to connect to the service."},
     {ThermalErrors::ERR_PERMISSION_DENIED, "Permission is denied"             },
     {ThermalErrors::ERR_PARAM_INVALID,     "Invalid input parameter."         }
 };
