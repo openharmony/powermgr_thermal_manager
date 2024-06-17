@@ -47,7 +47,7 @@ bool ThermalSrvConfigParser::ThermalSrvConfigInit(const std::string& path)
 
 bool ThermalSrvConfigParser::DecryptConfig(const std::string& path, std::string& result)
 {
-    if (path.compare(0, SYSTEM_PREFIX_INDEX, SYSTEM_PREFIX)) {
+    if (path.compare(0, SYSTEM_PREFIX_INDEX, SYSTEM_PREFIX) == 0) {
         return false;
     }
     THERMAL_HILOGI(COMP_SVC, "start DecryptConfig");
