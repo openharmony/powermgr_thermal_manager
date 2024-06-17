@@ -30,7 +30,7 @@ const std::string TRUE_STR = "1";
 constexpr const char* GET_THERMAL_EXT_CONGIH_FUNC = "GetThermalExtConfig";
 constexpr const char* THERMAL_CONFIG_LIBRARY_PATH = "/system/lib64/libthermal_manager_ext.z.so";
 const std::string SYSTEM_PREFIX = "/system";
-constexpr int32_t SYSTEM_PREFIX_INDEX = 6;
+constexpr int32_t SYSTEM_PREFIX_INDEX = 7;
 constexpr int32_t THERMAL_SERVICE_CONFIG_INDEX = 2;
 typedef int32_t(*Func)(int32_t, std::string&);
 }
