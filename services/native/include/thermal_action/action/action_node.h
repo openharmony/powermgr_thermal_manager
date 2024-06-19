@@ -34,9 +34,9 @@ public:
     void Execute() override;
 
 private:
-    std::string lastValue_;
+    int32_t lastValue_ {INT_MAX};
+    int32_t fallbackValue_ {0};
     std::string nodePath_;
-    std::string fallbackValue_ = "0";
     std::vector<std::string> valueList_;
 };
 } // namespace PowerMgr
