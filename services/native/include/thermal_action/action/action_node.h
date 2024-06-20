@@ -37,7 +37,7 @@ private:
     int32_t lastValue_ {INT_MAX};
     int32_t fallbackValue_ {0};
     std::string nodePath_;
-    std::vector<std::string> valueList_;
+    std::vector<int32_t> valueList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
