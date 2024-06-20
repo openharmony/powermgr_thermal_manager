@@ -61,7 +61,7 @@ void ActionNode::AddActionValue(std::string value)
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(value);
+    valueList_.push_back(atoi(value.c_str()));
 }
 
 void ActionNode::Execute()
