@@ -66,7 +66,7 @@ void ActionNode::AddActionValue(std::string value)
 
 void ActionNode::Execute()
 {
-    std::string value = fallbackValue_;
+    int32_t value = fallbackValue_;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
