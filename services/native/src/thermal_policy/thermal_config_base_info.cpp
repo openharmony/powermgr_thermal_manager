@@ -49,8 +49,9 @@ void ThermalConfigBaseInfo::Dump()
 {
     THERMAL_HILOGD(COMP_SVC, "type: %{public}s, count: %{public}d.",
         sensorType_.c_str(), historyTempCount_);
+    uint32_t id = 0;
     for (auto type : sensorsType_) {
-        THERMAL_HILOGI(COMP_SVC, "sensorType = %{public}s", type.c_str());
+        THERMAL_HILOGI(COMP_SVC, "Dump: id=%{public}u, sensorType = %{public}s", id++, type.c_str());
     }
 }
 } // namespace PowerMgr
