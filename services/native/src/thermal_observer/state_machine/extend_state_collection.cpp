@@ -52,9 +52,13 @@ void ExtendStateCollection::SetState(const std::string& stateValue)
 
 bool ExtendStateCollection::DecideState(const std::string& value)
 {
-    if (stateValue_ == value) {
-        THERMAL_HILOGD(COMP_SVC, "stateValue = %{public}s", stateValue_.c_str());
-        return true;
+    std::vector<std::string> valList;
+    StringOperation::SplitString(value, valList, ",");
+    for (std::string val : valList) {
+        if (stateValue_ == val) {
+            THERMAL_HILOGD(COMP_SVC, "stateValue = %{public}s", stateValue_.c_str());
+            return true;
+        }
     }
     return false;
 }
