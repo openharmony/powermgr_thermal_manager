@@ -289,7 +289,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
   */
 HWTEST_F(ThermalActionTest, ThermalActionTest013, TestSize.Level0)
 {
-    std::string input = "1.0";
+    std::string input = "1";
     g_actionNode->InitParams("/data/service/el0/thermal/config/lcd");
     g_actionNode->AddActionValue(input);
     g_actionNode->Execute();
