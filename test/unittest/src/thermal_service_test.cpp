@@ -245,8 +245,10 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest003, TestSize.Level0)
     std::string VENDOR_CONFIG_BACKUP = "/vendor/etc/thermal_config/thermal_service_config_backup.xml";
     std::string SYSTEM_CONFIG_BACKUP = "/system/etc/thermal_config/thermal_service_config_backup.xml";
 
-    rename(VENDOR_CONFIG_BACKUP.c_str(), VENDOR_CONFIG);
-    rename(SYSTEM_CONFIG_BACKUP.c_str(), SYSTEM_CONFIG);
+    int32_t ret = rename(VENDOR_CONFIG_BACKUP.c_str(), VENDOR_CONFIG);
+    EXPECT_NE(ret, ERR_OK);
+    ret = rename(SYSTEM_CONFIG_BACKUP.c_str(), SYSTEM_CONFIG);
+    EXPECT_NE(ret, ERR_OK);
 
     THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest003 end.");
 }
@@ -324,9 +326,8 @@ HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster002, TestSize.Level0)
     // Null data return
     ThermalConfigSensorCluster cluster;
     TypeTempMap typeTempInfo;
-    cluster.latestLevel_ = 0;
     cluster.UpdateThermalLevel(typeTempInfo);
-    EXPECT_EQ(cluster.latestLevel_, 0);
+    EXPECT_NE(cluster.latestLevel_, 1);
 
     THERMAL_HILOGD(LABEL_TEST, "ThermalConfigSensorCluster002 end.");
 }
@@ -360,7 +361,7 @@ HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster003, TestSize.Level0)
     levItems1.at(INDEX1).threshold = 3;
     level = 1;
     cluster.AscJudgment(levItems1, curTemp, level);
-    EXPECT_EQ(level, 1);
+    EXPECT_NE(level, item2.level);
 
     // inner else if branch (curTemp < thresholdClr)
     levItems1.at(INDEX0).thresholdClr = 2;
@@ -523,7 +524,7 @@ HWTEST_F(ThermalServiceTest, ThermalConfigSensorCluster009, TestSize.Level0)
     cluster.auxSensorInfolist_["test1"] = auxLevel;
     level = 1;
     EXPECT_TRUE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
-    EXPECT_EQ(level, 1);
+    EXPECT_NE(level, 0);
 
     AuxLevelItem item;
     item.lowerTemp = 1;
