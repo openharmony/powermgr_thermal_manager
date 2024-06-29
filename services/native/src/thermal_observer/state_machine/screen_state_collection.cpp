@@ -93,8 +93,8 @@ void ScreenStateCollection::SetState(const std::string& stateValue)
 bool ScreenStateCollection::DecideState(const std::string& value)
 {
     auto& powerMgrClient = PowerMgrClient::GetInstance();
-    if ((value == ToString(SCREEN_ON) && powerMgrClient.IsScreenOn()) ||
-        (value == ToString(SCREEN_OFF) && !powerMgrClient.IsScreenOn())) {
+    if ((value == ToString(SCREEN_ON) && powerMgrClient.IsScreenOn(false)) ||
+        (value == ToString(SCREEN_OFF) && !powerMgrClient.IsScreenOn(false))) {
         return true;
     }
     return false;
