@@ -40,15 +40,15 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest001, TestSize.Level0)
     char* buf = nullptr;
     EXPECT_EQ(true, FileOperation::CreateNodeDir(dir) != ERR_OK);
     EXPECT_EQ(true, FileOperation::CreateNodeFile(dir) != ERR_OK);
-    dir = "/thermaltest/";
+    dir = "/data/thermaltest/";
     EXPECT_EQ(true, FileOperation::CreateNodeDir(dir) == ERR_OK);
-    dir = "/thermaltest/thermaltest.txt";
+    dir = "/data/thermaltest/thermaltest.txt";
     EXPECT_EQ(true, FileOperation::CreateNodeFile(dir) == ERR_OK);
     size_t size = 1;
     EXPECT_EQ(true, FileOperation::WriteFile(dir, dir, size) == ERR_OK);
     dir = "";
     EXPECT_EQ(true, FileOperation::ReadFile(dir.c_str(), buf, size) != ERR_OK);
-    dir = "/thermaltest/thermaltest.txt";
+    dir = "/data/thermaltest/thermaltest.txt";
     EXPECT_EQ(false, FileOperation::ReadFile(dir.c_str(), buf, size) == ERR_OK);
     dir = "";
     EXPECT_EQ(true, FileOperation::WriteFile(dir, dir, size) != ERR_OK);
