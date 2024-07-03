@@ -518,7 +518,7 @@ void ThermalService::RegisterThermalHdiCallback()
 
     sptr<IThermalCallback> callback = new ThermalCallback();
     ThermalCallback::ThermalEventCallback eventCb =
-        std::bind(&ThermalService::HandleThermalCallbackEvent, this, std::placeholders::_1);
+        [this](const HdfThermalCallbackInfo& event) -> int32_t { return this->HandleThermalCallbackEvent(event); };
     ThermalCallback::RegisterThermalEvent(eventCb);
     int32_t ret = thermalInterface_->Register(callback);
     THERMAL_HILOGI(COMP_SVC, "register thermal hdi callback end, ret: %{public}d", ret);
@@ -579,7 +579,7 @@ void ThermalService::RegisterFanHdiCallback()
 
     sptr<IFanCallback> callback = new FanCallback();
     FanCallback::FanEventCallback eventCb =
-        std::bind(&ThermalService::HandleFanCallbackEvent, this, std::placeholders::_1);
+        [this](const HdfThermalCallbackInfo& event) -> int32_t { return this->HandleFanCallbackEvent(event); };
     FanCallback::RegisterFanEvent(eventCb);
     int32_t ret = thermalInterface_->RegisterFanCallback(callback);
     THERMAL_HILOGI(COMP_SVC, "register fan hdi callback end, ret: %{public}d", ret);
