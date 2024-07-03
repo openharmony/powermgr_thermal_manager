@@ -151,7 +151,7 @@ void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const 
         return;
     }
     sptr<IThermalLevelCallback> callback = iface_cast<IThermalLevelCallback>(remote.promote());
-    FFRTTask task = std::bind(&ThermalService::UnSubscribeThermalLevelCallback, tms, callback);
+    FFRTTask task = [tms, callback] { tms->UnSubscribeThermalLevelCallback(callback); };
     FFRTUtils::SubmitTask(task);
 }
 

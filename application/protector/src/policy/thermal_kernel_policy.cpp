@@ -103,8 +103,8 @@ void ThermalKernelPolicy::ActionExecution()
 
 void ThermalKernelPolicy::SetCallback()
 {
-    ThermalProtectorTimer::NotifyTask task = std::bind(&ThermalKernelPolicy::OnReceivedSensorsInfo,
-        this, std::placeholders::_1);
+    ThermalProtectorTimer::NotifyTask task =
+        [this](SensorsMap tempSensorsMap) { this->OnReceivedSensorsInfo(tempSensorsMap); };
     g_service.GetTimer()->RegisterTask(task);
 }
 
