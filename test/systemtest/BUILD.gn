@@ -28,7 +28,6 @@ config("module_private_config") {
 }
 
 deps_ex = [
-  "appspawn:appspawn_socket_client",
   "ability_base:base",
   "ability_base:want",
   "access_token:libaccesstoken_sdk",
