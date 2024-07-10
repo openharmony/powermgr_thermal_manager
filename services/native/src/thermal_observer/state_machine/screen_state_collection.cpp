@@ -67,9 +67,9 @@ bool ScreenStateCollection::RegisterEvent()
     if (receiver == nullptr) {
         return false;
     }
-    EventHandle handlerOn = std::bind(&ScreenStateCollection::HandleScreenOnCompleted, this, std::placeholders::_1);
+    EventHandle handlerOn = [this](const CommonEventData& data) { this->HandleScreenOnCompleted(data); };
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON, handlerOn);
-    EventHandle handlerOff = std::bind(&ScreenStateCollection::HandleScreenOffCompleted, this, std::placeholders::_1);
+    EventHandle handlerOff = [this](const CommonEventData& data) { this->HandleScreenOffCompleted(data); };
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_OFF, handlerOff);
     return true;
 }

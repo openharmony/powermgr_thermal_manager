@@ -81,14 +81,14 @@ bool ChargerStateCollection::RegisterEvent()
 
 #ifdef BATTERY_MANAGER_ENABLE
     EventHandle batteryChangedHandler =
-        std::bind(&ChargerStateCollection::HandleChangerStatusCompleted, this, std::placeholders::_1);
+        [this](const CommonEventData& data) { this->HandleChangerStatusCompleted(data); };
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED, batteryChangedHandler);
     EventHandle batteryChangedInnerHandler =
-        std::bind(&ChargerStateCollection::HandleChangerInnerStatusCompleted, this, std::placeholders::_1);
+        [this](const CommonEventData& data) { this->HandleChangerInnerStatusCompleted(data); };
     receiver->AddEvent(BatteryInfo::COMMON_EVENT_BATTERY_CHANGED_INNER, batteryChangedInnerHandler);
 #endif
     EventHandle thermalLevelHandler =
-        std::bind(&ChargerStateCollection::HandleThermalLevelCompleted, this, std::placeholders::_1);
+        [this](const CommonEventData& data) { this->HandleThermalLevelCompleted(data); };
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED, thermalLevelHandler);
     return true;
 }
