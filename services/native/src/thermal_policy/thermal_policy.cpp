@@ -84,7 +84,7 @@ void ThermalPolicy::SortLevel()
 
 void ThermalPolicy::RegisterObserver()
 {
-    ThermalObserver::Callback callback = std::bind(&ThermalPolicy::OnSensorInfoReported, this, std::placeholders::_1);
+    ThermalObserver::Callback callback = [this](const TypeTempMap& info) { this->OnSensorInfoReported(info); };
     auto tms = ThermalService::GetInstance();
     tms->GetObserver()->SetRegisterCallback(callback);
 }

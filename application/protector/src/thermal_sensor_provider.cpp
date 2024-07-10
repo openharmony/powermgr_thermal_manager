@@ -215,7 +215,7 @@ int32_t ThermalSensorProvider::LoopingThreadEntry(void *arg, int32_t epfd)
 
 void ThermalSensorProvider::Run(void *service, int32_t epfd)
 {
-    std::make_unique<std::thread>(&ThermalSensorProvider::LoopingThreadEntry, this, service, epfd)->join();
+    std::make_unique<std::thread>([this, service, epfd] { this->LoopingThreadEntry(service, epfd); })->join();
 }
 
 void ThermalSensorProvider::StartThread(void *service)

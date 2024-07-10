@@ -163,7 +163,7 @@ int32_t ThermalProtectorTimer::LoopingThreadEntry(void *arg, int32_t epfd)
 
 void ThermalProtectorTimer::Run(void *service, int32_t epfd)
 {
-    std::make_unique<std::thread>(&ThermalProtectorTimer::LoopingThreadEntry, this, service, epfd)->join();
+    std::make_unique<std::thread>([this, service, epfd] { this->LoopingThreadEntry(service, epfd); })->join();
 }
 
 void ThermalProtectorTimer::StartThread(void *service)

@@ -317,7 +317,7 @@ void ThermalObserver::SensorTempCallbackDeathRecipient::OnRemoteDied(const wptr<
         return;
     }
     sptr<IThermalTempCallback> callback = iface_cast<IThermalTempCallback>(remote.promote());
-    FFRTTask task = std::bind(&ThermalService::UnSubscribeThermalTempCallback, pms, callback);
+    FFRTTask task = [pms, callback] { pms->UnSubscribeThermalTempCallback(callback); };
     FFRTUtils::SubmitTask(task);
 }
 
@@ -332,7 +332,7 @@ void ThermalObserver::ActionCallbackDeathRecipient::OnRemoteDied(const wptr<IRem
         return;
     }
     sptr<IThermalActionCallback> callback = iface_cast<IThermalActionCallback>(remote.promote());
-    FFRTTask task = std::bind(&ThermalService::UnSubscribeThermalActionCallback, pms, callback);
+    FFRTTask task = [pms, callback] { pms->UnSubscribeThermalActionCallback(callback); };
     FFRTUtils::SubmitTask(task);
 }
 } // namespace PowerMgr
