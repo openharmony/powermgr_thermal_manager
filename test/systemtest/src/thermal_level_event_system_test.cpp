@@ -46,6 +46,8 @@ using namespace std;
 using namespace OHOS::AAFwk;
 using namespace OHOS::EventFwk;
 using namespace OHOS::HDI::Thermal::V1_1;
+using namespace Security::AccessToken;
+using Security::AccessToken::AccessTokenID;
 
 namespace {
 std::condition_variable g_callbackCV;
@@ -55,6 +57,21 @@ bool g_callbackTriggered = false;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
 sptr<ThermalService> g_service = nullptr;
 } // namespace
+
+const char *g_perms[] = { "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT" };
+uint64_t g_token;
+AccessTokenID ThermalLevelEventSystemTest::tokenID_ = 0;
+
+NativeTokenInfoParams infoInstance = {
+    .dcapsNum = 0,
+    .permsNum = 1,
+    .aclsNum = 0,
+    .dcaps = nullptr,
+    .perms = g_perms,
+    .acls = nullptr,
+    .processName = "ThermalLevelEventSystemTest",
+    .aplStr = "system_basic",
+};
 
 static void Notify()
 {
@@ -323,11 +340,18 @@ void ThermalLevelEventSystemTest::SetUpTestCase()
     g_service->InitSystemTestModules();
     g_service->OnStart();
     g_service->InitStateMachine();
+    g_token = GetSelfTokenID();
+    tokenID_ = GetAccessTokenId(&infoInstance);
+    ASSERT_NE(0, tokenID_);
+    ASSERT_EQ(0, SetSelfTokenID(tokenID_));
+    AccessTokenKit::ReloadNativeTokenInfo();
 }
 
 void ThermalLevelEventSystemTest::TearDownTestCase()
 {
     g_service->OnStop();
+    AccessTokenKit::DeleteToken(tokenID_);
+    SetSelfTokenID(g_token);
 }
 
 void ThermalLevelEventSystemTest::TearDown()
