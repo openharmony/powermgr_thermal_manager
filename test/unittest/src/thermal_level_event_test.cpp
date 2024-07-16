@@ -43,7 +43,11 @@ using namespace std;
 using namespace OHOS::AAFwk;
 using namespace OHOS::EventFwk;
 using namespace OHOS::HDI::Thermal::V1_1;
+using namespace Security::AccessToken;
+using Security::AccessToken::AccessTokenID;
 
+AccessTokenID ThermalLevelEventTest::tokenID_ = 0;
+static constexpr int32_t DEFAULT_API_VERSION = 8;
 namespace {
 std::condition_variable g_callbackCV;
 std::mutex g_mutex;
@@ -53,6 +57,32 @@ int32_t g_thermalLevel = -1;
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
 sptr<ThermalService> g_service = nullptr;
 ThermalConfigFileParser g_parser;
+
+uint64_t g_token;
+
+PermissionStateFull g_infoManagerTestState = {
+    .grantFlags = {1},
+    .grantStatus = {PermissionState::PERMISSION_GRANTED},
+    .isGeneral = true,
+    .permissionName = "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT",
+    .resDeviceID = {"local"}
+};
+
+HapPolicyParams g_infoManagerTestPolicyPrams = {
+    .apl = APL_NORMAL,
+    .domain = "test.domain.ThermalLevelEventTest",
+    .permList = {},
+    .permStateList = {g_infoManagerTestState}
+};
+
+HapInfoParams g_infoManagerTestInfoParms = {
+    .bundleName = "com.ohos.thermal_level_event_test",
+    .userID = 100,
+    .instIndex = 0,
+    .appIDDesc = "ThermalLevelEventTest",
+    .apiVersion = DEFAULT_API_VERSION,
+    .isSystemApp = true
+};
 
 void Notify()
 {
@@ -129,6 +159,12 @@ void ThermalLevelEventTest::TearDown()
 
 void ThermalLevelEventTest::SetUpTestCase()
 {
+    AccessTokenIDEx tokenIdEx = {0};
+    tokenIdEx = AccessTokenKit::AllocHapToken(g_infoManagerTestInfoParms, g_infoManagerTestPolicyPrams);
+    tokenID_ = tokenIdEx.tokenIdExStruct.tokenID;
+    ASSERT_NE(0, tokenID_);
+    g_token = GetSelfTokenID();
+    ASSERT_EQ(0, SetSelfTokenID(tokenID_));
     g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
     g_service->OnStart();
@@ -138,6 +174,8 @@ void ThermalLevelEventTest::SetUpTestCase()
 void ThermalLevelEventTest::TearDownTestCase()
 {
     g_service->OnStop();
+    AccessTokenKit::DeleteToken(tokenID_);
+    SetSelfTokenID(g_token);
 }
 
 namespace {
