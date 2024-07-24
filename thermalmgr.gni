@@ -14,6 +14,13 @@
 import("//build/ohos.gni")
 
 if (!defined(global_parts_info) ||
+    defined(global_parts_info.communication_netmanager_base)) {
+  has_thermal_airplane_manager_part = true
+} else {
+  has_thermal_airplane_manager_part = false
+}
+
+if (!defined(global_parts_info) ||
     defined(global_parts_info.multimedia_audio_framework)) {
   has_thermal_audio_framework_part = false
 } else {
@@ -32,6 +39,9 @@ ability_runtime_path = "//foundation/ability/ability_runtime"
 ability_runtime_inner_api_path = "${ability_runtime_path}/interfaces/inner_api"
 ability_runtime_services_path = "${ability_runtime_path}/services"
 batterystats_utils_path = "//base/powermgr/battery_statistics/utils"
+netmanager_base_path = "//foundation/communication/netmanager_base"
+netmanager_base_inner_api_path = "${netmanager_base_path}/interfaces/innerkits"
+netmanager_base_services_path = "${netmanager_base_path}/services"
 thermalmgr_native_part_name = "thermal_manager"
 thermal_manager_path = "//base/powermgr/thermal_manager"
 thermal_inner_api = "${thermal_manager_path}/interfaces/inner_api"
