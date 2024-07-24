@@ -653,6 +653,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
     usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(AIRPLANE_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
@@ -694,6 +695,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
     usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(AIRPLANE_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
@@ -735,6 +737,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
     usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(AIRPLANE_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);
@@ -776,6 +779,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
     usleep(100000);
     std::string actualDumpInfo = statsClient.Dump(g_dumpArgs);
     GTEST_LOG_(INFO) << __func__ << ": actual dump info: " << actualDumpInfo;
+    ThermalActionReportTest::ThermalActionTriggered(AIRPLANE_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BIG_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_MED_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_LIT_ACTION_NAME, level, actualDumpInfo);

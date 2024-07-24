@@ -22,6 +22,7 @@
 namespace OHOS {
 namespace PowerMgr {
 const uint32_t MAX_PATH = 256;
+const std::string AIRPLANE_PATH = "/data/service/el0/thermal/config/airplane";
 const std::string VOLUME_PATH = "/data/service/el0/thermal/config/volume";
 const std::string BATTERY_PATH = "/data/service/el0/thermal/sensor/battery/temp";
 const std::string SHELL_PATH = "/data/service/el0/thermal/sensor/shell/temp";

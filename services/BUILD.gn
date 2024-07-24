@@ -36,6 +36,7 @@ ohos_shared_library("thermalservice") {
 
   sources = [
     "native/src/fan_callback.cpp",
+    "native/src/thermal_action/action/action_airplane.cpp",
     "native/src/thermal_action/action/action_application_process.cpp",
     "native/src/thermal_action/action/action_charger.cpp",
     "native/src/thermal_action/action/action_display.cpp",
@@ -124,6 +125,11 @@ ohos_shared_library("thermalservice") {
   ]
 
   public_external_deps = [ "ability_base:want" ]
+
+  if (has_thermal_airplane_manager_part) {
+    defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
+    external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
 
   if (has_thermal_audio_framework_part) {
     defines += [ "HAS_THERMAL_AUDIO_FRAMEWORK_PART" ]
