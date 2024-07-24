@@ -15,6 +15,7 @@
 
 #include "thermal_action_factory.h"
 
+#include "action_airplane.h"
 #include "action_application_process.h"
 #include "action_charger.h"
 #include "action_cpu_big.h"
@@ -42,6 +43,8 @@ std::map<std::string, ActionFunc> g_actionMap;
 void ThermalActionFactory::InitFactory()
 {
     g_actionMap = {
+        std::make_pair(AIRPLANE_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionAirplane>(actionName); }),
         std::make_pair(CPU_BIG_ACTION_NAME,
             [&](std::string actionName) { return std::make_shared<ActionCpuBig>(actionName); }),
         std::make_pair(CPU_MED_ACTION_NAME,
