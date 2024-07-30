@@ -21,7 +21,6 @@
 
 #include "constants.h"
 #include "file_operation.h"
-#include "sa_mgr_client.h"
 #include "system_ability_definition.h"
 #include "if_system_ability_manager.h"
 #include "iremote_object.h"

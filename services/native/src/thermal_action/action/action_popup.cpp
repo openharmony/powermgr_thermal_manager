@@ -17,7 +17,7 @@
 
 #include <map>
 #include <ipc_skeleton.h>
-#include "ability_manager_client.h"
+#include <dlfcn.h>
 #include "constants.h"
 #include "thermal_common.h"
 #include "thermal_hisysevent.h"
@@ -107,8 +107,18 @@ void ActionPopup::HandlePopupEvent(const int32_t value)
 
 bool ActionPopup::ShowThermalDialog(TempStatus value)
 {
-    auto client = AbilityManagerClient::GetInstance();
-    if (client == nullptr) {
+    void *handler = dlopen("libpower_ability.z.so", RTLD_NOW);
+    if (handler == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "dlopen libpower_ability.z.so failed, reason : %{public}s", dlerror());
+        return false;
+    }
+    auto PowerStartAbility = reinterpret_cast<void (*)(const Want&)>(dlsym(handler, "PowerStartAbility"));
+    if (PowerStartAbility == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "find PowerStartAbility function failed, reason : %{public}s", dlerror());
+#ifndef FUZZ_TEST
+        dlclose(handler);
+#endif
+        handler = nullptr;
         return false;
     }
     AAFwk::Want want;
@@ -117,11 +127,11 @@ bool ActionPopup::ShowThermalDialog(TempStatus value)
     } else {
         want.SetElementName("com.ohos.powerdialog", "ThermalServiceExtAbility_high");
     }
-    int32_t result = client->StartAbility(want);
-    if (result != 0) {
-        THERMAL_HILOGE(COMP_SVC, "ShowThermalDialog failed, result = %{public}d", result);
-        return false;
-    }
+    PowerStartAbility(want);
+#ifndef FUZZ_TEST
+    dlclose(handler);
+#endif
+    handler = nullptr;
     THERMAL_HILOGD(COMP_SVC, "ShowThermalDialog success");
     return true;
 }

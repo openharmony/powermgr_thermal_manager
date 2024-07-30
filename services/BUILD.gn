@@ -97,7 +97,6 @@ ohos_shared_library("thermalservice") {
   external_deps = [ "power_manager:power_permission" ]
   external_deps += [
     "ability_base:want",
-    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_core",
@@ -121,7 +120,6 @@ ohos_shared_library("thermalservice") {
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
     "time_service:time_client",
-    "window_manager:libdm",
   ]
 
   if (has_thermal_audio_framework_part) {
