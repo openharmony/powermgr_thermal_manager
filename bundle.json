@@ -48,6 +48,7 @@
         "libxml2",
         "image_framework",
         "napi",
+        "netmanager_base",
         "power_manager",
         "safwk",
         "samgr",
