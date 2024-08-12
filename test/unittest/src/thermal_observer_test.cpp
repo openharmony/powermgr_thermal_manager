@@ -104,8 +104,8 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
     observer->SubscribeThermalActionCallback(typeList, "desc", actionCb);
     actionCb = new ThermalActionTestCallback();
     observer->SubscribeThermalActionCallback(typeList, "desc", actionCb);
-    observer->UnSubscribeThermalActionCallback(actionCb);
     observer->FindSubscribeActionValue();
+    observer->UnSubscribeThermalActionCallback(actionCb);
     IThermalActionCallback::ActionCallbackMap actionCbMap;
     observer->DecisionActionValue(typeList, actionCbMap);
     typeList.push_back("cpu_big");
