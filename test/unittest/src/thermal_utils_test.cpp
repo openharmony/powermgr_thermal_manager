@@ -72,6 +72,10 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest002, TestSize.Level0)
     StringOperation::SplitString(str, ret, sep);
     StringOperation::ClearAllSpace(str);
     str = "str";
+    uint32_t val = 1;
+    double value = 2;
+    StringOperation::StrToUint("", val);
+    StringOperation::StrToDouble("", value);
     StringOperation::ClearAllSpace(str);
     EXPECT_EQ(false, StringOperation::Compare(str, sep));
     sep = "str";

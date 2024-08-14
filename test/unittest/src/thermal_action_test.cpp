@@ -40,6 +40,7 @@
 #include "iremote_object.h"
 #include "mock_thermal_remote_object.h"
 #include "thermal_service.h"
+#include "thermal_timer.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -96,6 +97,9 @@ HWTEST_F(ThermalActionTest, ThermalActionTest001, TestSize.Level0)
     g_actionVolume->AddActionValue("");
     g_actionVolume->AddActionValue("1.0");
     g_actionVolume->Execute();
+    g_actionVolume->SetStrict(true);
+    g_actionVolume->AddActionValue("2.0");
+    g_actionVolume->GetActionValue();
     g_actionVolume->VolumeRequest(1.0);
     int32_t ret = g_actionVolume->VolumeExecution(1.0);
     EXPECT_TRUE(ret == ERR_OK);
@@ -111,6 +115,9 @@ HWTEST_F(ThermalActionTest, ThermalActionTest002, TestSize.Level0)
     g_actionVoltage->AddActionValue("");
     g_actionVoltage->AddActionValue("1.0");
     g_actionVoltage->Execute();
+    g_actionVoltage->SetStrict(true);
+    g_actionVoltage->AddActionValue("2.0");
+    g_actionVoltage->GetActionValue();
     g_actionVoltage->SetVoltage(123456);
     g_actionVoltage->ExecuteVoltageLimit();
     int32_t ret = g_actionVoltage->WriteMockNode(123456);
@@ -129,6 +136,11 @@ HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
     g_actionThermalLevel->Execute();
     g_actionThermalLevel->GetThermalLevel();
     g_actionThermalLevel->LevelRequest(1);
+    g_actionThermalLevel->LevelRequest(9);
+    g_actionThermalLevel->LevelRequest(-1);
+    g_actionThermalLevel->SetStrict(true);
+    g_actionThermalLevel->AddActionValue("2.0");
+    g_actionThermalLevel->GetActionValue();
     g_actionThermalLevel->SubscribeThermalLevelCallback(nullptr);
     g_actionThermalLevel->UnSubscribeThermalLevelCallback(nullptr);
     std::shared_ptr<IRemoteObject::DeathRecipient> deathRecipient =
@@ -154,8 +166,12 @@ HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
 {
+    g_actionShutdown->AddActionValue("");
     g_actionShutdown->AddActionValue("1.0");
     g_actionShutdown->Execute();
+    g_actionShutdown->SetStrict(true);
+    g_actionShutdown->AddActionValue("2.0");
+    g_actionShutdown->GetActionValue();
     int32_t ret = g_actionShutdown->ShutdownRequest(false);
     EXPECT_TRUE(ret == ERR_OK);
     g_actionShutdown->ShutdownExecution(false);
@@ -175,7 +191,10 @@ HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
     g_actionDisplay->AddActionValue("");
     g_actionDisplay->AddActionValue("1.0");
     g_actionDisplay->Execute();
-    EXPECT_TRUE(g_actionDisplay->valueList_.empty());
+    g_actionDisplay->SetStrict(true);
+    g_actionDisplay->AddActionValue("2.0");
+    g_actionDisplay->GetActionValue();
+    EXPECT_FALSE(g_actionDisplay->valueList_.empty());
 }
 
 /**
@@ -202,6 +221,7 @@ HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
 {
     g_actionApplicationProcess->InitParams("");
+    g_actionApplicationProcess->AddActionValue("");
     g_actionApplicationProcess->AddActionValue("1");
     g_actionApplicationProcess->Execute();
     g_actionApplicationProcess->KillApplicationAction("");
@@ -211,6 +231,9 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
     g_actionApplicationProcess->KillBgAppProcess();
     g_actionApplicationProcess->KillAllAppProcess();
     g_actionApplicationProcess->ProcessAppActionRequest(0);
+    g_actionApplicationProcess->ProcessAppActionRequest(1);
+    g_actionApplicationProcess->ProcessAppActionRequest(2);
+    g_actionApplicationProcess->ProcessAppActionRequest(3);
     g_actionApplicationProcess->ProcessAppActionExecution(0);
     EXPECT_TRUE(g_actionApplicationProcess->valueList_.empty());
 }
@@ -281,7 +304,10 @@ HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
     g_actionCpuIsolate->AddActionValue("");
     g_actionCpuIsolate->AddActionValue("1.0");
     g_actionCpuIsolate->Execute();
-    EXPECT_TRUE(g_actionCpuIsolate->valueList_.empty());
+    g_actionCpuIsolate->SetStrict(true);
+    g_actionCpuIsolate->AddActionValue("2.0");
+    g_actionCpuIsolate->GetActionValue();
+    EXPECT_FALSE(g_actionCpuIsolate->valueList_.empty());
 }
 
 /**
@@ -309,15 +335,64 @@ HWTEST_F(ThermalActionTest, ThermalActionTest013, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest014, TestSize.Level0)
 {
     g_actionAirplane->InitParams("airplane");
+    g_actionAirplane->AddActionValue("");
     g_actionAirplane->AddActionValue("0");
+    g_actionAirplane->AddActionValue("air");
     g_actionAirplane->Execute();
     EXPECT_TRUE(g_actionAirplane->valueList_.empty());
     std::string input = "1";
     g_actionAirplane->AddActionValue(input);
+    g_actionCpuIsolate->SetStrict(true);
     uint32_t value = g_actionAirplane->GetActionValue();
-    int32_t r = g_actionAirplane->AirplaneRequest(value);
-    EXPECT_TRUE(r == ERR_OK);
-    r = g_actionAirplane->AirplaneExecution(value);
-    EXPECT_TRUE(r == ERR_OK);
+    int32_t ret = g_actionAirplane->AirplaneRequest(value);
+    g_actionAirplane->AirplaneRequest(0);
+    g_actionAirplane->AirplaneRequest(1);
+    EXPECT_TRUE(ret == ERR_OK);
+    ret = g_actionAirplane->AirplaneExecution(value);
+    EXPECT_TRUE(ret == ERR_OK);
+}
+
+/**
+ * @tc.name: ThermalActionTest015
+ * @tc.desc: Action Timer Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionTest, ThermalActionTest015, TestSize.Level0)
+{
+    auto timerInfo = std::make_shared<ThermalTimerInfo>();
+    ASSERT_NE(timerInfo, nullptr);
+    OHOS::PowerMgr::ThermalTimerInfo::TimerInfoCallback callback;
+    timerInfo->SetCallbackInfo(callback);
+    timerInfo->OnTrigger();
+    auto timer = std::make_shared<ThermalTimer>();
+    ASSERT_NE(timer, nullptr);
+    uint64_t triggerTime = 1;
+    std::shared_ptr<ThermalTimerInfo> info;
+    uint64_t timerId = timer->CreateTimer(info);
+    EXPECT_EQ(timerId, 0);
+    timer->StartTimer(timerId, triggerTime);
+    timer->DestroyTimer(timerId);
+    timer->StopTimer(timerId);
+    auto timerUtils = std::make_shared<ThermalTimerUtils>();
+    ASSERT_NE(timerUtils, nullptr);
+    timerUtils->Stop();
+    int delay = 1;
+    OHOS::PowerMgr::ThermalTimerUtils::NotifyTask task;
+    timerUtils->Start(delay, task);
+    timerUtils->Start(delay, task);
+    timerUtils->Stop();
+    timerUtils->Stop();
+}
+
+/**
+ * @tc.name: ThermalActionTest016
+ * @tc.desc: Action Popup Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionTest, ThermalActionTest016, TestSize.Level0)
+{
+    g_actionPopup->AddActionValue("pop");
+    g_actionPopup->Execute();
+    EXPECT_TRUE(g_actionPopup->valueList_.empty());
 }
 } // namespace
