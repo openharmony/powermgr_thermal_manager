@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 
 #include "mock_thermal_remote_object.h"
 #include "thermal_mgr_client.h"
+#include "thermal_log.h"
 
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
@@ -32,6 +33,7 @@ namespace {
  */
 HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_001, TestSize.Level0)
 {
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceDeathTest_001 start");
     auto& thermalClient = ThermalMgrClient::GetInstance();
     EXPECT_EQ(thermalClient.Connect(), ERR_OK);
 
@@ -41,6 +43,7 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_001, TestSize.Level0)
     EXPECT_NE(deathRecipient, nullptr);
     deathRecipient->OnRemoteDied(remoteObj);
     EXPECT_NE(thermalClient.thermalSrv_, nullptr);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceDeathTest_001 end");
 }
 
 /**
@@ -51,6 +54,7 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_001, TestSize.Level0)
  */
 HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_002, TestSize.Level0)
 {
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceDeathTest_002 start");
     auto& thermalClient = ThermalMgrClient::GetInstance();
     EXPECT_EQ(thermalClient.Connect(), ERR_OK);
 
@@ -61,5 +65,6 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_002, TestSize.Level0)
     EXPECT_FALSE(sptrRemoteObj == nullptr);
     deathRecipient->OnRemoteDied(sptrRemoteObj);
     EXPECT_NE(thermalClient.thermalSrv_, nullptr);
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceDeathTest_002 end");
 }
 }
