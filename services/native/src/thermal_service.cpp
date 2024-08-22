@@ -43,7 +43,6 @@ namespace {
 const std::string THERMAL_SERVICE_CONFIG_PATH = "etc/thermal_config/thermal_service_config.xml";
 const std::string VENDOR_THERMAL_SERVICE_CONFIG_PATH = "/vendor/etc/thermal_config/thermal_service_config.xml";
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
-[[maybe_unused]] constexpr const char* THMERMAL_SERVICE_NAME = "ThermalService";
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 FFRTQueue g_queue("thermal_service");
 constexpr uint32_t RETRY_TIME = 1000;
