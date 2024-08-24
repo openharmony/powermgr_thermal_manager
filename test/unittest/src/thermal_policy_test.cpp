@@ -197,4 +197,23 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest005, TestSize.Level0)
     EXPECT_FALSE(policy.StateMachineDecision(stateMap));
     THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest005 end.");
 }
+
+/**
+ * @tc.name: ThermalPolicyTest006
+ * @tc.desc: test DecryptConfig
+ * @tc.type: FUNC
+ */
+HWTEST_F (ThermalPolicyTest, ThermalPolicyTest006, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest006: start");
+    string path = "test/path";
+    string result = "";
+    bool ret = g_service->GetConfigParser().DecryptConfig(path, result);
+    if (result.empty()) {
+        EXPECT_FALSE(ret);
+    } else {
+        EXPECT_TRUE(ret);
+    }
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest006: end");
+}
 } // namespace
