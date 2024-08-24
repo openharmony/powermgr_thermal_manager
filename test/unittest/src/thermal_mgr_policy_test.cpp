@@ -1735,4 +1735,23 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest072, Function|MediumTest|Lev
     EXPECT_TRUE(ret == "1") << "ThermalMgrPolicyTest072 failed";
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest072: end");
 }
+
+/**
+ * @tc.name: ThermalMgrPolicyTest073
+ * @tc.desc: test DecryptConfig
+ * @tc.type: FUNC
+ */
+HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest073, Function|MediumTest|Level2)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest073: start");
+    string path = "test";
+    string result = "";
+    bool ret = g_service->GetConfigParser().DecryptConfig(path, result);
+    if (result.empty()) {
+        EXPECT_FALSE(ret);
+    } else {
+        EXPECT_TRUE(ret);
+    }
+    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest073: end");
+}
 }
