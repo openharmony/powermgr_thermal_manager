@@ -28,6 +28,11 @@
 #include "screen_state_collection.h"
 #include "state_machine.h"
 
+#ifdef BATTERY_MANAGER_ENABLE
+#include "battery_info.h"
+#include "battery_srv_client.h"
+#endif
+
 using namespace testing::ext;
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
@@ -254,5 +259,45 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest009, TestSize.Level0)
     bool ret = stateMachine->Init();
     EXPECT_TRUE(ret);
     THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest009 end");
+}
+
+/**
+ * @tc.name: ThermalObserverTest010
+ * @tc.desc: Thermal Charger State Collection Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest010, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest010 start");
+#ifdef BATTERY_MANAGER_ENABLE
+    auto chargerState = std::make_shared<ChargerStateCollection>();
+    CommonEventData data;
+    Want want;
+    want.SetParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE,
+        static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_DISABLE));
+    data.SetWant(want);
+    chargerState->HandleChangerStatusCompleted(data);
+    want.SetParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE,
+        static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_ENABLE));
+    data.SetWant(want);
+    chargerState->HandleChangerStatusCompleted(data);
+    want.SetParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE,
+        static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_FULL));
+    data.SetWant(want);
+    chargerState->HandleChangerStatusCompleted(data);
+    want.SetParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE,
+        static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_NONE));
+    data.SetWant(want);
+    chargerState->HandleChangerStatusCompleted(data);
+    want.SetParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE,
+        static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_BUTT));
+    data.SetWant(want);
+    chargerState->HandleChangerStatusCompleted(data);
+    want.SetParam(BatteryInfo::COMMON_EVENT_KEY_CHARGE_STATE,
+        static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_BUTT));
+    data.SetWant(want);
+    chargerState->HandleChangerStatusCompleted(data);
+#endif
+    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest010 end");
 }
 } // namespace
