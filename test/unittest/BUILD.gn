@@ -522,7 +522,6 @@ ohos_unittest("ThermalClientTest") {
     "hdf_core:libhdi",
     "hdf_core:libpub_utils",
     "hilog:libhilog",
-    "hisysevent:libhisysevent",
     "ipc:ipc_core",
     "libxml2:libxml2",
     "power_manager:powermgr_client",
@@ -530,6 +529,11 @@ ohos_unittest("ThermalClientTest") {
     "samgr:samgr_proxy",
     "window_manager:libwm",
   ]
+
+  if (has_hiviewdfx_hisysevent_part) {
+    defines = [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
+    external_deps += [ "hisysevent:libhisysevent" ] 
+  }
 }
 
 # thermal mock stub test
@@ -757,10 +761,14 @@ ohos_unittest("FanFaultDetectTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
-    "hisysevent:libhisysevent",
-    "hisysevent:libhisyseventmanager",
-  ]
+  external_deps = []
+  if (has_hiviewdfx_hisysevent_part) {
+    defines += [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
+    external_deps = [
+      "hisysevent:libhisysevent",
+      "hisysevent:libhisyseventmanager",
+    ]
+  }
 
   external_deps += deps_ex
 }

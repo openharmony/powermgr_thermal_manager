@@ -18,15 +18,17 @@
 #include <atomic>
 #include <condition_variable>
 #include <mutex>
-
+#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 #include "hisysevent.h"
 #include "hisysevent_listener.h"
 #include "hisysevent_manager.h"
 #include "hisysevent_record.h"
 #include "thermal_log.h"
-
+#endif
 using namespace testing::ext;
+#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 using namespace OHOS::HiviewDFX;
+#endif
 using namespace OHOS::PowerMgr;
 
 namespace {
@@ -48,7 +50,7 @@ const int64_t TIME_OUT = 2;
 std::mutex g_mutex;
 std::condition_variable g_callbackCV;
 std::atomic_bool g_eventTriggered = false;
-
+#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 class Watcher : public HiSysEventListener {
 public:
     explicit Watcher(std::function<void(std::shared_ptr<HiSysEventRecord>)> func) : func_(func) {}
@@ -67,6 +69,7 @@ public:
 private:
     std::function<void(std::shared_ptr<HiSysEventRecord>)> func_;
 };
+#endif
 } // namespace
 
 void FanFaultDetectTest::SetUpTestCase() {}
@@ -101,7 +104,7 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
     std::shared_ptr<FanFaultDetect> fanFaultDetect = std::make_shared<FanFaultDetect>();
     EXPECT_NE(fanFaultDetect, nullptr);
     InitFanFaultInfoMap(fanFaultDetect);
-
+    #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
     auto watcher = std::make_shared<Watcher>([&faultId] (std::shared_ptr<HiSysEventRecord> sysEvent) {
         if (sysEvent == nullptr) {
             return;
@@ -116,16 +119,17 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
     sysRules.emplace_back(listenerRule);
     auto ret = OHOS::HiviewDFX::HiSysEventManager::AddListener(watcher, sysRules);
     EXPECT_TRUE(ret == SUCCESS);
-
+    #endif
     fanFaultDetect->OnFanSensorInfoChanged(report);
     std::unique_lock<std::mutex> lock(g_mutex);
     g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] {
         return g_eventTriggered.load();
     });
     g_eventTriggered = false;
-
+    #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
     ret = OHOS::HiviewDFX::HiSysEventManager::RemoveListener(watcher);
     EXPECT_TRUE(ret == SUCCESS);
+    #endif
 }
 
 namespace {

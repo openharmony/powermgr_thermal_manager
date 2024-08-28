@@ -110,7 +110,6 @@ ohos_shared_library("thermalservice") {
     "hdf_core:libpub_utils",
     "hicollie:libhicollie",
     "hilog:libhilog",
-    "hisysevent:libhisysevent",
     "image_framework:image_native",
     "init:libbegetutil",
     "ipc:ipc_core",
@@ -155,6 +154,11 @@ ohos_shared_library("thermalservice") {
     defines += [ "THERMAL_USER_VERSION" ]
   }
 
+  if (has_hiviewdfx_hisysevent_part) {
+    defines += [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
+    external_deps += [ "hisysevent:libhisysevent" ] 
+  }
+  
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }

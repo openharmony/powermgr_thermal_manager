@@ -44,10 +44,13 @@ ohos_source_set("thermal_utils") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "hisysevent:libhisysevent",
     "init:libbegetutil",
   ]
 
+  if (has_hiviewdfx_hisysevent_part) {
+    defines = [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
+    external_deps += [ "hisysevent:libhisysevent" ] 
+  }
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }
