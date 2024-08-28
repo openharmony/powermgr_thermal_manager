@@ -156,9 +156,9 @@ ohos_shared_library("thermalservice") {
 
   if (has_hiviewdfx_hisysevent_part) {
     defines += [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
-    external_deps += [ "hisysevent:libhisysevent" ] 
+    external_deps += [ "hisysevent:libhisysevent" ]
   }
-  
+
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }
