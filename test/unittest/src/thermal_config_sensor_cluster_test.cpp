@@ -303,8 +303,8 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest009, Test
     std::vector<AuxLevelItem> auxLevel;
     cluster.auxSensorInfolist_["test1"] = auxLevel;
     level = 1;
-    EXPECT_TRUE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
-    EXPECT_NE(level, 0);
+    EXPECT_FALSE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
+    EXPECT_EQ(level, 0);
 
     AuxLevelItem item;
     item.lowerTemp = 1;
