@@ -532,7 +532,7 @@ ohos_unittest("ThermalClientTest") {
 
   if (has_hiviewdfx_hisysevent_part) {
     defines = [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
-    external_deps += [ "hisysevent:libhisysevent" ] 
+    external_deps += [ "hisysevent:libhisysevent" ]
   }
 }
 
