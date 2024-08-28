@@ -14,6 +14,13 @@
 import("//build/ohos.gni")
 
 if (!defined(global_parts_info) ||
+    defined(global_parts_info.hiviewdfx_hisysevent)) {
+  has_hiviewdfx_hisysevent_part = true
+} else {
+  has_hiviewdfx_hisysevent_part = false
+}
+
+if (!defined(global_parts_info) ||
     defined(global_parts_info.communication_netmanager_base)) {
   has_thermal_airplane_manager_part = true
 } else {

@@ -17,7 +17,9 @@
 
 #define HISYSEVENT_PERIOD 5
 #define HISYSEVENT_THRESHOLD 200
+#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 #include "hisysevent.h"
+#endif
 #include "thermal_log.h"
 
 namespace OHOS {
@@ -25,11 +27,13 @@ namespace PowerMgr {
 template<typename... Types>
 static void WriteEvent(const std::string& eventType, Types... args)
 {
+    #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
     int ret = HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::THERMAL, eventType,
         HiviewDFX::HiSysEvent::EventType::STATISTIC, args...);
     if (ret != 0) {
         THERMAL_HILOGE(COMP_SVC, "Write event fail: %{public}s", eventType.c_str());
     }
+    #endif
 }
 
 void WriteLevelChangedHiSysEvent(bool enableEvent, int32_t level)
@@ -56,11 +60,13 @@ void WriteActionTriggeredHiSysEventWithRatio(bool enableEvent, const std::string
 template<typename... Types>
 static void WriteFaultEvent(const std::string& eventType, Types... args)
 {
+    #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
     int ret = HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::THERMAL, eventType,
         HiviewDFX::HiSysEvent::EventType::FAULT, args...);
     if (ret != 0) {
         THERMAL_HILOGE(COMP_SVC, "Write fault event fail: %{public}s", eventType.c_str());
     }
+    #endif
 }
 
 void WriteFanFaultEvent(int32_t faultId, std::string msg)
