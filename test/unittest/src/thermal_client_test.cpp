@@ -59,6 +59,10 @@ HWTEST_F(ThermalClientTest, ThermalClientTest001, TestSize.Level0)
     ThermalEventCallback cb = MockEventCb;
     EXPECT_TRUE(thermalCb->RegisterThermalEvent(cb) == HDF_SUCCESS);
     EXPECT_TRUE(thermalCb->OnThermalDataEvent(*info) != HDF_FAILURE);
+    delete thermalCb;
+    thermalCb = nullptr;
+    delete info;
+    info = nullptr;
     THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest001 end.");
 }
 
@@ -77,6 +81,8 @@ HWTEST_F(ThermalClientTest, ThermalClientTest002, TestSize.Level0)
     EXPECT_FALSE(listener == nullptr);
     OHOS::HDI::ServiceManager::V1_0::ServiceStatus status = {"a", 0, 0, "a"};
     listener->OnReceive(status);
+    delete listener;
+    listener = nullptr;
     THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest002 end.");
 }
 
