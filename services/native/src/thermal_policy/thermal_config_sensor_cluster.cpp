@@ -312,7 +312,8 @@ bool ThermalConfigSensorCluster::IsAuxSensorTrigger(const TypeTempMap& typeTempI
     for (auto sensorInfo = auxSensorInfolist_.begin(); sensorInfo != auxSensorInfolist_.end(); ++sensorInfo) {
         auto auxIter = typeTempInfo.find(sensorInfo->first);
         if (auxIter == typeTempInfo.end()) {
-            continue;
+            level = 0;
+            return false;
         }
         int32_t lowerTemp = sensorInfo->second.at(level - 1).lowerTemp;
         int32_t upperTemp = sensorInfo->second.at(level - 1).upperTemp;
