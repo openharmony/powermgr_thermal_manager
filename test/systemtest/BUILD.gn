@@ -182,7 +182,6 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
   ]
   external_deps = deps_ex
 
-  defines = []
   if (defined(global_parts_info) &&
       defined(global_parts_info.powermgr_battery_manager)) {
     defines += [ "BATTERY_MANAGER_ENABLE" ]

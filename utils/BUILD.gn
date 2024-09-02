@@ -48,7 +48,6 @@ ohos_source_set("thermal_utils") {
   ]
 
   if (has_hiviewdfx_hisysevent_part) {
-    defines = [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
     external_deps += [ "hisysevent:libhisysevent" ]
   }
   subsystem_name = "powermgr"
