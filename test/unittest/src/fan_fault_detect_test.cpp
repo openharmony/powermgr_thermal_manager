@@ -104,7 +104,7 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
     std::shared_ptr<FanFaultDetect> fanFaultDetect = std::make_shared<FanFaultDetect>();
     EXPECT_NE(fanFaultDetect, nullptr);
     InitFanFaultInfoMap(fanFaultDetect);
-    #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
+#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
     auto watcher = std::make_shared<Watcher>([&faultId] (std::shared_ptr<HiSysEventRecord> sysEvent) {
         if (sysEvent == nullptr) {
             return;
@@ -119,17 +119,17 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
     sysRules.emplace_back(listenerRule);
     auto ret = OHOS::HiviewDFX::HiSysEventManager::AddListener(watcher, sysRules);
     EXPECT_TRUE(ret == SUCCESS);
-    #endif
+#endif
     fanFaultDetect->OnFanSensorInfoChanged(report);
     std::unique_lock<std::mutex> lock(g_mutex);
     g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] {
         return g_eventTriggered.load();
     });
     g_eventTriggered = false;
-    #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
+#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
     ret = OHOS::HiviewDFX::HiSysEventManager::RemoveListener(watcher);
     EXPECT_TRUE(ret == SUCCESS);
-    #endif
+#endif
 }
 
 namespace {
