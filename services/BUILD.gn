@@ -81,8 +81,6 @@ ohos_shared_library("thermalservice") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = []
-
   if (use_libfuzzer) {
     defines += [ "FUZZ_TEST" ]
   }
@@ -155,7 +153,6 @@ ohos_shared_library("thermalservice") {
   }
 
   if (has_hiviewdfx_hisysevent_part) {
-    defines += [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
     external_deps += [ "hisysevent:libhisysevent" ]
   }
 

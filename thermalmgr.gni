@@ -13,9 +13,11 @@
 
 import("//build/ohos.gni")
 
+defines = []
 if (!defined(global_parts_info) ||
     defined(global_parts_info.hiviewdfx_hisysevent)) {
   has_hiviewdfx_hisysevent_part = true
+  defines += [ "HAS_HIVIEWDFX_HISYSEVENT_PART" ]
 } else {
   has_hiviewdfx_hisysevent_part = false
 }
@@ -37,7 +39,7 @@ if (!defined(global_parts_info) ||
 if (!defined(global_parts_info) ||
     defined(global_parts_info.powermgr_display_manager)) {
   has_thermal_display_manager_part = true
-  cflags_cc = [ "-DHAS_THERMAL_DISPLAY_MANAGER_PART" ]
+  defines += [ "-DHAS_THERMAL_DISPLAY_MANAGER_PART" ]
 } else {
   has_thermal_display_manager_part = false
 }
