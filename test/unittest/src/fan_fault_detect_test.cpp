@@ -23,8 +23,8 @@
 #include "hisysevent_listener.h"
 #include "hisysevent_manager.h"
 #include "hisysevent_record.h"
-#include "thermal_log.h"
 #endif
+#include "thermal_log.h"
 using namespace testing::ext;
 #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 using namespace OHOS::HiviewDFX;
