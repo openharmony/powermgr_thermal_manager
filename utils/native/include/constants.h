@@ -44,7 +44,7 @@ namespace PowerMgr {
     // state name
     const std::string STATE_CHARGER = "charge";
     const std::string STATE_SCREEN = "screen";
-    const std::string STATE_SCNEN = "scene";
+    const std::string STATE_SCENE = "scene";
 
     // scene sensor name
     const std::string BATTERY = "battery";
