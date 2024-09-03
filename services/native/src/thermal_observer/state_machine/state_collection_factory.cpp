@@ -31,7 +31,7 @@ std::shared_ptr<IStateCollection> StateCollectionFactory::Create(std::string &st
         return std::make_shared<ChargerStateCollection>();
     } else if (stateName == STATE_SCREEN) {
         return std::make_shared<ScreenStateCollection>();
-    } else if (stateName == STATE_SCNEN) {
+    } else if (stateName == STATE_SCENE) {
         return std::make_shared<SceneStateCollection>();
     } else {
         return std::make_shared<ExtendStateCollection>(stateName);
