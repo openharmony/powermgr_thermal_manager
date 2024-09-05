@@ -42,7 +42,7 @@ int32_t ThermalSensorInfo::GetTemp(std::string type)
         THERMAL_HILOGW(COMP_SVC, "failed to find sensor info");
         return ERR_INVALID_VALUE;
     }
-    temp_ = (int32_t) this->typeTempMap_[type];
+    temp_ = static_cast<int32_t>(this->typeTempMap_[type]);
     return temp_;
 }
 
