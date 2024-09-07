@@ -21,7 +21,6 @@
 
 #include <memory>
 #include <singleton.h>
-#include "action_airplane.h"
 #include "action_application_process.h"
 #include "action_charger.h"
 #include "action_cpu_big.h"
@@ -51,7 +50,6 @@ constexpr int32_t BUF_LEN = 32;
 static sptr<ThermalService> g_service = nullptr;
 std::shared_ptr<ActionApplicationProcess> g_actionApplicationProcess =
     std::make_shared<ActionApplicationProcess>("process_ctrl");
-std::shared_ptr<ActionAirplane> g_actionAirplane = std::make_shared<ActionAirplane>("airplane");
 std::shared_ptr<ActionCharger> g_actionCharger = std::make_shared<ActionCharger>("current_sc");
 std::shared_ptr<ActionCpuBig> g_actionCpuBig = std::make_shared<ActionCpuBig>("cpu_big");
 std::shared_ptr<ActionCpuMed> g_actionCpuMed = std::make_shared<ActionCpuMed>("cpu_med");
@@ -299,25 +297,5 @@ HWTEST_F(ThermalActionTest, ThermalActionTest013, TestSize.Level0)
     FileOperation::ReadFile("/data/service/el0/thermal/config/lcd", buf, BUF_LEN);
     std::string ret = buf;
     EXPECT_EQ(input, ret);
-}
-
-/**
- * @tc.name: ThermalActionTest014
- * @tc.desc: Action Airplane Function Test
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalActionTest, ThermalActionTest014, TestSize.Level0)
-{
-    g_actionAirplane->InitParams("airplane");
-    g_actionAirplane->AddActionValue("0");
-    g_actionAirplane->Execute();
-    EXPECT_TRUE(g_actionAirplane->valueList_.empty());
-    std::string input = "1";
-    g_actionAirplane->AddActionValue(input);
-    uint32_t value = g_actionAirplane->GetActionValue();
-    int32_t r = g_actionAirplane->AirplaneRequest(value);
-    EXPECT_TRUE(r == ERR_OK);
-    r = g_actionAirplane->AirplaneExecution(value);
-    EXPECT_TRUE(r == ERR_OK);
 }
 } // namespace
