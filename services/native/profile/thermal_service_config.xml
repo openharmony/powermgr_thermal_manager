@@ -62,7 +62,6 @@
     </state>
 
     <action>
-        <item name="airplane"/>
         <item name="cpu_big"/>
         <item name="cpu_med"/>
         <item name="cpu_lit"/>
@@ -84,7 +83,6 @@
 
     <policy>
         <config name="base_safe" level="1">
-            <airplane>0</airplane>
             <lcd>1.00</lcd>
             <lcd scene="cam">0.99</lcd>
             <lcd scene="call">0.98</lcd>
@@ -110,7 +108,6 @@
             <isolate>0</isolate>
         </config>
         <config name="base_safe" level="2">
-            <airplane>1</airplane>
             <lcd>0.90</lcd>
             <lcd scene="cam">0.89</lcd>
             <lcd scene="call">0.88</lcd>
