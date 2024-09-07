@@ -58,6 +58,7 @@ void ActionAirplane::AddActionValue(std::string value)
     char *endptr;
     long int result = strtol(value.c_str(), &endptr, STRTOL_FORMART_DEC);
     if (*endptr != '\0') {
+        THERMAL_HILOGE(COMP_SVC, "parse airplane value failed");
         return;
     }
     valueList_.push_back(static_cast<uint32_t>(result));
@@ -95,38 +96,48 @@ uint32_t ActionAirplane::GetActionValue()
     return value;
 }
 
-int32_t ActionAirplane::AirplaneRequest(const uint32_t value)
+int32_t ActionAirplane::AirplaneRequest(const uint32_t& value)
 {
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
     switch (value) {
         case ActionAirplane::TempStatus::LOWER_TEMP:
-            THERMAL_HILOGI(COMP_SVC, "device exit Airplane mode");
-#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
-            NetManagerStandard::NetConnClient::GetInstance().SetAirplaneMode(false);
-#endif
+            if (!ThermalService::userAirplaneState_) {
+                THERMAL_HILOGD(COMP_SVC, "device exit Airplane mode");
+                ThermalService::isThermalAirplane_ = true;
+                NetManagerStandard::NetConnClient::GetInstance().SetAirplaneMode(false);
+            } else {
+                THERMAL_HILOGD(COMP_SVC, "device keep Airplane mode");
+            }
             break;
         case ActionAirplane::TempStatus::HIGHER_TEMP:
-            THERMAL_HILOGI(COMP_SVC, "device start Airplane mode");
-#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
-            NetManagerStandard::NetConnClient::GetInstance().SetAirplaneMode(true);
-#endif
+            if (!ThermalService::userAirplaneState_) {
+                THERMAL_HILOGD(COMP_SVC, "device start Airplane mode");
+                ThermalService::isThermalAirplane_ = true;
+                NetManagerStandard::NetConnClient::GetInstance().SetAirplaneMode(true);
+            } else {
+                THERMAL_HILOGD(COMP_SVC, "device already in Airplane mode");
+            }
             break;
         default:
             break;
     }
+#endif
     return ERR_OK;
 }
 
-int32_t ActionAirplane::AirplaneExecution(const uint32_t value)
+int32_t ActionAirplane::AirplaneExecution(const uint32_t& value)
 {
     int32_t ret = -1;
     char buf[MAX_PATH] = {0};
     ret = snprintf_s(buf, MAX_PATH, sizeof(buf) - 1, AIRPLANE_PATH);
     if (ret < ERR_OK) {
+        THERMAL_HILOGE(COMP_SVC, "snprintf_s airplane value failed");
         return ret;
     }
     std::string valueString = std::to_string(value) + "\n";
     ret = FileOperation::WriteFile(buf, valueString, valueString.length());
     if (ret != ERR_OK) {
+        THERMAL_HILOGE(COMP_SVC, "write airplane value failed");
         return ret;
     }
     return ERR_OK;
