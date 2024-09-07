@@ -52,6 +52,8 @@ ohos_shared_library("thermalmgr_stub") {
 }
 
 ohos_shared_library("thermalmgr_proxy") {
+  branch_protector_ret = "pac_ret"
+
   sources = [
     "${thermal_manager_path}/frameworks/native/thermal_srv_sensor_info.cpp",
     "src/thermal_action_callback_proxy.cpp",
