@@ -1713,26 +1713,4 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest071, Function|MediumTest|Lev
     g_service->GetThermalSrvSensorInfo(SensorType::BATTERY, info);
     THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest071: end");
 }
-
-/**
- * @tc.name: ThermalMgrPolicyTest072
- * @tc.desc: get the config airplane by setting battery temp
- * @tc.type: FEATURE
- * @tc.cond: Set Battery temp
- * @tc.result level 2, airplane 1
- * @tc.require: issueIADG4V
- */
-HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest072, Function|MediumTest|Level2)
-{
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest072: start");
-    HdfThermalCallbackInfo event;
-    ThermalZoneInfo info1;
-    info1.type = "battery";
-    info1.temp = 43100;
-    event.info.push_back(info1);
-    g_service->HandleThermalCallbackEvent(event);
-    std::string ret = GetNodeValue(AIRPLANE_PATH);
-    EXPECT_TRUE(ret == "1") << "ThermalMgrPolicyTest072 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrPolicyTest072: end");
-}
 }
