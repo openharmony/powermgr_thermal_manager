@@ -52,6 +52,10 @@ SysParam::BootCompletedCallback g_bootCompletedCallback;
 } // namespace
 std::atomic_bool ThermalService::isBootCompleted_ = false;
 std::string ThermalService::scene_;
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+bool ThermalService::userAirplaneState_ = false;
+bool ThermalService::isThermalAirplane_ = false;
+#endif
 ThermalService::ThermalService() : SystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, true) {}
 
 ThermalService::~ThermalService() {}
@@ -103,8 +107,46 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
     THERMAL_HILOGI(COMP_SVC, "systemAbilityId=%{public}d, deviceId=%{private}s", systemAbilityId, deviceId.c_str());
     if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
         InitStateMachine();
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+        SubscribeCommonEvent();
+#endif
     }
 }
+
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+bool ThermalService::SubscribeCommonEvent()
+{
+    using namespace OHOS::EventFwk;
+    bool result = false;
+    MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_AIRPLANE_MODE_CHANGED);
+    CommonEventSubscribeInfo subscribeInfo(matchingSkills);
+    subscribeInfo.SetThreadMode(CommonEventSubscribeInfo::ThreadMode::COMMON);
+    if (!subscriberPtr_) {
+        subscriberPtr_ = std::make_shared<AirplaneCommonEventSubscriber>(subscribeInfo);
+    }
+    result = CommonEventManager::SubscribeCommonEvent(subscriberPtr_);
+    if (!result) {
+        THERMAL_HILOGE(COMP_SVC, "Subscribe CommonEvent failed");
+    } else {
+        THERMAL_HILOGD(COMP_SVC, "Subscribe CommonEvent success");
+    }
+    return result;
+}
+
+void AirplaneCommonEventSubscriber::OnReceiveEvent(const OHOS::EventFwk::CommonEventData &data)
+{
+    if (!ThermalService::isThermalAirplane_) {
+        int32_t code = data.GetCode();
+        ThermalService::userAirplaneState_ = static_cast<bool>(code);
+        THERMAL_HILOGD(COMP_SVC, "user %{public}s Airplane mode",
+            ThermalService::userAirplaneState_ ? "open" : "close");
+    } else {
+        ThermalService::isThermalAirplane_ = false;
+        THERMAL_HILOGD(COMP_SVC, "thermal change Airplane mode");
+    }
+}
+#endif
 
 bool ThermalService::Init()
 {
@@ -336,6 +378,13 @@ void ThermalService::OnStop()
         hdiServiceMgr_->UnregisterServiceStatusListener(hdiServStatListener_);
         hdiServiceMgr_ = nullptr;
     }
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+    if (!OHOS::EventFwk::CommonEventManager::UnSubscribeCommonEvent(subscriberPtr_)) {
+        THERMAL_HILOGE(COMP_SVC, "Thermal Onstop unregister to commonevent manager failed!");
+    } else {
+        THERMAL_HILOGD(COMP_SVC, "Thermal Onstop unregister to commonevent manager success!");
+    }
+#endif
 }
 
 bool ThermalService::SubscribeThermalTempCallback(
