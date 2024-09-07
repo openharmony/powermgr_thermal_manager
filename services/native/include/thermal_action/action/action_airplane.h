@@ -33,8 +33,8 @@ public:
     void SetEnableEvent(bool enable) override;
     void AddActionValue(std::string value) override;
     void Execute() override;
-    int32_t AirplaneRequest(const uint32_t value);
-    int32_t AirplaneExecution(const uint32_t value);
+    int32_t AirplaneRequest(const uint32_t& value);
+    int32_t AirplaneExecution(const uint32_t& value);
 private:
     uint32_t GetActionValue();
     std::vector<uint32_t> valueList_;

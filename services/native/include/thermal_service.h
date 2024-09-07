@@ -41,6 +41,12 @@
 #include "thermal_srv_stub.h"
 #include "v1_1/ithermal_interface.h"
 #include "v1_1/thermal_types.h"
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+#include "common_event_data.h"
+#include "common_event_manager.h"
+#include "common_event_subscribe_info.h"
+#include "common_event_support.h"
+#endif
 
 namespace OHOS {
 namespace PowerMgr {
@@ -158,6 +164,10 @@ public:
     {
         return scene_;
     }
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+    static bool userAirplaneState_;
+    static bool isThermalAirplane_;
+#endif
 
 private:
     bool Init();
@@ -179,6 +189,9 @@ private:
     void RegisterFanHdiCallback();
     void RegisterBootCompletedCallback();
     void EnableMock(const std::string& actionName, void* mockObject);
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+    bool SubscribeCommonEvent();
+#endif
     bool ready_ {false};
     static std::atomic_bool isBootCompleted_;
     bool isSimulation_ {false};
@@ -201,7 +214,19 @@ private:
     static std::string scene_;
     static sptr<ThermalService> instance_;
     static std::mutex singletonMutex_;
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+    std::shared_ptr<EventFwk::CommonEventSubscriber> subscriberPtr_;
+#endif
 };
+#ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
+class AirplaneCommonEventSubscriber : public EventFwk::CommonEventSubscriber {
+public:
+    explicit AirplaneCommonEventSubscriber(const EventFwk::CommonEventSubscribeInfo& subscribeInfo)
+        : EventFwk::CommonEventSubscriber(subscribeInfo) {}
+    virtual ~AirplaneCommonEventSubscriber() {}
+    void OnReceiveEvent(const EventFwk::CommonEventData &data) override;
+};
+#endif
 } // namespace PowerMgr
 } // namespace OHOS
 #endif // THERMAL_SERVICE_H
