@@ -26,6 +26,7 @@ namespace OHOS {
 namespace PowerMgr {
 namespace {
 const int32_t DELAY_TIME = 50000;
+static const int32_t POWER_UID = 5528;
 }
 ThermalCommonEventReceiver::~ThermalCommonEventReceiver()
 {
@@ -59,6 +60,7 @@ sptr<CesInfo> ThermalCommonEventReceiver::GetSubscribeInfo() const
     }
     sptr<CesInfo> info = new CesInfo(skill);
     info->SetThreadMode(CesInfo::COMMON);
+    info->SetPublisherUid(POWER_UID);
     return info;
 }
 
