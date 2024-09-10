@@ -18,6 +18,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <mutex>
+
 #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 #include "hisysevent.h"
 #include "hisysevent_listener.h"
@@ -46,10 +47,14 @@ const int32_t FAN_SLOW_SPEED = 400;
 const int32_t FAN_FAST_SPEED = 1600;
 const int32_t TEMP_HIGH = 60000;
 const int32_t TEMP_LOW = 20000;
+
+#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 const int64_t TIME_OUT = 2;
+std::atomic_bool g_eventTriggered = false;
+#endif 
+
 std::mutex g_mutex;
 std::condition_variable g_callbackCV;
-std::atomic_bool g_eventTriggered = false;
 #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 class Watcher : public HiSysEventListener {
 public:

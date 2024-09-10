@@ -50,6 +50,7 @@ ohos_source_set("thermal_utils") {
   if (has_hiviewdfx_hisysevent_part) {
     external_deps += [ "hisysevent:libhisysevent" ]
   }
+
   subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }
