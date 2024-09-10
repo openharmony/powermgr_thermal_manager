@@ -297,6 +297,11 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest010, TestSize.Level0)
         static_cast<int32_t>(BatteryChargeState::CHARGE_STATE_BUTT));
     data.SetWant(want);
     chargerState->HandleChangerStatusCompleted(data);
+    if (!g_service->GetSimulationXml()) {
+        EXPECT_EQ(chargerState->GetState(), "");
+    } else {
+        EXPECT_EQ(chargerState->GetState(), ToString(ChargerStateCollection::BUTT));
+    }
 #endif
     THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest010 end");
 }
