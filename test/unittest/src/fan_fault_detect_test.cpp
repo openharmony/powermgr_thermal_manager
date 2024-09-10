@@ -124,14 +124,14 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
     sysRules.emplace_back(listenerRule);
     auto ret = OHOS::HiviewDFX::HiSysEventManager::AddListener(watcher, sysRules);
     EXPECT_TRUE(ret == SUCCESS);
-#endif
+
     fanFaultDetect->OnFanSensorInfoChanged(report);
     std::unique_lock<std::mutex> lock(g_mutex);
     g_callbackCV.wait_for(lock, std::chrono::seconds(TIME_OUT), [] {
         return g_eventTriggered.load();
     });
     g_eventTriggered = false;
-#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
+
     ret = OHOS::HiviewDFX::HiSysEventManager::RemoveListener(watcher);
     EXPECT_TRUE(ret == SUCCESS);
 #endif
