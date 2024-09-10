@@ -51,7 +51,7 @@ const int32_t TEMP_LOW = 20000;
 #ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 const int64_t TIME_OUT = 2;
 std::atomic_bool g_eventTriggered = false;
-#endif 
+#endif
 
 std::mutex g_mutex;
 std::condition_variable g_callbackCV;
