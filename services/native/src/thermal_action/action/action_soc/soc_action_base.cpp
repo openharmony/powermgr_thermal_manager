@@ -25,6 +25,7 @@ namespace {
 #ifdef SOC_PERF_ENABLE
 constexpr int32_t ACTION_TYPE_THERMAL_ID = 2;
 constexpr int32_t ACTION_TYPE_CPU_ISOLATE_CMDID = 12361;
+const std::string THERMAL_MSG = "thermal";
 #endif
 }
 
@@ -52,5 +53,13 @@ void SocActionBase::SocIsolateRequest(bool enable)
     OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEx(ACTION_TYPE_CPU_ISOLATE_CMDID, enable, "");
 #endif
 }
+
+void SocActionBase::SetBoostEnable(bool status)
+{
+#ifdef SOC_PERF_ENABLE
+    OHOS::SOCPERF::SocPerfClient::GetInstance().SetRequestStatus(status, THERMAL_MSG);
+#endif
+}
+
 } // namespace PowerMgr
 } // namespace OHOS
