@@ -71,7 +71,7 @@ ohos_unittest("ThermalMockActionTest") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = [ "THERMAL_GTEST" ]
+  defines += [ "THERMAL_GTEST" ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
@@ -219,11 +219,9 @@ ohos_unittest("ThermalActionReportTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  defines = []
-
   if (defined(global_parts_info) &&
       defined(global_parts_info.powermgr_battery_statistics)) {
-    defines = [ "BATTERY_STATS_ENABLE" ]
+    defines += [ "BATTERY_STATS_ENABLE" ]
     deps += [ "${batterystats_utils_path}:batterystats_utils" ]
     external_deps = [ "battery_statistics:batterystats_client" ]
     external_deps += deps_ex
@@ -307,7 +305,7 @@ ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = [ "MOCK_WRITE_INTERFACE_TOKEN_RETURN_FALSE" ]
+  defines += [ "MOCK_WRITE_INTERFACE_TOKEN_RETURN_FALSE" ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
@@ -337,7 +335,7 @@ ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = [ "MOCK_WRITE_REMOTE_OBJECT_RETURN_FALSE" ]
+  defines += [ "MOCK_WRITE_REMOTE_OBJECT_RETURN_FALSE" ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
@@ -367,7 +365,7 @@ ohos_unittest("ThermalMockProxyWritevectorTest") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = [ "MOCK_WRITEVECTOR_RETURN_FALSE" ]
+  defines += [ "MOCK_WRITEVECTOR_RETURN_FALSE" ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
@@ -396,7 +394,7 @@ ohos_unittest("ThermalMockProxySendrequestTest") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = [ "MOCK_SEND_REQUEST_RETURN_ONE" ]
+  defines += [ "MOCK_SEND_REQUEST_RETURN_ONE" ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
@@ -447,7 +445,7 @@ ohos_unittest("ThermalServiceDeathTest") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = [ "THERMAL_SERVICE_DEATH_UT" ]
+  defines += [ "THERMAL_SERVICE_DEATH_UT" ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
@@ -522,7 +520,6 @@ ohos_unittest("ThermalClientTest") {
     "hdf_core:libhdi",
     "hdf_core:libpub_utils",
     "hilog:libhilog",
-    "hisysevent:libhisysevent",
     "ipc:ipc_core",
     "libxml2:libxml2",
     "power_manager:powermgr_client",
@@ -530,12 +527,16 @@ ohos_unittest("ThermalClientTest") {
     "samgr:samgr_proxy",
     "window_manager:libwm",
   ]
+
+  if (has_hiviewdfx_hisysevent_part) {
+    external_deps += [ "hisysevent:libhisysevent" ]
+  }
 }
 
 # thermal mock stub test
 ohos_unittest("ThermalMockStubTest") {
   module_out_path = module_output_path
-  defines = [ "THERMAL_GTEST" ]
+  defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_mock_stub_test.cpp" ]
 
   configs = [
@@ -593,7 +594,7 @@ ohos_unittest("ThermalActionTest") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = [ "THERMAL_GTEST" ]
+  defines += [ "THERMAL_GTEST" ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
@@ -621,7 +622,7 @@ ohos_unittest("ThermalObserverTest") {
     "${utils_path}:coverage_flags",
   ]
 
-  defines = [ "THERMAL_OBSERVER_UT_TEST" ]
+  defines += [ "THERMAL_OBSERVER_UT_TEST" ]
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
@@ -643,7 +644,7 @@ ohos_unittest("ThermalObserverTest") {
 # thermal service test
 ohos_unittest("ThermalServiceTest") {
   module_out_path = module_output_path
-  defines = [ "THERMAL_GTEST" ]
+  defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_service_test.cpp" ]
 
   configs = [
@@ -667,7 +668,7 @@ ohos_unittest("ThermalServiceTest") {
 # thermal config sensor cluster test
 ohos_unittest("ThermalConfigSensorClusterTest") {
   module_out_path = module_output_path
-  defines = [ "THERMAL_GTEST" ]
+  defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_config_sensor_cluster_test.cpp" ]
 
   configs = [
@@ -691,7 +692,7 @@ ohos_unittest("ThermalConfigSensorClusterTest") {
 # thermal mgr dump test
 ohos_unittest("ThermalMgrDumpTest") {
   module_out_path = module_output_path
-  defines = [ "THERMAL_GTEST" ]
+  defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_mgr_dump_test.cpp" ]
 
   configs = [
@@ -715,7 +716,7 @@ ohos_unittest("ThermalMgrDumpTest") {
 # thermal policy test
 ohos_unittest("ThermalPolicyTest") {
   module_out_path = module_output_path
-  defines = [ "THERMAL_GTEST" ]
+  defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_policy_test.cpp" ]
 
   configs = [
@@ -739,7 +740,7 @@ ohos_unittest("ThermalPolicyTest") {
 # fan fault detect test
 ohos_unittest("FanFaultDetectTest") {
   module_out_path = module_output_path
-  defines = [ "THERMAL_GTEST" ]
+  defines += [ "THERMAL_GTEST" ]
   sources = [ "src/fan_fault_detect_test.cpp" ]
 
   configs = [
@@ -757,10 +758,13 @@ ohos_unittest("FanFaultDetectTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
-    "hisysevent:libhisysevent",
-    "hisysevent:libhisyseventmanager",
-  ]
+  external_deps = []
+  if (has_hiviewdfx_hisysevent_part) {
+    external_deps = [
+      "hisysevent:libhisysevent",
+      "hisysevent:libhisyseventmanager",
+    ]
+  }
 
   external_deps += deps_ex
 }
