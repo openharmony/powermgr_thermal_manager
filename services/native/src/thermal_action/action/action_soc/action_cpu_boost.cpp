@@ -22,6 +22,7 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
+    constexpr int32_t BOOST_DISABLE_VALUE = 100;
 }
 
 ActionCpuBoost::ActionCpuBoost(const std::string& actionName)
@@ -58,7 +59,12 @@ void ActionCpuBoost::Execute()
     THERMAL_RETURN_IF (tms == nullptr);
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
-        SetSocPerfThermalLevel(value);
+        if (value == BOOST_DISABLE_VALUE) {
+            SetBoostEnable(false);
+        } else {
+            SetBoostEnable(true);
+            SetSocPerfThermalLevel(value);
+        }
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
