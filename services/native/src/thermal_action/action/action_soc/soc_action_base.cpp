@@ -60,6 +60,5 @@ void SocActionBase::SetBoostEnable(bool status)
     OHOS::SOCPERF::SocPerfClient::GetInstance().SetRequestStatus(status, THERMAL_MSG);
 #endif
 }
-
 } // namespace PowerMgr
 } // namespace OHOS
