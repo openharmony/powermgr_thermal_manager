@@ -29,6 +29,7 @@ protected:
     virtual void SocLimitRequest(int32_t tag, int64_t value);
     virtual void SetSocPerfThermalLevel(uint32_t level);
     virtual void SocIsolateRequest(bool enable);
+    virtual void SetBoostEnable(bool status);
 };
 } // namespace PowerMgr
 } // namespace OHOS
