@@ -355,6 +355,10 @@ std::string ThermalSrvProxy::ShellDump(const std::vector<std::string>& args, uin
         THERMAL_HILOGE(COMP_FWK, "write descriptor failed!");
         return 0;
     }
+    if (argc > args.size()) {
+        THERMAL_HILOGE(COMP_FWK, "argc is greater than args size!");
+        return result;
+    }
 
     data.WriteUint32(argc);
     for (uint32_t i = 0; i < argc; i++) {
