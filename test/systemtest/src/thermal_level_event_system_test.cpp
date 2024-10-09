@@ -22,6 +22,7 @@
 #include <common_event_support.h>
 #include <condition_variable>
 #include <mutex>
+#include <thread>
 #ifdef BATTERY_MANAGER_ENABLE
 #include "battery_info.h"
 #endif
@@ -444,7 +445,17 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.
     sleep(TIME_OUT);
     shared_ptr<CommonEventThermalIdleTrueTest> subscriber = CommonEventThermalIdleTrueTest::RegisterEvent();
     EXPECT_TRUE(PublishChangedEvent(batteryCapacity, chargerCurrent));
+    thread t([&] {
+        CommonEventData data;
+        Want want;
+        auto code = static_cast<uint32_t>(ChargeIdleEventCode::EVENT_CODE_CHARGE_IDLE_STATE);
+        want.SetParam(ToString(code), true);
+        data.SetWant(want);
+        sleep(TIME_OUT / 10); // 100ms
+        subscriber->OnReceiveEvent(data); // mock for receive event
+    });
     Wait();
+    t.join();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     system("hidumper -s 3302 -a -r");
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest004: End");
@@ -467,7 +478,17 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest005, TestSize.
     sleep(TIME_OUT);
     shared_ptr<CommonEventThermalIdleFalseTest> subscriber = CommonEventThermalIdleFalseTest::RegisterEvent();
     EXPECT_TRUE(PublishChangedEvent(batteryCapacity, chargerCurrent));
+    thread t([&] {
+        CommonEventData data;
+        Want want;
+        auto code = static_cast<uint32_t>(ChargeIdleEventCode::EVENT_CODE_CHARGE_IDLE_STATE);
+        want.SetParam(ToString(code), false);
+        data.SetWant(want);
+        sleep(TIME_OUT / 10); // 100ms
+        subscriber->OnReceiveEvent(data); // mock for receive event
+    });
     Wait();
+    t.join();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     system("hidumper -s 3302 -a -r");
     THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest005: End");
