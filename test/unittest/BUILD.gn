@@ -632,6 +632,12 @@ ohos_unittest("ThermalObserverTest") {
   ]
 
   external_deps = deps_ex
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.powermgr_battery_manager)) {
+    defines += [ "BATTERY_MANAGER_ENABLE" ]
+    external_deps += [ "battery_manager:batterysrv_client" ]
+  }
 }
 
 # thermal service test
