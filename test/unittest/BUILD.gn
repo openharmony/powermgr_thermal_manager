@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -90,7 +90,7 @@ ohos_unittest("ThermalMockActionTest") {
 }
 
 # thermal policy test
-ohos_unittest("ThermalPolicyTest") {
+ohos_unittest("ThermalMgrPolicyTest") {
   module_out_path = module_output_path
 
   sources = [
@@ -664,6 +664,78 @@ ohos_unittest("ThermalServiceTest") {
   external_deps = deps_ex
 }
 
+# thermal config sensor cluster test
+ohos_unittest("ThermalConfigSensorClusterTest") {
+  module_out_path = module_output_path
+  defines = [ "THERMAL_GTEST" ]
+  sources = [ "src/thermal_config_sensor_cluster_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+    "${utils_path}:coverage_flags",
+  ]
+
+  deps = [
+    "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal mgr dump test
+ohos_unittest("ThermalMgrDumpTest") {
+  module_out_path = module_output_path
+  defines = [ "THERMAL_GTEST" ]
+  sources = [ "src/thermal_mgr_dump_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+    "${utils_path}:coverage_flags",
+  ]
+
+  deps = [
+    "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
+# thermal policy test
+ohos_unittest("ThermalPolicyTest") {
+  module_out_path = module_output_path
+  defines = [ "THERMAL_GTEST" ]
+  sources = [ "src/thermal_policy_test.cpp" ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_private_config",
+    "${utils_path}:coverage_flags",
+  ]
+
+  deps = [
+    "${thermal_inner_api}:thermalsrv_client",
+    "${thermal_manager_path}/services:thermalservice",
+    "${thermal_service_zidl}:thermalmgr_proxy",
+    "${thermal_service_zidl}:thermalmgr_stub",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = deps_ex
+}
+
 # fan fault detect test
 ohos_unittest("FanFaultDetectTest") {
   module_out_path = module_output_path
@@ -702,8 +774,11 @@ group("unittest") {
     ":ThermalActionTest",
     ":ThermalClientApiTest",
     ":ThermalClientTest",
+    ":ThermalConfigSensorClusterTest",
     ":ThermalLevelEventTest",
     ":ThermalListenerTest",
+    ":ThermalMgrDumpTest",
+    ":ThermalMgrPolicyTest",
     ":ThermalMockActionTest",
     ":ThermalMockProxyRemoteTest",
     ":ThermalMockProxySendrequestTest",
