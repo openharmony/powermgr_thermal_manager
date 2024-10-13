@@ -42,7 +42,7 @@ int ThermalLevelCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data
     }
     const int DFX_DELAY_S = 10;
     int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalLevelCallbackStub", DFX_DELAY_S, nullptr, nullptr,
-        HiviewDFX::XCOLLIE_FLAG_NOOP);
+        HiviewDFX::XCOLLIE_FLAG_LOG);
     int ret = ERR_OK;
     if (code == static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::THERMAL_LEVEL_CHANGED)) {
         ret = OnThermalLevelChangedStub(data);

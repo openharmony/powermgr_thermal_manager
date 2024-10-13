@@ -59,7 +59,8 @@ const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_conf
 sptr<ThermalService> g_service = nullptr;
 } // namespace
 
-const char *g_perms[] = { "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT" };
+const char *g_perms[] = { "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT",
+                          "ohos.permission.POWER_OPTIMIZATION" };
 uint64_t g_token;
 AccessTokenID ThermalLevelEventSystemTest::tokenID_ = 0;
 

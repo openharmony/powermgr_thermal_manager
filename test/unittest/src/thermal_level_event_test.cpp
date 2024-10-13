@@ -173,7 +173,9 @@ void ThermalLevelEventTest::SetUpTestCase()
 
 void ThermalLevelEventTest::TearDownTestCase()
 {
-    g_service->OnStop();
+    if (g_service != nullptr) {
+        g_service->OnStop();
+    }
     AccessTokenKit::DeleteToken(tokenID_);
     SetSelfTokenID(g_token);
 }
