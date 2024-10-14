@@ -42,7 +42,7 @@ int ThermalSrvStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageP
         THERMAL_HILOGE(COMP_SVC, "ThermalSrvStub::OnRemoteRequest failed, descriptor is not matched!");
         return E_GET_THERMAL_SERVICE_FAILED;
     }
-    const int DFX_DELAY_S = 10;
+    const int DFX_DELAY_S = 60;
     int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalSrvStub", DFX_DELAY_S, nullptr, nullptr,
         HiviewDFX::XCOLLIE_FLAG_LOG);
     int32_t ret = CheckRequestCode(code, data, reply, option);
