@@ -42,7 +42,7 @@ int ThermalTempCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data,
             descriptor is not matched!");
         return E_GET_THERMAL_SERVICE_FAILED;
     }
-    const int DFX_DELAY_S = 10;
+    const int DFX_DELAY_S = 60;
     int id = HiviewDFX::XCollie::GetInstance().SetTimer("ThermalLevelCallbackStub", DFX_DELAY_S, nullptr, nullptr,
         HiviewDFX::XCOLLIE_FLAG_LOG);
     int ret = ERR_OK;
