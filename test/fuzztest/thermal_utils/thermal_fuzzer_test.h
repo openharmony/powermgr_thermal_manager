@@ -27,9 +27,6 @@ public:
     ThermalFuzzerTest();
     ~ThermalFuzzerTest();
     void TestThermalServiceStub(const uint32_t code, const uint8_t* data, size_t size);
-
-private:
-    OHOS::sptr<OHOS::PowerMgr::ThermalService> service_ {nullptr};
 };
 
 #endif // THERMAL_FUZZER_TEST_H
