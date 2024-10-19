@@ -30,18 +30,19 @@ namespace {
 const int32_t REWIND_READ_DATA = 0;
 } // namespace
 
+auto g_service = ThermalService::GetInstance();
+
 ThermalFuzzerTest::ThermalFuzzerTest()
 {
-    service_ = ThermalService::GetInstance();
-    service_->OnStart();
+    g_service->OnStart();
 }
 
 ThermalFuzzerTest::~ThermalFuzzerTest()
 {
-    if (service_ != nullptr) {
-        service_->OnStop();
+    if (g_service != nullptr) {
+        g_service->OnStop();
     }
-    service_ = nullptr;
+    g_service = nullptr;
 }
 
 void ThermalFuzzerTest::TestThermalServiceStub(const uint32_t code, const uint8_t* data, size_t size)
@@ -52,5 +53,5 @@ void ThermalFuzzerTest::TestThermalServiceStub(const uint32_t code, const uint8_
     datas.RewindRead(REWIND_READ_DATA);
     MessageParcel reply;
     MessageOption option;
-    service_->OnRemoteRequest(code, datas, reply, option);
+    g_service->OnRemoteRequest(code, datas, reply, option);
 }
