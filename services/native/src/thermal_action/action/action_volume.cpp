@@ -109,7 +109,7 @@ int32_t ActionVolume::VolumeRequest(float volume)
 
     StringOperation::SplitString(uid, uidList, ",");
 #ifdef HAS_THERMAL_AUDIO_FRAMEWORK_PART
-    std::vector<std::unique_ptr<AudioRendererChangeInfo>> audioInfos;
+    std::vector<std::shared_ptr<AudioRendererChangeInfo>> audioInfos;
     auto instance = AudioStreamManager::GetInstance();
 #endif
     int32_t ret = -1;
