@@ -509,7 +509,8 @@ bool ThermalService::UpdateThermalState(const std::string& tag, const std::strin
     if (!Permission::IsSystem()) {
         return false;
     }
-    THERMAL_HILOGI(COMP_SVC, "tag %{public}s, val %{public}s", tag.c_str(), val.c_str());
+    THERMAL_HILOGI(COMP_SVC, "tag %{public}s, val %{public}s, isImmed %{public}d",
+        tag.c_str(), val.c_str(), isImmed);
     std::lock_guard<std::mutex> lock(mutex_);
     state_->UpdateState(tag, val);
     if (isImmed) {

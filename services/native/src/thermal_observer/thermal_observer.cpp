@@ -173,30 +173,28 @@ void ThermalObserver::PrintAction()
 
 void ThermalObserver::FindSubscribeActionValue()
 {
-    std::lock_guard lock(mutexActionCallback_);
-    if (actionMap_.empty()) {
-        THERMAL_HILOGD(COMP_SVC, "no action");
-        return;
-    }
-    PrintAction();
-    actionCache_ = actionMap_;
-    if (actionListeners_.empty()) {
-        THERMAL_HILOGD(COMP_SVC, "no subscribe");
+    {
+        std::lock_guard lock(mutexActionMap_);
+        if (actionMap_.empty()) {
+            THERMAL_HILOGD(COMP_SVC, "no action");
+            return;
+        }
+        PrintAction();
+        actionCache_ = actionMap_;
         actionMap_.clear();
-        return;
     }
 
+    std::lock_guard lock(mutexActionCallback_);
     IThermalActionCallback::ActionCallbackMap newActionCbMap;
     for (auto& listener : actionListeners_) {
         auto actionIter = callbackActionMap_.find(listener);
         if (actionIter != callbackActionMap_.end()) {
             THERMAL_HILOGD(COMP_SVC, "find callback.");
-            DecisionActionValue(actionIter->second, newActionCbMap, actionMap_);
+            DecisionActionValue(actionIter->second, newActionCbMap, actionCache_);
         }
 
         listener->OnThermalActionChanged(newActionCbMap);
     }
-    actionMap_.clear();
 }
 
 void ThermalObserver::DecisionActionValue(const std::vector<std::string>& actionList,
