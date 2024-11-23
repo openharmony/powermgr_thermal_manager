@@ -23,7 +23,7 @@ namespace PowerMgr {
 class SocActionBase {
 public:
     SocActionBase() = default;
-    ~SocActionBase() = default;
+    virtual ~SocActionBase() = default;
 
 protected:
     virtual void SocLimitRequest(int32_t tag, int64_t value);
