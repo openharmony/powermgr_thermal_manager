@@ -34,6 +34,7 @@ public:
     void ExecuteInner(uint32_t actionId) override;
 
 private:
+    int32_t GetActionValue();
     int32_t lastValue_ {INT_MAX};
     int32_t fallbackValue_ {0};
     std::string nodePath_;
