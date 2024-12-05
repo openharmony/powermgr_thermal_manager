@@ -36,9 +36,17 @@ struct AuxLevelItem {
     int32_t level;
 };
 
+struct TempDiffItem {
+    std::string sensor1;
+    std::string sensor2;
+    int32_t tempDiff;
+    int32_t level;
+};
+
 using TypeTempMap = std::map<std::string, int32_t>;
 using SensorInfoMap = std::map<std::string, std::vector<LevelItem>>;
 using AuxSensorInfoMap = std::map<std::string, std::vector<AuxLevelItem>>;
+using TempDiffInfoList = std::vector<TempDiffItem>;
 
 class ThermalConfigSensorCluster {
 public:
@@ -48,9 +56,11 @@ public:
     uint32_t GetCurrentLevel();
     void SetSensorLevelInfo(SensorInfoMap& sensorInfolist);
     void SetAuxSensorLevelInfo(AuxSensorInfoMap& auxSensorInfolist);
+    void SetTempDiffInfo(TempDiffInfoList& tempDiffInfoList);
     void SetDescFlag(bool descflag);
     void SetAuxFlag(bool auxflag);
     void SetRateFlag(bool rateFlag);
+    void SetTempDiffFlag(bool tempDiffFlag);
     void AddState(std::string& state, std::string& val)
     {
         stateMap_.emplace(state, val);
@@ -59,27 +69,39 @@ public:
 private:
     bool CheckState();
     void CalculateSensorLevel(const TypeTempMap& typeTempInfo, std::vector<uint32_t>& levelList);
-    void AscendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp);
-    void DescendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp);
-    void DescendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp);
-    void AscendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp);
-    void LevelUpwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp);
-    void LevelDownwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp);
-    void LevelDownwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp);
+    void AscendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp,
+        const TypeTempMap& typeTempInfo);
+    void DescendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp,
+        const TypeTempMap& typeTempInfo);
+    void DescendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp,
+        const TypeTempMap& typeTempInfo);
+    void AscendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp,
+        const TypeTempMap& typeTempInfo);
+    void LevelUpwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp,
+        const TypeTempMap& typeTempInfo);
+    void LevelDownwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp,
+        const TypeTempMap& typeTempInfo);
+    void LevelDownwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp,
+        const TypeTempMap& typeTempInfo);
     void LevelUpwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level,
-        uint32_t end, int32_t curTemp);
-    void AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
-    void DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level);
+        uint32_t end, int32_t curTemp, const TypeTempMap& typeTempInfo);
+    void AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp,
+        uint32_t& level, const TypeTempMap& typeTempInfo);
+    void DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp,
+        uint32_t& level, const TypeTempMap& typeTempInfo);
     void CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level);
     bool IsTempRateTrigger(uint32_t& level);
     bool IsAuxSensorTrigger(const TypeTempMap& typeTempInfo, uint32_t& level);
+    bool IsTempDiffTrigger(const TypeTempMap& typeTempInfo, uint32_t& level);
 
     bool descFlag_ {false};
     bool auxFlag_ {false};
     bool rateFlag_ {false};
+    bool tempDiffFlag_ {false};
     uint32_t latestLevel_ {0};
     SensorInfoMap sensorInfolist_;
     AuxSensorInfoMap auxSensorInfolist_;
+    TempDiffInfoList tempDiffInfoList_;
     std::map<std::string, std::string> stateMap_;
 };
 
