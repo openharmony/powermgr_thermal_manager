@@ -76,9 +76,7 @@ uint64_t ThermalTimer::CreateTimer(std::shared_ptr<ThermalTimerInfo>& timerInfo)
 
 bool ThermalTimer::StartTimer(uint64_t timerId, uint64_t triggerTime)
 {
-    int delayTime = 6000;
     auto ret = TimeServiceClient::GetInstance()->StartTimer(timerId, triggerTime);
-    std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
     if (!ret) {
         THERMAL_HILOGE(COMP_SVC, "failed to start timer");
         return ret;
