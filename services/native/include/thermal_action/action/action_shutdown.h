@@ -28,8 +28,8 @@ public:
     void InitParams(const std::string& params) override;
     void SetStrict(bool enable) override;
     void SetEnableEvent(bool enable) override;
-    void AddActionValue(std::string value) override;
-    void Execute() override;
+    void AddActionValue(uint32_t actionId, std::string value) override;
+    void ExecuteInner(uint32_t actionId) override;
     uint32_t ShutdownRequest(bool isShutdown);
     uint32_t DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr);
     /* the api is used to test */
