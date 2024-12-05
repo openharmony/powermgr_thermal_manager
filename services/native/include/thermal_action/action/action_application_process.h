@@ -36,8 +36,8 @@ public:
     void InitParams(const std::string& params) override;
     void SetStrict(bool enable) override;
     void SetEnableEvent(bool enable) override;
-    void AddActionValue(std::string value) override;
-    void Execute() override;
+    void AddActionValue(uint32_t actionId, std::string value) override;
+    void ExecuteInner(uint32_t actionId) override;
     ErrCode KillApplicationAction(const std::string& bundleName);
     ErrCode GetRunningProcessInfo(std::vector<AppExecFwk::RunningProcessInfo>& info);
     AppExecFwk::RunningProcessInfo GetAppProcessInfoByName(const std::string& processName);
