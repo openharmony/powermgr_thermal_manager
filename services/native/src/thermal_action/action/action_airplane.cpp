@@ -50,7 +50,7 @@ void ActionAirplane::SetEnableEvent(bool enable)
     enableEvent_ = enable;
 }
 
-void ActionAirplane::AddActionValue(std::string value)
+void ActionAirplane::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
         return;
@@ -61,14 +61,27 @@ void ActionAirplane::AddActionValue(std::string value)
         THERMAL_HILOGE(COMP_SVC, "parse airplane value failed");
         return;
     }
-    valueList_.push_back(static_cast<uint32_t>(result));
+    if (actionId > 0) {
+        auto iter = policyActionMap_.find(actionId);
+        if (iter != policyActionMap_.end()) {
+            iter->second.uintDelayValue = static_cast<uint32_t>(result);
+        }
+    } else {
+        valueList_.push_back(static_cast<uint32_t>(result));
+    }
 }
 
-void ActionAirplane::Execute()
+void ActionAirplane::ExecuteInner(uint32_t actionId)
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    uint32_t value = GetActionValue();
+    auto iter = policyActionMap_.find(actionId);
+    uint32_t value;
+    if (actionId > 0 && iter != policyActionMap_.end()) {
+        value = iter->second.uintDelayValue;
+    } else {
+        value = GetActionValue();
+    }
     if (value != lastValue_) {
         if (!tms->GetSimulationXml()) {
             AirplaneRequest(value);

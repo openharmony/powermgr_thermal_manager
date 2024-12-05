@@ -54,19 +54,32 @@ void ActionDisplay::SetEnableEvent(bool enable)
     enableEvent_ = enable;
 }
 
-void ActionDisplay::AddActionValue(std::string value)
+void ActionDisplay::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(static_cast<float>(strtof(value.c_str(), nullptr)));
+    if (actionId > 0) {
+        auto iter = policyActionMap_.find(actionId);
+        if (iter != policyActionMap_.end()) {
+            iter->second.floatDelayValue = static_cast<float>(strtof(value.c_str(), nullptr));
+        }
+    } else {
+        valueList_.push_back(static_cast<float>(strtof(value.c_str(), nullptr)));
+    }
 }
 
-void ActionDisplay::Execute()
+void ActionDisplay::ExecuteInner(uint32_t actionId)
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    float value = GetActionValue();
+    auto iter = policyActionMap_.find(actionId);
+    float value;
+    if (actionId > 0 && iter != policyActionMap_.end()) {
+        value = iter->second.floatDelayValue;
+    } else {
+        value = GetActionValue();
+    }
     if (fabs(value - lastValue_) > FLOAT_ACCURACY) {
         if (!tms->GetSimulationXml()) {
             RequestDisplay(value);
