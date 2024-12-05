@@ -131,8 +131,9 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest003, Test
     levItems1.push_back(item2);
     int32_t curTemp = 1;
     uint32_t level = 1;
+    TypeTempMap type;
     ThermalConfigSensorCluster cluster;
-    cluster.AscJudgment(levItems1, curTemp, level);
+    cluster.AscJudgment(levItems1, curTemp, level, type);
     EXPECT_EQ(level, item2.level);
 
     const int32_t INDEX0 = 0;
@@ -140,7 +141,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest003, Test
     // The break branch in the for loop
     levItems1.at(INDEX1).threshold = 3;
     level = 1;
-    cluster.AscJudgment(levItems1, curTemp, level);
+    cluster.AscJudgment(levItems1, curTemp, level, type);
     EXPECT_NE(level, item2.level);
 
     // inner else if branch (curTemp < thresholdClr)
@@ -149,7 +150,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest003, Test
     levItems1.at(INDEX1).threshold = 2;
     levItems1.at(INDEX1).thresholdClr = 2;
     level = 1;
-    cluster.AscJudgment(levItems1, curTemp, level);
+    cluster.AscJudgment(levItems1, curTemp, level, type);
     EXPECT_EQ(level, levItems1.at(INDEX0).level - 1);
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest003 end.");
 }
@@ -170,8 +171,9 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest004, Test
     levItems.push_back(item);
     int32_t curTemp = 1;
     uint32_t level = 1;
+    TypeTempMap type;
     ThermalConfigSensorCluster cluster;
-    cluster.AscJudgment(levItems, curTemp, level);
+    cluster.AscJudgment(levItems, curTemp, level, type);
     EXPECT_EQ(level, item.level - 1);
 
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest004 end.");
@@ -194,8 +196,9 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest005, Test
     levItems.push_back(item);
     int32_t curTemp = 1;
     uint32_t level = 0;
+    TypeTempMap type;
     ThermalConfigSensorCluster cluster;
-    cluster.AscJudgment(levItems, curTemp, level);
+    cluster.AscJudgment(levItems, curTemp, level, type);
     EXPECT_EQ(level, item.level);
 
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest005 end.");
@@ -220,8 +223,9 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest006, Test
     levItems.push_back(item2);
     int32_t curTemp = 1;
     uint32_t level = 1;
+    TypeTempMap type;
     ThermalConfigSensorCluster cluster;
-    cluster.DescJudgment(levItems, curTemp, level);
+    cluster.DescJudgment(levItems, curTemp, level, type);
     EXPECT_EQ(level, item2.level);
 
     const int32_t INDEX0 = 0;
@@ -232,7 +236,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest006, Test
     levItems.at(INDEX1).threshold = 0;
     levItems.at(INDEX1).thresholdClr = 0;
     level = 1;
-    cluster.DescJudgment(levItems, curTemp, level);
+    cluster.DescJudgment(levItems, curTemp, level, type);
     EXPECT_EQ(level, levItems.at(INDEX0).level - 1);
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest006 end.");
 }
@@ -253,8 +257,9 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest007, Test
     levItems.push_back(item);
     int32_t curTemp = 3;
     uint32_t level = 1;
+    TypeTempMap type;
     ThermalConfigSensorCluster cluster;
-    cluster.DescJudgment(levItems, curTemp, level);
+    cluster.DescJudgment(levItems, curTemp, level, type);
     EXPECT_EQ(level, item.level - 1);
 
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest007 end.");
@@ -277,8 +282,9 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest008, Test
     levItems.push_back(item);
     int32_t curTemp = 2;
     uint32_t level = 0;
+    TypeTempMap type;
     ThermalConfigSensorCluster cluster;
-    cluster.DescJudgment(levItems, curTemp, level);
+    cluster.DescJudgment(levItems, curTemp, level, type);
     EXPECT_EQ(level, item.level);
 
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest008 end.");
@@ -359,5 +365,138 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest010, Test
     EXPECT_FALSE(cluster.IsTempRateTrigger(level));
     EXPECT_EQ(level, 0);
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest010 end.");
+}
+ 
+/**
+ * @tc.name: ThermalConfigSensorClusterTest011
+ * @tc.desc: test IsTempDiffTrigger
+ * @tc.type: FUNC
+*/
+HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest011, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest011 start.");
+ 
+    TypeTempMap typeTempInfo;
+    
+    uint32_t level = 0;
+    ThermalConfigSensorCluster cluster;
+    EXPECT_TRUE(cluster.IsTempDiffTrigger(typeTempInfo, level));
+ 
+    // illegal level parameter
+    level = INT_MAX;
+    EXPECT_FALSE(cluster.IsTempDiffTrigger(typeTempInfo, level));
+    level = -1;
+    EXPECT_FALSE(cluster.IsTempDiffTrigger(typeTempInfo, level));
+ 
+    TempDiffInfoList tempDiffInfoList;
+    TempDiffItem tdItem1, tdItem2;
+ 
+    tdItem1.sensor1 = "test1";
+    tdItem1.sensor2 = "test2";
+    tdItem1.tempDiff = 5000;
+    tdItem1.level = 1;
+ 
+    tdItem2.sensor1 = "test1";
+    tdItem2.sensor2 = "test2";
+    tdItem2.tempDiff = 900000;
+    tdItem2.level = 2;
+ 
+    tempDiffInfoList.push_back(tdItem2);
+    tempDiffInfoList.push_back(tdItem1);
+    cluster.SetTempDiffInfo(tempDiffInfoList);
+ 
+    // no sensor test2 info
+    level = 1;
+    typeTempInfo["test1"] = 41000;
+    EXPECT_FALSE(cluster.IsTempDiffTrigger(typeTempInfo, level));
+    EXPECT_EQ(level, 0);
+ 
+    // greater than level 1 diff temperature 5000
+    level = 1;
+    typeTempInfo["test2"] = 35000;
+    EXPECT_FALSE(cluster.IsTempDiffTrigger(typeTempInfo, level));
+    EXPECT_EQ(level, 0);
+ 
+    // less than or equal to level 1 diff temperature 5000
+    level = 1;
+    typeTempInfo["test2"] = 36000;
+    EXPECT_TRUE(cluster.IsTempDiffTrigger(typeTempInfo, level));
+    EXPECT_EQ(level, 1);
+ 
+    level = 2;
+    EXPECT_TRUE(cluster.IsTempDiffTrigger(typeTempInfo, level));
+    EXPECT_EQ(level, 2);
+ 
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest011 end.");
+}
+ 
+/**
+ * @tc.name: ThermalConfigSensorClusterTest012
+ * @tc.desc: test CheckStandard
+ * @tc.type: FUNC
+*/
+HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest012, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest012 start.");
+    auto& sensorClusterMap = g_service->GetPolicy()->sensorClusterMap_;
+    auto& cluster = sensorClusterMap["sunshine"];
+    auto& tempDiffInfoList = cluster->tempDiffInfoList_;
+ 
+    EXPECT_TRUE(cluster->CheckStandard());
+ 
+    TempDiffItem tdItem1;
+    tempDiffInfoList.push_back(tdItem1);
+ 
+    EXPECT_FALSE(cluster->CheckStandard());
+    tempDiffInfoList.pop_back();
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest012 end.");
+}
+ 
+/**
+ * @tc.name: ThermalConfigSensorClusterTest013
+ * @tc.desc: test ParseTempDiffXXX functions;
+ * @tc.type: FUNC
+*/
+HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest013, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest013 start.");
+ 
+    auto& sensorClusterMap = g_service->GetPolicy()->sensorClusterMap_;
+ 
+    ASSERT_FALSE(sensorClusterMap.count("sunshine") == 0);
+    auto& cluster = sensorClusterMap["sunshine"];
+    ASSERT_TRUE(cluster->tempDiffFlag_);
+ 
+    ASSERT_FALSE(sensorClusterMap.count("high_safe") == 0);
+    auto& clusterTmp = sensorClusterMap["high_safe"];
+    ASSERT_FALSE(clusterTmp->tempDiffFlag_);
+ 
+    auto& tempDiffInfoList = cluster->tempDiffInfoList_;
+    for (int i = 0; i < tempDiffInfoList.size(); ++ i) {
+        std::cout << "tempDiffInfoList -> " << i << std::endl;
+        std::cout << tempDiffInfoList[i].sensor1 << " "
+            << tempDiffInfoList[i].sensor2 << " "
+            << tempDiffInfoList[i].tempDiff << " "
+            << tempDiffInfoList[i].level << std::endl;
+    }
+ 
+    EXPECT_TRUE((int)tempDiffInfoList.size() == 2);
+ 
+    sort(tempDiffInfoList.begin(), tempDiffInfoList.end(), 
+        [](const TempDiffItem& item1, const TempDiffItem& item2) {
+            return item1.level < item2.level;
+    });
+ 
+    EXPECT_TRUE(tempDiffInfoList[0].sensor1 == "shell_front");
+    EXPECT_TRUE(tempDiffInfoList[0].sensor2 == "shell_back");
+    EXPECT_TRUE(tempDiffInfoList[0].tempDiff == 5000);
+    EXPECT_TRUE(tempDiffInfoList[0].level == 1);
+ 
+    EXPECT_TRUE(tempDiffInfoList[1].sensor1 == "shell_front");
+    EXPECT_TRUE(tempDiffInfoList[1].sensor2 == "shell_back");
+    EXPECT_TRUE(tempDiffInfoList[1].tempDiff == 900000);
+    EXPECT_TRUE(tempDiffInfoList[1].level == 2);
+ 
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest013 end.");
 }
 } // namespace
