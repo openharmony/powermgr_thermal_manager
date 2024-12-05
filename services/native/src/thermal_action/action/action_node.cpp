@@ -56,23 +56,29 @@ void ActionNode::SetEnableEvent(bool enable)
     enableEvent_ = enable;
 }
 
-void ActionNode::AddActionValue(std::string value)
+void ActionNode::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(atoi(value.c_str()));
+    if (actionId > 0) {
+        auto iter = policyActionMap_.find(actionId);
+        if (iter != policyActionMap_.end()) {
+            iter->second.intDelayValue = atoi(value.c_str());
+        }
+    } else {
+        valueList_.push_back(atoi(value.c_str()));
+    }
 }
 
-void ActionNode::Execute()
+void ActionNode::ExecuteInner(uint32_t actionId)
 {
-    int32_t value = fallbackValue_;
-    if (!valueList_.empty()) {
-        if (isStrict_) {
-            value = *min_element(valueList_.begin(), valueList_.end());
-        } else {
-            value = *max_element(valueList_.begin(), valueList_.end());
-        }
+    auto iter = policyActionMap_.find(actionId);
+    int32_t value;
+    if (actionId > 0 && iter != policyActionMap_.end()) {
+        value = iter->second.intDelayValue;
+    } else {
+        value = GetActionValue();
     }
     if (value != lastValue_) {
         std::string valStr = std::to_string(value);
@@ -85,6 +91,20 @@ void ActionNode::Execute()
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastValue_);
     }
     valueList_.clear();
+}
+
+int32_t ActionNode::GetActionValue()
+{
+    int32_t value = fallbackValue_;
+    if (!valueList_.empty()) {
+        if (isStrict_) {
+            value = *min_element(valueList_.begin(), valueList_.end());
+        } else {
+            value = *max_element(valueList_.begin(), valueList_.end());
+        }
+    }
+ 
+    return value;
 }
 } // namespace PowerMgr
 } // namespace OHOS

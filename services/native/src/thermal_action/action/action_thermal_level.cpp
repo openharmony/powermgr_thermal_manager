@@ -60,19 +60,33 @@ void ActionThermalLevel::SetEnableEvent(bool enable)
     enableEvent_ = enable;
 }
 
-void ActionThermalLevel::AddActionValue(std::string value)
+void ActionThermalLevel::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
+    if (actionId > 0) {
+        auto iter = policyActionMap_.find(actionId);
+        if (iter != policyActionMap_.end()) {
+            iter->second.uintDelayValue = static_cast<uint32_t>(static_cast<uint32_t>(strtol(value.c_str(),
+                nullptr, STRTOL_FORMART_DEC)));
+        }
+    } else {
+        valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
+    }
 }
 
-void ActionThermalLevel::Execute()
+void ActionThermalLevel::ExecuteInner(uint32_t actionId)
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    int32_t value = GetActionValue();
+    auto iter = policyActionMap_.find(actionId);
+    int32_t value;
+    if (actionId > 0 && iter != policyActionMap_.end()) {
+        value = iter->second.uintDelayValue;
+    } else {
+        value = GetActionValue();
+    }
     if (value != lastValue_) {
         LevelRequest(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
