@@ -89,7 +89,7 @@ private:
         uint32_t& level, const TypeTempMap& typeTempInfo);
     void DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp,
         uint32_t& level, const TypeTempMap& typeTempInfo);
-    void CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level);
+    bool CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level);
     bool IsTempRateTrigger(uint32_t& level);
     bool IsAuxSensorTrigger(const TypeTempMap& typeTempInfo, uint32_t& level);
     bool IsTempDiffTrigger(const TypeTempMap& typeTempInfo, uint32_t& level);
