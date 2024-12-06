@@ -75,7 +75,7 @@ bool ChargeDelayStateCollection::RegisterEvent()
 }
 
 #ifdef BATTERY_MANAGER_ENABLE
-void ChargeDelayStateCollection::HandlerPowerDisconnected(const EventFwk::CommonEventData& data __attribute__((__unused__)))
+void ChargeDelayStateCollection::HandlerPowerDisconnected(const EventFwk::CommonEventData& data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     criticalState_ = CRITICAL_STATE;
@@ -84,7 +84,7 @@ void ChargeDelayStateCollection::HandlerPowerDisconnected(const EventFwk::Common
     StartDelayTimer();
 }
 
-void ChargeDelayStateCollection::HandlerPowerConnected(const EventFwk::CommonEventData& data __attribute__((__unused__)))
+void ChargeDelayStateCollection::HandlerPowerConnected(const EventFwk::CommonEventData& data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (delayTimerId_ > 0) {
@@ -113,7 +113,7 @@ void ChargeDelayStateCollection::StopDelayTimer()
     if (delayTimerId_ > 0) {
         auto thermalTimer = std::make_shared<ThermalTimer>();
         if (!thermalTimer->StopTimer(delayTimerId_)) {
-            THERMAL_HILOGE(COMP_SVC, "failed to stop delay timer, timerId = %{public}lu", delayTimerId_);
+            THERMAL_HILOGE(COMP_SVC, "failed to stop delay timer, timerId = %{public}llu", delayTimerId_);
         }
         thermalTimer->DestroyTimer(delayTimerId_);
         delayTimerId_ = 0;
