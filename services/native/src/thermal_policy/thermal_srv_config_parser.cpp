@@ -32,6 +32,7 @@ constexpr const char* THERMAL_CONFIG_LIBRARY_PATH = "libthermal_manager_ext.z.so
 const std::string SYSTEM_PREFIX = "/system";
 constexpr int32_t SYSTEM_PREFIX_INDEX = 7;
 constexpr int32_t THERMAL_SERVICE_CONFIG_INDEX = 2;
+constexpr int32_t TEMPDIFF_SENSOR_SIZE = 2;
 typedef int32_t(*Func)(int32_t, std::string&);
 }
 
@@ -210,7 +211,8 @@ bool ThermalSrvConfigParser::ParseLevelNode(const xmlNodePtr& node)
             THERMAL_HILOGE(COMP_SVC, "level cluster name is null");
             return false;
         }
-        if (!ParseLevelState(cur, sc) || !ParseAuxSensorInfo(cur, sc) || !ParseSensorInfo(cur, sc)) {
+        if (!ParseLevelState(cur, sc) || !ParseAuxSensorInfo(cur, sc) || !ParseSensorInfo(cur, sc)
+            || !ParseTempDiffInfo(cur, sc)) {
             THERMAL_HILOGE(COMP_SVC, "parse sensor info failed, cluster name: %{public}s", name.c_str());
             return false;
         }
@@ -771,6 +773,87 @@ bool ThermalSrvConfigParser::ParseFanFaultInfo(const xmlNodePtr& node,
         cur = cur->next;
     }
 
+    return true;
+}
+ 
+bool ThermalSrvConfigParser::ParseTempDiffInfo(const xmlNodePtr& cur, SensorClusterPtr& sc)
+{
+    xmlChar* xmlTempDiff = xmlGetProp(cur, BAD_CAST"temp_diff");
+    if (xmlTempDiff == nullptr) {
+        THERMAL_HILOGD(COMP_SVC, "temp_diff does not exist!");
+        return true;
+    }
+ 
+    std::vector<std::string> sensors;
+    StringOperation::SplitString(reinterpret_cast<char*>(xmlTempDiff), sensors, ",");
+    if (sensors.size() != TEMPDIFF_SENSOR_SIZE) {
+        THERMAL_HILOGE(COMP_SVC, "temp_diff sensors parameter size is not 2.");
+        xmlFree(xmlTempDiff);
+        return false;
+    }
+ 
+    auto& sensor1 = sensors[0];
+    auto& sensor2 = sensors[1];
+    TempDiffInfoList infoList;
+    if (!ParseTempDiffLevInfo(cur, sensor1, sensor2, infoList)) {
+        THERMAL_HILOGE(COMP_SVC, "parse temp diff level info failed in ParseTempDiffInfo.");
+        xmlFree(xmlTempDiff);
+        return false;
+    }
+ 
+    sc->SetTempDiffInfo(infoList);
+    sc->SetTempDiffFlag(true);
+    xmlFree(xmlTempDiff);
+    return true;
+}
+ 
+bool ThermalSrvConfigParser::ParseTempDiffLevInfo(const xmlNodePtr& cur,
+    const std::string& sensor1, const std::string& sensor2, TempDiffInfoList& infoList)
+{
+    for (xmlNodePtr subNode = cur->xmlChildrenNode; subNode != nullptr; subNode = subNode->next) {
+        if (xmlStrcmp(subNode->name, BAD_CAST"item") != 0) {
+            continue;
+        }
+        TempDiffItem item;
+        if (!ParseTempDiffValue(subNode, sensor1, sensor2, item)) {
+            THERMAL_HILOGE(COMP_SVC, "parse temp diff value failed");
+            return false;
+        }
+        xmlChar* xmlLevel = xmlGetProp(subNode, BAD_CAST("level"));
+        if (xmlLevel == nullptr) {
+            THERMAL_HILOGE(COMP_SVC, "temp diff level is null");
+            return false;
+        }
+        if (!StrToInt(reinterpret_cast<char*>(xmlLevel), item.level)) {
+            THERMAL_HILOGE(COMP_SVC, "temp diff item level is illegal positive number.");
+            xmlFree(xmlLevel);
+            return false;
+        }
+        xmlFree(xmlLevel);
+        THERMAL_HILOGD(COMP_SVC, "temp diff level: %{public}d, temp diff: %{public}d",
+            item.level, item.tempDiff);
+        infoList.push_back(item);
+    }
+    return true;
+}
+ 
+bool ThermalSrvConfigParser::ParseTempDiffValue(const xmlNodePtr& cur,
+    const std::string& sensor1, const std::string& sensor2, TempDiffItem& item)
+{
+    xmlChar* xmlTempDiffTrigger = xmlGetProp(cur, BAD_CAST("temp_diff_trigger"));
+    if (xmlTempDiffTrigger == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "temp diff trigger value is null");
+        return false;
+    }
+    
+    if (!StrToInt(reinterpret_cast<char*>(xmlTempDiffTrigger), item.tempDiff)) {
+        THERMAL_HILOGE(COMP_SVC, "temp diff value is a illegal number");
+        xmlFree(xmlTempDiffTrigger);
+        return false;
+    }
+    item.sensor1 = sensor1;
+    item.sensor2 = sensor2;
+    xmlFree(xmlTempDiffTrigger);
     return true;
 }
 } // namespace PowerMgr
