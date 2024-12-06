@@ -31,8 +31,8 @@ public:
     void InitParams(const std::string& params) override;
     void SetStrict(bool enable) override;
     void SetEnableEvent(bool enable) override;
-    void AddActionValue(std::string value) override;
-    void Execute() override;
+    void AddActionValue(uint32_t actionId, std::string value) override;
+    void ExecuteInner(uint32_t actionId) override;
     void HandlePopupEvent(const int32_t value);
     bool ShowThermalDialog(TempStatus value);
 private:

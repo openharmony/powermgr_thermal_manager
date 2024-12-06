@@ -45,19 +45,33 @@ void ActionCpuBoost::SetEnableEvent(bool enable)
     enableEvent_ = enable;
 }
 
-void ActionCpuBoost::AddActionValue(std::string value)
+void ActionCpuBoost::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
         return;
     }
-    valueList_.push_back(static_cast<uint32_t>(atoi(value.c_str())));
+    if (actionId > 0) {
+        auto iter = policyActionMap_.find(actionId);
+        if (iter != policyActionMap_.end()) {
+            iter->second.uintDelayValue = static_cast<uint32_t>(static_cast<uint32_t>(strtol(value.c_str(),
+                nullptr, STRTOL_FORMART_DEC)));
+        }
+    } else {
+        valueList_.push_back(static_cast<uint32_t>(atoi(value.c_str())));
+    }
 }
 
-void ActionCpuBoost::Execute()
+void ActionCpuBoost::ExecuteInner(uint32_t actionId)
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    uint32_t value = GetActionValue();
+    auto iter = policyActionMap_.find(actionId);
+    uint32_t value;
+    if (actionId > 0 && iter != policyActionMap_.end()) {
+        value = iter->second.uintDelayValue;
+    } else {
+        value = GetActionValue();
+    }
     if (value != lastValue_) {
         if (value == BOOST_DISABLE_VALUE) {
             SetBoostEnable(false);

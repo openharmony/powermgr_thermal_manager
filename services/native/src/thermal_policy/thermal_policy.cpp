@@ -32,6 +32,8 @@ namespace PowerMgr {
 namespace {
 constexpr const char* LEVEL_PATH = "/data/service/el0/thermal/config/configLevel";
 const int MAX_PATH = 256;
+const int MAX_DELAY_FLAG_SIZE = 2;
+constexpr const char* DELAY_TIME_FLAG = "delaytime";
 }
 
 bool ThermalPolicy::Init()
@@ -158,22 +160,41 @@ void ThermalPolicy::PolicyDecision()
 
 void ThermalPolicy::ActionDecision(const std::vector<PolicyAction>& actionList)
 {
-    std::map<std::string, std::string> actionPolicyMap;
+    std::unordered_map<std::string, const PolicyAction&> actionPolicyInfos;
     for (auto action = actionList.begin(); action != actionList.end(); action++) {
         if (action->isProp && !StateMachineDecision(action->actionPropMap)) {
             continue;
         }
-        actionPolicyMap[action->actionName] = action->actionValue;
+        auto& actionName = action->actionName;
+        actionPolicyInfos.insert({actionName, *action});
     }
     auto tms = ThermalService::GetInstance();
     ThermalActionManager::ThermalActionMap actionMap = tms->GetActionManagerObj()->GetActionMap();
-    for (auto& actionPolicy : actionPolicyMap) {
-        auto actionIter = actionMap.find(actionPolicy.first);
-        if (actionIter == actionMap.end() || actionIter->second == nullptr) {
-            THERMAL_HILOGE(COMP_SVC, "can't find action [%{public}s] ability", actionPolicy.first.c_str());
+    for (const auto& [actionName, actionPolicy] : actionPolicyInfos) {
+        if (actionMap.count(actionName) == 0 || actionMap[actionName] == nullptr) {
+            THERMAL_HILOGE(COMP_SVC, "can't find action [%{public}s] ability", actionPolicy.actionName.c_str());
             continue;
         }
-        actionIter->second->AddActionValue(actionPolicy.second);
+        auto& thermalAction = actionMap[actionName];
+        auto ite = actionPolicy.actionPropMap.find(DELAY_TIME_FLAG);
+        if (actionPolicy.isProp && ite != actionPolicy.actionPropMap.end()) {
+            THERMAL_HILOGI(COMP_SVC, "actionName = %{public}s, actionValue = %{public}s, delayTime = %{public}s",
+                actionName.c_str(), actionPolicy.actionValue.c_str(), ite->second.c_str());
+            std::vector<std::string> delayStr;
+            StringOperation::SplitString(ite->second, delayStr, ",");
+            if (delayStr.size() != MAX_DELAY_FLAG_SIZE) {
+                THERMAL_HILOGE(COMP_SVC, "size check fail");
+                continue;
+            }
+            PolicyDelayAction delayAction;
+            uint32_t actionId = 0;
+            StringOperation::StrToUint(delayStr[0], actionId);
+            StringOperation::StrToUint(delayStr[1], delayAction.delayTime);
+            thermalAction->AddActionDelayTime(actionId, delayAction);
+            thermalAction->AddActionValue(actionId, actionPolicy.actionValue);
+            continue;
+        }
+        thermalAction->AddActionValue(actionPolicy.actionValue);
     }
 }
 
@@ -197,6 +218,7 @@ bool ThermalPolicy::StateMachineDecision(const std::map<std::string, std::string
 {
     auto tms = ThermalService::GetInstance();
     for (auto prop = stateMap.begin(); prop != stateMap.end(); prop++) {
+        if (prop->first == DELAY_TIME_FLAG) continue;
         StateMachine::StateMachineMap stateMachineMap = tms->GetStateMachineObj()->GetStateCollectionMap();
         auto stateIter = stateMachineMap.find(prop->first);
         if (stateIter == stateMachineMap.end() || stateIter->second == nullptr) {

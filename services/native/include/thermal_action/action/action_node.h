@@ -30,10 +30,11 @@ public:
     void InitParams(const std::string& params) override;
     void SetStrict(bool enable) override;
     void SetEnableEvent(bool enable) override;
-    void AddActionValue(std::string value) override;
-    void Execute() override;
+    void AddActionValue(uint32_t actionId, std::string value) override;
+    void ExecuteInner(uint32_t actionId) override;
 
 private:
+    int32_t GetActionValue();
     int32_t lastValue_ {INT_MAX};
     int32_t fallbackValue_ {0};
     std::string nodePath_;

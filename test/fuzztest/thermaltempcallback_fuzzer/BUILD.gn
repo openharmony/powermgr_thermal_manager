@@ -50,6 +50,7 @@ ohos_fuzztest("ThermalTempCallbackFuzzTest") {
   ]
 
   external_deps = [
+    "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "drivers_interface_thermal:libthermal_proxy_1.1",
     "hdf_core:libhdi",
@@ -59,6 +60,7 @@ ohos_fuzztest("ThermalTempCallbackFuzzTest") {
     "libxml2:libxml2",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "time_service:time_client",
   ]
 
   defines = []

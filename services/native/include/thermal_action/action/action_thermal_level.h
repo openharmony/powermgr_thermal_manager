@@ -39,8 +39,8 @@ public:
     void InitParams(const std::string& params) override;
     void SetStrict(bool enable) override;
     void SetEnableEvent(bool enable) override;
-    void AddActionValue(std::string value) override;
-    void Execute() override;
+    void AddActionValue(uint32_t actionId, std::string value) override;
+    void ExecuteInner(uint32_t actionId) override;
     void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     static int32_t GetThermalLevel();
