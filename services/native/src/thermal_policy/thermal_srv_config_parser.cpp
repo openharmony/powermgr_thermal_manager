@@ -489,6 +489,14 @@ bool ThermalSrvConfigParser::ParseStateNode(const xmlNodePtr& node)
             si.isExistParam = true;
             xmlFree(param);
         }
+
+        xmlChar* delayTime = xmlGetProp(cur, BAD_CAST("delaytime"));
+        if (delayTime != nullptr) {
+            si.params = reinterpret_cast<char*>(delayTime);
+            si.isDelayed = true;
+            xmlFree(delayTime);
+        }
+
         stateItems.push_back(si);
         THERMAL_HILOGD(COMP_SVC, "state: %{public}s, params: %{public}s", si.name.c_str(), si.params.c_str());
         cur = cur->next;
