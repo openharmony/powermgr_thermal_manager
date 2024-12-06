@@ -46,6 +46,11 @@ private:
     bool ParseLevelState(const xmlNodePtr& cur, SensorClusterPtr& sc);
     bool ParseAuxSensorInfo(const xmlNodePtr& cur, SensorClusterPtr& sc);
     bool ParseSensorInfo(const xmlNodePtr& cur, SensorClusterPtr& sc);
+    bool ParseTempDiffInfo(const xmlNodePtr& cur, SensorClusterPtr& sc);
+    bool ParseTempDiffLevInfo(const xmlNodePtr& cur,
+        const std::string& sensor1, const std::string& sensor2, TempDiffInfoList& infoList);
+    bool ParseTempDiffValue(const xmlNodePtr& cur,
+        const std::string& sensor1, const std::string& sensor2, TempDiffItem& item);
     bool ParseAuxSensorLevInfo(const xmlNodePtr& cur, std::vector<std::string>& auxsensors,
         const uint32_t sensorIdx, std::vector<AuxLevelItem>& auxLevelItem);
     bool ParseAuxSensorTriggerRange(const xmlNodePtr& subNode, std::vector<std::string>& auxsensors,

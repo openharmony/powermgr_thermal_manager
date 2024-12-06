@@ -55,6 +55,12 @@ bool ThermalConfigSensorCluster::CheckStandard()
         THERMAL_HILOGE(COMP_SVC, "sensor [%{public}s] aux lev size mismatch", sensorInfo->first.c_str());
         return false;
     }
+    uint32_t tempDiffLevSize = static_cast<uint32_t>(tempDiffInfoList_.size());
+    if (tempDiffFlag_ && tempDiffLevSize != expectedLevSize) {
+        THERMAL_HILOGE(COMP_SVC, "temp diff sensor lev size mismatch");
+        return false;
+    }
+
     return true;
 }
 
@@ -113,22 +119,20 @@ void ThermalConfigSensorCluster::CalculateSensorLevel(const TypeTempMap& typeTem
         }
         uint32_t level = latestLevel_;
         if (descFlag_) {
-            DescJudgment(sensorInfo->second, iter->second, level);
-            CheckExtraCondition(typeTempInfo, level);
+            DescJudgment(sensorInfo->second, iter->second, level, typeTempInfo);
             levelList.push_back(level);
         } else {
-            AscJudgment(sensorInfo->second, iter->second, level);
-            CheckExtraCondition(typeTempInfo, level);
+            AscJudgment(sensorInfo->second, iter->second, level, typeTempInfo);
             levelList.push_back(level);
         }
     }
 }
 
 void ThermalConfigSensorCluster::AscendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level,
-    uint32_t end, int32_t curTemp)
+    uint32_t end, int32_t curTemp, const TypeTempMap& typeTempInfo)
 {
     for (uint32_t i = level; i < end; i++) {
-        if (curTemp < levItems.at(i).threshold) {
+        if (curTemp < levItems.at(i).threshold || !CheckExtraCondition(typeTempInfo, levItems.at(i).level)) {
             break;
         }
         level = levItems.at(i).level;
@@ -136,10 +140,10 @@ void ThermalConfigSensorCluster::AscendLevelToThreshold(std::vector<LevelItem>& 
 }
 
 void ThermalConfigSensorCluster::DescendLevelToThresholdClr(std::vector<LevelItem>& levItems,
-    uint32_t& level, int32_t curTemp)
+    uint32_t& level, int32_t curTemp, const TypeTempMap& typeTempInfo)
 {
     for (uint32_t i = level; i >= 1; i--) {
-        if (curTemp >= levItems.at(i - 1).thresholdClr) {
+        if (curTemp >= levItems.at(i - 1).thresholdClr && CheckExtraCondition(typeTempInfo, levItems.at(i - 1).level)) {
             break;
         }
         level = (levItems.at(i - 1).level > 0) ? (levItems.at(i - 1).level - 1) : 0;
@@ -147,10 +151,10 @@ void ThermalConfigSensorCluster::DescendLevelToThresholdClr(std::vector<LevelIte
 }
 
 void ThermalConfigSensorCluster::DescendLevelToThreshold(std::vector<LevelItem>& levItems,
-    uint32_t& level, int32_t curTemp)
+    uint32_t& level, int32_t curTemp, const TypeTempMap& typeTempInfo)
 {
     for (uint32_t i = level; i >= 1; i--) {
-        if (curTemp < levItems.at(i - 1).thresholdClr) {
+        if (curTemp < levItems.at(i - 1).thresholdClr || !CheckExtraCondition(typeTempInfo, levItems.at(i - 1).level)) {
             level = (levItems.at(i - 1).level > 0) ? (levItems.at(i - 1).level - 1) : 0;
         } else {
             break;
@@ -159,10 +163,10 @@ void ThermalConfigSensorCluster::DescendLevelToThreshold(std::vector<LevelItem>&
 }
 
 void ThermalConfigSensorCluster::AscendLevelToThresholdClr(std::vector<LevelItem>& levItems,
-    uint32_t& level, uint32_t end, int32_t curTemp)
+    uint32_t& level, uint32_t end, int32_t curTemp, const TypeTempMap& typeTempInfo)
 {
     for (uint32_t i = level; i < end; i++) {
-        if (curTemp >= levItems.at(i).threshold) {
+        if (curTemp >= levItems.at(i).threshold && CheckExtraCondition(typeTempInfo, levItems.at(i).level)) {
             level = levItems.at(i).level;
         } else {
             break;
@@ -171,10 +175,10 @@ void ThermalConfigSensorCluster::AscendLevelToThresholdClr(std::vector<LevelItem
 }
 
 void ThermalConfigSensorCluster::LevelUpwardsSearch(std::vector<LevelItem>& levItems,
-    uint32_t& level, uint32_t end, int32_t curTemp)
+    uint32_t& level, uint32_t end, int32_t curTemp, const TypeTempMap& typeTempInfo)
 {
     for (uint32_t i = level; i < end; i++) {
-        if (curTemp > levItems.at(i).threshold) {
+        if (curTemp > levItems.at(i).threshold || !CheckExtraCondition(typeTempInfo, levItems.at(i).level)) {
             break;
         }
         level = levItems.at(i).level;
@@ -182,10 +186,10 @@ void ThermalConfigSensorCluster::LevelUpwardsSearch(std::vector<LevelItem>& levI
 }
 
 void ThermalConfigSensorCluster::LevelDownwardsSearch(std::vector<LevelItem>& levItems,
-    uint32_t& level, int32_t curTemp)
+    uint32_t& level, int32_t curTemp, const TypeTempMap& typeTempInfo)
 {
     for (uint32_t i = level; i >= 1; i--) {
-        if (curTemp <= levItems.at(i - 1).thresholdClr) {
+        if (curTemp <= levItems.at(i - 1).thresholdClr && CheckExtraCondition(typeTempInfo, levItems.at(i - 1).level)) {
             break;
         }
         level = (levItems.at(i - 1).level > 0) ? (levItems.at(i - 1).level - 1) : 0;
@@ -193,10 +197,10 @@ void ThermalConfigSensorCluster::LevelDownwardsSearch(std::vector<LevelItem>& le
 }
 
 void ThermalConfigSensorCluster::LevelDownwardsSearchWithThreshold(std::vector<LevelItem>& levItems,
-    uint32_t& level, int32_t curTemp)
+    uint32_t& level, int32_t curTemp, const TypeTempMap& typeTempInfo)
 {
     for (uint32_t i = level; i >= 1; i--) {
-        if (curTemp > levItems.at(i - 1).thresholdClr) {
+        if (curTemp > levItems.at(i - 1).thresholdClr || !CheckExtraCondition(typeTempInfo, levItems.at(i - 1).level)) {
             level = (levItems.at(i - 1).level > 0) ? (levItems.at(i - 1).level - 1) : 0;
         } else {
             break;
@@ -205,10 +209,10 @@ void ThermalConfigSensorCluster::LevelDownwardsSearchWithThreshold(std::vector<L
 }
 
 void ThermalConfigSensorCluster::LevelUpwardsSearchWithThreshold(std::vector<LevelItem>& levItems,
-    uint32_t& level, uint32_t end, int32_t curTemp)
+    uint32_t& level, uint32_t end, int32_t curTemp, const TypeTempMap& typeTempInfo)
 {
     for (uint32_t i = level; i < end; i++) {
-        if (curTemp <= levItems.at(i).threshold) {
+        if (curTemp <= levItems.at(i).threshold && CheckExtraCondition(typeTempInfo, levItems.at(i).level)) {
             level = levItems.at(i).level;
         } else {
             break;
@@ -216,65 +220,75 @@ void ThermalConfigSensorCluster::LevelUpwardsSearchWithThreshold(std::vector<Lev
     }
 }
 
-void ThermalConfigSensorCluster::AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level)
+void ThermalConfigSensorCluster::AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level,
+    const TypeTempMap& typeTempInfo)
 {
     if (level > 0 && level < levItems.size()) {
         int32_t curDownTemp = levItems.at(level - 1).thresholdClr;
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp >= nextUptemp) {
-            AscendLevelToThreshold(levItems, level, levItems.size(), curTemp);
-        } else if (curTemp < curDownTemp) {
-            DescendLevelToThresholdClr(levItems, level, curTemp);
+            AscendLevelToThreshold(levItems, level, levItems.size(), curTemp, typeTempInfo);
+        } else if (curTemp < curDownTemp || !CheckExtraCondition(typeTempInfo, level)) {
+            DescendLevelToThresholdClr(levItems, level, curTemp, typeTempInfo);
         }
     } else if (level == levItems.size()) {
         int32_t curDownTemp = levItems.at(level - 1).thresholdClr;
-        if (curTemp < curDownTemp) {
-            DescendLevelToThreshold(levItems, level, curTemp);
+        if (curTemp < curDownTemp || !CheckExtraCondition(typeTempInfo, level)) {
+            DescendLevelToThreshold(levItems, level, curTemp, typeTempInfo);
         }
     } else {
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp >= nextUptemp) {
-            AscendLevelToThresholdClr(levItems, level, levItems.size(), curTemp);
+            AscendLevelToThresholdClr(levItems, level, levItems.size(), curTemp, typeTempInfo);
         }
     }
 }
 
-void ThermalConfigSensorCluster::DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level)
+void ThermalConfigSensorCluster::DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp, uint32_t& level,
+    const TypeTempMap& typeTempInfo)
 {
     if (level != 0 && level < levItems.size()) {
         int32_t curDownTemp = levItems.at(level - 1).thresholdClr;
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp <= nextUptemp) {
-            LevelUpwardsSearch(levItems, level, levItems.size(), curTemp);
-        } else if (curTemp > curDownTemp) {
-            LevelDownwardsSearch(levItems, level, curTemp);
+            LevelUpwardsSearch(levItems, level, levItems.size(), curTemp, typeTempInfo);
+        } else if (curTemp > curDownTemp || !CheckExtraCondition(typeTempInfo, level)) {
+            LevelDownwardsSearch(levItems, level, curTemp, typeTempInfo);
         }
     } else if (level == levItems.size()) {
         int32_t curDownTemp = levItems.at(level - 1).thresholdClr;
-        if (curTemp > curDownTemp) {
-            LevelDownwardsSearchWithThreshold(levItems, level, curTemp);
+        if (curTemp > curDownTemp || !CheckExtraCondition(typeTempInfo, level)) {
+            LevelDownwardsSearchWithThreshold(levItems, level, curTemp, typeTempInfo);
         }
     } else {
         int32_t nextUptemp = levItems.at(level).threshold;
         if (curTemp <= nextUptemp) {
-            LevelUpwardsSearchWithThreshold(levItems, level, levItems.size(), curTemp);
+            LevelUpwardsSearchWithThreshold(levItems, level, levItems.size(), curTemp, typeTempInfo);
         }
     }
 }
 
-void ThermalConfigSensorCluster::CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level)
+bool ThermalConfigSensorCluster::CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level)
 {
     if (auxFlag_) {
         if (!IsAuxSensorTrigger(typeTempInfo, level)) {
             THERMAL_HILOGD(COMP_SVC, "aux sensor isn't satisfied, fallback");
+            return false;
         }
     }
 
     if (rateFlag_) {
         if (!IsTempRateTrigger(level)) {
             THERMAL_HILOGD(COMP_SVC, "temp rise rate isn't satisfied, fallback");
+            return false;
         }
     }
+
+    if (tempDiffFlag_ && !IsTempDiffTrigger(typeTempInfo, level)) {
+        THERMAL_HILOGD(COMP_SVC, "temp diff isn't satisfied, fallback");
+        return false;
+    }
+    return true;
 }
 
 bool ThermalConfigSensorCluster::IsTempRateTrigger(uint32_t& level)
@@ -296,7 +310,6 @@ bool ThermalConfigSensorCluster::IsTempRateTrigger(uint32_t& level)
             if (rateIter->second > levItem.tempRiseRate) {
                 continue;
             } else {
-                level = 0;
                 return false;
             }
         }
@@ -312,7 +325,6 @@ bool ThermalConfigSensorCluster::IsAuxSensorTrigger(const TypeTempMap& typeTempI
     for (auto sensorInfo = auxSensorInfolist_.begin(); sensorInfo != auxSensorInfolist_.end(); ++sensorInfo) {
         auto auxIter = typeTempInfo.find(sensorInfo->first);
         if (auxIter == typeTempInfo.end()) {
-            level = 0;
             return false;
         }
         int32_t lowerTemp = sensorInfo->second.at(level - 1).lowerTemp;
@@ -320,10 +332,48 @@ bool ThermalConfigSensorCluster::IsAuxSensorTrigger(const TypeTempMap& typeTempI
         if (auxIter->second >= lowerTemp && auxIter->second <= upperTemp) {
             continue;
         } else {
-            level = 0;
             return false;
         }
     }
+    return true;
+}
+
+bool ThermalConfigSensorCluster::IsTempDiffTrigger(const TypeTempMap& typeTempInfo, uint32_t& level)
+{
+    if (level == 0) {
+        THERMAL_HILOGD(COMP_SVC, "initial level is zero, temp diff not triggered");
+        return true;
+    }
+    uint32_t levSize = static_cast<uint32_t>(tempDiffInfoList_.size());
+    if (level <= 0 || level > levSize) {
+        THERMAL_HILOGE(COMP_SVC, "target level or level size is illegal.");
+        return false;
+    }
+    sort(tempDiffInfoList_.begin(), tempDiffInfoList_.end(),
+        [](const TempDiffItem& t1, const TempDiffItem& t2) {
+            return t1.level < t2.level;
+    });
+    auto& tempDiffInfo = tempDiffInfoList_.at(level - 1);
+    auto& sensor1 = tempDiffInfo.sensor1;
+    auto& sensor2 = tempDiffInfo.sensor2;
+ 
+    std::map<std::string, int>::const_iterator ite1 = typeTempInfo.end(),
+        ite2 = typeTempInfo.end();
+    if ((ite1 = typeTempInfo.find(sensor1)) == typeTempInfo.end()
+        || (ite2 = typeTempInfo.find(sensor2)) == typeTempInfo.end()) {
+        THERMAL_HILOGE(COMP_SVC, "No temperature info about the target sensor: %{public}s and %{public}s.",
+            sensor1.c_str(), sensor2.c_str());
+        return false;
+    }
+ 
+    const auto& tempSensor1 = ite1->second;
+    const auto& tempSensor2 = ite2->second;
+    if ((tempSensor1 - tempSensor2) > tempDiffInfo.tempDiff) {
+        THERMAL_HILOGE(COMP_SVC, "temp diff of target sensors do not meet the requirements.");
+        return false;
+    }
+ 
+    THERMAL_HILOGD(COMP_SVC, "Temperature difference triggered successfully.");
     return true;
 }
 
@@ -355,6 +405,16 @@ void ThermalConfigSensorCluster::SetAuxFlag(bool auxflag)
 void ThermalConfigSensorCluster::SetRateFlag(bool rateFlag)
 {
     rateFlag_ =  rateFlag;
+}
+
+void ThermalConfigSensorCluster::SetTempDiffFlag(bool tempDiffFlag)
+{
+    tempDiffFlag_ = tempDiffFlag;
+}
+ 
+void ThermalConfigSensorCluster::SetTempDiffInfo(TempDiffInfoList& tempDiffInfoList)
+{
+    tempDiffInfoList_ = tempDiffInfoList;
 }
 } // namespace PowerMgr
 } // namespace OHOS
