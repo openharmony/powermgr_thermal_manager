@@ -341,10 +341,12 @@ bool ThermalConfigSensorCluster::IsAuxSensorTrigger(const TypeTempMap& typeTempI
 bool ThermalConfigSensorCluster::IsTempDiffTrigger(const TypeTempMap& typeTempInfo, uint32_t& level)
 {
     if (level == 0) {
+        THERMAL_HILOGD(COMP_SVC, "initial level is zero, temp diff not triggered");
         return true;
     }
     uint32_t levSize = static_cast<uint32_t>(tempDiffInfoList_.size());
     if (level <= 0 || level > levSize) {
+        THERMAL_HILOGE(COMP_SVC, "target level or level size is illegal.");
         return false;
     }
     sort(tempDiffInfoList_.begin(), tempDiffInfoList_.end(),
@@ -359,15 +361,19 @@ bool ThermalConfigSensorCluster::IsTempDiffTrigger(const TypeTempMap& typeTempIn
         ite2 = typeTempInfo.end();
     if ((ite1 = typeTempInfo.find(sensor1)) == typeTempInfo.end()
         || (ite2 = typeTempInfo.find(sensor2)) == typeTempInfo.end()) {
+        THERMAL_HILOGE(COMP_SVC, "No temperature info about the target sensor: %{public}s and %{public}s.",
+            sensor1.c_str(), sensor2.c_str());
         return false;
     }
  
     const auto& tempSensor1 = ite1->second;
     const auto& tempSensor2 = ite2->second;
     if ((tempSensor1 - tempSensor2) > tempDiffInfo.tempDiff) {
+        THERMAL_HILOGE(COMP_SVC, "temp diff of target sensors do not meet the requirements.");
         return false;
     }
  
+    THERMAL_HILOGD(COMP_SVC, "Temperature difference triggered successfully.");
     return true;
 }
 
