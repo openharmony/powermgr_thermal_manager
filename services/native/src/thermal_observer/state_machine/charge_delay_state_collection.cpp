@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
 #include "charge_delay_state_collection.h"
- 
+
 #ifdef BATTERY_MANAGER_ENABLE
 #include "battery_info.h"
 #include "battery_srv_client.h"
@@ -30,7 +30,6 @@
 #include "thermal_service.h"
 #include "thermal_common.h"
 
-using namespace OHOS::EventFwk;
 namespace OHOS {
 namespace PowerMgr {
 bool ChargeDelayStateCollection::Init()
@@ -65,31 +64,34 @@ bool ChargeDelayStateCollection::RegisterEvent()
 
 #ifdef BATTERY_MANAGER_ENABLE
     EventHandle batteryPowerConnectedHandler =
-        [this](const CommonEventData& data) { this->HandlerPowerConnected(data); };
-    receiver->AddEvent(CommonEventSupport::COMMON_EVENT_POWER_CONNECTED, batteryPowerConnectedHandler);
+        [this](const EventFwk::CommonEventData& data) { this->HandlerPowerConnected(data); };
+    receiver->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_POWER_CONNECTED, batteryPowerConnectedHandler);
 
     EventHandle batteryPowerDisconnectedHandler =
-        [this](const CommonEventData& data) { this->HandlerPowerDisconnected(data); };
-    receiver->AddEvent(CommonEventSupport::COMMON_EVENT_POWER_DISCONNECTED, batteryPowerDisconnectedHandler);
+        [this](const EventFwk::CommonEventData& data) { this->HandlerPowerDisconnected(data); };
+    receiver->AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_POWER_DISCONNECTED, batteryPowerDisconnectedHandler);
 #endif
     return true;
 }
 
 #ifdef BATTERY_MANAGER_ENABLE
-void ChargeDelayStateCollection::HandlerPowerDisconnected(const CommonEventData& data __attribute__((__unused__)))
+void ChargeDelayStateCollection::HandlerPowerDisconnected(const EventFwk::CommonEventData& data __attribute__((__unused__)))
 {
     std::lock_guard<std::mutex> lock(mutex_);
     criticalState_ = CRITICAL_STATE;
+    THERMAL_HILOGI(COMP_SVC, "ChargeDelayStateCollection HandlerPowerDisconnected");
+    StopDelayTimer();
     StartDelayTimer();
 }
- 
-void ChargeDelayStateCollection::HandlerPowerConnected(const CommonEventData& data __attribute__((__unused__)))
+
+void ChargeDelayStateCollection::HandlerPowerConnected(const EventFwk::CommonEventData& data __attribute__((__unused__)))
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (delayTimerId_ > 0) {
-        StopDelayAction();
+        StopDelayTimer();
     }
     criticalState_ = NON_CRITICAL_STATE;
+    THERMAL_HILOGI(COMP_SVC, "ChargeDelayStateCollection HandlerPowerConnected");
 }
 #endif
 
@@ -99,31 +101,32 @@ bool ChargeDelayStateCollection::StartDelayTimer()
     auto timerInfo = std::make_shared<ThermalTimerInfo>();
     timerInfo->SetType(timerInfo->TIMER_TYPE_WAKEUP | timerInfo->TIMER_TYPE_EXACT);
     timerInfo->SetCallbackInfo([this] { ResetState(); });
-
+    
     delayTimerId_ = thermalTimer->CreateTimer(timerInfo);
     int64_t curMsecTimestam = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
 
     return thermalTimer->StartTimer(delayTimerId_, static_cast<uint64_t>(delayTime_ + curMsecTimestam));
 }
 
-void ChargeDelayStateCollection::StopDelayAction()
+void ChargeDelayStateCollection::StopDelayTimer()
 {
     if (delayTimerId_ > 0) {
         auto thermalTimer = std::make_shared<ThermalTimer>();
         if (!thermalTimer->StopTimer(delayTimerId_)) {
-            THERMAL_HILOGE(COMP_SVC, "failed to stop delay timer, timerId = %{public}llu", delayTimerId_);
+            THERMAL_HILOGE(COMP_SVC, "failed to stop delay timer, timerId = %{public}lu", delayTimerId_);
         }
         thermalTimer->DestroyTimer(delayTimerId_);
         delayTimerId_ = 0;
     }
 }
- 
+
 void ChargeDelayStateCollection::SetState(const std::string& stateValue)
 {
 }
- 
+
 void ChargeDelayStateCollection::ResetState()
 {
+    THERMAL_HILOGI(COMP_SVC, "ChargeDelayStateCollection ResetState");
     std::lock_guard<std::mutex> lock(mutex_);
     criticalState_ = NON_CRITICAL_STATE;
     delayTimerId_ = 0;

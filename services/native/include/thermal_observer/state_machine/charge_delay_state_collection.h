@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@
 #include "thermal_mgr_listener.h"
 #include "thermal_timer.h"
 
-using IntentWant = OHOS::AAFwk::Want;
 namespace OHOS {
 namespace PowerMgr {
 class ChargeDelayStateCollection : public IStateCollection {
@@ -40,7 +39,7 @@ public:
     void HandlerPowerConnected(const EventFwk::CommonEventData& data);
     bool RegisterEvent();
     bool StartDelayTimer();
-    void StopDelayAction();
+    void StopDelayTimer();
     void ResetState();
     bool InitDelayTime(std::string& delaytime) override;
     virtual void SetState(const std::string& stateValue) override;
