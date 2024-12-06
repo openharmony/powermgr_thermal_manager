@@ -17,6 +17,7 @@
 
 #ifdef THERMAL_GTEST
 #define private   public
+#define protected   public
 #endif
 
 #include <memory>
@@ -95,15 +96,36 @@ HWTEST_F(ThermalActionTest, ThermalActionTest001, TestSize.Level0)
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest001 start");
     g_actionVolume->InitParams("volume");
     g_actionVolume->SetEnableEvent(false);
-    g_actionVolume->AddActionValue("");
-    g_actionVolume->AddActionValue("1.0");
+    g_actionVolume->AddActionValue(0, "");
+    g_actionVolume->AddActionValue(0, "1.0");
     g_actionVolume->Execute();
     g_actionVolume->SetStrict(true);
-    g_actionVolume->AddActionValue("2.0");
+    g_actionVolume->AddActionValue(0, "2.0");
     g_actionVolume->GetActionValue();
     g_actionVolume->VolumeRequest(1.0);
     int32_t ret = g_actionVolume->VolumeExecution(1.0);
     EXPECT_TRUE(ret == ERR_OK);
+    std::shared_ptr<IThermalAction> g_actionVolume2 = g_actionVolume;
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    g_actionVolume2->AddActionDelayTime(1, delayAction);
+    g_actionVolume2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionVolume2->AddActionDelayTime(2, delayAction2);
+    g_actionVolume2->AddActionValue(2, "1.0");
+    g_actionVolume2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionVolume2->AddActionDelayTime(2, delayAction3);
+    g_actionVolume2->AddActionValue(2, "1.0");
+    g_actionVolume2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionVolume2->AddActionDelayTime(4, delayAction4);
+    g_actionVolume2->AddActionValue(4, "1.0");
+    g_actionVolume2->Execute();
+    g_actionVolume2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest001 end");
 }
 
@@ -115,16 +137,37 @@ HWTEST_F(ThermalActionTest, ThermalActionTest001, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest002, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest002 start");
-    g_actionVoltage->AddActionValue("");
-    g_actionVoltage->AddActionValue("1.0");
+    g_actionVoltage->AddActionValue(0, "");
+    g_actionVoltage->AddActionValue(0, "1.0");
     g_actionVoltage->Execute();
     g_actionVoltage->SetStrict(true);
-    g_actionVoltage->AddActionValue("2.0");
+    g_actionVoltage->AddActionValue(0, "2.0");
     g_actionVoltage->GetActionValue();
     g_actionVoltage->SetVoltage(123456);
     g_actionVoltage->ExecuteVoltageLimit();
     int32_t ret = g_actionVoltage->WriteMockNode(123456);
     EXPECT_FALSE(ret == ERR_OK);
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionVoltage2 = g_actionVoltage;
+    g_actionVoltage2->AddActionDelayTime(1, delayAction);
+    g_actionVoltage2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionVoltage2->AddActionDelayTime(2, delayAction2);
+    g_actionVoltage2->AddActionValue(2, "1.0");
+    g_actionVoltage2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionVoltage2->AddActionDelayTime(2, delayAction3);
+    g_actionVoltage2->AddActionValue(2, "1.0");
+    g_actionVoltage2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionVoltage2->AddActionDelayTime(4, delayAction4);
+    g_actionVoltage2->AddActionValue(4, "1.0");
+    g_actionVoltage2->Execute();
+    g_actionVoltage2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest002 end");
 }
 
@@ -136,15 +179,15 @@ HWTEST_F(ThermalActionTest, ThermalActionTest002, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest003 start");
-    g_actionThermalLevel->AddActionValue("");
-    g_actionThermalLevel->AddActionValue("1.0");
+    g_actionThermalLevel->AddActionValue(0, "");
+    g_actionThermalLevel->AddActionValue(0, "1.0");
     g_actionThermalLevel->Execute();
     g_actionThermalLevel->GetThermalLevel();
     g_actionThermalLevel->LevelRequest(1);
     g_actionThermalLevel->LevelRequest(9);
     g_actionThermalLevel->LevelRequest(-1);
     g_actionThermalLevel->SetStrict(true);
-    g_actionThermalLevel->AddActionValue("2.0");
+    g_actionThermalLevel->AddActionValue(0, "2.0");
     g_actionThermalLevel->GetActionValue();
     g_actionThermalLevel->SubscribeThermalLevelCallback(nullptr);
     g_actionThermalLevel->UnSubscribeThermalLevelCallback(nullptr);
@@ -162,6 +205,27 @@ HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
     bool ret = g_actionThermalLevel->
         PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, 1);
     EXPECT_TRUE(ret);
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionThermalLevel2 = g_actionThermalLevel;
+    g_actionThermalLevel2->AddActionDelayTime(1, delayAction);
+    g_actionThermalLevel2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionThermalLevel2->AddActionDelayTime(2, delayAction2);
+    g_actionThermalLevel2->AddActionValue(2, "1.0");
+    g_actionThermalLevel2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionThermalLevel2->AddActionDelayTime(2, delayAction3);
+    g_actionThermalLevel2->AddActionValue(2, "1.0");
+    g_actionThermalLevel2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionThermalLevel2->AddActionDelayTime(4, delayAction4);
+    g_actionThermalLevel2->AddActionValue(4, "1.0");
+    g_actionThermalLevel2->Execute();
+    g_actionThermalLevel2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest003 end");
 }
 
@@ -173,11 +237,11 @@ HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest004 start");
-    g_actionShutdown->AddActionValue("");
-    g_actionShutdown->AddActionValue("1.0");
+    g_actionShutdown->AddActionValue(0, "");
+    g_actionShutdown->AddActionValue(0, "1.0");
     g_actionShutdown->Execute();
     g_actionShutdown->SetStrict(true);
-    g_actionShutdown->AddActionValue("2.0");
+    g_actionShutdown->AddActionValue(0, "2.0");
     g_actionShutdown->GetActionValue();
     int32_t ret = g_actionShutdown->ShutdownRequest(false);
     EXPECT_TRUE(ret == ERR_OK);
@@ -185,6 +249,27 @@ HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
     g_actionShutdown->ShutdownExecution(false);
     ret = g_actionShutdown->DelayShutdown(false, 0, 0);
     EXPECT_TRUE(ret == ERR_OK);
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionShutdown2 = g_actionShutdown;
+    g_actionShutdown2->AddActionDelayTime(1, delayAction);
+    g_actionShutdown2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionShutdown2->AddActionDelayTime(2, delayAction2);
+    g_actionShutdown2->AddActionValue(2, "1.0");
+    g_actionShutdown2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionShutdown2->AddActionDelayTime(2, delayAction3);
+    g_actionShutdown2->AddActionValue(2, "1.0");
+    g_actionShutdown2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionShutdown2->AddActionDelayTime(4, delayAction4);
+    g_actionShutdown2->AddActionValue(4, "1.0");
+    g_actionShutdown2->Execute();
+    g_actionShutdown2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest004 end");
 }
 
@@ -197,13 +282,34 @@ HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest005 start");
-    g_actionDisplay->AddActionValue("");
-    g_actionDisplay->AddActionValue("1.0");
+    g_actionDisplay->AddActionValue(0, "");
+    g_actionDisplay->AddActionValue(0, "1.0");
     g_actionDisplay->Execute();
     g_actionDisplay->SetStrict(true);
-    g_actionDisplay->AddActionValue("2.0");
+    g_actionDisplay->AddActionValue(0, "2.0");
     g_actionDisplay->GetActionValue();
     EXPECT_FALSE(g_actionDisplay->valueList_.empty());
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionDisplay2 = g_actionDisplay;
+    g_actionDisplay2->AddActionDelayTime(1, delayAction);
+    g_actionDisplay2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionDisplay2->AddActionDelayTime(2, delayAction2);
+    g_actionDisplay2->AddActionValue(2, "1.0");
+    g_actionDisplay2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionDisplay2->AddActionDelayTime(2, delayAction3);
+    g_actionDisplay2->AddActionValue(2, "1.0");
+    g_actionDisplay2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionDisplay2->AddActionDelayTime(4, delayAction4);
+    g_actionDisplay2->AddActionValue(4, "1.0");
+    g_actionDisplay2->Execute();
+    g_actionDisplay2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest005 end");
 }
 
@@ -215,13 +321,34 @@ HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest006 start");
-    g_actionCharger->AddActionValue("");
-    g_actionCharger->AddActionValue("1.0");
+    g_actionCharger->AddActionValue(0, "");
+    g_actionCharger->AddActionValue(0, "1.0");
     g_actionCharger->Execute();
     g_actionCharger->ChargerRequest(0);
     g_actionCharger->ExecuteCurrentLimit();
     int32_t ret = g_actionCharger->WriteSimValue(0);
     EXPECT_TRUE(ret);
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionCharger2 = g_actionCharger;
+    g_actionCharger2->AddActionDelayTime(1, delayAction);
+    g_actionCharger2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionCharger2->AddActionDelayTime(2, delayAction2);
+    g_actionCharger2->AddActionValue(2, "1.0");
+    g_actionCharger2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionCharger2->AddActionDelayTime(2, delayAction3);
+    g_actionCharger2->AddActionValue(2, "1.0");
+    g_actionCharger2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionCharger2->AddActionDelayTime(4, delayAction4);
+    g_actionCharger2->AddActionValue(4, "1.0");
+    g_actionCharger2->Execute();
+    g_actionCharger2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest006 end");
 }
 
@@ -234,8 +361,8 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest007 start");
     g_actionApplicationProcess->InitParams("");
-    g_actionApplicationProcess->AddActionValue("");
-    g_actionApplicationProcess->AddActionValue("1");
+    g_actionApplicationProcess->AddActionValue(0, "");
+    g_actionApplicationProcess->AddActionValue(0, "1");
     g_actionApplicationProcess->Execute();
     g_actionApplicationProcess->KillApplicationAction("");
     g_actionApplicationProcess->KillProcess(0);
@@ -249,6 +376,27 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
     g_actionApplicationProcess->ProcessAppActionRequest(3);
     g_actionApplicationProcess->ProcessAppActionExecution(0);
     EXPECT_TRUE(g_actionApplicationProcess->valueList_.empty());
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionApplicationProcess2 = g_actionApplicationProcess;
+    g_actionApplicationProcess2->AddActionDelayTime(1, delayAction);
+    g_actionApplicationProcess2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionApplicationProcess2->AddActionDelayTime(2, delayAction2);
+    g_actionApplicationProcess2->AddActionValue(2, "1.0");
+    g_actionApplicationProcess2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionApplicationProcess2->AddActionDelayTime(2, delayAction3);
+    g_actionApplicationProcess2->AddActionValue(2, "1.0");
+    g_actionApplicationProcess2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionApplicationProcess2->AddActionDelayTime(4, delayAction4);
+    g_actionApplicationProcess2->AddActionValue(4, "1.0");
+    g_actionApplicationProcess2->Execute();
+    g_actionApplicationProcess2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest007 end");
 }
 
@@ -261,10 +409,31 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest008 start");
-    g_actionCpuBig->AddActionValue("");
-    g_actionCpuBig->AddActionValue("1.0");
+    g_actionCpuBig->AddActionValue(0, "");
+    g_actionCpuBig->AddActionValue(0, "1.0");
     g_actionCpuBig->Execute();
     EXPECT_TRUE(g_actionCpuBig->valueList_.empty());
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionCpuBig2 = g_actionCpuBig;
+    g_actionCpuBig2->AddActionDelayTime(1, delayAction);
+    g_actionCpuBig2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionCpuBig2->AddActionDelayTime(2, delayAction2);
+    g_actionCpuBig2->AddActionValue(2, "1.0");
+    g_actionCpuBig2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionCpuBig2->AddActionDelayTime(2, delayAction3);
+    g_actionCpuBig2->AddActionValue(2, "1.0");
+    g_actionCpuBig2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionCpuBig2->AddActionDelayTime(4, delayAction4);
+    g_actionCpuBig2->AddActionValue(4, "1.0");
+    g_actionCpuBig2->Execute();
+    g_actionCpuBig2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest008 end");
 }
 
@@ -277,10 +446,31 @@ HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest009 start");
-    g_actionCpuMed->AddActionValue("");
-    g_actionCpuMed->AddActionValue("1.0");
+    g_actionCpuMed->AddActionValue(0, "");
+    g_actionCpuMed->AddActionValue(0, "1.0");
     g_actionCpuMed->Execute();
     EXPECT_TRUE(g_actionCpuMed->valueList_.empty());
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionCpuMed2 = g_actionCpuMed;
+    g_actionCpuMed2->AddActionDelayTime(1, delayAction);
+    g_actionCpuMed2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionCpuMed2->AddActionDelayTime(2, delayAction2);
+    g_actionCpuMed2->AddActionValue(2, "1.0");
+    g_actionCpuMed2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionCpuMed2->AddActionDelayTime(2, delayAction3);
+    g_actionCpuMed2->AddActionValue(2, "1.0");
+    g_actionCpuMed2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionCpuMed2->AddActionDelayTime(4, delayAction4);
+    g_actionCpuMed2->AddActionValue(4, "1.0");
+    g_actionCpuMed2->Execute();
+    g_actionCpuMed2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest009 end");
 }
 
@@ -293,10 +483,31 @@ HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest010 start");
-    g_actionCpuLit->AddActionValue("");
-    g_actionCpuLit->AddActionValue("1.0");
+    g_actionCpuLit->AddActionValue(0, "");
+    g_actionCpuLit->AddActionValue(0, "1.0");
     g_actionCpuLit->Execute();
     EXPECT_TRUE(g_actionCpuLit->valueList_.empty());
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionCpuLit2 = g_actionCpuLit;
+    g_actionCpuLit2->AddActionDelayTime(1, delayAction);
+    g_actionCpuLit2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionCpuLit2->AddActionDelayTime(2, delayAction2);
+    g_actionCpuLit2->AddActionValue(2, "1.0");
+    g_actionCpuLit2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionCpuLit2->AddActionDelayTime(2, delayAction3);
+    g_actionCpuLit2->AddActionValue(2, "1.0");
+    g_actionCpuLit2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionCpuLit2->AddActionDelayTime(4, delayAction4);
+    g_actionCpuLit2->AddActionValue(4, "1.0");
+    g_actionCpuLit2->Execute();
+    g_actionCpuLit2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest010 end");
 }
 
@@ -309,10 +520,31 @@ HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest011 start");
-    g_actionGpu->AddActionValue("");
-    g_actionGpu->AddActionValue("1.0");
+    g_actionGpu->AddActionValue(0, "");
+    g_actionGpu->AddActionValue(0, "1.0");
     g_actionGpu->Execute();
     EXPECT_TRUE(g_actionGpu->valueList_.empty());
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionGpu2 = g_actionGpu;
+    g_actionGpu2->AddActionDelayTime(1, delayAction);
+    g_actionGpu2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionGpu2->AddActionDelayTime(2, delayAction2);
+    g_actionGpu2->AddActionValue(2, "1.0");
+    g_actionGpu2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionGpu2->AddActionDelayTime(2, delayAction3);
+    g_actionGpu2->AddActionValue(2, "1.0");
+    g_actionGpu2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionGpu2->AddActionDelayTime(4, delayAction4);
+    g_actionGpu2->AddActionValue(4, "1.0");
+    g_actionGpu2->Execute();
+    g_actionGpu2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest011 end");
 }
 
@@ -324,13 +556,34 @@ HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest012 start");
-    g_actionCpuIsolate->AddActionValue("");
-    g_actionCpuIsolate->AddActionValue("1.0");
+    g_actionCpuIsolate->AddActionValue(0, "");
+    g_actionCpuIsolate->AddActionValue(0, "1.0");
     g_actionCpuIsolate->Execute();
     g_actionCpuIsolate->SetStrict(true);
-    g_actionCpuIsolate->AddActionValue("2.0");
+    g_actionCpuIsolate->AddActionValue(0, "2.0");
     g_actionCpuIsolate->GetActionValue();
     EXPECT_FALSE(g_actionCpuIsolate->valueList_.empty());
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionCpuIsolate2 = g_actionCpuIsolate;
+    g_actionCpuIsolate2->AddActionDelayTime(1, delayAction);
+    g_actionCpuIsolate2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionCpuIsolate2->AddActionDelayTime(2, delayAction2);
+    g_actionCpuIsolate2->AddActionValue(2, "1.0");
+    g_actionCpuIsolate2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionCpuIsolate2->AddActionDelayTime(2, delayAction3);
+    g_actionCpuIsolate2->AddActionValue(2, "1.0");
+    g_actionCpuIsolate2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionCpuIsolate2->AddActionDelayTime(4, delayAction4);
+    g_actionCpuIsolate2->AddActionValue(4, "1.0");
+    g_actionCpuIsolate2->Execute();
+    g_actionCpuIsolate2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest012 end");
 }
 
@@ -344,12 +597,33 @@ HWTEST_F(ThermalActionTest, ThermalActionTest013, TestSize.Level0)
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest013 start");
     std::string input = "1";
     g_actionNode->InitParams("/data/service/el0/thermal/config/lcd");
-    g_actionNode->AddActionValue(input);
+    g_actionNode->AddActionValue(0, input);
     g_actionNode->Execute();
     char buf[BUF_LEN];
     FileOperation::ReadFile("/data/service/el0/thermal/config/lcd", buf, BUF_LEN);
     std::string ret = buf;
     EXPECT_EQ(input, ret);
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionNode2 = g_actionNode;
+    g_actionNode2->AddActionDelayTime(1, delayAction);
+    g_actionNode2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionNode2->AddActionDelayTime(2, delayAction2);
+    g_actionNode2->AddActionValue(2, "1.0");
+    g_actionNode2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionNode2->AddActionDelayTime(2, delayAction3);
+    g_actionNode2->AddActionValue(2, "1.0");
+    g_actionNode2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionNode2->AddActionDelayTime(4, delayAction4);
+    g_actionNode2->AddActionValue(4, "1.0");
+    g_actionNode2->Execute();
+    g_actionNode2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest013 end");
 }
 
@@ -362,13 +636,13 @@ HWTEST_F(ThermalActionTest, ThermalActionTest014, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest014 start");
     g_actionAirplane->InitParams("airplane");
-    g_actionAirplane->AddActionValue("");
-    g_actionAirplane->AddActionValue("0");
-    g_actionAirplane->AddActionValue("air");
+    g_actionAirplane->AddActionValue(0, "0");
+    g_actionAirplane->AddActionValue(0, "0");
+    g_actionAirplane->AddActionValue(0, "air");
     g_actionAirplane->Execute();
     EXPECT_TRUE(g_actionAirplane->valueList_.empty());
     std::string input = "1";
-    g_actionAirplane->AddActionValue(input);
+    g_actionAirplane->AddActionValue(0, input);
     g_actionCpuIsolate->SetStrict(true);
     uint32_t value = g_actionAirplane->GetActionValue();
     int32_t ret = g_actionAirplane->AirplaneRequest(value);
@@ -377,6 +651,27 @@ HWTEST_F(ThermalActionTest, ThermalActionTest014, TestSize.Level0)
     EXPECT_TRUE(ret == ERR_OK);
     ret = g_actionAirplane->AirplaneExecution(value);
     EXPECT_TRUE(ret == ERR_OK);
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionAirplane2 = g_actionAirplane;
+    g_actionAirplane2->AddActionDelayTime(1, delayAction);
+    g_actionAirplane2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionAirplane2->AddActionDelayTime(2, delayAction2);
+    g_actionAirplane2->AddActionValue(2, "1.0");
+    g_actionAirplane2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionAirplane2->AddActionDelayTime(2, delayAction3);
+    g_actionAirplane2->AddActionValue(2, "1.0");
+    g_actionAirplane2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionAirplane2->AddActionDelayTime(4, delayAction4);
+    g_actionAirplane2->AddActionValue(4, "1.0");
+    g_actionAirplane2->Execute();
+    g_actionAirplane2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest014 end");
 }
 
@@ -422,9 +717,30 @@ HWTEST_F(ThermalActionTest, ThermalActionTest015, TestSize.Level0)
 HWTEST_F(ThermalActionTest, ThermalActionTest016, TestSize.Level0)
 {
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest016 start");
-    g_actionPopup->AddActionValue("pop");
+    g_actionPopup->AddActionValue(0, "pop");
     g_actionPopup->Execute();
     EXPECT_TRUE(g_actionPopup->valueList_.empty());
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionPopup2 = g_actionPopup;
+    g_actionPopup2->AddActionDelayTime(1, delayAction);
+    g_actionPopup2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionPopup2->AddActionDelayTime(2, delayAction2);
+    g_actionPopup2->AddActionValue(2, "1.0");
+    g_actionPopup2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionPopup2->AddActionDelayTime(2, delayAction3);
+    g_actionPopup2->AddActionValue(2, "1.0");
+    g_actionPopup2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionPopup2->AddActionDelayTime(4, delayAction4);
+    g_actionPopup2->AddActionValue(4, "1.0");
+    g_actionPopup2->Execute();
+    g_actionPopup2->ExecuteInner(4);
     THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest016 end");
 }
 } // namespace

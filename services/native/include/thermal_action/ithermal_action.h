@@ -20,10 +20,22 @@
 #include <string>
 #include <vector>
 
+#include "constants.h"
 #include "thermal_common.h"
+#include "thermal_timer.h"
 
 namespace OHOS {
 namespace PowerMgr {
+
+struct PolicyDelayAction {
+    bool isCompleted;
+    int32_t intDelayValue;
+    uint32_t uintDelayValue;
+    float floatDelayValue;
+    uint32_t delayTime;
+    uint64_t delayTimerId;
+};
+
 class IThermalAction {
 public:
     IThermalAction() = default;
@@ -32,13 +44,66 @@ public:
     virtual void InitParams(const std::string& params) = 0;
     virtual void SetStrict(bool enable) = 0;
     virtual void SetEnableEvent(bool enable) = 0;
-    virtual void AddActionValue(std::string value) = 0;
-    virtual void Execute() = 0;
+    virtual void AddActionValue(uint32_t actionId, std::string value) = 0;
 
+    virtual void AddActionValue(std::string value)
+    {
+        AddActionValue(0, value);
+    }
+ 
+    virtual void AddActionDelayTime(uint32_t actionId, const PolicyDelayAction& delayTime)
+    {
+        policyActionMap_.insert(std::make_pair(actionId, delayTime));
+        actionIdList_.insert(actionId);
+    }
+ 
+    virtual void Execute()
+    {
+        ExecuteInner(0);
+        auto thermalTimer = std::make_shared<ThermalTimer>();
+        for (auto it = policyActionMap_.begin(); it != policyActionMap_.end();) {
+            if (actionIdList_.count(it->first) == 0) {
+                if (!it->second.isCompleted) {
+                    thermalTimer->StopTimer(it->second.delayTimerId);
+                    thermalTimer->DestroyTimer(it->second.delayTimerId);
+                }
+                it = policyActionMap_.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        actionIdList_.clear();
+        int64_t curMsecTimestam = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
+ 
+        for (auto &policyAction : policyActionMap_) {
+            if (policyAction.second.isCompleted || policyAction.second.delayTimerId > 0) {
+                continue;
+            }
+            auto timerInfo = std::make_shared<ThermalTimerInfo>();
+            timerInfo->SetType(timerInfo->TIMER_TYPE_WAKEUP | timerInfo->TIMER_TYPE_EXACT);
+            auto callback = [this, &policyAction]() {
+                ExecuteInner(policyAction.first);
+                auto thermalTimer = std::make_shared<ThermalTimer>();
+                thermalTimer->StopTimer(policyAction.second.delayTimerId);
+                thermalTimer->DestroyTimer(policyAction.second.delayTimerId);
+                policyAction.second.isCompleted = true;
+            };
+            timerInfo->SetCallbackInfo(callback);
+            policyAction.second.delayTimerId = thermalTimer->CreateTimer(timerInfo);
+            THERMAL_HILOGI(COMP_SVC, "%{public}s delayTime = %{public}d,", actionName_.c_str(),
+                policyAction.second.delayTime);
+            thermalTimer->StartTimer(policyAction.second.delayTimerId,
+                static_cast<uint64_t>(policyAction.second.delayTime + curMsecTimestam));
+        }
+    }
+ 
+    virtual void ExecuteInner(uint32_t actionId) = 0;
 protected:
     bool isStrict_ {true};
     bool enableEvent_ {false};
     std::string actionName_ = "";
+    std::unordered_map<uint32_t, PolicyDelayAction> policyActionMap_;
+    std::unordered_set<uint32_t> actionIdList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
