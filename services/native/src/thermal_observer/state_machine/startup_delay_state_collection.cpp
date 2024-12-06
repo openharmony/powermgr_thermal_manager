@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,25 +15,26 @@
 
 #include "startup_delay_state_collection.h"
 
-#include "common_event_subscriber.h"
-#include "common_event_data.h"
-#include "common_event_manager.h"
-#include "common_event_support.h"
 #include "file_operation.h"
 #include "securec.h"
 #include "string_ex.h"
 #include "string_operation.h"
+#include "sysparam.h"
 #include "thermal_service.h"
 #include "thermal_common.h"
 
-using namespace OHOS::EventFwk;
 namespace OHOS {
 namespace PowerMgr {
 
 bool StartupDelayStateCollection::Init()
 {
-    THERMAL_HILOGD(COMP_SVC, "StartupDelayStateCollection Init...");
-    return this->RegisterEvent();
+    THERMAL_HILOGI(COMP_SVC, "StartupDelayStateCollection Init...,start to init startup delay state");
+    if (delayTimerId_ > 0) {
+        StopDelayTimer();
+    }
+    state_ = STARTUP_DELAY_STATE;
+    StartDelayTimer();
+    return true;
 }
 
 bool StartupDelayStateCollection::InitParam(std::string& params)
@@ -49,34 +50,6 @@ std::string StartupDelayStateCollection::GetState()
     return ToString(state_);
 }
 
-bool StartupDelayStateCollection::RegisterEvent()
-{
-    auto tms = ThermalService::GetInstance();
-    if (tms == nullptr) {
-        return false;
-    }
-    auto receiver = tms->GetStateMachineObj()->GetCommonEventReceiver();
-    if (receiver == nullptr) {
-        return false;
-    }
- 
-    EventHandle handlerPowerOn =
-        [this](const CommonEventData& data) { this->HandlerPowerOnState(data); };
-    receiver->AddEvent(CommonEventSupport::COMMON_EVENT_BOOT_COMPLETED, handlerPowerOn);
- 
-    return true;
-}
-
-void StartupDelayStateCollection::HandlerPowerOnState(const CommonEventData& data __attribute__((__unused__)))
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (delayTimerId_ > 0) {
-        StopDelayAction();
-    }
-    state_ = STARTUP_DELAY_STATE;
-    StartDelayTimer();
-}
-
 bool StartupDelayStateCollection::StartDelayTimer()
 {
     auto thermalTimer = std::make_shared<ThermalTimer>();
@@ -86,16 +59,16 @@ bool StartupDelayStateCollection::StartDelayTimer()
     
     delayTimerId_ = thermalTimer->CreateTimer(timerInfo);
     int64_t curMsecTimestam = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
- 
+
     return thermalTimer->StartTimer(delayTimerId_, static_cast<uint64_t>(delayTime_ + curMsecTimestam));
 }
 
-void StartupDelayStateCollection::StopDelayAction()
+void StartupDelayStateCollection::StopDelayTimer()
 {
     if (delayTimerId_ > 0) {
         auto thermalTimer = std::make_shared<ThermalTimer>();
         if (!thermalTimer->StopTimer(delayTimerId_)) {
-            THERMAL_HILOGE(COMP_SVC, "failed to stop delay timer, timerId = %{public}llu", delayTimerId_);
+            THERMAL_HILOGE(COMP_SVC, "failed to stop delay timer, timerId = %{public}lu", delayTimerId_);
         }
         thermalTimer->DestroyTimer(delayTimerId_);
         delayTimerId_ = 0;
@@ -109,20 +82,21 @@ void StartupDelayStateCollection::SetState(const std::string& stateValue)
 void StartupDelayStateCollection::ResetState()
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    THERMAL_HILOGI(COMP_SVC, "StartupDelayStateCollection ResetState");
     state_ = NON_STARTUP_DELAY_STATE;
-    delayTimerId_ = 0;
+    StopDelayTimer();
 }
 
 bool StartupDelayStateCollection::InitDelayTime(std::string& delaytime)
 {
-    THERMAL_HILOGD(COMP_SVC, "init power on delay time info");
+    THERMAL_HILOGI(COMP_SVC, "init power on delay time info");
     delayTime_ = static_cast<uint32_t>(strtol(delaytime.c_str(), nullptr, STRTOL_FORMART_DEC));
     return true;
 }
 
 bool StartupDelayStateCollection::DecideState(const std::string& value)
 {
-    THERMAL_HILOGD(COMP_SVC, "Enter: Consider the impact of the power-on delay status.");
+    THERMAL_HILOGI(COMP_SVC, "Enter: DecideState the impact of the power-on delay status.");
     std::lock_guard<std::mutex> lock(mutex_);
     if ((value == ToString(NON_STARTUP_DELAY_STATE) && state_ == NON_STARTUP_DELAY_STATE) ||
         (value == ToString(STARTUP_DELAY_STATE) && state_ == STARTUP_DELAY_STATE)) {
