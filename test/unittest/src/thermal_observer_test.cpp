@@ -24,6 +24,8 @@
 #include "thermal_service.h"
 #include "thermal_sensor_info.h"
 #include "charger_state_collection.h"
+#include "charge_delay_state_collection.h"
+#include "startup_delay_state_collection.h"
 #include "scene_state_collection.h"
 #include "screen_state_collection.h"
 #include "state_machine.h"
@@ -304,5 +306,57 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest010, TestSize.Level0)
     }
 #endif
     THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest010 end");
+}
+
+/**
+ * @tc.name: ThermalObserverTest011
+ * @tc.desc: Thermal Charger State Collection Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest011 start");
+#ifdef BATTERY_MANAGER_ENABLE
+    auto chargerDelayState = std::make_shared<ChargeDelayStateCollection>();
+    chargerDelayState->Init();
+    string param = "delayCharge";
+    chargerDelayState->InitParam(param);
+    string delayTime = "60000";
+    chargerDelayState->InitDelayTime(delayTime);
+    CommonEventData data;
+    chargerDelayState->HandlerPowerDisconnected(data);
+    EXPECT_EQ(chargerDelayState->GetState(), "1");
+    chargerDelayState->HandlerPowerConnected(data);
+    EXPECT_EQ(chargerDelayState->GetState(), "0");
+    EXPECT_TRUE(chargerDelayState->DecideState("0"));
+    chargerDelayState->SetState("");
+    chargerDelayState->ResetState();
+
+#endif
+    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest011 end");
+}
+
+/**
+ * @tc.name: ThermalObserverTest012
+ * @tc.desc: Thermal Charger State Collection Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest012, TestSize.Level0)
+{
+    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest012 start");
+#ifdef BATTERY_MANAGER_ENABLE
+    auto delayState = std::make_shared<StartupDelayStateCollection>();
+    delayState->Init();
+    EXPECT_EQ(delayState->GetState(), "1");
+    string param = "delayCharge";
+    delayState->InitParam(param);
+    string delayTime = "60000";
+    delayState->InitDelayTime(delayTime);
+    delayState->ResetState();
+    EXPECT_EQ(delayState->GetState(), "0");
+    EXPECT_TRUE(delayState->DecideState("0"));
+    delayState->SetState("");
+#endif
+    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest012 end");
 }
 } // namespace

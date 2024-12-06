@@ -26,6 +26,10 @@ public:
     virtual ~IStateCollection() = default;
     virtual bool Init();
     virtual bool InitParam(std::string &params) = 0;
+    virtual bool InitDelayTime(std::string& delaytime)
+    {
+        return true;
+    }
     virtual std::string GetState() = 0;
     virtual bool DecideState(const std::string &value);
     /* Test */
