@@ -112,7 +112,7 @@ bool ThermalMgrInterfaceTest::ThermalTempTest1Callback::OnThermalTempChanged(Tem
 {
     int assertValue = 0;
     for (auto iter : tempCbMap) {
-        THERMAL_HILOGD(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first.c_str(), iter.second);
+        THERMAL_HILOGI(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first.c_str(), iter.second);
         EXPECT_EQ(true, iter.second >= assertValue) << "Test Failed";
     }
     Notify();
@@ -123,7 +123,7 @@ bool ThermalMgrInterfaceTest::ThermalTempTest2Callback::OnThermalTempChanged(Tem
 {
     int assertValue = 0;
     for (auto iter : tempCbMap) {
-        THERMAL_HILOGD(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first.c_str(), iter.second);
+        THERMAL_HILOGI(LABEL_TEST, "type: %{public}s, temp: %{public}d", iter.first.c_str(), iter.second);
         EXPECT_EQ(true, iter.second >= assertValue) << "Test Failed";
     }
     Notify();
@@ -135,7 +135,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest1Callback::OnThermalLevelChanged(T
     int assertMin = -1;
     int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
+    THERMAL_HILOGI(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
     Notify();
     return true;
@@ -146,7 +146,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest2Callback::OnThermalLevelChanged(T
     int assertMin = -1;
     int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
+    THERMAL_HILOGI(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
     Notify();
     return true;
@@ -157,7 +157,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest3Callback::OnThermalLevelChanged(T
     int assertMin = -1;
     int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
+    THERMAL_HILOGI(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
     Notify();
     return true;
@@ -168,7 +168,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest4Callback::OnThermalLevelChanged(T
     int assertMin = -1;
     int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
+    THERMAL_HILOGI(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
     g_levelCallBack4 = true;
     g_callbackCV.notify_one();
@@ -180,7 +180,7 @@ bool ThermalMgrInterfaceTest::ThermalLevelTest5Callback::OnThermalLevelChanged(T
     int assertMin = -1;
     int assertMax = 7;
     int32_t levelValue = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "level: %{public}d", levelValue);
+    THERMAL_HILOGI(LABEL_TEST, "level: %{public}d", levelValue);
     EXPECT_EQ(true, levelValue >= assertMin && levelValue <= assertMax) << "Test Failed";
     g_levelCallBack5 = true;
     g_callbackCV.notify_one();
@@ -195,7 +195,7 @@ namespace {
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest001 start");
     sleep(1);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -207,7 +207,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest001, TestSize.Level0)
     g_service->GetThermalSrvSensorInfo(SensorType::BATTERY, info);
     g_thermalMgrClient.GetThermalSensorTemp(SensorType::BATTERY);
     EXPECT_EQ(info1.temp, info.GetTemp()) << "ThermalMgrInterfaceTest001 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest001 end");
 }
 
 /**
@@ -217,7 +217,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest002 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest002 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "soc";
@@ -228,7 +228,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest002, TestSize.Level0)
     g_service->GetThermalSrvSensorInfo(SensorType::SOC, info);
     g_thermalMgrClient.GetThermalSensorTemp(SensorType::SOC);
     EXPECT_EQ(info1.temp, info.GetTemp()) << "ThermalMgrInterfaceTest002 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest002 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest002 end");
 }
 
 /**
@@ -238,7 +238,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest003 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest003 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "shell";
@@ -249,7 +249,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest003, TestSize.Level0)
     g_service->GetThermalSrvSensorInfo(SensorType::SHELL, info);
     g_thermalMgrClient.GetThermalSensorTemp(SensorType::SHELL);
     EXPECT_EQ(info1.temp, info.GetTemp()) << "ThermalMgrInterfaceTest003 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest003 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest003 end");
 }
 
 /**
@@ -259,7 +259,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest004 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest004 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "cpu";
@@ -270,7 +270,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest004, TestSize.Level0)
     g_service->GetThermalSrvSensorInfo(SensorType::SENSOR1, info);
     g_thermalMgrClient.GetThermalSensorTemp(SensorType::SENSOR1);
     EXPECT_EQ(info1.temp, info.GetTemp()) << "ThermalMgrInterfaceTest004 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest004 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest004 end");
 }
 
 /**
@@ -280,7 +280,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest005 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest005 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "charger";
@@ -291,7 +291,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest005, TestSize.Level0)
     g_service->GetThermalSrvSensorInfo(SensorType::SENSOR2, info);
     g_thermalMgrClient.GetThermalSensorTemp(SensorType::SENSOR2);
     EXPECT_EQ(info1.temp, info.GetTemp()) << "ThermalMgrInterfaceTest005 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest005 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest005 end");
 }
 
 /**
@@ -301,10 +301,10 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest006, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest006 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest006 start");
     InitData();
     const sptr<IThermalTempCallback> cb1 = new ThermalTempTest1Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest006 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest006 start register");
     g_service->SubscribeThermalTempCallback(typelist, cb1);
     g_thermalMgrClient.SubscribeThermalTempCallback(typelist, cb1);
     int32_t temp = 10000;
@@ -324,7 +324,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest006, TestSize.Level0)
     }
     g_service->UnSubscribeThermalTempCallback(cb1);
     g_thermalMgrClient.UnSubscribeThermalTempCallback(cb1);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest006 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest006 end");
 }
 
 /**
@@ -334,7 +334,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest007, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest007 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest007 start");
     const sptr<IThermalLevelCallback> cb4 = new ThermalLevelTest4Callback();
     const sptr<IThermalLevelCallback> cb5 = new ThermalLevelTest5Callback();
     g_thermalMgrClient.SubscribeThermalLevelCallback(cb4);
@@ -364,7 +364,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest007, TestSize.Level0)
     g_service->UnSubscribeThermalLevelCallback(cb5);
     g_thermalMgrClient.UnSubscribeThermalLevelCallback(cb4);
     g_service->UnSubscribeThermalLevelCallback(cb4);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest007 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest007 end");
 }
 
 /**
@@ -374,7 +374,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest007, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest008, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest008 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest008 start");
     const sptr<IThermalLevelCallback> cb2 = new ThermalLevelTest2Callback();
     g_thermalMgrClient.SubscribeThermalLevelCallback(cb2);
     g_service->SubscribeThermalLevelCallback(cb2);
@@ -382,7 +382,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest008, TestSize.Level0)
 
     int32_t temp = -25100;
     for (uint32_t i = 0; i < 5; i++) {
-        THERMAL_HILOGD(LABEL_TEST, "temp: %{public}d", temp);
+        THERMAL_HILOGI(LABEL_TEST, "temp: %{public}d", temp);
         HdfThermalCallbackInfo event;
         ThermalZoneInfo info1;
         info1.type = "battery";
@@ -405,7 +405,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest008, TestSize.Level0)
     }
     g_thermalMgrClient.UnSubscribeThermalLevelCallback(cb2);
     g_service->SubscribeThermalLevelCallback(cb2);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest008 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest008 end");
 }
 
 /**
@@ -415,7 +415,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest008, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest009, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest009 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest009 start");
     const sptr<IThermalLevelCallback> cb1 = new ThermalLevelTest1Callback();
     g_thermalMgrClient.SubscribeThermalLevelCallback(cb1);
     g_service->SubscribeThermalLevelCallback(cb1);
@@ -449,7 +449,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest009, TestSize.Level0)
 
     g_thermalMgrClient.UnSubscribeThermalLevelCallback(cb1);
     g_service->UnSubscribeThermalLevelCallback(cb1);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest009 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest009 end");
 }
 
 /**
@@ -459,7 +459,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest009, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest010, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest010 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest010 start");
     const sptr<IThermalLevelCallback> cb1 = new ThermalLevelTest1Callback();
     g_thermalMgrClient.SubscribeThermalLevelCallback(cb1);
     g_service->SubscribeThermalLevelCallback(cb1);
@@ -488,7 +488,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest010, TestSize.Level0)
 
     g_thermalMgrClient.UnSubscribeThermalLevelCallback(cb1);
     g_service->UnSubscribeThermalLevelCallback(cb1);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest020 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest020 end");
 }
 
 /**
@@ -498,7 +498,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest010, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest011, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest011 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest011 start");
     InitData();
     const sptr<IThermalTempCallback> cb1 = new ThermalTempTest1Callback();
     g_service->SubscribeThermalTempCallback(typelist, cb1);
@@ -541,7 +541,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest011, TestSize.Level0)
     }
     g_service->UnSubscribeThermalTempCallback(cb1);
     g_thermalMgrClient.UnSubscribeThermalTempCallback(cb1);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest011 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest011 end");
 }
 
 /**
@@ -551,7 +551,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest011, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest012, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest012 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest012 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
@@ -562,7 +562,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest012, TestSize.Level0)
     ThermalSrvSensorInfo info;
     g_service->GetThermalSrvSensorInfo(SensorType::BATTERY, info);
     EXPECT_EQ(INVAILD_TEMP, info.GetTemp()) << "ThermalMgrInterfaceTest012 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest012 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest012 end");
 }
 
 /**
@@ -572,7 +572,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest012, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest013, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest013 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest013 start");
     const sptr<IThermalTempCallback> cb = nullptr;
     InitData();
     g_thermalMgrClient.SubscribeThermalTempCallback(typelist, cb);
@@ -585,7 +585,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest013, TestSize.Level0)
     g_service->HandleThermalCallbackEvent(event);
     g_thermalMgrClient.UnSubscribeThermalTempCallback(cb);
     EXPECT_TRUE(g_service->UnSubscribeThermalTempCallback(cb));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest013 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest013 end");
 }
 
 /**
@@ -595,7 +595,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest013, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest014, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest014 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest014 start");
     const sptr<IThermalLevelCallback> cb = nullptr;
     g_thermalMgrClient.SubscribeThermalLevelCallback(cb);
     g_service->SubscribeThermalLevelCallback(cb);
@@ -607,7 +607,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest014, TestSize.Level0)
     g_service->HandleThermalCallbackEvent(event);
     g_thermalMgrClient.UnSubscribeThermalLevelCallback(cb);
     EXPECT_TRUE(g_service->UnSubscribeThermalLevelCallback(cb));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest014 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest014 end");
 }
 
 /**
@@ -617,7 +617,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest014, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest015, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest015 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest015 start");
     std::vector<int32_t> temps {-1000, 40100, 43100, 46100};
     std::vector<ThermalLevel> levels {ThermalLevel::COOL, ThermalLevel::NORMAL, ThermalLevel::WARM, ThermalLevel::HOT};
     for (uint32_t i = 0; i < temps.size(); ++i) {
@@ -633,7 +633,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest015, TestSize.Level0)
         GTEST_LOG_(INFO) << "test thermal temp: " << temps[i];
         EXPECT_EQ(level, levels[i]) << "ThermalMgrInterfaceTest015 Failed";
     }
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest015 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest015 end");
 }
 
 /**
@@ -643,7 +643,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest015, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest016, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest016 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest016 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "pa";
@@ -657,7 +657,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest016, TestSize.Level0)
     ThermalLevel level;
     g_service->GetThermalLevel(level);
     EXPECT_EQ(level, ThermalLevel::OVERHEATED) << "ThermalMgrInterfaceTest016 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest016 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest016 end");
 }
 
 /**
@@ -667,7 +667,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest016, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest017, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest017 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest017 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "pa";
@@ -681,7 +681,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest017, TestSize.Level0)
     ThermalLevel level;
     g_service->GetThermalLevel(level);
     EXPECT_EQ(level, ThermalLevel::WARNING) << "ThermalMgrInterfaceTest017 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest017 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest017 end");
 }
 
 /**
@@ -692,7 +692,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest017, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest018, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest018 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest018 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "ap";
@@ -709,7 +709,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest018, TestSize.Level0)
     ThermalLevel level;
     g_service->GetThermalLevel(level);
     EXPECT_EQ(level, ThermalLevel::EMERGENCY) << "ThermalMgrInterfaceTest018 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest018 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest018 end");
 }
 
 /**
@@ -719,7 +719,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest018, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest019, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest019 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest019 start");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "pa";
@@ -733,7 +733,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest019, TestSize.Level0)
     ThermalLevel level;
     g_service->GetThermalLevel(level);
     EXPECT_EQ(level, ThermalLevel::ESCAPE) << "ThermalMgrInterfaceTest019 Failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest019 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest019 end");
 }
 
 /**
@@ -744,7 +744,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest019, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest020, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest020 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest020 start");
     std::string tag1 = "modeid";
     std::string val1 = "100";
     bool ret = g_thermalMgrClient.UpdateThermalState(tag1, val1, false);
@@ -762,7 +762,7 @@ HWTEST_F(ThermalMgrInterfaceTest, ThermalMgrInterfaceTest020, TestSize.Level0)
     g_service->HandleThermalCallbackEvent(event);
     int32_t value = ConvertInt(GetNodeValue(CONFIG_LEVEL_PATH));
     EXPECT_TRUE(value == 1);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrInterfaceTest020 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrInterfaceTest020 end");
 }
 
 } // namespace

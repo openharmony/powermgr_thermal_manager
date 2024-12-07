@@ -188,7 +188,7 @@ CommonEventThermalIdleFalseTest::CommonEventThermalIdleFalseTest(const CommonEve
 
 void CommonEventThermalLevel1Test::OnReceiveEvent(const CommonEventData& data)
 {
-    THERMAL_HILOGD(LABEL_TEST, "CommonEventThermalLevel1Test: OnReceiveEvent Enter");
+    THERMAL_HILOGI(LABEL_TEST, "CommonEventThermalLevel1Test: OnReceiveEvent Enter");
     int32_t invalidLevel = -1;
     std::string key = ToString(static_cast<int32_t>(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED));
     int32_t level = data.GetWant().GetIntParam(key, invalidLevel);
@@ -199,7 +199,7 @@ void CommonEventThermalLevel1Test::OnReceiveEvent(const CommonEventData& data)
 
 void CommonEventThermalLevel2Test::OnReceiveEvent(const CommonEventData& data)
 {
-    THERMAL_HILOGD(LABEL_TEST, "CommonEventThermalLevel2Test: OnReceiveEvent Enter");
+    THERMAL_HILOGI(LABEL_TEST, "CommonEventThermalLevel2Test: OnReceiveEvent Enter");
     int32_t invalidLevel = -1;
     std::string key = ToString(static_cast<int32_t>(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED));
     int32_t level = data.GetWant().GetIntParam(key, invalidLevel);
@@ -210,7 +210,7 @@ void CommonEventThermalLevel2Test::OnReceiveEvent(const CommonEventData& data)
 
 void CommonEventThermalLevel3Test::OnReceiveEvent(const CommonEventData& data)
 {
-    THERMAL_HILOGD(LABEL_TEST, "CommonEventThermalLevel3Test: OnReceiveEvent Enter");
+    THERMAL_HILOGI(LABEL_TEST, "CommonEventThermalLevel3Test: OnReceiveEvent Enter");
     int32_t invalidLevel = -1;
     std::string key = ToString(static_cast<int32_t>(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED));
     int32_t level = data.GetWant().GetIntParam(key, invalidLevel);
@@ -221,7 +221,7 @@ void CommonEventThermalLevel3Test::OnReceiveEvent(const CommonEventData& data)
 
 void CommonEventThermalIdleTrueTest::OnReceiveEvent(const CommonEventData& data)
 {
-    THERMAL_HILOGD(LABEL_TEST, "CommonEventThermalIdleTrueTest: OnReceiveEvent Enter");
+    THERMAL_HILOGI(LABEL_TEST, "CommonEventThermalIdleTrueTest: OnReceiveEvent Enter");
     bool invalidState = false;
     std::string key = ToString(static_cast<uint32_t>(ChargeIdleEventCode::EVENT_CODE_CHARGE_IDLE_STATE));
     bool getState = data.GetWant().GetBoolParam(key, invalidState);
@@ -232,7 +232,7 @@ void CommonEventThermalIdleTrueTest::OnReceiveEvent(const CommonEventData& data)
 
 void CommonEventThermalIdleFalseTest::OnReceiveEvent(const CommonEventData& data)
 {
-    THERMAL_HILOGD(LABEL_TEST, "CommonEventThermalIdleFalseTest: OnReceiveEvent Enter");
+    THERMAL_HILOGI(LABEL_TEST, "CommonEventThermalIdleFalseTest: OnReceiveEvent Enter");
     bool invalidState = true;
     std::string key = ToString(static_cast<uint32_t>(ChargeIdleEventCode::EVENT_CODE_CHARGE_IDLE_STATE));
     bool getState = data.GetWant().GetBoolParam(key, invalidState);
@@ -243,7 +243,7 @@ void CommonEventThermalIdleFalseTest::OnReceiveEvent(const CommonEventData& data
 
 shared_ptr<CommonEventThermalLevel1Test> CommonEventThermalLevel1Test::RegisterEvent()
 {
-    THERMAL_HILOGD(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
+    THERMAL_HILOGI(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
     int32_t retryTimes = 2;
     bool succeed = false;
     MatchingSkills matchingSkills;
@@ -254,7 +254,7 @@ shared_ptr<CommonEventThermalLevel1Test> CommonEventThermalLevel1Test::RegisterE
         succeed = CommonEventManager::SubscribeCommonEvent(subscriberPtr);
     }
     if (!succeed) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to register subscriber");
+        THERMAL_HILOGI(COMP_SVC, "Failed to register subscriber");
         return nullptr;
     }
     return subscriberPtr;
@@ -262,7 +262,7 @@ shared_ptr<CommonEventThermalLevel1Test> CommonEventThermalLevel1Test::RegisterE
 
 shared_ptr<CommonEventThermalLevel2Test> CommonEventThermalLevel2Test::RegisterEvent()
 {
-    THERMAL_HILOGD(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
+    THERMAL_HILOGI(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
     int32_t retryTimes = 2;
     bool succeed = false;
     MatchingSkills matchingSkills;
@@ -273,7 +273,7 @@ shared_ptr<CommonEventThermalLevel2Test> CommonEventThermalLevel2Test::RegisterE
         succeed = CommonEventManager::SubscribeCommonEvent(subscriberPtr);
     }
     if (!succeed) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to register subscriber");
+        THERMAL_HILOGI(COMP_SVC, "Failed to register subscriber");
         return nullptr;
     }
     return subscriberPtr;
@@ -281,7 +281,7 @@ shared_ptr<CommonEventThermalLevel2Test> CommonEventThermalLevel2Test::RegisterE
 
 shared_ptr<CommonEventThermalLevel3Test> CommonEventThermalLevel3Test::RegisterEvent()
 {
-    THERMAL_HILOGD(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
+    THERMAL_HILOGI(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
     int32_t retryTimes = 2;
     bool succeed = false;
     MatchingSkills matchingSkills;
@@ -292,7 +292,7 @@ shared_ptr<CommonEventThermalLevel3Test> CommonEventThermalLevel3Test::RegisterE
         succeed = CommonEventManager::SubscribeCommonEvent(subscriberPtr);
     }
     if (!succeed) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to register subscriber");
+        THERMAL_HILOGI(COMP_SVC, "Failed to register subscriber");
         return nullptr;
     }
     return subscriberPtr;
@@ -300,7 +300,7 @@ shared_ptr<CommonEventThermalLevel3Test> CommonEventThermalLevel3Test::RegisterE
 
 shared_ptr<CommonEventThermalIdleTrueTest> CommonEventThermalIdleTrueTest::RegisterEvent()
 {
-    THERMAL_HILOGD(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
+    THERMAL_HILOGI(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
     int32_t retryTimes = 2;
     bool succeed = false;
     MatchingSkills matchingSkills;
@@ -311,7 +311,7 @@ shared_ptr<CommonEventThermalIdleTrueTest> CommonEventThermalIdleTrueTest::Regis
         succeed = CommonEventManager::SubscribeCommonEvent(subscriberPtr);
     }
     if (!succeed) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to register subscriber");
+        THERMAL_HILOGI(COMP_SVC, "Failed to register subscriber");
         return nullptr;
     }
     return subscriberPtr;
@@ -319,7 +319,7 @@ shared_ptr<CommonEventThermalIdleTrueTest> CommonEventThermalIdleTrueTest::Regis
 
 shared_ptr<CommonEventThermalIdleFalseTest> CommonEventThermalIdleFalseTest::RegisterEvent()
 {
-    THERMAL_HILOGD(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
+    THERMAL_HILOGI(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
     int32_t retryTimes = 2;
     bool succeed = false;
     MatchingSkills matchingSkills;
@@ -330,7 +330,7 @@ shared_ptr<CommonEventThermalIdleFalseTest> CommonEventThermalIdleFalseTest::Reg
         succeed = CommonEventManager::SubscribeCommonEvent(subscriberPtr);
     }
     if (!succeed) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to register subscriber");
+        THERMAL_HILOGI(COMP_SVC, "Failed to register subscriber");
         return nullptr;
     }
     return subscriberPtr;
@@ -377,7 +377,7 @@ namespace {
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest001: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest001: Start");
     shared_ptr<CommonEventThermalLevel1Test> subscriber = CommonEventThermalLevel1Test::RegisterEvent();
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -387,7 +387,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest001, TestSize.
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest001: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest001: End");
 }
 
 /*
@@ -397,7 +397,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest001, TestSize.
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest002: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest002: Start");
     shared_ptr<CommonEventThermalLevel2Test> subscriber = CommonEventThermalLevel2Test::RegisterEvent();
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -407,7 +407,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest002, TestSize.
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest002: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest002: End");
 }
 
 /*
@@ -417,7 +417,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest002, TestSize.
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest003: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest003: Start");
     shared_ptr<CommonEventThermalLevel3Test> subscriber = CommonEventThermalLevel3Test::RegisterEvent();
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -427,7 +427,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest003, TestSize.
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest003: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest003: End");
 }
 
 /*
@@ -437,7 +437,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest003, TestSize.
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest004: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest004: Start");
     int32_t batteryCapacity = 90;
     int32_t chargerCurrent = 1100;
     int32_t invalid = 0;
@@ -459,7 +459,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.
     t.join();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     system("hidumper -s 3302 -a -r");
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest004: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest004: End");
 }
 
 /*
@@ -469,7 +469,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest005: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest005: Start");
     int32_t lastBatteryCapacity = 90;
     int32_t lastChargerCurrent = 1100;
     int32_t batteryCapacity = 70;
@@ -492,6 +492,6 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest005, TestSize.
     t.join();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     system("hidumper -s 3302 -a -r");
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventSystemTest005: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest005: End");
 }
 } // namespace

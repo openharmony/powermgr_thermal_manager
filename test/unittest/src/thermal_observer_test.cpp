@@ -83,7 +83,7 @@ namespace {
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest001 start");
     EventHandle handlerOn = std::bind(&ThermalObserverTest::HandleScreenOnCompleted, this, std::placeholders::_1);
     auto receiver = std::make_shared<ThermalCommonEventReceiver>();
     receiver->AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON, handlerOn);
@@ -91,7 +91,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest001, TestSize.Level0)
     EXPECT_TRUE(on);
     CommonEventData data;
     receiver->HandleEventChanged(data);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest001 end");
 }
 
 /**
@@ -101,7 +101,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest002 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest002 start");
     auto observer = std::make_shared<ThermalObserver>();
     std::vector<std::string> typeList;
     sptr<IThermalTempCallback> tempCallback;
@@ -122,7 +122,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
     typeList.push_back("cpu_med");
     typeList.push_back("cpu_lit");
     observer->DecisionActionValue(typeList, actionCbMap);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest002 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest002 end");
 }
 
 /**
@@ -132,7 +132,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest003 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest003 start");
     std::shared_ptr<IRemoteObject::DeathRecipient> deathRecipient =
         std::make_shared<ThermalObserver::SensorTempCallbackDeathRecipient>();
     wptr<IRemoteObject> remoteObj = nullptr;
@@ -142,7 +142,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest003, TestSize.Level0)
     sptr<IRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
     deathRecipient->OnRemoteDied(sptrRemoteObj);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest003 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest003 end");
 }
 
 /**
@@ -152,7 +152,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest004 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest004 start");
     std::shared_ptr<IRemoteObject::DeathRecipient> deathRecipient =
         std::make_shared<ThermalObserver::ActionCallbackDeathRecipient>();
     wptr<IRemoteObject> remoteObj = nullptr;
@@ -162,7 +162,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest004, TestSize.Level0)
     sptr<IRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
     deathRecipient->OnRemoteDied(sptrRemoteObj);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest004 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest004 end");
 }
 
 /**
@@ -173,7 +173,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest005 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest005 start");
     auto info = std::make_shared<ThermalSensorInfo>();
     EXPECT_TRUE(info->GetTypeTempMap().empty());
     TypeTempMap type;
@@ -181,7 +181,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest005, TestSize.Level0)
     info->GetTemp("soc");
     EXPECT_TRUE(info->GetHistoryTemperature("soc").empty());
     info->NotifyObserver();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest005 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest005 end");
 }
 
 /**
@@ -191,7 +191,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest006, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest006 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest006 start");
     auto chargerState = std::make_shared<ChargerStateCollection>();
     chargerState->Init();
     string param = "charging";
@@ -205,7 +205,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest006, TestSize.Level0)
     chargerState->DecideState("1");
     chargerState->HandleChargeIdleState();
     chargerState->HandleThermalLevelCompleted(data);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest006 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest006 end");
 }
 
 /**
@@ -215,7 +215,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest007, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest007 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest007 start");
     auto sceneState = std::make_shared<SceneStateCollection>();
     sceneState->Init();
     string param = "game";
@@ -223,7 +223,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest007, TestSize.Level0)
     EXPECT_TRUE(ret);
     sceneState->SetState("");
     sceneState->DecideState("game");
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest007 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest007 end");
 }
 
 /**
@@ -233,7 +233,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest007, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest008 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest008 start");
     auto screenState = std::make_shared<ScreenStateCollection>();
     screenState->Init();
     string param = "on";
@@ -246,7 +246,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
     screenState->HandleScreenOffCompleted(data);
     screenState->SetState("");
     screenState->DecideState("0");
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest008 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest008 end");
 }
 
 /**
@@ -256,11 +256,11 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest009, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest009 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest009 start");
     auto stateMachine = std::make_shared<StateMachine>();
     bool ret = stateMachine->Init();
     EXPECT_TRUE(ret);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest009 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest009 end");
 }
 
 /**
@@ -270,7 +270,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest009, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest010, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest010 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest010 start");
 #ifdef BATTERY_MANAGER_ENABLE
     auto chargerState = std::make_shared<ChargerStateCollection>();
     CommonEventData data;
@@ -305,7 +305,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest010, TestSize.Level0)
         EXPECT_EQ(chargerState->GetState(), ToString(ChargerStateCollection::BUTT));
     }
 #endif
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest010 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest010 end");
 }
 
 /**
@@ -315,7 +315,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest010, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest011 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest011 start");
 #ifdef BATTERY_MANAGER_ENABLE
     auto chargerDelayState = std::make_shared<ChargeDelayStateCollection>();
     chargerDelayState->Init();
@@ -333,7 +333,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
     chargerDelayState->ResetState();
 
 #endif
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest011 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest011 end");
 }
 
 /**
@@ -343,7 +343,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
  */
 HWTEST_F(ThermalObserverTest, ThermalObserverTest012, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest012 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest012 start");
 #ifdef BATTERY_MANAGER_ENABLE
     auto delayState = std::make_shared<StartupDelayStateCollection>();
     delayState->Init();
@@ -357,6 +357,6 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest012, TestSize.Level0)
     EXPECT_TRUE(delayState->DecideState("0"));
     delayState->SetState("");
 #endif
-    THERMAL_HILOGD(LABEL_TEST, "ThermalObserverTest012 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest012 end");
 }
 } // namespace

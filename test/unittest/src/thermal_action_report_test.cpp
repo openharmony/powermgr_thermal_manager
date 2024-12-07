@@ -67,7 +67,7 @@ void ThermalActionReportTest::ParserThermalSrvConfigFile()
 
 int32_t ThermalActionReportTest::SetCondition(int32_t value, const std::string& scene)
 {
-    THERMAL_HILOGD(LABEL_TEST, "battery = %{public}d, scene = %{public}s", value, scene.c_str());
+    THERMAL_HILOGI(LABEL_TEST, "battery = %{public}d, scene = %{public}s", value, scene.c_str());
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
@@ -83,18 +83,18 @@ int32_t ThermalActionReportTest::GetThermalLevel(int32_t expectValue)
     ThermalLevel level;
     g_service->GetThermalLevel(level);
     int32_t value = static_cast<int32_t>(level);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(value, expectValue) << "Thermal action policy failed";
     return value;
 }
 
 std::string ThermalActionReportTest::GetActionValue(const std::string& actionName, uint32_t level)
 {
-    THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s, level = %{public}d", actionName.c_str(), level);
+    THERMAL_HILOGI(LABEL_TEST, "action name = %{public}s, level = %{public}d", actionName.c_str(), level);
     std::string value = "0";
     std::vector<PolicyAction> vAction;
     if (!g_configParser->GetActionPolicy(POLICY_CFG_NAME, level, vAction)) {
-        THERMAL_HILOGD(LABEL_TEST, "Get policy failed name = %{public}s, return", POLICY_CFG_NAME.c_str());
+        THERMAL_HILOGI(LABEL_TEST, "Get policy failed name = %{public}s, return", POLICY_CFG_NAME.c_str());
         return value;
     }
     return ActionDecision(actionName, vAction);
@@ -102,7 +102,7 @@ std::string ThermalActionReportTest::GetActionValue(const std::string& actionNam
 
 std::string ThermalActionReportTest::ActionDecision(const std::string& actionName, std::vector<PolicyAction>& vAction)
 {
-    THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s", actionName.c_str());
+    THERMAL_HILOGI(LABEL_TEST, "action name = %{public}s", actionName.c_str());
     if (actionName == LCD_ACTION_NAME) {
         return LcdValueDecision(actionName, vAction);
     } else {
@@ -113,7 +113,7 @@ std::string ThermalActionReportTest::ActionDecision(const std::string& actionNam
 std::string ThermalActionReportTest::ActionValueDecision(
     const std::string& actionName, std::vector<PolicyAction>& vAction)
 {
-    THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s", actionName.c_str());
+    THERMAL_HILOGI(LABEL_TEST, "action name = %{public}s", actionName.c_str());
     int32_t value = -1;
     std::vector<uint32_t> valueList;
     for (auto actionIter : vAction) {
@@ -144,7 +144,7 @@ std::string ThermalActionReportTest::ActionValueDecision(
 
 std::string ThermalActionReportTest::LcdValueDecision(const std::string& actionName, std::vector<PolicyAction>& vAction)
 {
-    THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s", actionName.c_str());
+    THERMAL_HILOGI(LABEL_TEST, "action name = %{public}s", actionName.c_str());
     float value = -1.0;
     std::vector<float> valueList;
     std::map<std::string, std::string> sceneMap;
@@ -188,9 +188,9 @@ bool ThermalActionReportTest::StateDecision(std::map<std::string, std::string>& 
     GetStateMap(stateMap);
     for (auto prop : actionPropMap) {
         auto stateIter = stateMap.find(prop.first);
-        THERMAL_HILOGD(LABEL_TEST, "state = %{public}s, value = %{public}s", prop.first.c_str(), prop.second.c_str());
+        THERMAL_HILOGI(LABEL_TEST, "state = %{public}s, value = %{public}s", prop.first.c_str(), prop.second.c_str());
         if (stateIter != stateMap.end()) {
-            THERMAL_HILOGD(LABEL_TEST, "state iter = %{public}s, iter value = %{public}s", stateIter->first.c_str(),
+            THERMAL_HILOGI(LABEL_TEST, "state iter = %{public}s, iter value = %{public}s", stateIter->first.c_str(),
                 stateIter->second.c_str());
             if (stateIter->second.compare(prop.second) == 0) {
                 continue;
@@ -243,7 +243,7 @@ void ThermalActionReportTest::GetStateMap(std::map<std::string, std::string>& st
         stateMap.emplace(std::pair(stateIter.name, state));
     }
     for (auto iter : stateMap) {
-        THERMAL_HILOGD(
+        THERMAL_HILOGI(
             LABEL_TEST, "stateMap name = %{public}s, value = %{public}s", iter.first.c_str(), iter.second.c_str());
     }
 }
@@ -252,7 +252,7 @@ void ThermalActionReportTest::ThermalActionTriggered(
     const std::string& actionName, int32_t level, const std::string& dumpInfo, bool isReversed)
 {
     bool enableEvent = g_configParser->GetActionEnableEvent(actionName);
-    THERMAL_HILOGD(LABEL_TEST, "action name = %{public}s, event flag = %{public}d", actionName.c_str(), enableEvent);
+    THERMAL_HILOGI(LABEL_TEST, "action name = %{public}s, event flag = %{public}d", actionName.c_str(), enableEvent);
     if (!enableEvent) {
         GTEST_LOG_(INFO) << __func__ << " action name: " << actionName << " enalbe event flag is false, return";
         return;
@@ -269,7 +269,7 @@ void ThermalActionReportTest::ThermalActionTriggered(
         .append(actionName)
         .append(valueLabel)
         .append(value);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}s", value.c_str());
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}s", value.c_str());
     GTEST_LOG_(INFO) << __func__ << " action name: " << actionName << " expected debug info: " << expectedDumpInfo;
     auto index = dumpInfo.find(expectedDumpInfo);
     if (!isReversed) {
@@ -319,7 +319,7 @@ namespace {
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.001 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.001 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -346,7 +346,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.001 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.001 end");
 }
 
 /**
@@ -358,7 +358,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.002 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.002 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -385,7 +385,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.002 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.002 end");
 }
 
 /**
@@ -397,7 +397,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.003 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.003 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -425,7 +425,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.003 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.003 end");
 }
 
 /**
@@ -437,7 +437,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.004 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.004 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -465,7 +465,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.004 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.004 end");
 }
 
 /**
@@ -477,7 +477,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.005 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.005 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -505,7 +505,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.005 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.005 end");
 }
 
 /**
@@ -517,7 +517,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.006 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.006 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -545,7 +545,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.006 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.006 end");
 }
 
 /**
@@ -557,7 +557,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.007 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.007 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -585,7 +585,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.007 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.007 end");
 }
 
 /**
@@ -597,7 +597,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest007, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.008 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.008 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -625,7 +625,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_SC_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.008 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.008 end");
 }
 
 /**
@@ -637,7 +637,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest008, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.009 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.009 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -667,7 +667,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.009 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.009 end");
 }
 
 /**
@@ -679,7 +679,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest009, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.010 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.010 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -709,7 +709,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.010 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.010 end");
 }
 
 /**
@@ -721,7 +721,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest010, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.011 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.011 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -751,7 +751,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.011 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.011 end");
 }
 
 /**
@@ -763,7 +763,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest011, TestSize.Level0)
  */
 HWTEST_F(ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.012 start");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.012 start");
     auto& statsClient = BatteryStatsClient::GetInstance();
     statsClient.Reset();
 
@@ -793,7 +793,7 @@ HWTEST_F(ThermalActionReportTest, ThermalActionReportTest012, TestSize.Level0)
     ThermalActionReportTest::ThermalActionTriggered(VOLATAGE_BUCK_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(SHUTDOWN_ACTION_NAME, level, actualDumpInfo);
     ThermalActionReportTest::ThermalActionTriggered(CPU_BOOST_ACTION_NAME, level, actualDumpInfo, true);
-    THERMAL_HILOGD(LABEL_TEST, "Thermal action report test No.012 end");
+    THERMAL_HILOGI(LABEL_TEST, "Thermal action report test No.012 end");
 }
 } // namespace
 #endif // BATTERY_STATS_ENABLE

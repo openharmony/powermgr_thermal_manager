@@ -37,7 +37,7 @@ namespace {
  */
 HWTEST_F(ThermalMockProxyWriteinterfacetokenTest, ThermalMockProxyWriteinterfacetokenTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteinterfacetokenTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyWriteinterfacetokenTest001 start.");
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
     std::shared_ptr<ThermalSrvProxy> srvProxy = std::make_shared<ThermalSrvProxy>(sptrRemoteObj);
@@ -65,7 +65,7 @@ HWTEST_F(ThermalMockProxyWriteinterfacetokenTest, ThermalMockProxyWriteinterface
     EXPECT_FALSE(srvProxy->GetThermalLevel(level));
     std::string sence;
     EXPECT_FALSE(srvProxy->SetScene(sence));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteinterfacetokenTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyWriteinterfacetokenTest001 end.");
 }
 
 /**
@@ -76,7 +76,7 @@ HWTEST_F(ThermalMockProxyWriteinterfacetokenTest, ThermalMockProxyWriteinterface
  */
 HWTEST_F(ThermalMockProxyWriteinterfacetokenTest, ThermalMockProxyWriteinterfacetokenTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteinterfacetokenTest002 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyWriteinterfacetokenTest002 start.");
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
     std::shared_ptr<ThermalTempCallbackProxy> tempProxy = std::make_shared<ThermalTempCallbackProxy>(sptrRemoteObj);
@@ -94,6 +94,6 @@ HWTEST_F(ThermalMockProxyWriteinterfacetokenTest, ThermalMockProxyWriteinterface
     EXPECT_FALSE(levalProxy == nullptr);
     ThermalLevel level = ThermalLevel::COOL;
     EXPECT_FALSE(levalProxy->OnThermalLevelChanged(level));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteinterfacetokenTest002 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyWriteinterfacetokenTest002 end.");
 }
 } // namespace

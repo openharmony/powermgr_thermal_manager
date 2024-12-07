@@ -60,7 +60,7 @@ namespace {
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest001 start.");
     uint32_t code = 0;
     MessageParcel data;
     MessageParcel reply;
@@ -74,7 +74,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest001, TestSize.Level0)
     sptr<ThermalTempCallbackStub> tempStub = new ThermalTempCallbackStub();
     ASSERT_FALSE(tempStub == nullptr);
     EXPECT_EQ(E_GET_THERMAL_SERVICE_FAILED, tempStub->OnRemoteRequest(code, data, reply, option));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest001 end.");
 }
 
 /**
@@ -85,7 +85,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest002 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest002 start.");
     uint32_t begin = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::REG_THERMAL_TEMP_CALLBACK);
     uint32_t end = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::SHELL_DUMP);
     for (uint32_t code = begin; code <= end; ++code) {
@@ -94,7 +94,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest002, TestSize.Level0)
         EXPECT_TRUE(ret == E_READ_PARCEL_ERROR_THERMAL || ret == E_GET_SYSTEM_ABILITY_MANAGER_FAILED_THERMAL ||
             ret == 0);
     }
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest002 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest002 end.");
 }
 
 /**
@@ -104,11 +104,11 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest003 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest003 start.");
     uint32_t code = 0;
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, E_GET_THERMAL_SERVICE_FAILED) << "code: " << code << " ret:" << ret;
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest003 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest003 end.");
 }
 
 /**
@@ -118,12 +118,12 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest004 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest004 start.");
     uint32_t code = 9999;
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, IPC_STUB_UNKNOW_TRANS_ERR) << "code: " << code << " ret:" << ret;
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest004 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest004 end.");
 }
 
 /**
@@ -133,7 +133,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest005 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest005 start.");
 
     sptr<ThermalTempCallbackStub> tempStub = new ThermalTempCallbackStub();
     std::vector<std::string> typeList;
@@ -149,7 +149,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest005, TestSize.Level0)
     code = static_cast<uint32_t>(PowerMgr::ThermalMgrInterfaceCode::UNREG_THERMAL_TEMP_CALLBACK);
     ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest005 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest005 end.");
 }
 
 /**
@@ -159,7 +159,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest006, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest006 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest006 start.");
 
     MessageParcel data;
     sptr<ThermalLevelCallbackStub> levelStub = new ThermalLevelCallbackStub();
@@ -175,7 +175,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest006, TestSize.Level0)
     ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest006 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest006 end.");
 }
 
 /**
@@ -185,7 +185,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest007, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest007 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest007 start.");
 
     sptr<ThermalActionCallbackStub> actionStub = new ThermalActionCallbackStub();
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
@@ -203,7 +203,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest007, TestSize.Level0)
     ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest007 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest007 end.");
 }
 
 /**
@@ -213,7 +213,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest007, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest008, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest008 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest008 start.");
 
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, Uint32, static_cast<uint32_t>(SensorType::BATTERY));
@@ -221,7 +221,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest008, TestSize.Level0)
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest008 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest008 end.");
 }
 
 /**
@@ -231,7 +231,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest008, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest009, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest009 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest009 start.");
 
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     THERMAL_WRITE_PARCEL_NO_RET(g_data, String, "test");
@@ -239,7 +239,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest009, TestSize.Level0)
     int32_t ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest009 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest009 end.");
 }
 
 /**
@@ -249,7 +249,7 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest009, TestSize.Level0)
  */
 HWTEST_F(ThermalMockStubTest, ThermalMockStubTest010, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest010 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest010 start.");
 
     g_data.WriteInterfaceToken(ThermalSrvProxy::GetDescriptor());
     const int32_t PARAM_MAX_NUM = 100;
@@ -270,6 +270,6 @@ HWTEST_F(ThermalMockStubTest, ThermalMockStubTest010, TestSize.Level0)
     ret = g_service->OnRemoteRequest(code, g_data, g_reply, g_option);
     EXPECT_EQ(ret, ERR_OK) << " ret:" << ret;
 
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockStubTest010 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubTest010 end.");
 }
 } // namespace

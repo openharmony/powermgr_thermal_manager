@@ -51,7 +51,7 @@ bool MockStatusCb(const OHOS::HDI::ServiceManager::V1_0::ServiceStatus&)
  */
 HWTEST_F(ThermalClientTest, ThermalClientTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest001 start.");
     ThermalCallback* thermalCb = new ThermalCallback();
     HdfThermalCallbackInfo* info = new HdfThermalCallbackInfo();
     EXPECT_TRUE(thermalCb->OnThermalDataEvent(*info) == HDF_FAILURE);
@@ -63,7 +63,7 @@ HWTEST_F(ThermalClientTest, ThermalClientTest001, TestSize.Level0)
     thermalCb = nullptr;
     delete info;
     info = nullptr;
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest001 end.");
 }
 
 /**
@@ -74,7 +74,7 @@ HWTEST_F(ThermalClientTest, ThermalClientTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalClientTest, ThermalClientTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest002 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest002 start.");
     using StatusCallback = std::function<void(const OHOS::HDI::ServiceManager::V1_0::ServiceStatus&)>;
     StatusCallback cb = MockStatusCb;
     HdiServiceStatusListener* listener = new HdiServiceStatusListener(cb);
@@ -83,7 +83,7 @@ HWTEST_F(ThermalClientTest, ThermalClientTest002, TestSize.Level0)
     listener->OnReceive(status);
     delete listener;
     listener = nullptr;
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest002 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest002 end.");
 }
 
 /**
@@ -94,7 +94,7 @@ HWTEST_F(ThermalClientTest, ThermalClientTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalClientTest, ThermalClientTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest003 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest003 start.");
     auto& client = ThermalMgrClient::GetInstance();
     std::vector<std::string> typeList;
     sptr<IThermalTempCallback> tempCallback = nullptr;
@@ -121,7 +121,7 @@ HWTEST_F(ThermalClientTest, ThermalClientTest003, TestSize.Level0)
     EXPECT_FALSE(actionCallback == nullptr);
     EXPECT_TRUE(client.SubscribeThermalActionCallback(typeList, actionList, actionCallback));
     EXPECT_TRUE(client.UnSubscribeThermalActionCallback(actionCallback));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest003 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest003 end.");
 }
 
 /**
@@ -132,12 +132,12 @@ HWTEST_F(ThermalClientTest, ThermalClientTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalClientTest, ThermalClientTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest004 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest004 start.");
     sptr<ThermalSrvSensorInfo> info = new ThermalSrvSensorInfo();
     MessageParcel parcel;
     info->Unmarshalling(parcel);
     EXPECT_TRUE(info->Marshalling(parcel));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest004 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest004 end.");
 }
 
 /**
@@ -148,7 +148,7 @@ HWTEST_F(ThermalClientTest, ThermalClientTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalClientTest, ThermalClientTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest005 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest005 start.");
     std::shared_ptr<ThermalMgrListener> thermalListener = std::make_shared<ThermalMgrListener>();
     ASSERT_NE(thermalListener, nullptr);
     int32_t ret = thermalListener->SubscribeLevelEvent(nullptr);
@@ -160,6 +160,6 @@ HWTEST_F(ThermalClientTest, ThermalClientTest005, TestSize.Level0)
     sptr<IThermalLevelCallback> callback = new ThermalMgrListener::ThermalLevelCallback(nullptr);
     bool result = callback->OnThermalLevelChanged(level);
     EXPECT_EQ(result, false);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientTest005 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientTest005 end.");
 }
 } // namespace
