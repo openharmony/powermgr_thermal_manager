@@ -78,13 +78,13 @@ int32_t ThermalMgrSystemTest::ReadFile(const char* path, char* buf, size_t size)
 
     int32_t fd = open(path, O_RDONLY, S_IRUSR | S_IRGRP | S_IROTH);
     if (fd < ERR_OK) {
-        THERMAL_HILOGD(LABEL_TEST, "WriteFile: failed to open file fd: %{public}d", fd);
+        THERMAL_HILOGI(LABEL_TEST, "WriteFile: failed to open file fd: %{public}d", fd);
         return ERR_INVALID_VALUE;
     }
 
     ret = read(fd, buf, size);
     if (ret < ERR_OK) {
-        THERMAL_HILOGD(LABEL_TEST, "WriteFile: failed to read file ret: %{public}d", ret);
+        THERMAL_HILOGI(LABEL_TEST, "WriteFile: failed to read file ret: %{public}d", ret);
         close(fd);
         return ERR_INVALID_VALUE;
     }
@@ -149,9 +149,9 @@ void ThermalMgrSystemTest::TearDown()
 
 static void GetSystemTestTemp(std::vector<LevelItem>& iter, const int32_t& needLevel)
 {
-    THERMAL_HILOGD(LABEL_TEST, "GetSystemTestTemp: start.");
+    THERMAL_HILOGI(LABEL_TEST, "GetSystemTestTemp: start.");
     for (auto info : iter) {
-        THERMAL_HILOGD(LABEL_TEST, "info.level = %{public}d", info.level);
+        THERMAL_HILOGI(LABEL_TEST, "info.level = %{public}d", info.level);
         if (info.level == static_cast<uint32_t>(needLevel)) {
             g_temp = info.threshold;
         }
@@ -160,9 +160,9 @@ static void GetSystemTestTemp(std::vector<LevelItem>& iter, const int32_t& needL
 
 static void GetSensorName(SensorInfoMap& info, const std::string& sensorName, const int32_t& needLevel)
 {
-    THERMAL_HILOGD(LABEL_TEST, "GetSensorName: start.");
+    THERMAL_HILOGI(LABEL_TEST, "GetSensorName: start.");
     for (auto iter = info.begin(); iter != info.end(); ++iter) {
-        THERMAL_HILOGD(COMP_SVC, "SENSOR name = %{public}s", iter->first.c_str());
+        THERMAL_HILOGI(COMP_SVC, "SENSOR name = %{public}s", iter->first.c_str());
         if (iter->first == sensorName) {
             GetSystemTestTemp(iter->second, needLevel);
         }
@@ -172,15 +172,15 @@ static void GetSensorName(SensorInfoMap& info, const std::string& sensorName, co
 static void GetSensorClusterName(const std::string& sensorClusterName, const std::string& sensorName,
     const int32_t& needLevel)
 {
-    THERMAL_HILOGD(LABEL_TEST, "GetSensorClusterName: start.");
+    THERMAL_HILOGI(LABEL_TEST, "GetSensorClusterName: start.");
     if (g_parser == nullptr) {
-        THERMAL_HILOGD(LABEL_TEST, "g_parser: is nullptr.");
+        THERMAL_HILOGI(LABEL_TEST, "g_parser: is nullptr.");
         return;
     }
 
     std::map<std::string, SensorInfoMap> sensorInfoMap = g_parser->GetSensorInfoMap();
     for (auto info = sensorInfoMap.begin(); info != sensorInfoMap.end(); ++info) {
-        THERMAL_HILOGD(COMP_SVC, "sensor_cluster name = %{public}s", info->first.c_str());
+        THERMAL_HILOGI(COMP_SVC, "sensor_cluster name = %{public}s", info->first.c_str());
         if (info->first == sensorClusterName) {
             GetSensorName(info->second, sensorName, needLevel);
         }
@@ -198,7 +198,7 @@ namespace {
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest001: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest001: start.");
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
@@ -209,7 +209,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -223,9 +223,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest001 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest001: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest001: end.");
 }
 
 /**
@@ -237,7 +237,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest002: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest002: start.");
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
@@ -248,7 +248,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -262,9 +262,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest002 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest002: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest002: end.");
 }
 
 /**
@@ -276,7 +276,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest003: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest003: start.");
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
@@ -287,7 +287,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -301,9 +301,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest003 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest003: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest003: end.");
 }
 
 /**
@@ -315,7 +315,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest003: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest003: start.");
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
@@ -326,7 +326,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -341,7 +341,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest005 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest004: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest004: end.");
 }
 
 /**
@@ -353,7 +353,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest005: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest005: start.");
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
@@ -367,7 +367,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
     std::string level;
     int32_t value;
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -398,9 +398,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest005 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest005: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest005: end.");
 }
 
 /**
@@ -457,7 +457,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest006 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest006: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest006: end.");
 }
 
 /**
@@ -469,7 +469,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest007: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest007: start.");
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
@@ -516,7 +516,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Lev
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest007 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest007: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest007: end.");
 }
 
 /**
@@ -584,20 +584,20 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest009: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest009: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
     GetSensorClusterName("cold_safe", "battery", 1);
     int32_t batteryTemp = g_temp - 2000;
-    THERMAL_HILOGD(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
+    THERMAL_HILOGI(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -612,7 +612,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest009 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest009: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest009: end.");
 }
 
 /**
@@ -624,20 +624,20 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest010: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest010: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
     GetSensorClusterName("cold_safe", "battery", 2);
     int32_t batteryTemp = g_temp - 2000;
-    THERMAL_HILOGD(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
+    THERMAL_HILOGI(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -652,7 +652,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest010 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest010: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest010: end.");
 }
 
 /**
@@ -664,7 +664,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest011: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest011: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
@@ -676,7 +676,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -691,7 +691,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest011 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest011: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest011: end.");
 }
 
 /**
@@ -703,20 +703,20 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest012: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest012: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
     GetSensorClusterName("cold_safe", "battery", 4);
     int32_t batteryTemp = g_temp - 2000;
-    THERMAL_HILOGD(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
+    THERMAL_HILOGI(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
     std::string sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -731,7 +731,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Lev
     std::string level = levelValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest012 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest012: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest012: end.");
 }
 
 /**
@@ -743,7 +743,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest013: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest013: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
@@ -790,7 +790,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest013 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest013: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest013: end.");
 }
 
 /**
@@ -802,7 +802,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest014: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest014: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
@@ -849,7 +849,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 4) << "ThermalMgrSystemTest014 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest014: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest014: end.");
 }
 
 /**
@@ -861,7 +861,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest015: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest015: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
@@ -908,7 +908,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest015 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest015: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest015: end.");
 }
 
 /**
@@ -920,7 +920,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest016: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest016: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
@@ -967,7 +967,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
     level = levelValue;
     value = ThermalMgrSystemTest::ConvertInt(level);
     EXPECT_EQ(true, value == 0) << "ThermalMgrSystemTest016 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest016: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest016: end.");
 }
 
 /**
@@ -979,20 +979,20 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest017: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest017: start.");
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
     GetSensorClusterName("base_safe", "battery", 1);
     int32_t batteryTemp = g_temp + 1000;
-    THERMAL_HILOGD(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
+    THERMAL_HILOGI(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
     std::string sTemp = to_string(batteryTemp);
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -1008,10 +1008,10 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Lev
 
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 3) << "ThermalMgrSystemTest017 failed";
 
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest017: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest017: end.");
 }
 
 /**
@@ -1023,19 +1023,19 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest018: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest018: start.");
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
 
     GetSensorClusterName("base_safe", "battery", 2);
     int32_t batteryTemp = g_temp + 1000;
-    THERMAL_HILOGD(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
+    THERMAL_HILOGI(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
     std::string sTemp = to_string(batteryTemp);
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -1049,9 +1049,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 2) << "ThermalMgrSystemTest018 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest018: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest018: end.");
 }
 
 /**
@@ -1063,20 +1063,20 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Lev
  */
 HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest019: start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest019: start.");
 
     char batteryTempBuf[MAX_PATH] = {0};
     int32_t ret = snprintf_s(batteryTempBuf, MAX_PATH, sizeof(batteryTempBuf) - 1, BATTERY_PATH.c_str());
     EXPECT_EQ(true, ret >= EOK);
     GetSensorClusterName("base_safe", "battery", 3);
     int32_t batteryTemp = g_temp + 1000;
-    THERMAL_HILOGD(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
+    THERMAL_HILOGI(LABEL_TEST, "TEMP: %{public}d", batteryTemp);
     std::string sTemp = to_string(batteryTemp);
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
     if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGD(LABEL_TEST, "SIMUL PATH has been in ");
+        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
         return;
     }
 
@@ -1089,9 +1089,9 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Lev
     EXPECT_EQ(true, ret == ERR_OK);
     std::string process = procsesValue;
     int32_t value = ThermalMgrSystemTest::ConvertInt(process);
-    THERMAL_HILOGD(LABEL_TEST, "value: %{public}d", value);
+    THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(true, value == 1) << "ThermalMgrSystemTest019 failed";
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMgrSystemTest019: end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrSystemTest019: end.");
 }
 }
 

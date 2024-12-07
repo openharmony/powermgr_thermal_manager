@@ -119,7 +119,7 @@ CommonEventThermalLevelTest::CommonEventThermalLevelTest(const CommonEventSubscr
 
 void CommonEventThermalLevelTest::OnReceiveEvent(const CommonEventData& data)
 {
-    THERMAL_HILOGD(LABEL_TEST, "CommonEventThermalLevelTest: OnReceiveEvent Enter");
+    THERMAL_HILOGI(LABEL_TEST, "CommonEventThermalLevelTest: OnReceiveEvent Enter");
     int invalidLevel = -1;
     std::string action = data.GetWant().GetAction();
     EXPECT_TRUE(action == CommonEventSupport::COMMON_EVENT_THERMAL_LEVEL_CHANGED);
@@ -134,7 +134,7 @@ void CommonEventThermalLevelTest::OnReceiveEvent(const CommonEventData& data)
 
 shared_ptr<CommonEventThermalLevelTest> CommonEventThermalLevelTest::RegisterEvent()
 {
-    THERMAL_HILOGD(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
+    THERMAL_HILOGI(LABEL_TEST, "RegisterEvent: Regist Subscriber Start");
     static const int32_t MAX_RETRY_TIMES = 2;
     auto succeed = false;
     MatchingSkills matchingSkills;
@@ -145,7 +145,7 @@ shared_ptr<CommonEventThermalLevelTest> CommonEventThermalLevelTest::RegisterEve
         succeed = CommonEventManager::SubscribeCommonEvent(subscriberPtr);
     }
     if (!succeed) {
-        THERMAL_HILOGD(COMP_SVC, "Failed to register subscriber");
+        THERMAL_HILOGI(COMP_SVC, "Failed to register subscriber");
         return nullptr;
     }
     return subscriberPtr;
@@ -188,7 +188,7 @@ namespace {
  */
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest001: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest001: start");
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -209,7 +209,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest001: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest001: end");
 }
 
 /*
@@ -219,7 +219,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest002: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest002: start");
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
 
     auto levelItems = g_parser.GetLevelItems("base_safe", "battery");
@@ -239,7 +239,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
         Wait();
     }
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest002: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest002: end");
 }
 
 /*
@@ -249,7 +249,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest003: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest003: start");
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
 
     HdfThermalCallbackInfo event;
@@ -268,7 +268,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest003: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest003: end");
 }
 
 /*
@@ -278,7 +278,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest004: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest004: start");
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
 
     HdfThermalCallbackInfo event;
@@ -297,7 +297,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest004: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest004: end");
 }
 
 /*
@@ -307,7 +307,7 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest005: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest005: start");
     shared_ptr<CommonEventThermalLevelTest> subscriber = CommonEventThermalLevelTest::RegisterEvent();
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -330,6 +330,6 @@ HWTEST_F(ThermalLevelEventTest, ThermalLevelEventTest005, TestSize.Level0)
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalLevelEventTest005: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventTest005: end");
 }
 } // namespace

@@ -33,7 +33,7 @@ namespace {
  */
 HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceDeathTest_001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceDeathTest_001 start");
     auto& thermalClient = ThermalMgrClient::GetInstance();
     EXPECT_EQ(thermalClient.Connect(), ERR_OK);
 
@@ -43,7 +43,7 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_001, TestSize.Level0)
     EXPECT_NE(deathRecipient, nullptr);
     deathRecipient->OnRemoteDied(remoteObj);
     EXPECT_NE(thermalClient.thermalSrv_, nullptr);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceDeathTest_001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceDeathTest_001 end");
 }
 
 /**
@@ -54,7 +54,7 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_001, TestSize.Level0)
  */
 HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceDeathTest_002 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceDeathTest_002 start");
     auto& thermalClient = ThermalMgrClient::GetInstance();
     EXPECT_EQ(thermalClient.Connect(), ERR_OK);
 
@@ -65,6 +65,6 @@ HWTEST_F (ThermalServiceDeathTest, ThermalServiceDeathTest_002, TestSize.Level0)
     EXPECT_FALSE(sptrRemoteObj == nullptr);
     deathRecipient->OnRemoteDied(sptrRemoteObj);
     EXPECT_NE(thermalClient.thermalSrv_, nullptr);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceDeathTest_002 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceDeathTest_002 end");
 }
 }
