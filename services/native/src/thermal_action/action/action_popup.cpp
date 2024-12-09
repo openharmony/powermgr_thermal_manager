@@ -121,7 +121,7 @@ void ActionPopup::HandlePopupEvent(const int32_t value)
 
 bool ActionPopup::ShowThermalDialog(TempStatus value)
 {
-    void *handler = dlopen("libpower_ability.z.so", RTLD_NOW);
+    void *handler = dlopen("libpower_ability.z.so", RTLD_NOW | RTLD_NODELETE);
     if (handler == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "dlopen libpower_ability.z.so failed, reason : %{public}s", dlerror());
         return false;
