@@ -68,7 +68,7 @@ void StartupDelayStateCollection::StopDelayTimer()
     if (delayTimerId_ > 0) {
         auto thermalTimer = std::make_shared<ThermalTimer>();
         if (!thermalTimer->StopTimer(delayTimerId_)) {
-            THERMAL_HILOGE(COMP_SVC, "failed to stop delay timer, timerId = %{public}llu", delayTimerId_);
+            THERMAL_HILOGE(COMP_SVC, "StartupDelayStateCollection failed to stop delay timer");
         }
         thermalTimer->DestroyTimer(delayTimerId_);
         delayTimerId_ = 0;
