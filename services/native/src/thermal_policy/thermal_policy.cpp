@@ -160,13 +160,13 @@ void ThermalPolicy::PolicyDecision()
 
 void ThermalPolicy::ActionDecision(const std::vector<PolicyAction>& actionList)
 {
-    std::unordered_map<std::string, const PolicyAction&> actionPolicyInfos;
+    std::unordered_map<std::string, PolicyAction> actionPolicyInfos;
     for (auto action = actionList.begin(); action != actionList.end(); action++) {
         if (action->isProp && !StateMachineDecision(action->actionPropMap)) {
             continue;
         }
         auto& actionName = action->actionName;
-        actionPolicyInfos.insert({actionName, *action});
+        actionPolicyInfos[actionName] = *action;
     }
     auto tms = ThermalService::GetInstance();
     ThermalActionManager::ThermalActionMap actionMap = tms->GetActionManagerObj()->GetActionMap();
