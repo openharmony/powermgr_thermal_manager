@@ -35,7 +35,7 @@ namespace {
  */
 HWTEST_F(ThermalUtilsTest, ThermalUtilsTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalUtilsTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest001 start.");
     std::string dir = "";
     char* buf = nullptr;
     EXPECT_EQ(true, FileOperation::CreateNodeDir(dir) != ERR_OK);
@@ -54,7 +54,7 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest001, TestSize.Level0)
     EXPECT_EQ(true, FileOperation::WriteFile(dir, dir, size) != ERR_OK);
     dir = "1";
     EXPECT_EQ(1, FileOperation::ConvertInt(dir));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalUtilsTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest001 end.");
 }
 
 /**
@@ -65,7 +65,7 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalUtilsTest, ThermalUtilsTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalUtilsTest002 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest002 start.");
     std::string str;
     std::vector<std::string> ret;
     std::string sep;
@@ -90,6 +90,6 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest002, TestSize.Level0)
     WriteActionTriggeredHiSysEvent(false, configDir, 1);
     WriteActionTriggeredHiSysEventWithRatio(true, configDir, 1);
     WriteActionTriggeredHiSysEventWithRatio(false, configDir, 1);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalUtilsTest002 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest002 end.");
 }
 } // namespace
