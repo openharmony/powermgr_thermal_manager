@@ -155,7 +155,7 @@ void ThermalConfigFileParser::ParseBaseNode(xmlNodePtr node)
         }
         baseInfoMap_.emplace(item.tag, item.value);
         curNode = curNode->next;
-        THERMAL_HILOGD(LABEL_TEST, "tag: %{public}s, value:%{public}s",
+        THERMAL_HILOGI(LABEL_TEST, "tag: %{public}s, value:%{public}s",
             item.tag.c_str(), item.value.c_str());
     }
 }
@@ -243,7 +243,7 @@ void ThermalConfigFileParser::ParseActionNode(xmlNodePtr node)
                 ai.enableEvent = (TrimStr(eventValue) == TRUE_STR);
                 xmlFree(event);
             }
-            THERMAL_HILOGD(LABEL_TEST,
+            THERMAL_HILOGI(LABEL_TEST,
                 "ai.name: %{public}s, ai.strict: %{public}d, ai.params: %{public}s, ai.strict: %{public}s, "    \
                 "ai.enableEvent: %{public}d",
                 ai.name.c_str(), ai.strict, ai.params.c_str(), ai.protocol.c_str(), ai.enableEvent);
@@ -271,7 +271,7 @@ void ThermalConfigFileParser::ParsePolicyNode(xmlNodePtr node)
             uint32_t level = 0;
             StringOperation::StrToUint(reinterpret_cast<char*>(xmlLevel), level);
             policyConfig.level = level;
-            THERMAL_HILOGD(LABEL_TEST, "policyConfig.name: %{public}s, policyConfig.level:%{public}d",
+            THERMAL_HILOGI(LABEL_TEST, "policyConfig.name: %{public}s, policyConfig.level:%{public}d",
                 clusterName.c_str(), level);
             xmlFree(xmlLevel);
         }
@@ -279,7 +279,7 @@ void ThermalConfigFileParser::ParsePolicyNode(xmlNodePtr node)
         ParsePolicySubnode(curNode, policyConfig);
 
         const auto& clusterIter = policyConfigMap_.find(clusterName);
-        THERMAL_HILOGD(LABEL_TEST, "clusterName: %{public}s", clusterName.c_str());
+        THERMAL_HILOGI(LABEL_TEST, "clusterName: %{public}s", clusterName.c_str());
         if (clusterIter == policyConfigMap_.end()) {
             std::vector<PolicyConfig> policyList;
             policyList.push_back(policyConfig);
@@ -320,7 +320,7 @@ void ThermalConfigFileParser::ParseIdleNode(xmlNodePtr node)
                 xmlFree(value);
             }
         } else {
-            THERMAL_HILOGD(LABEL_TEST, "not supported node, name=%{public}s", subNode->name);
+            THERMAL_HILOGI(LABEL_TEST, "not supported node, name=%{public}s", subNode->name);
         }
     }
     THERMAL_HILOGI(LABEL_TEST, "level=%{public}d, soc=%{public}d, charging=%{public}d, current=%{public}d",
@@ -342,7 +342,7 @@ void ThermalConfigFileParser::ParseAuxSensorInfo(
             if (auxSensorList[i].empty()) {
                 continue;
             }
-            THERMAL_HILOGD(LABEL_TEST, "aux_sensor item: %{public}s", sensorType.c_str());
+            THERMAL_HILOGI(LABEL_TEST, "aux_sensor item: %{public}s", sensorType.c_str());
             auxSensorLevelInfo.emplace(sensorType, ParseAuxSensorSubnodeInfo(cur, auxSensorList, i));
         }
         auxSensorInfoMap_.emplace(name, auxSensorLevelInfo);
@@ -393,9 +393,9 @@ std::vector<AuxLevelItem> ThermalConfigFileParser::ParseAuxSensorSubnodeInfo(con
             StrToInt(reinterpret_cast<char*>(xmlLevel), auxlevelItem.level);
             xmlFree(xmlLevel);
         }
-        THERMAL_HILOGD(LABEL_TEST, "aux_trigger_range: %{public}s",
+        THERMAL_HILOGI(LABEL_TEST, "aux_trigger_range: %{public}s",
             tempRanges.c_str());
-        THERMAL_HILOGD(LABEL_TEST, "lowerTemp: %{public}d, upperTemp: %{public}d",
+        THERMAL_HILOGI(LABEL_TEST, "lowerTemp: %{public}d, upperTemp: %{public}d",
             auxlevelItem.lowerTemp, auxlevelItem.upperTemp);
         auxItems.push_back(auxlevelItem);
     }
@@ -478,14 +478,14 @@ void ThermalConfigFileParser::ParsePolicySubnode(const xmlNode* cur, PolicyConfi
         xmlChar* xmlActionValue = xmlNodeGetContent(subNode);
         if (xmlActionValue != nullptr) {
             policyAction.actionValue = reinterpret_cast<char*>(xmlActionValue);
-            THERMAL_HILOGD(LABEL_TEST,
+            THERMAL_HILOGI(LABEL_TEST,
                 "policyAction.actionNodeName: %{public}s, policyAction.value:%{public}s",
                 policyAction.actionName.c_str(), policyAction.actionValue.c_str());
             xmlFree(xmlActionValue);
         }
 
         if (subNode->properties == nullptr) {
-            THERMAL_HILOGD(LABEL_TEST, "action prop is nullptr");
+            THERMAL_HILOGI(LABEL_TEST, "action prop is nullptr");
             policyAction.isProp = false;
             policyConfig.policyActionList.push_back(policyAction);
             continue;
@@ -495,7 +495,7 @@ void ThermalConfigFileParser::ParsePolicySubnode(const xmlNode* cur, PolicyConfi
             xmlChar* xmlPropValue = xmlGetProp(subNode, actionProp->name);
             if (xmlPropValue != nullptr) {
                 std::string propValue = reinterpret_cast<char*>(xmlPropValue);
-                THERMAL_HILOGD(LABEL_TEST, "propName.name: %{public}s, propValue:%{public}s",
+                THERMAL_HILOGI(LABEL_TEST, "propName.name: %{public}s, propValue:%{public}s",
                     propName.c_str(), propValue.c_str());
                 policyAction.actionPropMap.emplace(std::pair(propName, propValue));
                 xmlFree(xmlPropValue);

@@ -42,7 +42,7 @@ sptr<ThermalService> g_service = nullptr;
 
 void ThermalListenerTest::ThermalLevelTestEvent::OnThermalLevelResult(const ThermalLevel& level)
 {
-    THERMAL_HILOGD(LABEL_TEST, "OnThermalLevelResult Enter");
+    THERMAL_HILOGI(LABEL_TEST, "OnThermalLevelResult Enter");
     g_thermalLevel = level;
 }
 
@@ -74,7 +74,7 @@ namespace {
  */
 HWTEST_F(ThermalListenerTest, ThermalListenerTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalListenerTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalListenerTest001 start");
     std::shared_ptr<ThermalMgrListener> thermalListener = std::make_shared<ThermalMgrListener>();
     ASSERT_NE(thermalListener, nullptr);
     const std::shared_ptr<ThermalMgrListener::ThermalLevelEvent> thermalEvent =
@@ -101,7 +101,7 @@ HWTEST_F(ThermalListenerTest, ThermalListenerTest001, TestSize.Level0)
     ThermalLevel level;
     g_service->GetThermalLevel(level);
     EXPECT_EQ(g_thermalLevel, level);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalListenerTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalListenerTest001 end");
 }
 
 /**
@@ -112,12 +112,12 @@ HWTEST_F(ThermalListenerTest, ThermalListenerTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalListenerTest, ThermalListenerTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalListenerTest002 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalListenerTest002 start");
     std::shared_ptr<ThermalMgrListener> thermalListener = std::make_shared<ThermalMgrListener>();
     ASSERT_NE(thermalListener, nullptr);
 
     int32_t ret = thermalListener->SubscribeLevelEvent(nullptr);
     EXPECT_EQ(true, ret == ERR_INVALID_VALUE);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalListenerTest002 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalListenerTest002 end");
 }
 } // namespace

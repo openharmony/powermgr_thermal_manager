@@ -98,7 +98,7 @@ void ThermalActionHubTest::InitData()
 
 bool ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest1Callback::OnThermalActionChanged Enter");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest1Callback::OnThermalActionChanged Enter");
     int32_t cpuBigFreq = 1992000;
     bool isFind = false;
     for (auto iter : actionCbMap) {
@@ -115,7 +115,7 @@ bool ThermalActionHubTest::ThermalActionTest1Callback::OnThermalActionChanged(Ac
 
 bool ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest2Callback::OnThermalActionChanged Enter");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest2Callback::OnThermalActionChanged Enter");
     std::string lcd = "0.9";
     bool isFind = false;
     for (auto iter : actionCbMap) {
@@ -133,7 +133,7 @@ bool ThermalActionHubTest::ThermalActionTest2Callback::OnThermalActionChanged(Ac
 
 bool ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest3Callback::OnThermalActionChanged Enter");
     std::string cpuMedFreq = "1989500";
     std::string lcd = "0.8";
     bool isFindCpuMed = false;
@@ -158,7 +158,7 @@ bool ThermalActionHubTest::ThermalActionTest3Callback::OnThermalActionChanged(Ac
 
 bool ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest4Callback::OnThermalActionChanged Enter");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest4Callback::OnThermalActionChanged Enter");
     std::string lcd = "0.99";
     bool isFind = false;
     for (auto iter : actionCbMap) {
@@ -176,7 +176,7 @@ bool ThermalActionHubTest::ThermalActionTest4Callback::OnThermalActionChanged(Ac
 
 bool ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest5Callback::OnThermalActionChanged Enter");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest5Callback::OnThermalActionChanged Enter");
     std::string lcd = "0.88";
     bool isFind = false;
     for (auto iter : actionCbMap) {
@@ -194,7 +194,7 @@ bool ThermalActionHubTest::ThermalActionTest5Callback::OnThermalActionChanged(Ac
 
 bool ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest6Callback::OnThermalActionChanged Enter");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest6Callback::OnThermalActionChanged Enter");
     std::string lcd = "0.77";
     bool isFind = false;
     for (auto iter : actionCbMap) {
@@ -212,7 +212,7 @@ bool ThermalActionHubTest::ThermalActionTest6Callback::OnThermalActionChanged(Ac
 
 bool ThermalActionHubTest::ThermalActionTest7Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest7Callback::OnThermalActionChanged Enter");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest7Callback::OnThermalActionChanged Enter");
     bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "boost") {
@@ -228,7 +228,7 @@ bool ThermalActionHubTest::ThermalActionTest7Callback::OnThermalActionChanged(Ac
 
 bool ThermalActionHubTest::ThermalActionTest8Callback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionTest8Callback::OnThermalActionChanged Enter");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest8Callback::OnThermalActionChanged Enter");
     bool isFind = false;
     for (auto iter : actionCbMap) {
         if (iter.first == "isolate") {
@@ -250,13 +250,13 @@ namespace {
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 start");
     std::vector<std::string> actionList;
     actionList.push_back("cpu_big");
     std::string desc = "";
     InitData();
     const sptr<IThermalActionCallback> cb1 = new ThermalActionTest1Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 start register");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
@@ -267,7 +267,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb1);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb1);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 end");
 }
 
 /**
@@ -277,13 +277,13 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest002 start");
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
     const sptr<IThermalActionCallback> cb2 = new ThermalActionTest2Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest002 start register");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
@@ -294,7 +294,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb2);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb2);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest002 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest002 end");
 }
 
 /**
@@ -304,14 +304,14 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest003 start");
     std::vector<std::string> actionList;
     actionList.push_back("cpu_med");
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
     const sptr<IThermalActionCallback> cb3 = new ThermalActionTest3Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest003 start register");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
@@ -322,7 +322,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb3);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb3);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest003 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest003 end");
 }
 
 /**
@@ -332,13 +332,13 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest004 start");
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
     const sptr<IThermalActionCallback> cb4 = new ThermalActionTest4Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest004 start register");
     g_service->SetScene("cam");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -350,7 +350,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb4);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb4);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest004 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest004 end");
 }
 
 /**
@@ -360,13 +360,13 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest005 start");
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
     const sptr<IThermalActionCallback> cb5 = new ThermalActionTest5Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest005 start register");
     g_service->SetScene("call");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -378,7 +378,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb5);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb5);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest005 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest005 end");
 }
 
 /**
@@ -388,13 +388,13 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest006 start");
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
     InitData();
     const sptr<IThermalActionCallback> cb6 = new ThermalActionTest6Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest006 start register");
     g_service->SetScene("game");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -406,7 +406,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb6);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb6);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest006 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest006 end");
 }
 
 /**
@@ -417,13 +417,13 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest007 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest007 start");
     std::vector<std::string> actionList;
     actionList.push_back("boost");
     std::string desc = "";
     InitData();
     const sptr<IThermalActionCallback> cbBoost = new ThermalActionTest7Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 start register");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
@@ -434,7 +434,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cbBoost);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cbBoost);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 end");
 }
 
 /**
@@ -444,13 +444,13 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest008, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest008 start");
     std::vector<std::string> actionList;
     actionList.push_back("isolate");
     std::string desc = "";
     InitData();
     const sptr<IThermalActionCallback> cbIsolateCpu = new ThermalActionTest8Callback();
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 start register");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest008 start register");
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
     info1.type = "battery";
@@ -461,6 +461,6 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest008, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cbIsolateCpu);
-    THERMAL_HILOGD(LABEL_TEST, "ThermalActionHubTest008 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest008 end");
 }
 } // namespace

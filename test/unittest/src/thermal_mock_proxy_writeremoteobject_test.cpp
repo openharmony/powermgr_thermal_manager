@@ -37,7 +37,7 @@ namespace {
  */
 HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalClientMockParcelTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientMockParcelTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientMockParcelTest001 start");
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
 
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
@@ -66,7 +66,7 @@ HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalClientMockParcelTest001, 
     EXPECT_FALSE(thermalMgrClient.SetScene(sence));
     std::vector<std::string> args {};
     EXPECT_TRUE(thermalMgrClient.Dump(args) == "can't connect service");
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientMockParcelTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientMockParcelTest001 end");
 }
 
 /**
@@ -77,7 +77,7 @@ HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalClientMockParcelTest001, 
  */
 HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalClientMockParcelTest002, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientMockParcelTest002 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientMockParcelTest002 start");
     std::string type = "test";
     int32_t temp = 100;
     sptr<ThermalSrvSensorInfo> info = new ThermalSrvSensorInfo(type, temp);
@@ -85,7 +85,7 @@ HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalClientMockParcelTest002, 
     EXPECT_TRUE(temp == info->GetTemp());
     MessageParcel parcel {};
     EXPECT_FALSE(info->Marshalling(parcel));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalClientMockParcelTest002 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientMockParcelTest002 end");
 }
 
 /**
@@ -96,7 +96,7 @@ HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalClientMockParcelTest002, 
  */
 HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalMockProxyWriteremoteobjectTest001, TestSize.Level0)
 {
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteremoteobjectTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyWriteremoteobjectTest001 start");
     std::string result = "a";
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
@@ -127,6 +127,6 @@ HWTEST_F(ThermalMockProxyWriteremoteobjectTest, ThermalMockProxyWriteremoteobjec
     EXPECT_FALSE(actionCallback == nullptr);
     EXPECT_FALSE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback));
     EXPECT_FALSE(srvProxy->UnSubscribeThermalActionCallback(actionCallback));
-    THERMAL_HILOGD(LABEL_TEST, "ThermalMockProxyWriteremoteobjectTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyWriteremoteobjectTest001 end");
 }
 } // namespace
