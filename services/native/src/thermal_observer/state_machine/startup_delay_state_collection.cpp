@@ -41,6 +41,8 @@ bool StartupDelayStateCollection::InitParam(std::string& params)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     params_ = params;
+    THERMAL_HILOGI(COMP_SVC, "init power on delay time info");
+    delayTime_ = static_cast<uint32_t>(strtol(params_.c_str(), nullptr, STRTOL_FORMART_DEC));
     return true;
 }
 
@@ -54,7 +56,7 @@ bool StartupDelayStateCollection::StartDelayTimer()
 {
     auto thermalTimer = std::make_shared<ThermalTimer>();
     auto timerInfo = std::make_shared<ThermalTimerInfo>();
-    timerInfo->SetType(timerInfo->TIMER_TYPE_WAKEUP | timerInfo->TIMER_TYPE_EXACT);
+    timerInfo->SetType(ThermalTimer::TIMER_TYPE_WAKEUP | ThermalTimer::TIMER_TYPE_EXACT);
     timerInfo->SetCallbackInfo([this] { ResetState(); });
     
     delayTimerId_ = thermalTimer->CreateTimer(timerInfo);
@@ -85,13 +87,6 @@ void StartupDelayStateCollection::ResetState()
     THERMAL_HILOGI(COMP_SVC, "StartupDelayStateCollection ResetState");
     state_ = NON_STARTUP_DELAY_STATE;
     StopDelayTimer();
-}
-
-bool StartupDelayStateCollection::InitDelayTime(std::string& delaytime)
-{
-    THERMAL_HILOGI(COMP_SVC, "init power on delay time info");
-    delayTime_ = static_cast<uint32_t>(strtol(delaytime.c_str(), nullptr, STRTOL_FORMART_DEC));
-    return true;
 }
 
 bool StartupDelayStateCollection::DecideState(const std::string& value)

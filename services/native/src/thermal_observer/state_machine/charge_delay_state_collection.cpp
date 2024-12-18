@@ -42,6 +42,8 @@ bool ChargeDelayStateCollection::InitParam(std::string& params)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     params_ = params;
+    THERMAL_HILOGD(COMP_SVC, "init charge delay time info");
+    delayTime_ = static_cast<uint32_t>(strtol(params_.c_str(), nullptr, STRTOL_FORMART_DEC));
     return true;
 }
 
@@ -99,7 +101,7 @@ bool ChargeDelayStateCollection::StartDelayTimer()
 {
     auto thermalTimer = std::make_shared<ThermalTimer>();
     auto timerInfo = std::make_shared<ThermalTimerInfo>();
-    timerInfo->SetType(timerInfo->TIMER_TYPE_WAKEUP | timerInfo->TIMER_TYPE_EXACT);
+    timerInfo->SetType(ThermalTimer::TIMER_TYPE_WAKEUP | ThermalTimer::TIMER_TYPE_EXACT);
     timerInfo->SetCallbackInfo([this] { ResetState(); });
     
     delayTimerId_ = thermalTimer->CreateTimer(timerInfo);
@@ -130,13 +132,6 @@ void ChargeDelayStateCollection::ResetState()
     std::lock_guard<std::mutex> lock(mutex_);
     criticalState_ = NON_CRITICAL_STATE;
     delayTimerId_ = 0;
-}
-
-bool ChargeDelayStateCollection::InitDelayTime(std::string& delaytime)
-{
-    THERMAL_HILOGD(COMP_SVC, "init charge delay time info");
-    delayTime_ = static_cast<uint32_t>(strtol(delaytime.c_str(), nullptr, STRTOL_FORMART_DEC));
-    return true;
 }
 
 bool ChargeDelayStateCollection::DecideState(const std::string& value)

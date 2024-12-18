@@ -495,7 +495,7 @@ bool ThermalSrvConfigParser::ParseStateNode(const xmlNodePtr& node)
         xmlChar* delayTime = xmlGetProp(cur, BAD_CAST("delaytime"));
         if (delayTime != nullptr) {
             si.params = reinterpret_cast<char*>(delayTime);
-            si.isDelayed = true;
+            si.isExistParam = true;
             xmlFree(delayTime);
         }
 

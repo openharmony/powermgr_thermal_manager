@@ -71,15 +71,15 @@ void ActionNode::AddActionValue(uint32_t actionId, std::string value)
     }
 }
 
-void ActionNode::ExecuteInner(uint32_t actionId)
+void ActionNode::ExecuteInner()
 {
-    auto iter = policyActionMap_.find(actionId);
-    int32_t value;
-    if (actionId > 0 && iter != policyActionMap_.end()) {
-        value = iter->second.intDelayValue;
-    } else {
-        value = GetActionValue();
+    for (auto &policyAction : policyActionMap_) {
+        if (policyAction.second.isCompleted) {
+            valueList_.push_back(policyAction.second.intDelayValue);
+        }
     }
+
+    int32_t value = GetActionValue();
     if (value != lastValue_) {
         std::string valStr = std::to_string(value);
         if (nodePath_.size() > MIN_PATH_LENGTH) {

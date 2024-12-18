@@ -56,6 +56,9 @@ public:
     bool StartTimer(uint64_t timerId, uint64_t triggerTime);
     bool StopTimer(uint64_t timerId);
     bool DestroyTimer(uint64_t timerId);
+public:
+    static const uint32_t TIMER_TYPE_WAKEUP = 1 << 1;
+    static const uint32_t TIMER_TYPE_EXACT = 1 << 2;
 };
 
 class ThermalTimerUtils {

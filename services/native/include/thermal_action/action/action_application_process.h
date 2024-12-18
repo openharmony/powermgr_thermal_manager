@@ -37,7 +37,7 @@ public:
     void SetStrict(bool enable) override;
     void SetEnableEvent(bool enable) override;
     void AddActionValue(uint32_t actionId, std::string value) override;
-    void ExecuteInner(uint32_t actionId) override;
+    void ExecuteInner() override;
     ErrCode KillApplicationAction(const std::string& bundleName);
     ErrCode GetRunningProcessInfo(std::vector<AppExecFwk::RunningProcessInfo>& info);
     AppExecFwk::RunningProcessInfo GetAppProcessInfoByName(const std::string& processName);
