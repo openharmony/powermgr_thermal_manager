@@ -40,9 +40,6 @@ bool StateMachine::Init()
         if (state->isExistParam) {
             stateCollection->InitParam(state->params);
         }
-        if (state->isDelayed) {
-            stateCollection->InitDelayTime(state->params);
-        }
         stateCollection->Init();
         stateCollectionMap_.emplace(std::pair(state->name, stateCollection));
     }
@@ -60,7 +57,7 @@ void StateMachine::UpdateState(std::string stateName, std::string stateValue)
         iter->second->SetState(stateValue);
         return;
     }
-    vState_.push_back({stateName, "", false, false});
+    vState_.push_back({stateName, "", false});
     std::shared_ptr<IStateCollection> stateCollection = StateCollectionFactory::Create(stateName);
     stateCollection->SetState(stateValue);
     stateCollectionMap_.emplace(std::pair(stateName, stateCollection));

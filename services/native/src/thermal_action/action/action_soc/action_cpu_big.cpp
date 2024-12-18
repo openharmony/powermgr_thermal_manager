@@ -62,17 +62,17 @@ void ActionCpuBig::AddActionValue(uint32_t actionId, std::string value)
     }
 }
 
-void ActionCpuBig::ExecuteInner(uint32_t actionId)
+void ActionCpuBig::ExecuteInner()
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    auto iter = policyActionMap_.find(actionId);
-    uint32_t value;
-    if (actionId > 0 && iter != policyActionMap_.end()) {
-        value = iter->second.uintDelayValue;
-    } else {
-        value = GetActionValue();
+    for (auto &policyAction : policyActionMap_) {
+        if (policyAction.second.isCompleted) {
+            valueList_.push_back(policyAction.second.uintDelayValue);
+        }
     }
+
+    uint32_t value = GetActionValue();
     if (value != lastValue_) {
         if (multiCoreflag_) {
             SocLimitRequest(LIM_CPU_BIG2_ID, value);

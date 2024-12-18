@@ -16,7 +16,9 @@
     "name": "thermal_manager",
     "subsystem": "powermgr",
     "syscap": ["SystemCapability.PowerManager.ThermalManager"],
-    "features": [],
+    "features": [
+      "thermal_manager_audio_framework_enable"
+    ],
     "adapted_system_type": ["standard"],
     "hisysevent_config": [
         "//base/powermgr/thermal_manager/thermalmgr.yaml"

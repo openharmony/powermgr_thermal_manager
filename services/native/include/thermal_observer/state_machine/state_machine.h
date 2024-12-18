@@ -32,7 +32,6 @@ struct StateItem {
     std::string name;
     std::string params;
     bool isExistParam = false;
-    bool isDelayed = false;
 };
 
 class StateMachine {

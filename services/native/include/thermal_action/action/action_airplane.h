@@ -32,7 +32,7 @@ public:
     void SetStrict(bool enable) override;
     void SetEnableEvent(bool enable) override;
     void AddActionValue(uint32_t actionId, std::string value) override;
-    void ExecuteInner(uint32_t actionId) override;
+    void ExecuteInner() override;
     int32_t AirplaneRequest(const uint32_t& value);
     int32_t AirplaneExecution(const uint32_t& value);
 private:
