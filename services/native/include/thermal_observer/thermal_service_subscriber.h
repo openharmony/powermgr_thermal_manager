@@ -16,6 +16,7 @@
 #ifndef THERMAL_SRV_SUBSCRIBER_H
 #define THERMAL_SRV_SUBSCRIBER_H
 
+#include <deque>
 #include <memory>
 #include <mutex>
 #include <time.h>
@@ -31,7 +32,11 @@ public:
     bool Init();
     void OnTemperatureChanged(TypeTempMap typeTempMap);
     void SetHistoryTypeTempMap(TypeTempMap typeTempMap);
-    const std::map<std::string, double>& GetSensorsRate()
+    uint32_t GetRateCount() const
+    {
+        return rateCount_;
+    }
+    const std::map<std::string, std::deque<double>>& GetSensorsRate()
     {
         return sensorsRateMap_;
     }
@@ -40,15 +45,14 @@ public:
         return typeTempMap_;
     }
 private:
+    double GetThermalRiseRate(const std::deque<int32_t> &tempQueue);
+
     TypeTempMap typeTempMap_;
-    ThermalSensorInfo::TypeHistoryMap typeHistoryMap_;
     uint32_t historyCount_ {0};
-    time_t startTime_;
-    time_t endTime_;
-    std::map<std::string, double> sensorsRateMap_;
+    uint32_t rateCount_ {3};
+    std::map<std::string, std::deque<int32_t>> typeHistoryMap_;
+    std::map<std::string, std::deque<double>> sensorsRateMap_;
     std::mutex mutex_;
-    int32_t count_ {0};
-    int32_t magnification_ {0};
 };
 } // namespace PowerMgr
 } // namespace OHOS
