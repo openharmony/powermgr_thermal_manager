@@ -99,7 +99,7 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
             }
         } else {
             std::deque<double> historyRateList;
-            historyRateList.push_front(itMap.second);
+            historyRateList.push_front(rate);
             sensorsRateMap_.insert(std::make_pair(history.first, historyRateList));
         }
     }
