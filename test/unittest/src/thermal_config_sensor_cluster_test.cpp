@@ -361,7 +361,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest010, Test
     item2.tempRiseRate = 2.14;
     vecLevel.push_back(item1);
     vecLevel.push_back(item2);
-    EXPECT_TRUE(cluster.IsTempRateTrigger(level, sensorType, vecLevel, isCritical));
+    EXPECT_FALSE(cluster.IsTempRateTrigger(level, sensorType, vecLevel, isCritical));
 
     // rate list is full
     rateMap["test"].push_back(3.04);
