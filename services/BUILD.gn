@@ -128,7 +128,8 @@ ohos_shared_library("thermalservice") {
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
 
-  if (has_thermal_audio_framework_part && thermal_manager_audio_framework_enable) {
+  if (has_thermal_audio_framework_part &&
+      thermal_manager_audio_framework_enable) {
     defines += [ "HAS_THERMAL_AUDIO_FRAMEWORK_PART" ]
     external_deps += [ "audio_framework:audio_client" ]
   }
