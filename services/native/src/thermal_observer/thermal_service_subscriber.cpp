@@ -112,11 +112,12 @@ double ThermalServiceSubscriber::GetThermalRiseRate(const std::deque<int32_t> &t
         return 0;
     }
 
-    int32_t timeSum = 0;
-    int32_t tempSum = 0;
-    int32_t timeSquaredSum = 0;
-    int32_t timeTempMultiplySum = 0;
-    int32_t time = 0;
+    // yi: tempQueue[i]
+    int32_t time = 0;                   // xi
+    int32_t timeSum = 0;                // sum of xi
+    int32_t tempSum = 0;                // sum of yi
+    int32_t timeSquaredSum = 0;         // sum of xi * xi
+    int32_t timeTempMultiplySum = 0;    // sum of xi * yi
 
     for (uint32_t timeIndex = 0; timeIndex < tempQueueSize; timeIndex++) {
         time = timeIndex * THERMAL_UPDATE_PERIOD;
@@ -127,10 +128,11 @@ double ThermalServiceSubscriber::GetThermalRiseRate(const std::deque<int32_t> &t
         THERMAL_HILOGD(COMP_SVC, "GetThermalRiseRate: timeIndex=%{private}u, value=%{private}d", timeIndex,
             tempQueue.at(timeIndex));
     }
-    int32_t calcTime = tempQueueSize * timeSquaredSum - timeSum * timeSum;
+    int32_t calcTime = tempQueueSize * timeSquaredSum - timeSum * timeSum;  // (n * sum(xi * xi)) - (sum(xi) * sum(xi))
     if (calcTime == 0) {
         return 0;
     }
+    // (n * sum(xi * yi) - (sum(xi) * sum(yi))) / (n * sum(xi * xi)) - (sum(xi) * sum(xi))
     double slopeRate = (double)(tempQueueSize * timeTempMultiplySum - timeSum * tempSum) / calcTime;
 
     return slopeRate * SEC_MIN_NUM;
