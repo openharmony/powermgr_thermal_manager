@@ -53,13 +53,14 @@ public:
  
     virtual void AddActionDelayTime(uint32_t actionId, const PolicyDelayAction& delayTime)
     {
-        policyActionMap_.insert(std::make_pair(actionId, delayTime));
+        if (policyActionMap_.count(actionId) == 0) {
+            policyActionMap_.insert(std::make_pair(actionId, delayTime));
+        }
         actionIdList_.insert(actionId);
     }
  
     virtual void Execute()
     {
-        ExecuteInner(0);
         auto thermalTimer = std::make_shared<ThermalTimer>();
         for (auto it = policyActionMap_.begin(); it != policyActionMap_.end();) {
             if (actionIdList_.count(it->first) == 0) {
@@ -74,30 +75,31 @@ public:
         }
         actionIdList_.clear();
         int64_t curMsecTimestam = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
- 
+
         for (auto &policyAction : policyActionMap_) {
             if (policyAction.second.isCompleted || policyAction.second.delayTimerId > 0) {
                 continue;
             }
             auto timerInfo = std::make_shared<ThermalTimerInfo>();
-            timerInfo->SetType(timerInfo->TIMER_TYPE_WAKEUP | timerInfo->TIMER_TYPE_EXACT);
+            timerInfo->SetType(ThermalTimer::TIMER_TYPE_WAKEUP | ThermalTimer::TIMER_TYPE_EXACT);
             auto callback = [this, &policyAction]() {
-                ExecuteInner(policyAction.first);
+                policyAction.second.isCompleted = true;
+                ExecuteInner();
                 auto thermalTimer = std::make_shared<ThermalTimer>();
                 thermalTimer->StopTimer(policyAction.second.delayTimerId);
                 thermalTimer->DestroyTimer(policyAction.second.delayTimerId);
-                policyAction.second.isCompleted = true;
             };
             timerInfo->SetCallbackInfo(callback);
             policyAction.second.delayTimerId = thermalTimer->CreateTimer(timerInfo);
-            THERMAL_HILOGI(COMP_SVC, "%{public}s delayTime = %{public}d,", actionName_.c_str(),
+            THERMAL_HILOGI(COMP_SVC, "%{public}s startTimer, delayTime = %{public}d,", actionName_.c_str(),
                 policyAction.second.delayTime);
             thermalTimer->StartTimer(policyAction.second.delayTimerId,
                 static_cast<uint64_t>(policyAction.second.delayTime + curMsecTimestam));
         }
+        ExecuteInner();
     }
- 
-    virtual void ExecuteInner(uint32_t actionId) = 0;
+
+    virtual void ExecuteInner() = 0;
 protected:
     bool isStrict_ {true};
     bool enableEvent_ {false};

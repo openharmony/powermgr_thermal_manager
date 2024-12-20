@@ -60,7 +60,7 @@ void ActionCharger::AddActionValue(uint32_t actionId, std::string value)
     if (actionId > 0) {
         auto iter = policyActionMap_.find(actionId);
         if (iter != policyActionMap_.end()) {
-            iter->second.intDelayValue = static_cast<uint32_t>(static_cast<uint32_t>(strtol(value.c_str(),
+            iter->second.uintDelayValue = static_cast<uint32_t>(static_cast<uint32_t>(strtol(value.c_str(),
                 nullptr, STRTOL_FORMART_DEC)));
         }
     } else {
@@ -68,17 +68,17 @@ void ActionCharger::AddActionValue(uint32_t actionId, std::string value)
     }
 }
 
-void ActionCharger::ExecuteInner(uint32_t actionId)
+void ActionCharger::ExecuteInner()
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    auto iter = policyActionMap_.find(actionId);
-    uint32_t value;
-    if (actionId > 0 && iter != policyActionMap_.end()) {
-        value = iter->second.uintDelayValue;
-    } else {
-        value = GetActionValue();
+    for (auto &policyAction : policyActionMap_) {
+        if (policyAction.second.isCompleted) {
+            valueList_.push_back(policyAction.second.uintDelayValue);
+        }
     }
+
+    uint32_t value = GetActionValue();
     if (value != lastValue_) {
         ChargerRequest(value);
         WriteSimValue(value);

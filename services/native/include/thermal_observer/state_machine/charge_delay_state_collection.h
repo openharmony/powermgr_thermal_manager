@@ -41,7 +41,6 @@ public:
     bool StartDelayTimer();
     void StopDelayTimer();
     void ResetState();
-    bool InitDelayTime(std::string& delaytime) override;
     virtual void SetState(const std::string& stateValue) override;
 
 #ifndef THERMAL_OBSERVER_UT_TEST
