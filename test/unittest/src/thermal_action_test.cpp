@@ -125,7 +125,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest001, TestSize.Level0)
     g_actionVolume2->AddActionDelayTime(4, delayAction4);
     g_actionVolume2->AddActionValue(4, "1.0");
     g_actionVolume2->Execute();
-    g_actionVolume2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest001 end");
 }
 
@@ -167,7 +166,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest002, TestSize.Level0)
     g_actionVoltage2->AddActionDelayTime(4, delayAction4);
     g_actionVoltage2->AddActionValue(4, "1.0");
     g_actionVoltage2->Execute();
-    g_actionVoltage2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest002 end");
 }
 
@@ -225,7 +223,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest003, TestSize.Level0)
     g_actionThermalLevel2->AddActionDelayTime(4, delayAction4);
     g_actionThermalLevel2->AddActionValue(4, "1.0");
     g_actionThermalLevel2->Execute();
-    g_actionThermalLevel2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest003 end");
 }
 
@@ -269,7 +266,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest004, TestSize.Level0)
     g_actionShutdown2->AddActionDelayTime(4, delayAction4);
     g_actionShutdown2->AddActionValue(4, "1.0");
     g_actionShutdown2->Execute();
-    g_actionShutdown2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest004 end");
 }
 
@@ -309,7 +305,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest005, TestSize.Level0)
     g_actionDisplay2->AddActionDelayTime(4, delayAction4);
     g_actionDisplay2->AddActionValue(4, "1.0");
     g_actionDisplay2->Execute();
-    g_actionDisplay2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest005 end");
 }
 
@@ -348,7 +343,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest006, TestSize.Level0)
     g_actionCharger2->AddActionDelayTime(4, delayAction4);
     g_actionCharger2->AddActionValue(4, "1.0");
     g_actionCharger2->Execute();
-    g_actionCharger2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest006 end");
 }
 
@@ -396,7 +390,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
     g_actionApplicationProcess2->AddActionDelayTime(4, delayAction4);
     g_actionApplicationProcess2->AddActionValue(4, "1.0");
     g_actionApplicationProcess2->Execute();
-    g_actionApplicationProcess2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest007 end");
 }
 
@@ -433,7 +426,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest008, TestSize.Level0)
     g_actionCpuBig2->AddActionDelayTime(4, delayAction4);
     g_actionCpuBig2->AddActionValue(4, "1.0");
     g_actionCpuBig2->Execute();
-    g_actionCpuBig2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest008 end");
 }
 
@@ -470,7 +462,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest009, TestSize.Level0)
     g_actionCpuMed2->AddActionDelayTime(4, delayAction4);
     g_actionCpuMed2->AddActionValue(4, "1.0");
     g_actionCpuMed2->Execute();
-    g_actionCpuMed2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest009 end");
 }
 
@@ -507,7 +498,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest010, TestSize.Level0)
     g_actionCpuLit2->AddActionDelayTime(4, delayAction4);
     g_actionCpuLit2->AddActionValue(4, "1.0");
     g_actionCpuLit2->Execute();
-    g_actionCpuLit2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest010 end");
 }
 
@@ -544,7 +534,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest011, TestSize.Level0)
     g_actionGpu2->AddActionDelayTime(4, delayAction4);
     g_actionGpu2->AddActionValue(4, "1.0");
     g_actionGpu2->Execute();
-    g_actionGpu2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest011 end");
 }
 
@@ -583,7 +572,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest012, TestSize.Level0)
     g_actionCpuIsolate2->AddActionDelayTime(4, delayAction4);
     g_actionCpuIsolate2->AddActionValue(4, "1.0");
     g_actionCpuIsolate2->Execute();
-    g_actionCpuIsolate2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest012 end");
 }
 
@@ -623,7 +611,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest013, TestSize.Level0)
     g_actionNode2->AddActionDelayTime(4, delayAction4);
     g_actionNode2->AddActionValue(4, "1.0");
     g_actionNode2->Execute();
-    g_actionNode2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest013 end");
 }
 
@@ -671,7 +658,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest014, TestSize.Level0)
     g_actionAirplane2->AddActionDelayTime(4, delayAction4);
     g_actionAirplane2->AddActionValue(4, "1.0");
     g_actionAirplane2->Execute();
-    g_actionAirplane2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest014 end");
 }
 
@@ -740,7 +726,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest016, TestSize.Level0)
     g_actionPopup2->AddActionDelayTime(4, delayAction4);
     g_actionPopup2->AddActionValue(4, "1.0");
     g_actionPopup2->Execute();
-    g_actionPopup2->ExecuteInner(4);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest016 end");
 }
 } // namespace

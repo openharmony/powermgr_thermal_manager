@@ -64,25 +64,24 @@ void ActionVolume::AddActionValue(uint32_t actionId, std::string value)
     if (actionId > 0) {
         auto iter = policyActionMap_.find(actionId);
         if (iter != policyActionMap_.end()) {
-            iter->second.uintDelayValue = static_cast<uint32_t>(static_cast<uint32_t>(strtol(value.c_str(),
-                nullptr, STRTOL_FORMART_DEC)));
+            iter->second.floatDelayValue = static_cast<float>(strtof(value.c_str(), nullptr));
         }
     } else {
         valueList_.push_back(static_cast<float>(strtof(value.c_str(), nullptr)));
     }
 }
 
-void ActionVolume::ExecuteInner(uint32_t actionId)
+void ActionVolume::ExecuteInner()
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
-    auto iter = policyActionMap_.find(actionId);
-    float value;
-    if (actionId > 0 && iter != policyActionMap_.end()) {
-        value = iter->second.floatDelayValue;
-    } else {
-        value = GetActionValue();
+    for (auto &policyAction : policyActionMap_) {
+        if (policyAction.second.isCompleted) {
+            valueList_.push_back(policyAction.second.floatDelayValue);
+        }
     }
+
+    float value = GetActionValue();
     if (fabs(value - lastValue_) > FLOAT_ACCURACY) {
         if (!tms->GetSimulationXml()) {
             VolumeRequest(value);

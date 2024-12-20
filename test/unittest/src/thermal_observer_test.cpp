@@ -319,10 +319,8 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
 #ifdef BATTERY_MANAGER_ENABLE
     auto chargerDelayState = std::make_shared<ChargeDelayStateCollection>();
     chargerDelayState->Init();
-    string param = "delayCharge";
-    chargerDelayState->InitParam(param);
     string delayTime = "60000";
-    chargerDelayState->InitDelayTime(delayTime);
+    chargerDelayState->InitParam(delayTime);
     CommonEventData data;
     chargerDelayState->HandlerPowerDisconnected(data);
     EXPECT_EQ(chargerDelayState->GetState(), "1");
@@ -348,10 +346,8 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest012, TestSize.Level0)
     auto delayState = std::make_shared<StartupDelayStateCollection>();
     delayState->Init();
     EXPECT_EQ(delayState->GetState(), "1");
-    string param = "delayCharge";
-    delayState->InitParam(param);
     string delayTime = "60000";
-    delayState->InitDelayTime(delayTime);
+    delayState->InitParam(delayTime);
     delayState->ResetState();
     EXPECT_EQ(delayState->GetState(), "0");
     EXPECT_TRUE(delayState->DecideState("0"));
