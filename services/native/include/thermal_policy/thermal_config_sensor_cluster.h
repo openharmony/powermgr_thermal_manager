@@ -16,6 +16,7 @@
 #ifndef THERMAL_CONFIG_SENSOR_CLUSTER_H
 #define THERMAL_CONFIG_SENSOR_CLUSTER_H
 
+#include <deque>
 #include <string>
 #include <map>
 #include <vector>
@@ -23,10 +24,17 @@
 
 namespace OHOS {
 namespace PowerMgr {
+enum ThermalStatus {
+    STATUS_IDEAL = 0,
+    STATUS_STABLE,
+    STATUS_CRITICAL,
+    MAX_STATUS,
+};
+
 struct LevelItem {
     int32_t threshold;
     int32_t thresholdClr;
-    double tempRiseRate;
+    double tempRiseRate {-1000000};
     uint32_t level;
 };
 
@@ -69,30 +77,34 @@ public:
 private:
     bool CheckState();
     void CalculateSensorLevel(const TypeTempMap& typeTempInfo, std::vector<uint32_t>& levelList);
-    void AscendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp,
-        const TypeTempMap& typeTempInfo);
-    void DescendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp,
-        const TypeTempMap& typeTempInfo);
-    void DescendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp,
-        const TypeTempMap& typeTempInfo);
-    void AscendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp,
-        const TypeTempMap& typeTempInfo);
-    void LevelUpwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, uint32_t end, int32_t curTemp,
-        const TypeTempMap& typeTempInfo);
-    void LevelDownwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp,
-        const TypeTempMap& typeTempInfo);
-    void LevelDownwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level, int32_t curTemp,
-        const TypeTempMap& typeTempInfo);
-    void LevelUpwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level,
-        uint32_t end, int32_t curTemp, const TypeTempMap& typeTempInfo);
-    void AscJudgment(std::vector<LevelItem>& levItems, int32_t curTemp,
-        uint32_t& level, const TypeTempMap& typeTempInfo);
-    void DescJudgment(std::vector<LevelItem>& levItems, int32_t curTemp,
-        uint32_t& level, const TypeTempMap& typeTempInfo);
-    bool CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level);
-    bool IsTempRateTrigger(uint32_t& level);
+    void AscendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, const int32_t& curTemp,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void DescendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, const int32_t& curTemp,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void DescendLevelToThreshold(std::vector<LevelItem>& levItems, uint32_t& level, const int32_t& curTemp,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void AscendLevelToThresholdClr(std::vector<LevelItem>& levItems, uint32_t& level, const int32_t& curTemp,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void LevelUpwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, const int32_t& curTemp,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void LevelDownwardsSearch(std::vector<LevelItem>& levItems, uint32_t& level, const int32_t& curTemp,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void LevelDownwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level, const int32_t& curTemp,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void LevelUpwardsSearchWithThreshold(std::vector<LevelItem>& levItems, uint32_t& level, const int32_t& curTemp,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void AscJudgment(std::vector<LevelItem>& levItems, const int32_t& curTemp, uint32_t& level,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    void DescJudgment(std::vector<LevelItem>& levItems, const int32_t& curTemp, uint32_t& level,
+        const TypeTempMap& typeTempInfo, const std::string& type);
+    bool CheckExtraCondition(const TypeTempMap& typeTempInfo, uint32_t& level, const std::string& type,
+        std::vector<LevelItem>& levItems, bool isCritical);
+    bool IsTempRateTrigger(uint32_t& level, const std::string& type, std::vector<LevelItem>& levItems,
+        bool& isCritical);
     bool IsAuxSensorTrigger(const TypeTempMap& typeTempInfo, uint32_t& level);
     bool IsTempDiffTrigger(const TypeTempMap& typeTempInfo, uint32_t& level);
+    ThermalStatus GetRateTrend(const double targetRate, const std::deque<double>& rateList,
+        const uint32_t& maxRateCount);
 
     bool descFlag_ {false};
     bool auxFlag_ {false};

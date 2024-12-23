@@ -41,14 +41,21 @@ void ThermalConfigBaseInfo::SetHistoryTempCount()
 {
     auto countIter = baseItems_.find(HISTORY_TEMP_COUNT_TAG);
     if (countIter != baseItems_.end()) {
-        StringOperation::StrToUint(countIter->second, historyTempCount_);
+        std::vector<std::string> countSizes;
+        StringOperation::SplitString(countIter->second, countSizes, ",");
+        const uint32_t INDEX0 = 0;
+        const uint32_t INDEX1 = 1;
+        StringOperation::StrToUint(countSizes[INDEX0], historyTempCount_);
+        if (countSizes.size() > INDEX1) {
+            StringOperation::StrToUint(countSizes[INDEX1], riseRateCount_);
+        }
     }
 }
 
 void ThermalConfigBaseInfo::Dump()
 {
-    THERMAL_HILOGD(COMP_SVC, "type: %{public}s, count: %{public}d.",
-        sensorType_.c_str(), historyTempCount_);
+    THERMAL_HILOGD(COMP_SVC, "type: %{public}s, count: %{public}d,%{public}d.",
+        sensorType_.c_str(), historyTempCount_, riseRateCount_);
     uint32_t id = 0;
     for (auto type : sensorsType_) {
         THERMAL_HILOGI(COMP_SVC, "Dump: id=%{public}u, sensorType = %{public}s", id++, type.c_str());
