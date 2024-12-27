@@ -28,6 +28,7 @@ namespace {
 ActionCpuBoost::ActionCpuBoost(const std::string& actionName)
 {
     actionName_ = actionName;
+    SocActionBase::SocSet.insert(actionName_);
 }
 
 void ActionCpuBoost::InitParams(const std::string& params)
@@ -85,6 +86,11 @@ void ActionCpuBoost::ExecuteInner()
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastValue_);
     }
     valueList_.clear();
+}
+
+void ActionCpuBoost::ResetActionValue()
+{
+    lastValue_ = UINT_MAX;
 }
 
 uint32_t ActionCpuBoost::GetActionValue()

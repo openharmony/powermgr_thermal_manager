@@ -30,6 +30,7 @@ public:
     void SetEnableEvent(bool enable) override;
     void AddActionValue(uint32_t actionId, std::string value) override;
     void ExecuteInner() override;
+    void ResetActionValue() override;
     int32_t VolumeRequest(float volume);
     int32_t VolumeExecution(float volume);
 private:

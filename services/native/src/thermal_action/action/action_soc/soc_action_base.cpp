@@ -29,6 +29,8 @@ const std::string THERMAL_MSG = "thermal";
 #endif
 }
 
+std::set<std::strig> SocActionBase::SocSet;
+
 void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 {
 #ifdef SOC_PERF_ENABLE

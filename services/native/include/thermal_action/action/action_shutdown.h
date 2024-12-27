@@ -30,6 +30,7 @@ public:
     void SetEnableEvent(bool enable) override;
     void AddActionValue(uint32_t actionId, std::string value) override;
     void ExecuteInner() override;
+    void ResetActionValue() override;
     uint32_t ShutdownRequest(bool isShutdown);
     uint32_t DelayShutdown(bool isShutdown, int32_t temp, int32_t thresholdClr);
     /* the api is used to test */

@@ -41,6 +41,7 @@ public:
     void SetEnableEvent(bool enable) override;
     void AddActionValue(uint32_t actionId, std::string value) override;
     void ExecuteInner() override;
+    void ResetActionValue() override;
     void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     static int32_t GetThermalLevel();

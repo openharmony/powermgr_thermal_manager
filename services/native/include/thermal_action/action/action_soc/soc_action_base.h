@@ -16,6 +16,8 @@
 #ifndef SOC_ACTION_BASE_H
 #define SOC_ACTION_BASE_H
 
+#include <set>
+
 #include "ithermal_action.h"
 
 namespace OHOS {
@@ -24,6 +26,7 @@ class SocActionBase {
 public:
     SocActionBase() = default;
     virtual ~SocActionBase() = default;
+    static std::set<std::string> SocSet;
 
 protected:
     virtual void SocLimitRequest(int32_t tag, int64_t value);

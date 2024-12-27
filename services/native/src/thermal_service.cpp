@@ -33,6 +33,7 @@
 #include "ffrt_utils.h"
 #include "permission.h"
 #include "sysparam.h"
+#include "soc_action_base.h"
 #include "thermal_common.h"
 #include "thermal_mgr_dumper.h"
 #include "xcollie/watchdog.h"
@@ -87,6 +88,7 @@ void ThermalService::OnStart()
     }
 
     AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
+    AddSystemAbilityListener(SOC_PERF_SERVICE_SA_ID);
     if (!Publish(ThermalService::GetInstance())) {
         THERMAL_HILOGE(COMP_SVC, "OnStart register to system ability manager failed.");
         return;
@@ -112,6 +114,17 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
 #ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
         SubscribeCommonEvent();
 #endif
+    } else if (systemAbilityId == SOC_PERF_SERVICE_SA_ID) {
+        ThermalActionManager::ThermalActionMap actionMap = GetActionManagerObj()->GetActionMap();
+        std::lock_guard<std::mutex> lock(mutex_);
+        for (auto& iter :SocActionBase::SocSet) {
+            auto actionIter = actionMap.find(iter);
+            if (actionIter == actionMap.end() || actionIter->second == nullptr) {
+                THERMAL_HILOGE(COMP_SVC, "can't find action [%{pubic}s] abiity", iter.c_str());
+                continue;
+            }
+            actionIter->second->ResetActionValue();
+        }
     }
 }
 

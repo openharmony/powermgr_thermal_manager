@@ -90,6 +90,11 @@ void ActionPopup::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionPopup::ResetActionValue()
+{
+    lastValue_ = 0;
+}
+
 uint32_t ActionPopup::GetActionValue()
 {
     uint32_t value = FALLBACK_VALUE_UINT_ZERO;

@@ -96,6 +96,11 @@ void ActionAirplane::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionAirplane::ResetActionValue()
+{
+    lastValue_ = 0;
+}
+
 uint32_t ActionAirplane::GetActionValue()
 {
     uint32_t value = FALLBACK_VALUE_UINT_ZERO;

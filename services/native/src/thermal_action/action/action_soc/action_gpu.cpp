@@ -27,6 +27,7 @@ namespace {
 ActionGpu::ActionGpu(const std::string& actionName)
 {
     actionName_ = actionName;
+    SocActionBase::SocSet.insert(actionName_);
 }
 
 void ActionGpu::InitParams(const std::string& params)
@@ -58,6 +59,11 @@ void ActionGpu::AddActionValue(uint32_t actionId, std::string value)
     } else {
         valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
     }
+}
+
+void ActionGpu::ResetActionValue()
+{
+    lastValue_ = 0;
 }
 
 void ActionGpu::ExecuteInner()

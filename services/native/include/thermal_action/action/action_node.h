@@ -32,6 +32,7 @@ public:
     void SetEnableEvent(bool enable) override;
     void AddActionValue(uint32_t actionId, std::string value) override;
     void ExecuteInner() override;
+    void ResetActionValue() override;
 
 private:
     int32_t GetActionValue();
