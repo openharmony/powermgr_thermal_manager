@@ -91,6 +91,11 @@ void ActionVoltage::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionVoltage::ResetActionValue()
+{
+    lastValue_ = 0;
+}
+
 uint32_t ActionVoltage::GetActionValue()
 {
     uint32_t value = FALLBACK_VALUE_UINT_ZERO;

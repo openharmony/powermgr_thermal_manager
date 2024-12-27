@@ -93,6 +93,11 @@ void ActionNode::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionNode::ResetActionValue()
+{
+    lastValue_ = INT_MAX;
+}
+
 int32_t ActionNode::GetActionValue()
 {
     int32_t value = fallbackValue_;

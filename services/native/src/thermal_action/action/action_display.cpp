@@ -94,6 +94,11 @@ void ActionDisplay::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionDisplay::ResetActionValue()
+{
+    lastValue_ = 0.0f;
+}
+
 float ActionDisplay::GetActionValue()
 {
     float value = FALLBACK_VALUE_FLOAT;

@@ -33,6 +33,7 @@ public:
     void SetEnableEvent(bool enable) override;
     void AddActionValue(uint32_t actionId, std::string value) override;
     void ExecuteInner() override;
+    void ResetActionValue() override;
     void HandlePopupEvent(const int32_t value);
     bool ShowThermalDialog(TempStatus value);
 private:

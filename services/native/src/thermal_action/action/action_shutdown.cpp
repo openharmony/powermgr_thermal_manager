@@ -98,6 +98,11 @@ void ActionShutdown::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionShutdown::ResetActionValue()
+{
+    lastValue_ = 0;
+}
+
 uint32_t ActionShutdown::GetActionValue()
 {
     uint32_t value = FALLBACK_VALUE_UINT_ZERO;
