@@ -29,7 +29,7 @@ const std::string THERMAL_MSG = "thermal";
 #endif
 }
 
-std::set<std::strig> SocActionBase::SocSet;
+std::set<std::string> SocActionBase::SocSet;
 
 void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 {
