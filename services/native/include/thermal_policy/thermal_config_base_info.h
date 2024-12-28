@@ -43,6 +43,11 @@ public:
         return historyTempCount_;
     }
 
+    uint32_t GetRiseRateCount() const
+    {
+        return riseRateCount_;
+    }
+
     std::vector<std::string> GetSensorsType() const
     {
         return sensorsType_;
@@ -57,7 +62,8 @@ private:
     void SetHistoryTempCount();
     void SetSensorsType();
 
-    uint32_t historyTempCount_;
+    uint32_t historyTempCount_ {0};
+    uint32_t riseRateCount_ {0};
     std::string sensorType_;
     std::vector<std::string> sensorsType_;
     BaseInfoMap baseItems_;
