@@ -117,7 +117,7 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
     } else if (systemAbilityId == SOC_PERF_SERVICE_SA_ID) {
         ThermalActionManager::ThermalActionMap actionMap = GetActionManagerObj()->GetActionMap();
         std::lock_guard<std::mutex> lock(mutex_);
-        for (auto& iter :SocActionBase::SocSet) {
+        for (auto& iter : SocActionBase::SocSet) {
             auto actionIter = actionMap.find(iter);
             if (actionIter == actionMap.end() || actionIter->second == nullptr) {
                 THERMAL_HILOGE(COMP_SVC, "can't find action [%{pubic}s] abiity", iter.c_str());
