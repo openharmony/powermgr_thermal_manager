@@ -97,6 +97,11 @@ void ActionThermalLevel::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionThermalLevel::ResetActionValue()
+{
+    lastValue_ = INT_MIN;
+}
+
 int32_t ActionThermalLevel::GetActionValue()
 {
     uint32_t value = MIN_THERMAL_LEVEL;

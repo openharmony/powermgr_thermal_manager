@@ -90,6 +90,11 @@ void ActionCharger::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionCharger::ResetActionValue()
+{
+    lastValue_ = 0;
+}
+
 uint32_t ActionCharger::GetActionValue()
 {
     uint32_t value = FALLBACK_VALUE_UINT_ZERO;

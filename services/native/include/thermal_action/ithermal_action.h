@@ -45,6 +45,7 @@ public:
     virtual void SetStrict(bool enable) = 0;
     virtual void SetEnableEvent(bool enable) = 0;
     virtual void AddActionValue(uint32_t actionId, std::string value) = 0;
+    virtual void ResetActionValue() = 0;
 
     virtual void AddActionValue(std::string value)
     {
