@@ -27,6 +27,7 @@ namespace {
 ActionCpuMed::ActionCpuMed(const std::string& actionName)
 {
     actionName_ = actionName;
+    SocActionBase::SocSet.insert(actionName_);
 }
 
 void ActionCpuMed::InitParams(const std::string& params)
@@ -79,6 +80,11 @@ void ActionCpuMed::ExecuteInner()
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
     valueList_.clear();
+}
+
+void ActionCpuMed::ResetActionValue()
+{
+    lastValue_ = 0;
 }
 
 uint32_t ActionCpuMed::GetActionValue()

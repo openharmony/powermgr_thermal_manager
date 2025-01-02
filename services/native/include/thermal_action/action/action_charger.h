@@ -32,6 +32,7 @@ public:
     void SetEnableEvent(bool enable) override;
     void AddActionValue(uint32_t actionId, std::string value) override;
     void ExecuteInner() override;
+    void ResetActionValue() override;
     int32_t ChargerRequest(int32_t current);
     int32_t WriteSimValue(int32_t simValue);
     static void ExecuteCurrentLimit();

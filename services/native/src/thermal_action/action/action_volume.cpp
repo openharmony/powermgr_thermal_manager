@@ -96,6 +96,11 @@ void ActionVolume::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionVolume::ResetActionValue()
+{
+    lastValue_ = 0;
+}
+
 float ActionVolume::GetActionValue()
 {
     float value = FALLBACK_VALUE_FLOAT;

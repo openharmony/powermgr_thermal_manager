@@ -102,6 +102,11 @@ void ActionApplicationProcess::ExecuteInner()
     valueList_.clear();
 }
 
+void ActionApplicationProcess::ResetActionValue()
+{
+    lastValue_ = 0;
+}
+
 uint32_t ActionApplicationProcess::GetActionValue()
 {
     uint32_t value = FALLBACK_VALUE_UINT_ZERO;

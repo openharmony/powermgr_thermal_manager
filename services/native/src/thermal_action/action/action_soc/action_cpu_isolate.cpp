@@ -27,6 +27,7 @@ namespace {
 ActionCpuIsolate::ActionCpuIsolate(const std::string& actionName)
 {
     actionName_ = actionName;
+    SocActionBase::SocSet.insert(actionName_);
 }
 
 void ActionCpuIsolate::InitParams(const std::string& params)
@@ -80,6 +81,11 @@ void ActionCpuIsolate::ExecuteInner()
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
     valueList_.clear();
+}
+
+void ActionCpuIsolate::ResetActionValue()
+{
+    lastValue_ = UINT_MAX;
 }
 
 uint32_t ActionCpuIsolate::GetActionValue()
