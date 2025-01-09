@@ -107,10 +107,10 @@ void ThermalServiceSubscriber::SetHistoryTypeTempMap(TypeTempMap typeTempMap)
 
 double ThermalServiceSubscriber::GetThermalRiseRate(const std::deque<int32_t> &tempQueue)
 {
-    uint32_t tempQueueSize = tempQueue.size();
-    if (tempQueueSize < historyCount_) {
+    if (tempQueue.size() < historyCount_) {
         return 0;
     }
+    int32_t tempQueueSize = static_cast<int32_t>(tempQueue.size());
 
     // yi: tempQueue[i]
     int32_t time = 0;                   // xi
@@ -119,7 +119,7 @@ double ThermalServiceSubscriber::GetThermalRiseRate(const std::deque<int32_t> &t
     int32_t timeSquaredSum = 0;         // sum of xi * xi
     int32_t timeTempMultiplySum = 0;    // sum of xi * yi
 
-    for (uint32_t timeIndex = 0; timeIndex < tempQueueSize; timeIndex++) {
+    for (int32_t timeIndex = 0; timeIndex < tempQueueSize; timeIndex++) {
         time = timeIndex * THERMAL_UPDATE_PERIOD;
         timeSum += time;
         tempSum += tempQueue.at(timeIndex);
