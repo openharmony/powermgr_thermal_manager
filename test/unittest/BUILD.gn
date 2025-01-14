@@ -40,6 +40,7 @@ deps_ex = [
   "bundle_framework:appexecfwk_base",
   "c_utils:utils",
   "config_policy:configpolicy_util",
+  "googletest:gmock_main",
   "ipc:ipc_core",
   "hdf_core:libhdi",
   "hdf_core:libpub_utils",
