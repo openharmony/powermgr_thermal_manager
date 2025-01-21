@@ -65,16 +65,6 @@ void ThermalObserverTest::HandleScreenOnCompleted(const CommonEventData& data __
 {
 }
 
-bool ThermalObserverTest::ThermalTempTestCallback::OnThermalTempChanged(TempCallbackMap& tempCbMap)
-{
-    return true;
-}
-
-bool ThermalObserverTest::ThermalActionTestCallback::OnThermalActionChanged(ActionCallbackMap& actionCbMap)
-{
-    return true;
-}
-
 namespace {
 /**
  * @tc.name: ThermalObserverTest001
@@ -107,13 +97,23 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
     sptr<IThermalTempCallback> tempCallback;
     observer->Init();
     observer->SubscribeThermalTempCallback(typeList, tempCallback);
+    // implicit conversion from ThermalTempTestCallback* to IThermalTempCallback* before construct sptr
+    // should be safe to cast back
     sptr<IThermalTempCallback> tempCb = new ThermalTempTestCallback();
     observer->SubscribeThermalTempCallback(typeList, tempCb);
+    IThermalTempCallback::TempCallbackMap tempCbMap;
+    EXPECT_CALL(*static_cast<ThermalTempTestCallback*>(tempCb.GetRefPtr()), OnThermalTempChanged(::testing::_));
+    observer->NotifySensorTempChanged(tempCbMap);
     observer->UnSubscribeThermalTempCallback(tempCb);
+    EXPECT_CALL(*static_cast<ThermalTempTestCallback*>(tempCb.GetRefPtr()), OnThermalTempChanged(::testing::_))
+        .Times(0);
+    observer->NotifySensorTempChanged(tempCbMap);
     sptr<IThermalActionCallback> actionCb;
     observer->SubscribeThermalActionCallback(typeList, "desc", actionCb);
     actionCb = new ThermalActionTestCallback();
     observer->SubscribeThermalActionCallback(typeList, "desc", actionCb);
+    EXPECT_CALL(*static_cast<ThermalActionTestCallback*>(actionCb.GetRefPtr()), OnThermalActionChanged(::testing::_));
+    observer->SetDecisionValue("", "");
     observer->FindSubscribeActionValue();
     observer->UnSubscribeThermalActionCallback(actionCb);
     IThermalActionCallback::ActionCallbackMap actionCbMap;

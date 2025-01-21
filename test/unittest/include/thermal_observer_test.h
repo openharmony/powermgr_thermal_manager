@@ -16,6 +16,7 @@
 #ifndef THERMAL_OBSERVER_TEST_H
 #define THERMAL_OBSERVER_TEST_H
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <common_event_manager.h>
 #include "thermal_action_callback_stub.h"
@@ -32,15 +33,11 @@ public:
     void HandleScreenOnCompleted(const EventFwk::CommonEventData& data __attribute__((__unused__)));
     class ThermalTempTestCallback : public ThermalTempCallbackStub {
     public:
-        ThermalTempTestCallback() {};
-        virtual ~ThermalTempTestCallback() {};
-        virtual bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override;
+        MOCK_METHOD1(OnThermalTempChanged, bool(TempCallbackMap& tempCbMap));
     };
     class ThermalActionTestCallback : public ThermalActionCallbackStub {
     public:
-        ThermalActionTestCallback() {};
-        virtual ~ThermalActionTestCallback() {};
-        virtual bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override;
+        MOCK_METHOD1(OnThermalActionChanged, bool(ActionCallbackMap& actionCbMap));
     };
 };
 } // namespace PowerMgr
