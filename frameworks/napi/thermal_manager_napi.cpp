@@ -63,28 +63,18 @@ bool ThermalLevelCallback::OnThermalLevelChanged(ThermalLevel level)
     std::lock_guard lock(mutex_);
     level_ = level;
     THERMAL_RETURN_IF_WITH_RET(env_ == nullptr, false);
-    uv_loop_s* loop = nullptr;
-    napi_get_uv_event_loop(env_, &loop);
-    THERMAL_RETURN_IF_WITH_RET(loop == nullptr, false);
     uv_work_t* work = new (std::nothrow) uv_work_t;
     THERMAL_RETURN_IF_WITH_RET(work == nullptr, false);
     work->data = reinterpret_cast<void*>(this);
-
-    int32_t ret = uv_queue_work_with_qos(
-        loop, work,
-        [](uv_work_t* work) {
-            THERMAL_HILOGD(COMP_FWK, "uv_queue_work callback function is called");
-        },
-        [](uv_work_t* work, int status) {
-            ThermalLevelCallback* callback = reinterpret_cast<ThermalLevelCallback*>(work->data);
-            if (callback != nullptr) {
-                callback->OnThermalLevel();
-            }
-            delete work;
-            work = nullptr;
-        },
-        uv_qos_utility);
-    if (ret != ERR_OK) {
+    auto uvcallback = [work]() mutable {
+        ThermalLevelCallback* callback = reinterpret_cast<ThermalLevelCallback*>(work->data);
+        if (callback != nullptr) {
+            callback->OnThermalLevel();
+        }
+        delete work;
+        work = nullptr;
+    };
+    if (napi_send_event(env_, uvcallback, napi_eprio_low) != napi_status::napi_ok) {
         delete work;
         work = nullptr;
         THERMAL_HILOGW(COMP_FWK, "uv_queue_work is failed");
