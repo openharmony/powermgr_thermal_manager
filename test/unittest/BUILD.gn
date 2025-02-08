@@ -51,7 +51,6 @@ deps_ex = [
   "samgr:samgr_proxy",
   "common_event_service:cesfwk_innerkits",
   "window_manager:libwm",
-  "drivers_interface_battery:libbattery_proxy_2.0",
   "drivers_interface_thermal:libthermal_proxy_1.1",
   "time_service:time_client",
 ]
@@ -93,6 +92,12 @@ ohos_unittest("ThermalMockActionTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal policy test
@@ -123,6 +128,12 @@ ohos_unittest("ThermalMgrPolicyTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -161,6 +172,12 @@ ohos_unittest("ThermalLevelEventTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal client api test
@@ -187,6 +204,12 @@ ohos_unittest("ThermalClientApiTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -219,6 +242,12 @@ ohos_unittest("ThermalActionHubTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -265,6 +294,12 @@ ohos_unittest("ThermalActionReportTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal mock proxy test
@@ -295,6 +330,12 @@ ohos_unittest("ThermalMockProxyTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -327,6 +368,12 @@ ohos_unittest("ThermalMockProxyRemoteTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -361,6 +408,12 @@ ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -397,6 +450,12 @@ ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal mock proxy writevector test
@@ -432,6 +491,12 @@ ohos_unittest("ThermalMockProxyWritevectorTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal mock proxy sendrequest test
@@ -466,6 +531,12 @@ ohos_unittest("ThermalMockProxySendrequestTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal utils test
@@ -493,6 +564,12 @@ ohos_unittest("ThermalUtilsTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -527,6 +604,12 @@ ohos_unittest("ThermalServiceDeathTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal listener test
@@ -559,6 +642,12 @@ ohos_unittest("ThermalListenerTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -612,6 +701,12 @@ ohos_unittest("ThermalClientTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal mock stub test
@@ -640,6 +735,12 @@ ohos_unittest("ThermalMockStubTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal mock stub getdescriptor test
@@ -667,6 +768,12 @@ ohos_unittest("ThermalMockStubGetdescriptorTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -700,6 +807,12 @@ ohos_unittest("ThermalActionTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -740,6 +853,12 @@ ohos_unittest("ThermalObserverTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal service test
@@ -768,6 +887,12 @@ ohos_unittest("ThermalServiceTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -798,6 +923,12 @@ ohos_unittest("ThermalConfigSensorClusterTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal mgr dump test
@@ -827,6 +958,12 @@ ohos_unittest("ThermalMgrDumpTest") {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
   }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
+  }
 }
 
 # thermal policy test
@@ -855,6 +992,12 @@ ohos_unittest("ThermalPolicyTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 
@@ -892,6 +1035,12 @@ ohos_unittest("FanFaultDetectTest") {
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 }
 

@@ -16,7 +16,9 @@
 #include "action_voltage.h"
 
 #include <map>
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
 #include "v2_0/ibattery_interface.h"
+#endif
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
 #include "file_operation.h"
@@ -31,7 +33,9 @@ constexpr const char* BUCK_VOLTAGE_PATH = "/data/service/el0/thermal/config/buck
 const int32_t MAX_PATH = 256;
 }
 
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
 std::vector<ChargingLimit> ActionVoltage::chargeLimitList_;
+#endif
 
 ActionVoltage::ActionVoltage(const std::string& actionName)
 {
@@ -111,6 +115,7 @@ uint32_t ActionVoltage::GetActionValue()
 
 int32_t ActionVoltage::SetVoltage(int32_t voltage)
 {
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
     sptr<IBatteryInterface> iBatteryInterface = IBatteryInterface::Get();
     if (iBatteryInterface == nullptr) {
         THERMAL_HILOGE(COMP_SVC, "iBatteryInterface_ is nullptr");
@@ -121,11 +126,13 @@ int32_t ActionVoltage::SetVoltage(int32_t voltage)
     chargingLimit.protocol = protocol_;
     chargingLimit.value = voltage;
     chargeLimitList_.push_back(chargingLimit);
+#endif
     return ERR_OK;
 }
 
 void ActionVoltage::ExecuteVoltageLimit()
 {
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
     if (chargeLimitList_.empty()) {
         return;
     }
@@ -140,6 +147,7 @@ void ActionVoltage::ExecuteVoltageLimit()
         return;
     }
     chargeLimitList_.clear();
+#endif
 }
 
 int32_t ActionVoltage::WriteMockNode(int32_t mockValue)
