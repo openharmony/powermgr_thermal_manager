@@ -120,7 +120,7 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
         for (auto& iter : SocActionBase::SocSet) {
             auto actionIter = actionMap.find(iter);
             if (actionIter == actionMap.end() || actionIter->second == nullptr) {
-                THERMAL_HILOGE(COMP_SVC, "can't find action [%{pubic}s] abiity", iter.c_str());
+                THERMAL_HILOGE(COMP_SVC, "can't find action [%{public}s] ability", iter.c_str());
                 continue;
             }
             actionIter->second->ResetActionValue();
