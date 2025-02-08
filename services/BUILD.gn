@@ -102,7 +102,6 @@ ohos_shared_library("thermalservice") {
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
-    "drivers_interface_battery:libbattery_proxy_2.0",
     "drivers_interface_thermal:libthermal_proxy_1.1",
     "ffrt:libffrt",
     "hdf_core:libhdi",
@@ -153,6 +152,12 @@ ohos_shared_library("thermalservice") {
       defined(global_parts_info.powermgr_battery_manager)) {
     defines += [ "BATTERY_MANAGER_ENABLE" ]
     external_deps += [ "battery_manager:batterysrv_client" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.hdf_drivers_interface_battery)) {
+    defines += [ "DRIVERS_INTERFACE_BATTERY_ENABLE" ]
+    external_deps += [ "drivers_interface_battery:libbattery_proxy_2.0" ]
   }
 
   if (build_variant == "user") {
