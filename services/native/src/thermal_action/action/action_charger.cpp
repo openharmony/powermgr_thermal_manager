@@ -21,7 +21,9 @@
 #include "securec.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
 #include "v2_0/ibattery_interface.h"
+#endif
 
 namespace OHOS {
 namespace PowerMgr {
@@ -30,7 +32,9 @@ constexpr const char* SC_CURRENT_PATH = "/data/service/el0/thermal/config/sc_cur
 constexpr const char* BUCK_CURRENT_PATH = "/data/service/el0/thermal/config/buck_current";
 const int MAX_PATH = 256;
 }
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
 std::vector<ChargingLimit> ActionCharger::chargeLimitList_;
+#endif
 
 ActionCharger::ActionCharger(const std::string& actionName)
 {
@@ -110,11 +114,13 @@ uint32_t ActionCharger::GetActionValue()
 
 int32_t ActionCharger::ChargerRequest(int32_t current)
 {
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
     ChargingLimit chargingLimit;
     chargingLimit.type = TYPE_CURRENT;
     chargingLimit.protocol = protocol_;
     chargingLimit.value = current;
     chargeLimitList_.push_back(chargingLimit);
+#endif
 
     auto tms = ThermalService::GetInstance();
     auto thermalInterface = tms->GetThermalInterface();
@@ -130,6 +136,7 @@ int32_t ActionCharger::ChargerRequest(int32_t current)
 
 void ActionCharger::ExecuteCurrentLimit()
 {
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
     if (chargeLimitList_.empty()) {
         return;
     }
@@ -144,6 +151,7 @@ void ActionCharger::ExecuteCurrentLimit()
         return;
     }
     chargeLimitList_.clear();
+#endif
 }
 
 int32_t ActionCharger::WriteSimValue(int32_t simValue)

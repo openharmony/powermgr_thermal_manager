@@ -17,11 +17,15 @@
 #define ACTION_VOLATEG_H
 
 #include "ithermal_action.h"
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
 #include "v2_0/types.h"
+#endif
 
 namespace OHOS {
 namespace PowerMgr {
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
 using namespace OHOS::HDI::Battery::V2_0;
+#endif
 class ActionVoltage : public IThermalAction {
 public:
     ActionVoltage(const std::string& actionName);
@@ -41,7 +45,9 @@ private:
     std::vector<uint32_t> valueList_;
     uint32_t lastValue_ {0};
     std::string protocol_;
+#ifdef DRIVERS_INTERFACE_BATTERY_ENABLE
     static std::vector<ChargingLimit> chargeLimitList_;
+#endif
 };
 } // namespace PowerMgr
 } // namespace OHOS
