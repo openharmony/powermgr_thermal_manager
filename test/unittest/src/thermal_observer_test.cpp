@@ -318,14 +318,17 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
     THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest011 start");
 #ifdef BATTERY_MANAGER_ENABLE
     auto chargerDelayState = std::make_shared<ChargeDelayStateCollection>();
+    auto chargerState =  ChargerStateCollection::GetInstance();
     chargerDelayState->Init();
     string delayTime = "60000";
     chargerDelayState->InitParam(delayTime);
     CommonEventData data;
     chargerDelayState->HandlerPowerDisconnected(data);
+    EXPECT_EQ(chargerState->isCharge_, false);
     EXPECT_EQ(chargerDelayState->GetState(), "1");
     chargerDelayState->HandlerPowerConnected(data);
     EXPECT_EQ(chargerDelayState->GetState(), "0");
+    EXPECT_EQ(chargerState->isCharge_, true);
     EXPECT_TRUE(chargerDelayState->DecideState("0"));
     chargerDelayState->SetState("");
     chargerDelayState->ResetState();
