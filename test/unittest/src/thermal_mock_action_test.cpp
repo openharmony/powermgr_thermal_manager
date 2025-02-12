@@ -404,7 +404,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest007, Function|MediumTest|L
     auto state = chargerState->isCharge_;
     if (state) {
         EXPECT_TRUE(cpuLimitValue == 1990800);
-    } else{
+    } else {
         EXPECT_TRUE(cpuLimitValue == 1990600);
     }
 #endif
