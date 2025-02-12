@@ -365,7 +365,6 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|L
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
-    auto state = BatterySrvClient::GetInstance().GetChargingStatus();
     if (state) {
         EXPECT_TRUE(cpuLimitValue == 1991800);
     } else {
