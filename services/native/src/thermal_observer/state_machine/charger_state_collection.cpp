@@ -70,6 +70,16 @@ std::shared_ptr<ChargerStateCollection> ChargerStateCollection::GetInstance()
     return instance_;
 }
 
+bool ChargerStateCollection::GetCharge()
+{
+    return isCharge_;
+}
+
+void ChargerStateCollection::SetCharge(bool charge)
+{
+    isCharge_ = charge;
+}
+
 std::string ChargerStateCollection::GetState()
 {
     THERMAL_HILOGD(COMP_SVC, "charger state = %{public}s", mockState_.c_str());

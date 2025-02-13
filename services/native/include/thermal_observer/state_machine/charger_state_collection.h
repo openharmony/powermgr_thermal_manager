@@ -70,18 +70,20 @@ public:
     bool RegisterEvent();
 public:
     virtual void SetState(const std::string& stateValue) override;
-    static std::shared_ptr<ChargerStateCollection> instance_;
     static std::shared_ptr<ChargerStateCollection> GetInstance();
-    static std::mutex mutex_;
-    bool isCharge_ = false;
+    bool GetCharge();
+    void SetCharge(bool charge);
 #ifndef THERMAL_OBSERVER_UT_TEST
 private:
 #endif
     static void HandleChargeIdleState();
     static void PublishIdleEvent(bool isIdle, const std::string commonEventSupport);
+    static std::shared_ptr<ChargerStateCollection> instance_;
+    static std::mutex mutex_;
     std::string state_;
     std::string params_;
     std::string mockState_;
+    bool isCharge_ = false;
     sptr<IThermalLevelCallback> callback_ {nullptr};
 };
 } // namespace PowerMgr
