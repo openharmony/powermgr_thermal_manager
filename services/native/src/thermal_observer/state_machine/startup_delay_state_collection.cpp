@@ -91,7 +91,7 @@ void StartupDelayStateCollection::ResetState()
 
 bool StartupDelayStateCollection::DecideState(const std::string& value)
 {
-    THERMAL_HILOGI(COMP_SVC, "Enter: DecideState the impact of the power-on delay status.");
+    THERMAL_HILOGD(COMP_SVC, "Enter: DecideState the impact of the power-on delay status.");
     std::lock_guard<std::mutex> lock(mutex_);
     if ((value == ToString(NON_STARTUP_DELAY_STATE) && state_ == NON_STARTUP_DELAY_STATE) ||
         (value == ToString(STARTUP_DELAY_STATE) && state_ == STARTUP_DELAY_STATE)) {
