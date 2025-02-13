@@ -30,7 +30,7 @@ std::shared_ptr<IStateCollection> StateCollectionFactory::Create(std::string &st
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
     if (stateName == STATE_CHARGER) {
-        return std::make_shared<ChargerStateCollection>();
+        return ChargerStateCollection::GetInstance();
     } else if (stateName == STATE_SCREEN) {
         return std::make_shared<ScreenStateCollection>();
     } else if (stateName == STATE_SCENE) {

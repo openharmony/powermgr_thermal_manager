@@ -348,6 +348,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest005, Function|MediumTest|L
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|Level2)
 {
     THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest006: start");
+    auto chargerState =  ChargerStateCollection::GetInstance();
+    chargerState->SetCharge(true);
+    auto state = chargerState->GetCharge();
     ASSERT_NE(g_service, nullptr);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -362,10 +365,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|L
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
-    auto state = BatterySrvClient::GetInstance().GetChargingStatus();
-    if (state == BatteryChargeState::CHARGE_STATE_ENABLE) {
+    if (state) {
         EXPECT_TRUE(cpuLimitValue == 1991800);
-    } else if (state == BatteryChargeState::CHARGE_STATE_NONE) {
+    } else {
         EXPECT_TRUE(cpuLimitValue == 1991600);
     }
 #endif
@@ -397,10 +399,12 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest007, Function|MediumTest|L
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
-    auto state = BatterySrvClient::GetInstance().GetChargingStatus();
-    if (state == BatteryChargeState::CHARGE_STATE_ENABLE) {
+    auto chargerState =  ChargerStateCollection::GetInstance();
+    chargerState->SetCharge(true);
+    auto state = chargerState->GetCharge();
+    if (state) {
         EXPECT_TRUE(cpuLimitValue == 1990800);
-    } else if (state == BatteryChargeState::CHARGE_STATE_NONE) {
+    } else {
         EXPECT_TRUE(cpuLimitValue == 1990600);
     }
 #endif
@@ -432,10 +436,12 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest008, Function|MediumTest|L
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
-    auto state = BatterySrvClient::GetInstance().GetChargingStatus();
-    if (state == BatteryChargeState::CHARGE_STATE_ENABLE) {
+    auto chargerState =  ChargerStateCollection::GetInstance();
+    chargerState->SetCharge(true);
+    auto state = chargerState->GetCharge();
+    if (state) {
         EXPECT_TRUE(cpuLimitValue == 1989800);
-    } else if (state == BatteryChargeState::CHARGE_STATE_NONE) {
+    } else {
         EXPECT_TRUE(cpuLimitValue == 1989600);
     }
 #endif

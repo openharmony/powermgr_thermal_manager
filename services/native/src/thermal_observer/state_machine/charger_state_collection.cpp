@@ -33,6 +33,8 @@
 using namespace OHOS::EventFwk;
 namespace OHOS {
 namespace PowerMgr {
+std::shared_ptr<ChargerStateCollection> ChargerStateCollection::instance_ = nullptr;
+std::mutex ChargerStateCollection::mutex_;
 namespace {
 IdleState g_idleStateConfig {};
 IdleState g_cachedIdleState {};
@@ -55,6 +57,27 @@ bool ChargerStateCollection::InitParam(std::string& params)
     THERMAL_HILOGD(COMP_SVC, "Enter");
     params_ = params;
     return true;
+}
+
+std::shared_ptr<ChargerStateCollection> ChargerStateCollection::GetInstance()
+{
+    if (instance_ == nullptr) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (instance_ == nullptr) {
+            instance_ = std::make_shared<ChargerStateCollection>();
+        }
+    }
+    return instance_;
+}
+
+bool ChargerStateCollection::GetCharge()
+{
+    return isCharge_;
+}
+
+void ChargerStateCollection::SetCharge(bool charge)
+{
+    isCharge_ = charge;
 }
 
 std::string ChargerStateCollection::GetState()
@@ -146,11 +169,8 @@ void ChargerStateCollection::SetState(const std::string& stateValue)
 bool ChargerStateCollection::DecideState(const std::string& value)
 {
 #ifdef BATTERY_MANAGER_ENABLE
-    THERMAL_HILOGD(COMP_SVC, "Enter");
-    auto& batterySrvClient = BatterySrvClient::GetInstance();
-    BatteryChargeState chargeState = batterySrvClient.GetChargingStatus();
-    if ((value == CHARGER_ON && chargeState == BatteryChargeState::CHARGE_STATE_ENABLE) ||
-        (value == CHARGER_OFF && chargeState != BatteryChargeState::CHARGE_STATE_ENABLE)) {
+    THERMAL_HILOGD(COMP_SVC, "ChargerStateCollection Enter %{public}d", isCharge_);
+    if ((!isCharge_ && value == CHARGER_OFF)||(isCharge_ && value == CHARGER_ON)) {
         return true;
     }
     return false;

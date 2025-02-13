@@ -19,6 +19,7 @@
 #include "battery_info.h"
 #include "battery_srv_client.h"
 #endif
+#include "charger_state_collection.h"
 #include "common_event_subscriber.h"
 #include "common_event_data.h"
 #include "common_event_manager.h"
@@ -80,6 +81,8 @@ bool ChargeDelayStateCollection::RegisterEvent()
 void ChargeDelayStateCollection::HandlerPowerDisconnected(const EventFwk::CommonEventData& data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    auto csc = ChargerStateCollection::GetInstance();
+    csc->SetCharge(false);
     criticalState_ = CRITICAL_STATE;
     THERMAL_HILOGI(COMP_SVC, "ChargeDelayStateCollection HandlerPowerDisconnected");
     StopDelayTimer();
@@ -92,6 +95,8 @@ void ChargeDelayStateCollection::HandlerPowerConnected(const EventFwk::CommonEve
     if (delayTimerId_ > 0) {
         StopDelayTimer();
     }
+    auto csc = ChargerStateCollection::GetInstance();
+    csc->SetCharge(true);
     criticalState_ = NON_CRITICAL_STATE;
     THERMAL_HILOGI(COMP_SVC, "ChargeDelayStateCollection HandlerPowerConnected");
 }
@@ -137,7 +142,7 @@ void ChargeDelayStateCollection::ResetState()
 bool ChargeDelayStateCollection::DecideState(const std::string& value)
 {
 #ifdef BATTERY_MANAGER_ENABLE
-    THERMAL_HILOGD(COMP_SVC, "Enter: Consider the influence of critical state of charge");
+    THERMAL_HILOGD(COMP_SVC, "Enter: Consider the influence of critical state of charge, %{public}d", criticalState_);
     std::lock_guard<std::mutex> lock(mutex_);
     if ((value == ToString(NON_CRITICAL_STATE) && criticalState_ == NON_CRITICAL_STATE) ||
         (value == ToString(CRITICAL_STATE) && criticalState_ == CRITICAL_STATE)) {
