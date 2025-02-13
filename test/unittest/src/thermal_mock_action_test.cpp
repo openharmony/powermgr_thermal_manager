@@ -349,8 +349,8 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|L
 {
     THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest006: start");
     auto chargerState =  ChargerStateCollection::GetInstance();
-    chargerState->isCharge_ = true;
-    auto state = chargerState->isCharge_;
+    chargerState->SetCharge(true);
+    auto state = chargerState->GetCharge();
     ASSERT_NE(g_service, nullptr);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -400,8 +400,8 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest007, Function|MediumTest|L
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
     auto chargerState =  ChargerStateCollection::GetInstance();
-    chargerState->isCharge_ = true;
-    auto state = chargerState->isCharge_;
+    chargerState->SetCharge(true);
+    auto state = chargerState->GetCharge();
     if (state) {
         EXPECT_TRUE(cpuLimitValue == 1990800);
     } else {
@@ -437,8 +437,8 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest008, Function|MediumTest|L
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
     auto chargerState =  ChargerStateCollection::GetInstance();
-    chargerState->isCharge_ = true;
-    auto state = chargerState->isCharge_;
+    chargerState->SetCharge(true);
+    auto state = chargerState->GetCharge();
     if (state) {
         EXPECT_TRUE(cpuLimitValue == 1989800);
     } else {

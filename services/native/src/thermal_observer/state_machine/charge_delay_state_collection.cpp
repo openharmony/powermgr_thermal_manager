@@ -82,7 +82,7 @@ void ChargeDelayStateCollection::HandlerPowerDisconnected(const EventFwk::Common
 {
     std::lock_guard<std::mutex> lock(mutex_);
     auto csc = ChargerStateCollection::GetInstance();
-    csc->isCharge_ = false;
+    csc->SetCharge(false);
     criticalState_ = CRITICAL_STATE;
     THERMAL_HILOGI(COMP_SVC, "ChargeDelayStateCollection HandlerPowerDisconnected");
     StopDelayTimer();
@@ -96,7 +96,7 @@ void ChargeDelayStateCollection::HandlerPowerConnected(const EventFwk::CommonEve
         StopDelayTimer();
     }
     auto csc = ChargerStateCollection::GetInstance();
-    csc->isCharge_ = true;
+    csc->SetCharge(true);
     criticalState_ = NON_CRITICAL_STATE;
     THERMAL_HILOGI(COMP_SVC, "ChargeDelayStateCollection HandlerPowerConnected");
 }
