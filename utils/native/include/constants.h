@@ -47,7 +47,7 @@ namespace PowerMgr {
     const std::string STATE_SCENE = "scene";
     const std::string STATE_CHARGE_DELAY = "charge_delay";
     const std::string STATE_STARTUP_DELAY = "startup_delay";
-    const syd::string STATE_CUST = "cust";
+    const std::string STATE_CUST = "cust";
 
     // scene sensor name
     const std::string BATTERY = "battery";
