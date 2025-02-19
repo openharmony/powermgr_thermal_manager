@@ -370,10 +370,10 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest013, TestSize.Level0)
     THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest013 start");
     auto custState = std::make_shared<CustStateCollection>();
     custState->Init();
-    string value = "67"
+    string value = "67";
     custState->SetState(value);
     EXPECT_TRUE(custState->DecideState("1"));
-    EXPECT_FALSE(custState_>DecideState("4"));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest012 end");
+    EXPECT_FALSE(custState->DecideState("4"));
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest013 end");
 }
 } // namespace
