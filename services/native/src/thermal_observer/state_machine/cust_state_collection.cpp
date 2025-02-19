@@ -17,9 +17,9 @@
 #include "constants.h"
 #include "thermal_service.h"
 
-namespace OHOS{
-namespace PowerMgr{
-namespace{
+namespace OHOS {
+namespace PowerMgr {
+namespace {
 }
 bool CustStateCollection::Init()
 {
