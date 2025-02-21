@@ -60,6 +60,7 @@ ohos_shared_library("thermalservice") {
     "native/src/thermal_mgr_dumper.cpp",
     "native/src/thermal_observer/state_machine/charge_delay_state_collection.cpp",
     "native/src/thermal_observer/state_machine/charger_state_collection.cpp",
+    "native/src/thermal_observer/state_machine/cust_state_collection.cpp",
     "native/src/thermal_observer/state_machine/extend_state_collection.cpp",
     "native/src/thermal_observer/state_machine/scene_state_collection.cpp",
     "native/src/thermal_observer/state_machine/screen_state_collection.cpp",

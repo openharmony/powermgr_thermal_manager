@@ -25,6 +25,7 @@
 #include "thermal_sensor_info.h"
 #include "charger_state_collection.h"
 #include "charge_delay_state_collection.h"
+#include "cust_state_collection.h"
 #include "startup_delay_state_collection.h"
 #include "scene_state_collection.h"
 #include "screen_state_collection.h"
@@ -357,5 +358,22 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest012, TestSize.Level0)
     delayState->SetState("");
 #endif
     THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest012 end");
+}
+
+/**
+ * @tc.name: ThermalObserverTest013
+ * @tc.desc: Thermal Cust State Collection Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest013, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest013 start");
+    auto custState = std::make_shared<CustStateCollection>();
+    custState->Init();
+    string value = "67";
+    custState->SetState(value);
+    EXPECT_TRUE(custState->DecideState("1"));
+    EXPECT_FALSE(custState->DecideState("4"));
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest013 end");
 }
 } // namespace

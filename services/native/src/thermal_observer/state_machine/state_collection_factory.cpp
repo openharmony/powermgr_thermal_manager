@@ -17,6 +17,7 @@
 
 #include "charger_state_collection.h"
 #include "charge_delay_state_collection.h"
+#include "cust_state_collection.h"
 #include "startup_delay_state_collection.h"
 #include "screen_state_collection.h"
 #include "scene_state_collection.h"
@@ -39,6 +40,8 @@ std::shared_ptr<IStateCollection> StateCollectionFactory::Create(std::string &st
         return std::make_shared<ChargeDelayStateCollection>();
     } else if (stateName == STATE_STARTUP_DELAY) {
         return std::make_shared<StartupDelayStateCollection>();
+    } else if (stateName == STATE_CUST) {
+        return std::make_shared<CustStateCollection>();
     } else {
         return std::make_shared<ExtendStateCollection>(stateName);
     }
