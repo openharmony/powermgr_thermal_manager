@@ -15,9 +15,9 @@
 
 #include "action_application_process.h"
 
-#include <csignal>
 #include <map>
 #include <sys/types.h>
+#include <dlfcn.h>
 
 #include "constants.h"
 #include "file_operation.h"
@@ -35,9 +35,9 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace PowerMgr {
 namespace {
-const int32_t SIGNAL_KILL = 9;
 constexpr const char* PROCESS_PATH = "/data/service/el0/thermal/config/process_ctrl";
 const int MAX_PATH = 256;
+const int ERR_FAILED = -1;
 }
 
 ActionApplicationProcess::ActionApplicationProcess(const std::string& actionName)
@@ -47,9 +47,7 @@ ActionApplicationProcess::ActionApplicationProcess(const std::string& actionName
 
 void ActionApplicationProcess::InitParams(const std::string& params)
 {
-    if (appMgrClient_ == nullptr) {
-        appMgrClient_ = std::make_unique<AppMgrClient>();
-    }
+    (void)params;
 }
 
 void ActionApplicationProcess::SetStrict(bool enable)
@@ -122,117 +120,54 @@ uint32_t ActionApplicationProcess::GetActionValue()
 
 ErrCode ActionApplicationProcess::KillApplicationAction(const std::string& bundleName)
 {
-    int result = ERR_OK;
-    result = appMgrClient_->KillApplication(bundleName);
-    if (result == ERR_OK) {
-        THERMAL_HILOGE(COMP_SVC, "kill application:%{public}s successfully.", bundleName.c_str());
-    } else {
-        THERMAL_HILOGE(COMP_SVC, "failed to kill application:%{public}s.", bundleName.c_str());
+    typedef ErrCode(*KillApplicationActionFunc)(const std::string& bundleName);
+    void* handler = dlopen("libthermal_ability.z.so", RTLD_LAZY | RTLD_NODELETE);
+    if (handler == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "dlopen KillApplicationActionFunc failed, reason : %{public}s", dlerror());
+        return ERR_FAILED;
     }
-    return result;
-}
-
-ErrCode ActionApplicationProcess::GetRunningProcessInfo(std::vector<RunningProcessInfo>& info)
-{
-    ErrCode result = ERR_OK;
-    result = appMgrClient_->GetAllRunningProcesses(info);
-    if (result == ERR_OK) {
-        THERMAL_HILOGI(COMP_SVC, "get running process info successfully.");
-    } else {
-        THERMAL_HILOGE(COMP_SVC, "failed to get running process info.");
+    KillApplicationActionFunc KillApplicationAction =
+        reinterpret_cast<KillApplicationActionFunc>(dlsym(handler, "KillApplicationAction"));
+    if (KillApplicationAction == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "KillApplicationActionFunc is null, reason : %{public}s", dlerror());
+#ifndef FUZZ_TEST
+        dlclose(handler);
+#endif
+        handler = nullptr;
+        return ERR_FAILED;
     }
-    return result;
-}
-
-ErrCode ActionApplicationProcess::KillProcess(const pid_t pid)
-{
-    int32_t ret = -1;
-    if (pid > 0) {
-        ret = kill(pid, SIGNAL_KILL);
-        if (ret == ERR_OK) {
-            THERMAL_HILOGI(COMP_SVC, "KillProcess: success kill, pid=%{public}d", pid);
-        } else {
-            THERMAL_HILOGE(COMP_SVC, "KillProcess: failed to kill, pid=%{public}d", pid);
-        }
-    }
+    ErrCode ret = KillApplicationAction(bundleName);
+#ifndef FUZZ_TEST
+    dlclose(handler);
+#endif
+    handler = nullptr;
     return ret;
-}
-
-RunningProcessInfo ActionApplicationProcess::GetAppProcessInfoByName(const std::string& processName)
-{
-    RunningProcessInfo appProcessInfo;
-    appProcessInfo.pid_ = 0;
-    if (ERR_OK == GetRunningProcessInfo(allAppProcessInfos_)) {
-        const auto& it = std::find_if(allAppProcessInfos_.begin(), allAppProcessInfos_.end(), [&](const auto& info) {
-            return processName == info.processName_;
-        });
-        appProcessInfo = (it != allAppProcessInfos_.end()) ? *it : appProcessInfo;
-    }
-    return appProcessInfo;
-}
-
-
-void ActionApplicationProcess::GetAllRunnningAppProcess()
-{
-    if (ERR_OK == GetRunningProcessInfo(allAppProcessInfos_)) {
-        for (const auto& info : allAppProcessInfos_) {
-            if (info.state_ ==  AppProcessState::APP_STATE_BACKGROUND) {
-                bgAppProcessInfos_.push_back(info);
-            } else if (info.state_ == AppProcessState::APP_STATE_FOREGROUND) {
-                fgAppProcessInfos_.push_back(info);
-            }
-        }
-    }
-}
-
-void ActionApplicationProcess::KillBgAppProcess()
-{
-    for (auto bg : bgAppProcessInfos_) {
-        if (KillProcess(bg.pid_) != ERR_OK) {
-            THERMAL_HILOGE(COMP_SVC, "failed to kill bg process");
-        }
-    }
-}
-
-void ActionApplicationProcess::KillFgAppProcess()
-{
-    for (auto fg : fgAppProcessInfos_) {
-        if (KillProcess(fg.pid_) != ERR_OK) {
-            THERMAL_HILOGE(COMP_SVC, "failed to kill fg process");
-        }
-    }
-}
-
-void ActionApplicationProcess::KillAllAppProcess()
-{
-    for (auto all : allAppProcessInfos_) {
-        if (KillProcess(all.pid_) != ERR_OK) {
-            THERMAL_HILOGE(COMP_SVC, "failed to kill all process");
-        }
-    }
 }
 
 void ActionApplicationProcess::ProcessAppActionRequest(const uint32_t& value)
 {
-    THERMAL_HILOGD(COMP_SVC, "value: %{public}d", value);
-    GetAllRunnningAppProcess();
-    switch (value) {
-        case KILL_FG_PROCESS_APP: {
-            KillFgAppProcess();
-            break;
-        }
-        case KILL_BG_PROCESS_APP: {
-            KillBgAppProcess();
-            break;
-        }
-        case KILL_ALL_PROCESS_APP: {
-            KillAllAppProcess();
-            break;
-        }
-        default: {
-            break;
-        }
+    typedef void(*ProcessAppActionRequestFunc)(const uint32_t& value);
+    void* handler = dlopen("libthermal_ability.z.so", RTLD_LAZY | RTLD_NODELETE);
+    if (handler == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "dlopen ProcessAppActionRequestFunc failed, reason : %{public}s", dlerror());
+        return;
     }
+    ProcessAppActionRequestFunc ProcessAppActionRequest =
+        reinterpret_cast<ProcessAppActionRequestFunc>(dlsym(handler, "ProcessAppActionRequest"));
+    if (ProcessAppActionRequest == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "ProcessAppActionRequestFunc is null, reason : %{public}s", dlerror());
+#ifndef FUZZ_TEST
+        dlclose(handler);
+#endif
+        handler = nullptr;
+        return;
+    }
+    ProcessAppActionRequest(value);
+#ifndef FUZZ_TEST
+    dlclose(handler);
+#endif
+    handler = nullptr;
+    return;
 }
 
 void ActionApplicationProcess::ProcessAppActionExecution(const uint32_t& value)

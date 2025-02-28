@@ -359,11 +359,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest007, TestSize.Level0)
     g_actionApplicationProcess->AddActionValue(0, "1");
     g_actionApplicationProcess->Execute();
     g_actionApplicationProcess->KillApplicationAction("");
-    g_actionApplicationProcess->KillProcess(0);
-    g_actionApplicationProcess->GetAppProcessInfoByName("");
-    g_actionApplicationProcess->GetAllRunnningAppProcess();
-    g_actionApplicationProcess->KillBgAppProcess();
-    g_actionApplicationProcess->KillAllAppProcess();
     g_actionApplicationProcess->ProcessAppActionRequest(0);
     g_actionApplicationProcess->ProcessAppActionRequest(1);
     g_actionApplicationProcess->ProcessAppActionRequest(2);
