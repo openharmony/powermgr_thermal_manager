@@ -330,7 +330,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
     EXPECT_EQ(chargerState->GetCharge(), true);
     EXPECT_EQ(chargerDelayState->GetState(), "0");
     chargerDelayState->HandlerPowerDisconnected(data);
-    EXPECT_EQ(chargerState->GetCharge(), false);   
+    EXPECT_EQ(chargerState->GetCharge(), false);
     EXPECT_EQ(chargerDelayState->GetState(), "1");
     chargerDelayState->SetState("");
     chargerDelayState->ResetState();
