@@ -89,6 +89,7 @@ void ThermalService::OnStart()
 
     AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
     AddSystemAbilityListener(SOC_PERF_SERVICE_SA_ID);
+    AddSystemAbilityListener(POWER_MANAGER_BATT_SERVICE_ID);
     if (!Publish(ThermalService::GetInstance())) {
         THERMAL_HILOGE(COMP_SVC, "OnStart register to system ability manager failed.");
         return;
@@ -125,6 +126,10 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
             }
             actionIter->second->ResetActionValue();
         }
+    } else if (systemAbilityId == POWER_MANAGER_BATT_SERVICE_ID) {
+#ifdef BATTERY_MANAGER_ENABLE
+        ChargerStateCollection::GetInstance()->InitChargeState();
+#endif
     }
 }
 
