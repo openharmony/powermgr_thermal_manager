@@ -62,13 +62,13 @@ void SocActionBase::SetBoostEnable(bool status)
 #ifdef SOC_PERF_ENABLE
     OHOS::SOCPERF::SocPerfClient::GetInstance().SetRequestStatus(status, THERMAL_MSG);
 #endif
+}
 
 void SocActionBase::SocNonVipRequest(bool enable)
 {
 #ifdef SOC_PERF_ENABLE
     OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEx(ACTION_TYPE_CPU_NONVIP_CMDID, enable, "");
 #endif
-}
 }
 } // namespace PowerMgr
 } // namespace OHOS
