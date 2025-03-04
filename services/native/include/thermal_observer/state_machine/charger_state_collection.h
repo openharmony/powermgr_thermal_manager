@@ -73,6 +73,9 @@ public:
     static std::shared_ptr<ChargerStateCollection> GetInstance();
     bool GetCharge();
     void SetCharge(bool charge);
+#ifdef BATTERY_MANAGER_ENABLE
+    void InitChargeState();
+#endif
 #ifndef THERMAL_OBSERVER_UT_TEST
 private:
 #endif

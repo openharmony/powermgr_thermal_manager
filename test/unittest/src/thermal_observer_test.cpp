@@ -326,11 +326,13 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
     CommonEventData data;
     chargerDelayState->HandlerPowerDisconnected(data);
     EXPECT_EQ(chargerState->GetCharge(), false);
-    EXPECT_EQ(chargerDelayState->GetState(), "1");
-    chargerDelayState->HandlerPowerConnected(data);
     EXPECT_EQ(chargerDelayState->GetState(), "0");
+    chargerDelayState->HandlerPowerConnected(data);
     EXPECT_EQ(chargerState->GetCharge(), true);
-    EXPECT_TRUE(chargerDelayState->DecideState("0"));
+    EXPECT_EQ(chargerDelayState->GetState(), "0");
+    chargerDelayState->HandlerPowerDisconnected(data);
+    EXPECT_EQ(chargerState->GetCharge(), false);
+    EXPECT_EQ(chargerDelayState->GetState(), "1");
     chargerDelayState->SetState("");
     chargerDelayState->ResetState();
 
