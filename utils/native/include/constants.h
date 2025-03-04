@@ -27,6 +27,7 @@ namespace PowerMgr {
     const std::string CPU_LIT_ACTION_NAME = "cpu_lit";
     const std::string CPU_BOOST_ACTION_NAME = "boost";
     const std::string CPU_ISOLATE_ACTION_NAME = "isolate";
+    const std::string CPU_NONVIP_ACTION_NAME = "nonvip_task";
     const std::string GPU_ACTION_NAME = "gpu";
     const std::string LCD_ACTION_NAME = "lcd";
     const std::string VOLUME_ACTION_NAME = "volume";
