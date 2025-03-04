@@ -82,6 +82,10 @@ void ChargeDelayStateCollection::HandlerPowerDisconnected(const EventFwk::Common
 {
     std::lock_guard<std::mutex> lock(mutex_);
     auto csc = ChargerStateCollection::GetInstance();
+    if (csc == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "ChargerStateCollection GetInstance failed");
+        return;
+    }
     if (!csc->GetCharge()) {
         return;
     }
@@ -95,6 +99,10 @@ void ChargeDelayStateCollection::HandlerPowerDisconnected(const EventFwk::Common
 void ChargeDelayStateCollection::HandlerPowerConnected(const EventFwk::CommonEventData& data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    if (csc == nullptr) {
+        THERMAL_HILOGE(COMP_SVC, "ChargerStateCollection GetInstance failed");
+        return;
+    }
     auto csc = ChargerStateCollection::GetInstance();
     if (csc->GetCharge()) {
         return;
