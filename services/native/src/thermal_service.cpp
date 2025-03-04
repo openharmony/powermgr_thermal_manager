@@ -128,12 +128,12 @@ void ThermalService::OnAddSystemAbility(int32_t systemAbilityId, const std::stri
         }
     } else if (systemAbilityId == POWER_MANAGER_BATT_SERVICE_ID) {
 #ifdef BATTERY_MANAGER_ENABLE
-    auto csc = ChargerStateCollection::GetInstance();
-    if (csc == nullptr) {
-        THERMAL_HILOGE(COMP_SVC, "ChargerStateCollection GetInstance failed");
-        return;
-    }
-    csc->InitChargeState();
+        auto csc = ChargerStateCollection::GetInstance();
+        if (csc == nullptr) {
+            THERMAL_HILOGE(COMP_SVC, "ChargerStateCollection GetInstance failed");
+            return;
+        }
+        csc->InitChargeState();
 #endif
     }
 }
