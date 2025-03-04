@@ -49,6 +49,9 @@ bool ChargerStateCollection::Init()
     if (!RegisterEvent()) {
         return false;
     }
+#ifdef BATTERY_MANAGER_ENABLE
+    InitChargeState();
+#endif
     return true;
 }
 
@@ -79,6 +82,16 @@ void ChargerStateCollection::SetCharge(bool charge)
 {
     isCharge_ = charge;
 }
+
+#ifdef BATTERY_MANAGER_ENABLE
+void ChargerStateCollection::InitChargeState()
+{
+    auto& batterySrvClient = BatterySrvClient::GetInstance();
+    BatteryChargeState chargeState = batterySrvClient.GetChargingStatus();
+    isCharge_ = (chargeState == BatteryChargeState::CHARGE_STATE_ENABLE);
+    THERMAL_HILOGI(COMP_SVC, "ChargerStateCollection init charging state = %{public}d", isCharge_);
+}
+#endif
 
 std::string ChargerStateCollection::GetState()
 {
