@@ -73,7 +73,7 @@ void ThermalActionFactory::InitFactory()
         std::make_pair(CPU_ISOLATE_ACTION_NAME,
             [&](std::string actionName) { return std::make_shared<ActionCpuIsolate>(actionName); }),
         std::make_pair(CPU_NONVIP_ACTION_NAME,
-            [&](std::string actionName) { return std::make_shared<ActionCpuIsolate>(actionName); }),
+            [&](std::string actionName) { return std::make_shared<ActionCpuNonVip>(actionName); }),
         std::make_pair(PROCESS_ACTION_NAME,
             [&](std::string actionName) { return std::make_shared<ActionApplicationProcess>(actionName); }),
         std::make_pair(NODE_ACTION_NAME,
