@@ -57,8 +57,7 @@ void ActionCpuLit::AddActionValue(uint32_t actionId, std::string value)
                 nullptr, STRTOL_FORMART_DEC));
         }
     } else {
-        valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(),
-                nullptr, STRTOL_FORMART_DEC)));
+        valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
     }
 }
 
