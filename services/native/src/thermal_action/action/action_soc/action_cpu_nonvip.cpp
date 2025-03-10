@@ -45,7 +45,7 @@ void ActionCpuNonVip::SetEnableEvent(bool enable)
     enableEvent_ = enable;
 }
 
-void ::AddActionValue(uint32_t actionId, std::string value)
+void ActionCpuNonVip::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
         return;
