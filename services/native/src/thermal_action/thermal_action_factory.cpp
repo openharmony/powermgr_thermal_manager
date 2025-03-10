@@ -23,6 +23,7 @@
 #include "action_cpu_isolate.h"
 #include "action_cpu_lit.h"
 #include "action_cpu_med.h"
+#include "action_cpu_nonvip.h"
 #include "action_display.h"
 #include "action_gpu.h"
 #include "action_node.h"
@@ -71,6 +72,8 @@ void ThermalActionFactory::InitFactory()
             [&](std::string actionName) { return std::make_shared<ActionCpuBoost>(actionName); }),
         std::make_pair(CPU_ISOLATE_ACTION_NAME,
             [&](std::string actionName) { return std::make_shared<ActionCpuIsolate>(actionName); }),
+        std::make_pair(CPU_NONVIP_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionCpuNonVip>(actionName); }),
         std::make_pair(PROCESS_ACTION_NAME,
             [&](std::string actionName) { return std::make_shared<ActionApplicationProcess>(actionName); }),
         std::make_pair(NODE_ACTION_NAME,
