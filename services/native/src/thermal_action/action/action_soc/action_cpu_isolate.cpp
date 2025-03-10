@@ -54,10 +54,12 @@ void ActionCpuIsolate::AddActionValue(uint32_t actionId, std::string value)
     if (actionId > 0) {
         auto iter = policyActionMap_.find(actionId);
         if (iter != policyActionMap_.end()) {
-            iter->second.uintDelayValue = static_cast<uint32_t>(std::stoul(value));
+            iter->second.uintDelayValue = static_cast<uint32_t>(strtol(value.c_str(),
+                nullptr, STRTOL_FORMART_DEC));
         }
     } else {
-        valueList_.push_back(static_cast<uint32_t>(std::stoul(value)));
+        valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(),
+                nullptr, STRTOL_FORMART_DEC)));
     }
 }
 
