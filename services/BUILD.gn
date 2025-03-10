@@ -48,6 +48,7 @@ ohos_shared_library("thermalservice") {
     "native/src/thermal_action/action/action_soc/action_cpu_isolate.cpp",
     "native/src/thermal_action/action/action_soc/action_cpu_lit.cpp",
     "native/src/thermal_action/action/action_soc/action_cpu_med.cpp",
+    "native/src/thermal_action/action/action_soc/action_cpu_nonvip.cpp",
     "native/src/thermal_action/action/action_soc/action_gpu.cpp",
     "native/src/thermal_action/action/action_soc/soc_action_base.cpp",
     "native/src/thermal_action/action/action_thermal_level.cpp",

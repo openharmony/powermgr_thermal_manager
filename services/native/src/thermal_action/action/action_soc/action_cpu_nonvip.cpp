@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "action_gpu.h"
+#include "action_cpu_nonvip.h"
 
 #include "constants.h"
 #include "thermal_hisysevent.h"
@@ -24,32 +24,33 @@ namespace PowerMgr {
 namespace {
 }
 
-ActionGpu::ActionGpu(const std::string& actionName)
+ActionCpuNonVip::ActionCpuNonVip(const std::string& actionName)
 {
     actionName_ = actionName;
     SocActionBase::SocSet.insert(actionName_);
 }
 
-void ActionGpu::InitParams(const std::string& params)
+void ActionCpuNonVip::InitParams(const std::string& params)
 {
     (void)params;
 }
 
-void ActionGpu::SetStrict(bool enable)
+void ActionCpuNonVip::SetStrict(bool enable)
 {
     isStrict_ = enable;
 }
 
-void ActionGpu::SetEnableEvent(bool enable)
+void ActionCpuNonVip::SetEnableEvent(bool enable)
 {
     enableEvent_ = enable;
 }
 
-void ActionGpu::AddActionValue(uint32_t actionId, std::string value)
+void ActionCpuNonVip::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
         return;
     }
+
     if (actionId > 0) {
         auto iter = policyActionMap_.find(actionId);
         if (iter != policyActionMap_.end()) {
@@ -61,12 +62,7 @@ void ActionGpu::AddActionValue(uint32_t actionId, std::string value)
     }
 }
 
-void ActionGpu::ResetActionValue()
-{
-    lastValue_ = 0;
-}
-
-void ActionGpu::ExecuteInner()
+void ActionCpuNonVip::ExecuteInner()
 {
     auto tms = ThermalService::GetInstance();
     THERMAL_RETURN_IF (tms == nullptr);
@@ -78,7 +74,7 @@ void ActionGpu::ExecuteInner()
 
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
-        SocLimitRequest(LIM_GPU_ID, value);
+        SocNonVipRequest(value > 0);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
@@ -87,9 +83,14 @@ void ActionGpu::ExecuteInner()
     valueList_.clear();
 }
 
-uint32_t ActionGpu::GetActionValue()
+void ActionCpuNonVip::ResetActionValue()
 {
-    uint32_t value = FALLBACK_VALUE_UINT_SOC;
+    lastValue_ = UINT_MAX;
+}
+
+uint32_t ActionCpuNonVip::GetActionValue()
+{
+    uint32_t value = FALLBACK_VALUE_UINT_ZERO;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
@@ -99,5 +100,5 @@ uint32_t ActionGpu::GetActionValue()
     }
     return value;
 }
-} // namespace PowermMgr
+} // namespace PowerMgr
 } // namespace OHOS
