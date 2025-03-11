@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("../../thermalmgr.gni")
 
-module_output_path = "thermal_manager/thermal_native"
+module_output_path = "thermal_manager/thermal_manager"
 
 ###############################################################################
 config("module_private_config") {
