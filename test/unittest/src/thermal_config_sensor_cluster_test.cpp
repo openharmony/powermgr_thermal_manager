@@ -61,7 +61,7 @@ namespace {
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest001 function start!");
 
     ThermalConfigSensorCluster cluster;
     cluster.sensorInfolist_.clear();
@@ -91,7 +91,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest001, Test
     cluster.auxSensorInfolist_["test"] = auxLevel;
     EXPECT_FALSE(cluster.CheckStandard());
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest001 function end!");
 }
 
 /**
@@ -101,7 +101,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest001, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest002 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest002 function start!");
 
     // Null data return
     ThermalConfigSensorCluster cluster;
@@ -109,7 +109,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest002, Test
     cluster.UpdateThermalLevel(typeTempInfo);
     EXPECT_NE(cluster.latestLevel_, 1);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest002 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest002 function end!");
 }
 
 /**
@@ -119,7 +119,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest002, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest003, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest003 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest003 function start!");
     // inner if branch (curTemp >= threshold)
     LevelItem item1;
     item1.threshold = 0;
@@ -153,7 +153,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest003, Test
     level = 1;
     cluster.AscJudgment(levItems1, curTemp, level, type, sensorType);
     EXPECT_EQ(level, levItems1.at(INDEX0).level - 1);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest003 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest003 function end!");
 }
 
 /**
@@ -163,7 +163,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest003, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest004, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest004 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest004 function start!");
 
     LevelItem item;
     item.thresholdClr = 2;
@@ -178,7 +178,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest004, Test
     cluster.AscJudgment(levItems, curTemp, level, type, sensorType);
     EXPECT_EQ(level, item.level - 1);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest004 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest004 function end!");
 }
 
 /**
@@ -188,7 +188,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest004, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest005, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest005 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest005 function start!");
 
     LevelItem item;
     item.threshold = 1;
@@ -204,7 +204,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest005, Test
     cluster.AscJudgment(levItems, curTemp, level, type, sensorType);
     EXPECT_EQ(level, item.level);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest005 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest005 function end!");
 }
 
 /**
@@ -214,7 +214,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest005, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest006, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest006 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest006 function start!");
     // inner if branch (curTemp <= nextUptemp)
     LevelItem item1;
     item1.threshold = 1;
@@ -242,7 +242,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest006, Test
     level = 1;
     cluster.DescJudgment(levItems, curTemp, level, type, sensorType);
     EXPECT_EQ(level, levItems.at(INDEX0).level - 1);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest006 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest006 function end!");
 }
 
 /**
@@ -252,7 +252,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest006, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest007, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest007 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest007 function start!");
 
     LevelItem item;
     item.thresholdClr = 2;
@@ -267,7 +267,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest007, Test
     cluster.DescJudgment(levItems, curTemp, level, type, sensorType);
     EXPECT_EQ(level, item.level - 1);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest007 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest007 function end!");
 }
 
 /**
@@ -277,7 +277,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest007, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest008, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest008 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest008 function start!");
 
     LevelItem item;
     item.threshold = 2;
@@ -293,7 +293,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest008, Test
     cluster.DescJudgment(levItems, curTemp, level, type, sensorType);
     EXPECT_EQ(level, item.level);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest008 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest008 function end!");
 }
 
 /**
@@ -303,7 +303,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest008, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest009, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest009 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest009 function start!");
 
     TypeTempMap typeTempInfo;
     uint32_t level = 0;
@@ -331,7 +331,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest009, Test
     EXPECT_FALSE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
     EXPECT_EQ(level, 1);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest009 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest009 function end!");
 }
 
 /**
@@ -341,7 +341,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest009, Test
  */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest010, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest010 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest010 function start!");
     g_service->RegisterThermalHdiCallback();
     ThermalConfigSensorCluster cluster;
     std::vector<LevelItem> vecLevel;
@@ -387,7 +387,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest010, Test
     rateMap["test"].push_back(1.04);
     rateMap["test"].push_back(0.94);
     EXPECT_TRUE(cluster.IsTempRateTrigger(level, sensorType, vecLevel, isCritical));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest010 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest010 function end!");
 }
  
 /**
@@ -397,7 +397,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest010, Test
 */
 HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest011, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest011 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest011 function start!");
 
     TypeTempMap typeTempInfo;
     
@@ -455,6 +455,6 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest011, Test
     std::vector<LevelItem> vecLevel;
     cluster.CheckExtraCondition(typeTempInfo, level, sensorType, vecLevel, isCritical);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest011 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest011 function end!");
 }
 } // namespace
