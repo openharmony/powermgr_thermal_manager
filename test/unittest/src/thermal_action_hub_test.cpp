@@ -250,7 +250,7 @@ namespace {
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 function start!");
     std::vector<std::string> actionList;
     actionList.push_back("cpu_big");
     std::string desc = "";
@@ -267,7 +267,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb1);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb1);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 function end!");
 }
 
 /**
@@ -277,7 +277,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest002 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest002 function start!");
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
@@ -294,7 +294,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb2);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb2);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest002 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest002 function end!");
 }
 
 /**
@@ -304,7 +304,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest003 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest003 function start!");
     std::vector<std::string> actionList;
     actionList.push_back("cpu_med");
     actionList.push_back("lcd");
@@ -322,7 +322,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb3);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb3);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest003 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest003 function end!");
 }
 
 /**
@@ -332,7 +332,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest004 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest004 function start!");
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
@@ -350,7 +350,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb4);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb4);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest004 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest004 function end!");
 }
 
 /**
@@ -360,7 +360,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest005 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest005 function start!");
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
@@ -378,7 +378,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb5);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb5);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest005 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest005 function end!");
 }
 
 /**
@@ -388,7 +388,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest006 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest006 function start!");
     std::vector<std::string> actionList;
     actionList.push_back("lcd");
     std::string desc = "";
@@ -406,7 +406,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cb6);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cb6);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest006 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest006 function end!");
 }
 
 /**
@@ -417,7 +417,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest006, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest007 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest007 function start!");
     std::vector<std::string> actionList;
     actionList.push_back("boost");
     std::string desc = "";
@@ -434,7 +434,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cbBoost);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cbBoost);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest001 function end!");
 }
 
 /**
@@ -444,7 +444,7 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest007, TestSize.Level0)
  */
 HWTEST_F(ThermalActionHubTest, ThermalActionHubTest008, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest008 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest008 function start!");
     std::vector<std::string> actionList;
     actionList.push_back("isolate");
     std::string desc = "";
@@ -461,6 +461,6 @@ HWTEST_F(ThermalActionHubTest, ThermalActionHubTest008, TestSize.Level0)
     g_service->SubscribeThermalActionCallback(actionList, desc, cbIsolateCpu);
     Wait();
     g_service->UnSubscribeThermalActionCallback(cbIsolateCpu);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest008 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionHubTest008 function end!");
 }
 } // namespace

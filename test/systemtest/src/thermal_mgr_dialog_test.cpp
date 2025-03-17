@@ -66,8 +66,10 @@ namespace {
  */
 HWTEST_F(ThermalMgrDialogTest, ThermalMgrDialogTest001, TestSize.Level0)
 {
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDialogTest001 function start!");
     auto popup = std::make_unique<ActionPopup>("Start HighThermal Dialog");
     EXPECT_TRUE(popup->ShowThermalDialog(ActionPopup::TempStatus::HIGHER_TEMP));
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDialogTest001 function end!");
 }
 
 /**
@@ -78,7 +80,9 @@ HWTEST_F(ThermalMgrDialogTest, ThermalMgrDialogTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrDialogTest, ThermalMgrDialogTest002, TestSize.Level0)
 {
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDialogTest002 function start!");
     auto popup = std::make_unique<ActionPopup>("Start LowThermal Dialog");
     EXPECT_TRUE(popup->ShowThermalDialog(ActionPopup::TempStatus::LOWER_TEMP));
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDialogTest002 function end!");
 }
 } // namespace

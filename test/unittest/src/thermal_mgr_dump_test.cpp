@@ -59,7 +59,7 @@ namespace {
  */
 HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest001 function start!");
     std::vector<std::string> args;
     std::string result;
     EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
@@ -70,7 +70,7 @@ HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest001, TestSize.Level0)
     EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
     EXPECT_TRUE(!result.empty());
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest001 function end!");
 }
 
 /**
@@ -80,14 +80,14 @@ HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest002 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest002 function start!");
     std::vector<std::string> args;
     std::string result;
 
     args.push_back("-d");
     EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
     EXPECT_TRUE(result.empty());
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest002 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest002 function end!");
 }
 
 /**
@@ -97,14 +97,14 @@ HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest003, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest003 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest003 function start!");
     std::vector<std::string> args;
     std::string result;
 
     g_service->RegisterThermalHdiCallback();
     args.push_back("-t");
     EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest003 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest003 function end!");
 }
 
 /**
@@ -114,14 +114,14 @@ HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest004, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest004 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest004 function start!");
     std::vector<std::string> args;
     std::string result;
 
     args.push_back("---");
     EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
     EXPECT_TRUE(result.empty());
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest004 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest004 function end!");
 }
 
 /**
@@ -131,7 +131,7 @@ HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest005, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest005 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest005 function start!");
     std::vector<std::string> args;
     std::string result;
 
@@ -142,7 +142,7 @@ HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest005, TestSize.Level0)
     args.push_back("-st");
     args.push_back("1");
     EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest005 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest005 function end!");
 }
 
 /**
@@ -152,7 +152,7 @@ HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest005, TestSize.Level0)
  */
 HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest006, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest006 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest006 function start!");
     std::vector<std::string> args;
     std::string result;
 
@@ -163,6 +163,6 @@ HWTEST_F(ThermalMgrDumperTest, ThermalMgrDumperTest006, TestSize.Level0)
     args.clear();
     args.push_back("-te");
     EXPECT_TRUE(ThermalMgrDumper::Dump(args, result));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest006 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMgrDumperTest006 function end!");
 }
 } // namespace

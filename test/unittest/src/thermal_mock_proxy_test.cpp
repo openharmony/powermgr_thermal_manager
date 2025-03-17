@@ -36,7 +36,7 @@ namespace {
  */
 HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest001 function start!");
     std::string result = "a";
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
@@ -57,7 +57,7 @@ HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest001, TestSize.Level0)
     TempCallbackMap tempCbMap;
     tempCbMap.insert(std::make_pair(result, 1));
     EXPECT_TRUE(tempProxy->OnThermalTempChanged(tempCbMap));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest001 function end!");
 }
 
 /**
@@ -68,7 +68,7 @@ HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest002 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest002 function start!");
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     std::shared_ptr<ThermalSrvProxy> srvProxy = std::make_shared<ThermalSrvProxy>(sptrRemoteObj);
     EXPECT_FALSE(srvProxy == nullptr);
@@ -96,6 +96,6 @@ HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest002, TestSize.Level0)
     EXPECT_FALSE(actionCallback == nullptr);
     EXPECT_TRUE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback));
     EXPECT_TRUE(srvProxy->UnSubscribeThermalActionCallback(actionCallback));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest002 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest002 function end!");
 }
 } // namespace

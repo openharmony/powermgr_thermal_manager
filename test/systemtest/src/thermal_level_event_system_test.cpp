@@ -377,7 +377,7 @@ namespace {
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest001: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest001 function start!");
     shared_ptr<CommonEventThermalLevel1Test> subscriber = CommonEventThermalLevel1Test::RegisterEvent();
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -387,7 +387,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest001, TestSize.
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest001: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest001 function end!");
 }
 
 /*
@@ -397,7 +397,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest001, TestSize.
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest002: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest002 function start!");
     shared_ptr<CommonEventThermalLevel2Test> subscriber = CommonEventThermalLevel2Test::RegisterEvent();
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -407,7 +407,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest002, TestSize.
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest002: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest002 function end!");
 }
 
 /*
@@ -417,7 +417,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest002, TestSize.
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest003, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest003: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest003 function start!");
     shared_ptr<CommonEventThermalLevel3Test> subscriber = CommonEventThermalLevel3Test::RegisterEvent();
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -427,7 +427,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest003, TestSize.
     g_service->HandleThermalCallbackEvent(event);
     Wait();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest003: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest003 function end!");
 }
 
 /*
@@ -437,7 +437,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest003, TestSize.
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest004: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest004 function start!");
     int32_t batteryCapacity = 90;
     int32_t chargerCurrent = 1100;
     int32_t invalid = 0;
@@ -459,7 +459,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.
     t.join();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     system("hidumper -s 3302 -a -r");
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest004: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest004 function end!");
 }
 
 /*
@@ -469,7 +469,7 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest004, TestSize.
  */
 HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest005, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest005: Start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest005 function start!");
     int32_t lastBatteryCapacity = 90;
     int32_t lastChargerCurrent = 1100;
     int32_t batteryCapacity = 70;
@@ -492,6 +492,6 @@ HWTEST_F (ThermalLevelEventSystemTest, ThermalLevelEventSystemTest005, TestSize.
     t.join();
     CommonEventManager::UnSubscribeCommonEvent(subscriber);
     system("hidumper -s 3302 -a -r");
-    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest005: End");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalLevelEventSystemTest005 function end!");
 }
 } // namespace

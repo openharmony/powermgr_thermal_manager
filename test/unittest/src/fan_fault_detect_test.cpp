@@ -146,7 +146,7 @@ namespace {
  */
 HWTEST_F(FanFaultDetectTest, FanFaultDetectTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest001 function start!");
     int64_t faultId = FAN_FAULT_OK;
     FanSensorInfo report;
     report.insert(std::make_pair(FAN, FAN_SLOW_SPEED));
@@ -154,7 +154,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest001, TestSize.Level0)
     report.insert(std::make_pair(GPU, TEMP_HIGH));
     GetFaultId(faultId, report);
     EXPECT_TRUE(faultId == FAN_FAULT_TOO_SLOW);
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest001 function end!");
 }
 
 /**
@@ -164,7 +164,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest001, TestSize.Level0)
  */
 HWTEST_F(FanFaultDetectTest, FanFaultDetectTest002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest002 start");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest002 function start!");
     int64_t faultId = FAN_FAULT_OK;
     FanSensorInfo report;
     report.insert(std::make_pair(FAN, FAN_SLOW_SPEED));
@@ -172,7 +172,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest002, TestSize.Level0)
     report.insert(std::make_pair(GPU, TEMP_LOW));
     GetFaultId(faultId, report);
     EXPECT_TRUE(faultId == FAN_FAULT_TOO_SLOW);
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest002 end");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest002 function end!");
 }
 
 /**
@@ -182,7 +182,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest002, TestSize.Level0)
  */
 HWTEST_F(FanFaultDetectTest, FanFaultDetectTest003, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest003 start");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest003 function start!");
     int64_t faultId = FAN_FAULT_OK;
     FanSensorInfo report;
     report.insert(std::make_pair(FAN, FAN_SLOW_SPEED));
@@ -190,7 +190,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest003, TestSize.Level0)
     report.insert(std::make_pair(GPU, TEMP_HIGH));
     GetFaultId(faultId, report);
     EXPECT_TRUE(faultId == FAN_FAULT_TOO_SLOW);
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest003 end");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest003 function end!");
 }
 
 /**
@@ -200,7 +200,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest003, TestSize.Level0)
  */
 HWTEST_F(FanFaultDetectTest, FanFaultDetectTest004, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest004 start");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest004 function start!");
     int64_t faultId = FAN_FAULT_OK;
     FanSensorInfo report;
     report.insert(std::make_pair(FAN, FAN_FAST_SPEED));
@@ -208,7 +208,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest004, TestSize.Level0)
     report.insert(std::make_pair(GPU, TEMP_LOW));
     GetFaultId(faultId, report);
     EXPECT_TRUE(faultId == FAN_FAULT_TOO_FAST);
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest004 end");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest004 function end!");
 }
 #endif
 
@@ -219,7 +219,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest004, TestSize.Level0)
  */
 HWTEST_F(FanFaultDetectTest, FanFaultDetectTest005, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest005 start");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest005 function start!");
     int64_t faultId = FAN_FAULT_OK;
     FanSensorInfo report;
     report.insert(std::make_pair(FAN, FAN_SLOW_SPEED));
@@ -227,7 +227,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest005, TestSize.Level0)
     report.insert(std::make_pair(GPU, TEMP_LOW));
     GetFaultId(faultId, report);
     EXPECT_TRUE(faultId == FAN_FAULT_OK);
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest005 end");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest005 function end!");
 }
 
 /**
@@ -237,7 +237,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest005, TestSize.Level0)
  */
 HWTEST_F(FanFaultDetectTest, FanFaultDetectTest006, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest006 start");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest006 function start!");
     int64_t faultId = FAN_FAULT_OK;
     FanSensorInfo report;
     report.insert(std::make_pair(FAN, FAN_FAST_SPEED));
@@ -245,7 +245,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest006, TestSize.Level0)
     report.insert(std::make_pair(GPU, TEMP_LOW));
     GetFaultId(faultId, report);
     EXPECT_TRUE(faultId == FAN_FAULT_OK);
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest006 end");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest006 function end!");
 }
 
 /**
@@ -255,7 +255,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest006, TestSize.Level0)
  */
 HWTEST_F(FanFaultDetectTest, FanFaultDetectTest007, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest007 start");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest007 function start!");
     int64_t faultId = FAN_FAULT_OK;
     FanSensorInfo report;
     report.insert(std::make_pair(FAN, FAN_FAST_SPEED));
@@ -263,7 +263,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest007, TestSize.Level0)
     report.insert(std::make_pair(GPU, TEMP_HIGH));
     GetFaultId(faultId, report);
     EXPECT_TRUE(faultId == FAN_FAULT_OK);
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest007 end");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest007 function end!");
 }
 
 /**
@@ -273,7 +273,7 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest007, TestSize.Level0)
  */
 HWTEST_F(FanFaultDetectTest, FanFaultDetectTest008, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest008 start");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest008 function start!");
     int64_t faultId = FAN_FAULT_OK;
     FanSensorInfo report;
     report.insert(std::make_pair(FAN, FAN_FAST_SPEED));
@@ -281,6 +281,6 @@ HWTEST_F(FanFaultDetectTest, FanFaultDetectTest008, TestSize.Level0)
     report.insert(std::make_pair(GPU, TEMP_HIGH));
     GetFaultId(faultId, report);
     EXPECT_TRUE(faultId == FAN_FAULT_OK);
-    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest008 end");
+    THERMAL_HILOGI(LABEL_TEST, "FanFaultDetectTest008 function end!");
 }
 } // namespace
