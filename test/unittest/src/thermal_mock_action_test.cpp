@@ -176,7 +176,7 @@ namespace {
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest001 function start!");
     ASSERT_NE(g_service, nullptr);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 1;
@@ -207,7 +207,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|L
     g_service->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(3, MockSocPerfAction::GetBoostRequestCounter());
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest001 function end!");
 }
 
 /**
@@ -220,7 +220,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest002, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest002 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest002 function start!");
     ASSERT_NE(g_service, nullptr);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -232,7 +232,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest002, Function|MediumTest|L
     int32_t expectLevel = 3;
     g_service->GetThermalLevel(level);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest002 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest002 function end!");
 }
 
 /**
@@ -245,7 +245,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest002, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest003, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest003: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest003 function start!");
     ASSERT_NE(g_service, nullptr);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -266,7 +266,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest003, Function|MediumTest|L
     } else {
         EXPECT_TRUE(gpuLimitValue == 524288);
     }
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest003: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest003 function end!");
 }
 
 /**
@@ -279,7 +279,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest003, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest004, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest004: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest004 function start!");
     ASSERT_NE(g_service, nullptr);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -300,7 +300,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest004, Function|MediumTest|L
     } else {
         EXPECT_TRUE(gpuLimitValue == 499712);
     }
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest004: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest004 function end!");
 }
 
 /**
@@ -313,7 +313,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest004, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest005, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest005: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest005 function start!");
     ASSERT_NE(g_service, nullptr);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -334,7 +334,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest005, Function|MediumTest|L
     } else {
         EXPECT_TRUE(gpuLimitValue == 475136);
     }
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest005: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest005 function end!");
 }
 
 /**
@@ -347,7 +347,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest005, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest006: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest006 function start!");
     auto chargerState =  ChargerStateCollection::GetInstance();
     chargerState->SetCharge(true);
     auto state = chargerState->GetCharge();
@@ -371,7 +371,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|L
         EXPECT_TRUE(cpuLimitValue == 1991600);
     }
 #endif
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest006: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest006 function end!");
 }
 
 /**
@@ -384,7 +384,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest007, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest007: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest007 function start!");
     ASSERT_NE(g_service, nullptr);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -408,7 +408,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest007, Function|MediumTest|L
         EXPECT_TRUE(cpuLimitValue == 1990600);
     }
 #endif
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest007: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest007 function end!");
 }
 
 /**
@@ -421,7 +421,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest007, Function|MediumTest|L
  */
 HWTEST_F (ThermalMockActionTest, ThermalMockActionTest008, Function|MediumTest|Level2)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest008: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest008 function start!");
     ASSERT_NE(g_service, nullptr);
     HdfThermalCallbackInfo event;
     ThermalZoneInfo info1;
@@ -445,6 +445,6 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest008, Function|MediumTest|L
         EXPECT_TRUE(cpuLimitValue == 1989600);
     }
 #endif
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest008: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest008 function end!");
 }
 }
