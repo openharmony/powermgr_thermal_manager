@@ -29,7 +29,7 @@ namespace {
  */
 HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_001:: Test Start!!");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_001 function start!");
     size_t size = 1000;
     std::vector<std::string> cmdsList;
     for (size_t i = 0; i < size; i++) {
@@ -41,7 +41,7 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_001, TestSize.Level0)
 
     THERMAL_HILOGI(LABEL_TEST, "result : %{public}s", result.c_str());
     EXPECT_EQ(true, result == "remote error");
-    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_001:: Test End!!");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_001 function end!");
 }
 
 /*
@@ -51,7 +51,7 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_001, TestSize.Level0)
  */
 HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_002:: Test Start!!");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_002 function start!");
     size_t size = 5;
     std::vector<std::string> cmdsList;
     for (size_t i = 0; i < size; i++) {
@@ -63,7 +63,7 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_002, TestSize.Level0)
 
     THERMAL_HILOGI(LABEL_TEST, "result : %{public}s", result.c_str());
     EXPECT_EQ(true, result.empty());
-    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_002:: Test End!!");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_002 function end!");
 }
 
 /*
@@ -73,12 +73,12 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_002, TestSize.Level0)
  */
 HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_003, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_003:: Test Start!!");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_003 function start!");
 
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
     ThermalLevel level = thermalMgrClient.GetThermalLevel();
 
     EXPECT_EQ(true, level <= ThermalLevel::ESCAPE && level >= ThermalLevel::COOL);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_003:: Test End!!");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_003 function end!");
 }
 }

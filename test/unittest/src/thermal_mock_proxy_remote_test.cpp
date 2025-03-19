@@ -39,7 +39,7 @@ namespace {
  */
 HWTEST_F(ThermalMockProxyRemoteTest, ThermalClientMockPeerTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalClientMockPeerTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientMockPeerTest001 function start!");
     auto& thermalMgrClient = ThermalMgrClient::GetInstance();
 
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
@@ -68,7 +68,7 @@ HWTEST_F(ThermalMockProxyRemoteTest, ThermalClientMockPeerTest001, TestSize.Leve
     EXPECT_FALSE(thermalMgrClient.SetScene(sence));
     std::vector<std::string> args {};
     EXPECT_TRUE(thermalMgrClient.Dump(args) == "can't connect service");
-    THERMAL_HILOGI(LABEL_TEST, "ThermalClientMockPeerTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientMockPeerTest001 function end!");
 }
 
 /**
@@ -79,7 +79,7 @@ HWTEST_F(ThermalMockProxyRemoteTest, ThermalClientMockPeerTest001, TestSize.Leve
  */
 HWTEST_F(ThermalMockProxyRemoteTest, ThermalMockProxyRemoteTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyRemoteTest001 start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyRemoteTest001 function start!");
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
     std::shared_ptr<ThermalTempCallbackProxy> tempProxy = std::make_shared<ThermalTempCallbackProxy>(sptrRemoteObj);
@@ -120,6 +120,6 @@ HWTEST_F(ThermalMockProxyRemoteTest, ThermalMockProxyRemoteTest001, TestSize.Lev
     sptr<IThermalActionCallback> actionCallback;
     EXPECT_FALSE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback));
     EXPECT_FALSE(srvProxy->UnSubscribeThermalActionCallback(actionCallback));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyRemoteTest001 end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyRemoteTest001 function end!");
 }
 } // namespace

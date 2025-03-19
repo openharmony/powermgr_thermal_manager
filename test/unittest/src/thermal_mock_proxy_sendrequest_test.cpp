@@ -36,7 +36,7 @@ namespace {
  */
 HWTEST_F(ThermalMockProxySendrequestTest, ThermalMockProxySendrequestTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxySendrequestTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxySendrequestTest001 function start!");
     sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
     EXPECT_FALSE(sptrRemoteObj == nullptr);
     std::shared_ptr<ThermalActionCallbackProxy> actionProxy =
@@ -66,6 +66,6 @@ HWTEST_F(ThermalMockProxySendrequestTest, ThermalMockProxySendrequestTest001, Te
     EXPECT_FALSE(actionCallback == nullptr);
     EXPECT_FALSE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback));
     EXPECT_FALSE(srvProxy->UnSubscribeThermalActionCallback(actionCallback));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxySendrequestTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxySendrequestTest001 function end!");
 }
 } // namespace

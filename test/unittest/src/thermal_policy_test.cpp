@@ -64,10 +64,10 @@ namespace {
  */
 HWTEST_F(ThermalPolicyTest, ThermalPolicyTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest001 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest001 function start!");
     ThermalPolicy policy;
     EXPECT_TRUE(policy.GetClusterLevelMap().empty());
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest001 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest001 function end!");
 }
 
 /**
@@ -78,7 +78,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalPolicyTest, ThermalPolicyTest002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest002 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest002 function start!");
     ThermalPolicy policy;
     EXPECT_TRUE(policy.Init());
     std::vector<PolicyConfig> vecConfig;
@@ -95,7 +95,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest002, TestSize.Level0)
     policy.PolicyDecision();
     g_service->actionMgr_ = mgrTmp;
     EXPECT_TRUE(g_service->actionMgr_ != nullptr);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest002 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest002 function end!");
 }
 
 /**
@@ -106,7 +106,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalPolicyTest, ThermalPolicyTest003, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest003 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest003 function start!");
     // No matching item
     ThermalPolicy policy;
     std::vector<PolicyAction> actionList;
@@ -121,7 +121,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest003, TestSize.Level0)
     actionMap["test"] = nullptr;
     policy.ActionDecision(actionList);
     EXPECT_FALSE(actionMap.empty());
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest003 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest003 function end!");
 }
 
 /**
@@ -132,7 +132,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalPolicyTest, ThermalPolicyTest004, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest004 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest004 function start!");
     ThermalPolicy policy;
     std::vector<PolicyAction> actionList;
     PolicyAction action1;
@@ -155,7 +155,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest004, TestSize.Level0)
     actionMap["test2"] = std::make_shared<ActionCpuBig>(CPU_BIG_ACTION_NAME);
     policy.ActionDecision(actionList);
     EXPECT_FALSE(actionMap.empty());
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest004 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest004 function end!");
 }
 
 /**
@@ -165,7 +165,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest004, TestSize.Level0)
  */
 HWTEST_F(ThermalPolicyTest, ThermalPolicyTest005, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest005 start.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest005 function start!");
     // No match
     ThermalPolicy policy;
     g_service->observer_ = nullptr;
@@ -195,7 +195,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest005, TestSize.Level0)
     stateMap["test1"] = "0";
     collectionMap["test1"] = std::make_shared<ScreenStateCollection>();
     EXPECT_FALSE(policy.StateMachineDecision(stateMap));
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest005 end.");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest005 function end!");
 }
 
 /**
@@ -205,7 +205,7 @@ HWTEST_F(ThermalPolicyTest, ThermalPolicyTest005, TestSize.Level0)
  */
 HWTEST_F (ThermalPolicyTest, ThermalPolicyTest006, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest006: start");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest006 function start!");
     string path = "test/path";
     string result = "";
     bool ret = g_service->GetConfigParser().DecryptConfig(path, result);
@@ -214,6 +214,6 @@ HWTEST_F (ThermalPolicyTest, ThermalPolicyTest006, TestSize.Level0)
     } else {
         EXPECT_TRUE(ret);
     }
-    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest006: end");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest006 function end!");
 }
 } // namespace
