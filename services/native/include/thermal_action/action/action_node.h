@@ -35,11 +35,11 @@ public:
     void ResetActionValue() override;
 
 private:
-    int32_t GetActionValue();
-    int32_t lastValue_ {INT_MAX};
-    int32_t fallbackValue_ {0};
+    long GetActionValue();
+    long lastValue_ {INT_MAX};
+    long fallbackValue_ {0};
     std::string nodePath_;
-    std::vector<int32_t> valueList_;
+    std::vector<long> valueList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
