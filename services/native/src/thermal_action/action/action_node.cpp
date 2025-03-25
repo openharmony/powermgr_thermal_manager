@@ -88,7 +88,7 @@ void ActionNode::ExecuteInner()
         auto tms = ThermalService::GetInstance();
         tms->GetObserver()->SetDecisionValue(actionName_, valStr);
         lastValue_ = value;
-        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}ld}", actionName_.c_str(), lastValue_);
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}" PRId64 "}", actionName_.c_str(), lastValue_);
     }
     valueList_.clear();
 }
