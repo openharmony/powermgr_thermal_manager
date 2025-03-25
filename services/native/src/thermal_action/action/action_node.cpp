@@ -79,7 +79,7 @@ void ActionNode::ExecuteInner()
         }
     }
 
-    long value = GetActionValue();
+    int64_t value = GetActionValue();
     if (value != lastValue_) {
         std::string valStr = std::to_string(value);
         if (nodePath_.size() > MIN_PATH_LENGTH) {
@@ -98,9 +98,9 @@ void ActionNode::ResetActionValue()
     lastValue_ = INT_MAX;
 }
 
-long ActionNode::GetActionValue()
+int64_t ActionNode::GetActionValue()
 {
-    long value = fallbackValue_;
+    int64_t value = fallbackValue_;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
