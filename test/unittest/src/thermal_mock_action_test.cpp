@@ -256,6 +256,7 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest003, Function|MediumTest|L
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 1;
     g_service->GetThermalLevel(level);
+    MockSocPerfAction::LimitRequest(LIM_CPU_BIG_ID, 1992000);
     EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
     EXPECT_EQ(1992000, MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID));
     EXPECT_EQ(1991500, MockSocPerfAction::GetLimitValue(LIM_CPU_MED_ID));
