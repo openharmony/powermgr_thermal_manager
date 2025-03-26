@@ -40,7 +40,7 @@ void ActionNode::InitParams(const std::string& params)
     int32_t paramNum = static_cast<int32_t>(paramList.size());
     if (paramNum > FALLBACK_IDX) {
         nodePath_ = paramList[PATH_IDX];
-        fallbackValue_ = atoi(paramList[FALLBACK_IDX].c_str());
+        fallbackValue_ = atol(paramList[FALLBACK_IDX].c_str());
     } else if (paramNum > PATH_IDX) {
         nodePath_ = paramList[PATH_IDX];
     }
@@ -64,10 +64,10 @@ void ActionNode::AddActionValue(uint32_t actionId, std::string value)
     if (actionId > 0) {
         auto iter = policyActionMap_.find(actionId);
         if (iter != policyActionMap_.end()) {
-            iter->second.intDelayValue = atoi(value.c_str());
+            iter->second.intDelayValue = atol(value.c_str());
         }
     } else {
-        valueList_.push_back(atoi(value.c_str()));
+        valueList_.push_back(atol(value.c_str()));
     }
 }
 
@@ -79,7 +79,7 @@ void ActionNode::ExecuteInner()
         }
     }
 
-    int32_t value = GetActionValue();
+    int64_t value = GetActionValue();
     if (value != lastValue_) {
         std::string valStr = std::to_string(value);
         if (nodePath_.size() > MIN_PATH_LENGTH) {
@@ -88,7 +88,7 @@ void ActionNode::ExecuteInner()
         auto tms = ThermalService::GetInstance();
         tms->GetObserver()->SetDecisionValue(actionName_, valStr);
         lastValue_ = value;
-        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}d}", actionName_.c_str(), lastValue_);
+        THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}" PRId64 "}", actionName_.c_str(), lastValue_);
     }
     valueList_.clear();
 }
@@ -98,9 +98,9 @@ void ActionNode::ResetActionValue()
     lastValue_ = INT_MAX;
 }
 
-int32_t ActionNode::GetActionValue()
+int64_t ActionNode::GetActionValue()
 {
-    int32_t value = fallbackValue_;
+    int64_t value = fallbackValue_;
     if (!valueList_.empty()) {
         if (isStrict_) {
             value = *min_element(valueList_.begin(), valueList_.end());
