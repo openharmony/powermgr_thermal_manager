@@ -53,7 +53,8 @@ int32_t FileOperation::CreateNodeFile(std::string filePath)
             THERMAL_HILOGE(COMP_SVC, "open failed to file. path=%{public}s", filePath.c_str());
             return fd;
         }
-        close(fd);
+        fdsan_exchange_owner_tag(fd, 0, DOMAIN_SERVICE);
+        fdsan_close_with_tag(fd, DOMAIN_SERVICE);
     } else {
         THERMAL_HILOGI(COMP_SVC, "the file already exists. path=%{public}s", filePath.c_str());
     }
@@ -92,15 +93,16 @@ int32_t FileOperation::ReadFile(const char *path, char *buf, size_t size)
         THERMAL_HILOGE(COMP_SVC, "open failed to file.");
         return fd;
     }
+    fdsan_exchange_owner_tag(fd, 0, DOMAIN_SERVICE);
 
     ret = read(fd, buf, size);
     if (ret < ERR_OK) {
         THERMAL_HILOGE(COMP_SVC, "failed to read file.");
-        close(fd);
+        fdsan_close_with_tag(fd, DOMAIN_SERVICE);
         return ret;
     }
 
-    close(fd);
+    fdsan_close_with_tag(fd, DOMAIN_SERVICE);
     buf[(size > 0) ? (size - 1) : 0] = '\0';
     return ERR_OK;
 }

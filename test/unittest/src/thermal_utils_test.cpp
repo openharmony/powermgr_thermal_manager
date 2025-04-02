@@ -27,6 +27,11 @@ using namespace OHOS;
 using namespace std;
 
 namespace {
+constexpr int32_t BUF_LEN = 64;
+constexpr int32_t NUM_ZERO = 0;
+}
+
+namespace {
 /**
  * @tc.name: ThermalUtilsTest001
  * @tc.desc: utils test
@@ -37,7 +42,7 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest001, TestSize.Level0)
 {
     THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest001 function start!");
     std::string dir = "";
-    char* buf = nullptr;
+    char buf[BUF_LEN];
     EXPECT_EQ(true, FileOperation::CreateNodeDir(dir) != ERR_OK);
     EXPECT_EQ(true, FileOperation::CreateNodeFile(dir) != ERR_OK);
     dir = "/data/thermaltest/";
@@ -49,7 +54,7 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest001, TestSize.Level0)
     dir = "";
     EXPECT_EQ(true, FileOperation::ReadFile(dir.c_str(), buf, size) != ERR_OK);
     dir = "/data/thermaltest/thermaltest.txt";
-    EXPECT_EQ(false, FileOperation::ReadFile(dir.c_str(), buf, size) == ERR_OK);
+    EXPECT_EQ(true, FileOperation::ReadFile(dir.c_str(), buf, size) == ERR_OK);
     dir = "";
     EXPECT_EQ(true, FileOperation::WriteFile(dir, dir, size) != ERR_OK);
     dir = "1";
@@ -60,12 +65,39 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest001, TestSize.Level0)
 /**
  * @tc.name: ThermalUtilsTest002
  * @tc.desc: utils test
- * @tc.require: issueI5YZQ2
  * @tc.type: FUNC
+ * @tc.require: issueI5YZQ2
  */
 HWTEST_F(ThermalUtilsTest, ThermalUtilsTest002, TestSize.Level0)
 {
     THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest002 function start!");
+    std::string dir = "";
+    char buf[BUF_LEN];
+    EXPECT_EQ(true, FileOperation::CreateNodeDir(dir) != ERR_OK);
+    EXPECT_EQ(true, FileOperation::CreateNodeFile(dir) != ERR_OK);
+    dir = "/data/thermaltest/";
+    EXPECT_EQ(true, FileOperation::CreateNodeDir(dir) == ERR_OK);
+    dir = "/data/thermaltest/thermaltest.txt";
+    EXPECT_EQ(true, FileOperation::CreateNodeFile(dir) == ERR_OK);
+    size_t size = dir.size()+1;
+    EXPECT_EQ(true, FileOperation::WriteFile(dir, dir, size) == ERR_OK);
+    EXPECT_EQ(true, FileOperation::ReadFile(dir.c_str(), buf, size) == ERR_OK);
+    EXPECT_EQ(true, dir.compare(buf) == NUM_ZERO);
+    dir = "";
+    EXPECT_EQ(true, FileOperation::ReadFile(dir.c_str(), buf, size) != ERR_OK);
+    EXPECT_EQ(true, FileOperation::WriteFile(dir, dir, size) != ERR_OK);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest002 function end!");
+}
+
+/**
+ * @tc.name: ThermalUtilsTest003
+ * @tc.desc: utils test
+ * @tc.require: issueI5YZQ2
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalUtilsTest, ThermalUtilsTest003, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest003 function start!");
     std::string str;
     std::vector<std::string> ret;
     std::string sep;
@@ -90,6 +122,6 @@ HWTEST_F(ThermalUtilsTest, ThermalUtilsTest002, TestSize.Level0)
     WriteActionTriggeredHiSysEvent(false, configDir, 1);
     WriteActionTriggeredHiSysEventWithRatio(true, configDir, 1);
     WriteActionTriggeredHiSysEventWithRatio(false, configDir, 1);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest002 function end!");
+    THERMAL_HILOGI(LABEL_TEST, "ThermalUtilsTest003 function end!");
 }
 } // namespace
