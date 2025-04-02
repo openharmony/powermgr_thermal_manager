@@ -89,7 +89,6 @@ void ActionThermalLevel::ExecuteInner()
     int32_t value = GetActionValue();
     if (value != lastValue_) {
         LevelRequest(value);
-        WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
@@ -186,9 +185,6 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
     for (auto& listener : thermalLevelListeners_) {
         listener->OnThermalLevelChanged(static_cast<ThermalLevel>(level));
     }
-
-    // Notify thermal level change event to battery statistics
-    WriteLevelChangedHiSysEvent(enableEvent_, level);
 }
 
 bool ActionThermalLevel::PublishLevelChangedEvents(ThermalCommonEventCode code, int32_t level)
