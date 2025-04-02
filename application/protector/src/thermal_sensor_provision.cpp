@@ -41,7 +41,6 @@ namespace PowerMgr {
 namespace {
 constexpr int32_t MAX_BUFF_SIZE = 128;
 constexpr int32_t MAX_SYSFS_SIZE = 128;
-constexpr uint32_t ARG_0 = 0;
 constexpr int32_t NUM_ZERO = 0;
 constexpr const char* THERMAL_SYSFS = "/sys/devices/virtual/thermal";
 constexpr const char* THERMAL_ZONE_DIR_NAME = "thermal_zone%d";
@@ -80,16 +79,17 @@ int32_t ThermalSensorProvision::ReadSysfsFile(const char* path, char* buf, size_
         THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to open file");
         return ERR_INVALID_OPERATION;
     }
+    fdsan_exchange_owner_tag(fd, 0, DOMAIN_FEATURE_PROTECTOR);
     readSize = read(fd, buf, size - 1);
     if (readSize < NUM_ZERO) {
         THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to read file");
-        close(fd);
+        fdsan_close_with_tag(fd, DOMAIN_FEATURE_PROTECTOR);
         return ERR_INVALID_OPERATION;
     }
 
     buf[readSize] = '\0';
     Trim(buf);
-    close(fd);
+    fdsan_close_with_tag(fd, DOMAIN_FEATURE_PROTECTOR);
 
     return ERR_OK;
 }
@@ -159,7 +159,7 @@ int32_t ThermalSensorProvision::InitThermalZoneSysfs()
             sysfsInfo.name = entry->d_name;
             THERMAL_HILOGI(FEATURE_PROTECTOR, "init sysfs info of %{public}s", sysfsInfo.name);
             int32_t ret = sscanf_s(sysfsInfo.name, THERMAL_ZONE_DIR_NAME, &id);
-            if (ret < ARG_0) {
+            if (ret < NUM_ZERO) {
                 closedir(dir);
                 return ret;
             }
