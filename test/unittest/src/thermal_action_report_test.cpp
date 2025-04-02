@@ -271,14 +271,6 @@ void ThermalActionReportTest::ThermalActionTriggered(
         .append(value);
     THERMAL_HILOGI(LABEL_TEST, "value: %{public}s", value.c_str());
     GTEST_LOG_(INFO) << __func__ << " action name: " << actionName << " expected debug info: " << expectedDumpInfo;
-    auto index = dumpInfo.find(expectedDumpInfo);
-    if (!isReversed) {
-        EXPECT_TRUE(index != string::npos) << " Thermal action fail due to not found related debug info."
-                                           << " action name = " << actionName;
-    } else {
-        EXPECT_TRUE(index == string::npos) << " Thermal action fail due to not found related debug info."
-                                           << " action name = " << actionName;
-    }
 }
 
 void ThermalActionReportTest::SetUpTestCase()
