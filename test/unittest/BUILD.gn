@@ -32,6 +32,17 @@ config("module_private_config") {
   ]
 }
 
+config("module_application_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "include",
+    "${utils_path}/native/include",
+    "${thermal_manager_path}/application/protector/include",
+    "${thermal_manager_path}/application/protector/include/action",
+    "${thermal_manager_path}/application/protector/include/policy",
+  ]
+}
+
 deps_ex = [
   "ability_base:base",
   "ability_base:want",
@@ -573,6 +584,39 @@ ohos_unittest("ThermalUtilsTest") {
   }
 }
 
+# thermal application test
+ohos_unittest("ThermalApplicationTest") {
+  module_out_path = module_output_path
+
+  sources = [
+    "${thermal_manager_path}/application/protector/src/action/cpu_action.cpp",
+    "${thermal_manager_path}/application/protector/src/action/current_action.cpp",
+    "${thermal_manager_path}/application/protector/src/action/device_control_factory.cpp",
+    "${thermal_manager_path}/application/protector/src/action/thermal_device_control.cpp",
+    "${thermal_manager_path}/application/protector/src/action/voltage_action.cpp",
+    "${thermal_manager_path}/application/protector/src/policy/protector_thermal_zone_info.cpp",
+    "${thermal_manager_path}/application/protector/src/policy/thermal_kernel_config_file.cpp",
+    "${thermal_manager_path}/application/protector/src/policy/thermal_kernel_policy.cpp",
+    "${thermal_manager_path}/application/protector/src/thermal_kernel_service.cpp",
+    "${thermal_manager_path}/application/protector/src/thermal_protector_timer.cpp",
+    "${thermal_manager_path}/application/protector/src/thermal_protector_utils.cpp",
+    "${thermal_manager_path}/application/protector/src/thermal_sensor_provision.cpp",
+    "src/thermal_application_test.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":module_application_config",
+    "${utils_path}:coverage_flags",
+  ]
+
+  deps = [ "${utils_path}:thermal_utils" ]
+
+  external_deps = deps_ex
+  external_deps += [ "googletest:gtest_main" ]
+  defines += [ "THERMAL_GTEST" ]
+}
+
 # thermal service death test
 ohos_unittest("ThermalServiceDeathTest") {
   module_out_path = module_output_path
@@ -1051,6 +1095,7 @@ group("unittest") {
     ":ThermalActionHubTest",
     ":ThermalActionReportTest",
     ":ThermalActionTest",
+    ":ThermalApplicationTest",
     ":ThermalClientApiTest",
     ":ThermalClientTest",
     ":ThermalConfigSensorClusterTest",
