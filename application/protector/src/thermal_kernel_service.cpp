@@ -23,7 +23,9 @@
 namespace OHOS {
 namespace PowerMgr {
 namespace {
+#ifdef HAS_THERMAL_CONFIG_POLICY_PART
 constexpr const char* THERMAL_KERNEL_CONFIG_PATH = "etc/thermal_config/thermal_kernel_config.xml";
+#endif
 constexpr const char* VENDOR_THERMAL_KERNEL_CONFIG_PATH = "/vendor/etc/thermal_config/thermal_kernel_config.xml";
 constexpr const char* SYSTEM_THERMAL_KERNEL_CONFIG_PATH = "/system/etc/thermal_config/thermal_kernel_config.xml";
 }
