@@ -34,10 +34,10 @@ public:
     void Execute() override;
 
 private:
-    int32_t lastValue_ {INT_MAX};
-    int32_t fallbackValue_ {0};
+    int64_t lastValue_ {INT_MAX};
+    int64_t fallbackValue_ {0};
     std::string nodePath_;
-    std::vector<int32_t> valueList_;
+    std::vector<int64_t> valueList_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
