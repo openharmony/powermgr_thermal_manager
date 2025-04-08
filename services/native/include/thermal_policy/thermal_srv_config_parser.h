@@ -38,6 +38,7 @@ public:
 private:
     bool ParseRootNode(const xmlNodePtr& node);
     bool ParseBaseNode(const xmlNodePtr& node);
+    bool ParseSimTz(const std::map<std::string, std::string>& baseInfoMap, ThermalService* tms);
     bool ParseLevelNode(const xmlNodePtr& node);
     bool ParseStateNode(const xmlNodePtr& node);
     bool ParseActionNode(const xmlNodePtr& node);

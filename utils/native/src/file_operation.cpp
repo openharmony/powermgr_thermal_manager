@@ -109,7 +109,19 @@ int32_t FileOperation::ReadFile(const char *path, char *buf, size_t size)
 
 int32_t FileOperation::ConvertInt(const std::string &value)
 {
-    return std::stoi(value);
+    constexpr int PARAMETER_TEN = 10;
+    errno = 0;
+    char* endptr = nullptr;
+    int64_t result = strtoll(value.c_str(), &endptr, PARAMETER_TEN);
+    if (endptr == value.c_str() || endptr == nullptr || *endptr != '\0') {
+        THERMAL_HILOGE(COMP_SVC, "strtoll error, string:%{public}s", value.c_str());
+        return ERR_INVALID_VALUE;
+    }
+    if (errno == ERANGE && (result == LLONG_MAX || result == LLONG_MIN)) {
+        THERMAL_HILOGE(COMP_SVC, "Transit result out of range");
+        return ERR_INVALID_VALUE;
+    }
+    return static_cast<int32_t>(result);
 }
 } // namespace PowerMgr
 } // namespace OHOS
