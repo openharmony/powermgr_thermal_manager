@@ -38,13 +38,39 @@ std::string CustStateCollection::GetState()
 
 void CustStateCollection::SetState(const std::string& stateValue)
 {
-    state_ = std::stoul(stateValue);
+    errno = 0;
+    constexpr unsigned long ULONG_MIN = 0;
+    constexpr int PARAMETER_TEN = 10;
+    char* endptr = nullptr;
+    unsigned long result = strtoul(stateValue.c_str(), &endptr, PARAMETER_TEN);
+    if (endptr == stateValue.c_str() || endptr == nullptr || *endptr != '\0') {
+        THERMAL_HILOGE(COMP_SVC, "strtoul error, string:%{public}s", stateValue.c_str());
+        return;
+    }
+    if (errno == ERANGE && (result == ULONG_MAX || result == ULONG_MIN)) {
+        THERMAL_HILOGE(COMP_SVC, "Transit result out of range");
+        return;
+    }
+    state_ = result;
     THERMAL_HILOGI(COMP_SVC, "cust state has set to %{public}s", stateValue.c_str());
 }
 
 bool CustStateCollection::DecideState(const std::string& value)
 {
-    if (state_ & std::stoul(value)) {
+    errno = 0;
+    constexpr unsigned long ULONG_MIN = 0;
+    constexpr int PARAMETER_TEN = 10;
+    char* endptr = nullptr;
+    unsigned long result = strtoul(value.c_str(), &endptr, PARAMETER_TEN);
+    if (endptr == value.c_str() || endptr == nullptr || *endptr != '\0') {
+        THERMAL_HILOGE(COMP_SVC, "strtoul error, string:%{public}s", value.c_str());
+        return false;
+    }
+    if (errno == ERANGE && (result == ULONG_MAX || result == ULONG_MIN)) {
+        THERMAL_HILOGE(COMP_SVC, "Transit result out of range");
+        return false;
+    }
+    if (state_ & result) {
         return true;
     } else {
         return false;
