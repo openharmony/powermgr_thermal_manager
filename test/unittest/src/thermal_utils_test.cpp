@@ -36,7 +36,7 @@ namespace {
  * @tc.name: ThermalUtilsTest001
  * @tc.desc: utils test
  * @tc.type: FUNC
- * @tc.require: issueI5YZQ2
+ * @tc.require: issueIBYAS8
  */
 HWTEST_F(ThermalUtilsTest, ThermalUtilsTest001, TestSize.Level0)
 {
