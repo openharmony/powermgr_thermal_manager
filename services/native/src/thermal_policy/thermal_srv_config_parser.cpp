@@ -183,7 +183,11 @@ bool ThermalSrvConfigParser::ParseBaseNode(const xmlNodePtr& node)
             return true;
         }
         if (iter->second == "0" || iter->second == "1") {
-            tms->SetSimulationXml(static_cast<bool>(std::stoi(iter->second)));
+            int64_t result = 0;
+            if (!StringOperation::ParseStrtollResult(iter->second, result)) {
+                return false;
+            }
+            tms->SetSimulationXml(static_cast<bool>(result));
             return true;
         }
         return false;
