@@ -65,7 +65,8 @@
         ],
         "service_group": [
           "//base/powermgr/thermal_manager/test/common:mock_thermalsrv_client",
-          "//base/powermgr/thermal_manager/services:service"
+          "//base/powermgr/thermal_manager/services:service",
+          "//base/powermgr/thermal_manager/utils/appmgr:thermal_utils_ability"
         ]
       },
       "inner_api": [

@@ -18,9 +18,6 @@
 
 #include "ithermal_action.h"
 
-#include "running_process_info.h"
-#include "app_mgr_client.h"
-
 namespace OHOS {
 namespace PowerMgr {
 class ActionApplicationProcess : public IThermalAction {
@@ -39,13 +36,6 @@ public:
     void AddActionValue(std::string value) override;
     void Execute() override;
     ErrCode KillApplicationAction(const std::string& bundleName);
-    ErrCode GetRunningProcessInfo(std::vector<AppExecFwk::RunningProcessInfo>& info);
-    AppExecFwk::RunningProcessInfo GetAppProcessInfoByName(const std::string& processName);
-    ErrCode KillProcess(const pid_t pid);
-    void GetAllRunnningAppProcess();
-    void KillFgAppProcess();
-    void KillBgAppProcess();
-    void KillAllAppProcess();
     void ProcessAppActionRequest(const uint32_t& value);
 
     /* The api is used to UT, MT, ST */
@@ -53,10 +43,6 @@ public:
 private:
     uint32_t GetActionValue();
     std::vector<uint32_t> valueList_;
-    std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;
-    std::vector<AppExecFwk::RunningProcessInfo> bgAppProcessInfos_;
-    std::vector<AppExecFwk::RunningProcessInfo> fgAppProcessInfos_;
-    std::vector<AppExecFwk::RunningProcessInfo> allAppProcessInfos_;
     uint32_t lastValue_ {0};
 };
 } // namespace PowerMgr
