@@ -15,6 +15,7 @@
 
 #include "cust_state_collection.h"
 #include "constants.h"
+#include "string_operation.h"
 #include "thermal_service.h"
 
 namespace OHOS {
@@ -38,13 +39,21 @@ std::string CustStateCollection::GetState()
 
 void CustStateCollection::SetState(const std::string& stateValue)
 {
-    state_ = std::stoul(stateValue);
+    unsigned long result = 0;
+    if (!StringOperation::ParseStrtoulResult(stateValue, result)) {
+        return;
+    }
+    state_ = result;
     THERMAL_HILOGI(COMP_SVC, "cust state has set to %{public}s", stateValue.c_str());
 }
 
 bool CustStateCollection::DecideState(const std::string& value)
 {
-    if (state_ & std::stoul(value)) {
+    unsigned long result = 0;
+    if (!StringOperation::ParseStrtoulResult(value, result)) {
+        return false;
+    }
+    if (state_ & result) {
         return true;
     } else {
         return false;
