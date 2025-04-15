@@ -98,7 +98,6 @@ ohos_shared_library("thermalservice") {
   external_deps += [
     "ability_base:want",
     "ability_runtime:ability_manager",
-    "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
