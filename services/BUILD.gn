@@ -99,6 +99,7 @@ ohos_shared_library("thermalservice") {
 
   external_deps = [ "power_manager:power_permission" ]
   external_deps += [
+    "ability_base:want",
     "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
@@ -120,8 +121,6 @@ ohos_shared_library("thermalservice") {
     "samgr:samgr_proxy",
     "time_service:time_client",
   ]
-
-  public_external_deps = [ "ability_base:want" ]
 
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
