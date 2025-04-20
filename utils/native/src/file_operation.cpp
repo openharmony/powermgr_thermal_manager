@@ -14,7 +14,7 @@
  */
 
 #include "file_operation.h"
-
+#include "string_operation.h"
 #include <cstdio>
 #include <string>
 #include <fcntl.h>
@@ -109,16 +109,8 @@ int32_t FileOperation::ReadFile(const char *path, char *buf, size_t size)
 
 int32_t FileOperation::ConvertInt(const std::string &value)
 {
-    constexpr int PARAMETER_TEN = 10;
-    errno = 0;
-    char* endptr = nullptr;
-    int64_t result = strtoll(value.c_str(), &endptr, PARAMETER_TEN);
-    if (endptr == value.c_str() || endptr == nullptr || *endptr != '\0') {
-        THERMAL_HILOGE(COMP_SVC, "strtoll error, string:%{public}s", value.c_str());
-        return ERR_INVALID_VALUE;
-    }
-    if (errno == ERANGE && (result == LLONG_MAX || result == LLONG_MIN)) {
-        THERMAL_HILOGE(COMP_SVC, "Transit result out of range");
+    int64_t result = 0;
+    if (!StringOperation::ParseStrtollResult(value, result)) {
         return ERR_INVALID_VALUE;
     }
     return static_cast<int32_t>(result);

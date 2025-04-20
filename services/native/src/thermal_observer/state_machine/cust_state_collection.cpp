@@ -15,6 +15,7 @@
 
 #include "cust_state_collection.h"
 #include "constants.h"
+#include "string_operation.h"
 #include "thermal_service.h"
 
 namespace OHOS {
@@ -38,17 +39,8 @@ std::string CustStateCollection::GetState()
 
 void CustStateCollection::SetState(const std::string& stateValue)
 {
-    errno = 0;
-    constexpr unsigned long ULONG_MIN = 0;
-    constexpr int PARAMETER_TEN = 10;
-    char* endptr = nullptr;
-    unsigned long result = strtoul(stateValue.c_str(), &endptr, PARAMETER_TEN);
-    if (endptr == stateValue.c_str() || endptr == nullptr || *endptr != '\0') {
-        THERMAL_HILOGE(COMP_SVC, "strtoul error, string:%{public}s", stateValue.c_str());
-        return;
-    }
-    if (errno == ERANGE && (result == ULONG_MAX || result == ULONG_MIN)) {
-        THERMAL_HILOGE(COMP_SVC, "Transit result out of range");
+    unsigned long result = 0;
+    if (!StringOperation::ParseStrtoulResult(stateValue, result)) {
         return;
     }
     state_ = result;
@@ -57,17 +49,8 @@ void CustStateCollection::SetState(const std::string& stateValue)
 
 bool CustStateCollection::DecideState(const std::string& value)
 {
-    errno = 0;
-    constexpr unsigned long ULONG_MIN = 0;
-    constexpr int PARAMETER_TEN = 10;
-    char* endptr = nullptr;
-    unsigned long result = strtoul(value.c_str(), &endptr, PARAMETER_TEN);
-    if (endptr == value.c_str() || endptr == nullptr || *endptr != '\0') {
-        THERMAL_HILOGE(COMP_SVC, "strtoul error, string:%{public}s", value.c_str());
-        return false;
-    }
-    if (errno == ERANGE && (result == ULONG_MAX || result == ULONG_MIN)) {
-        THERMAL_HILOGE(COMP_SVC, "Transit result out of range");
+    unsigned long result = 0;
+    if (!StringOperation::ParseStrtoulResult(value, result)) {
         return false;
     }
     if (state_ & result) {
