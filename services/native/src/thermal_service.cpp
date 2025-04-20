@@ -246,7 +246,7 @@ bool ThermalService::InitConfigFile()
             THERMAL_HILOGD(COMP_SVC, "match pliocy config file");
             return true;
         }
-        THERMAL_HILOGE(COMP_SVC, "pliocy config file config init err");
+        THERMAL_HILOGE(COMP_SVC, "policy config file config init err");
         return false;
     }
 #endif
@@ -260,7 +260,7 @@ bool ThermalService::InitConfigFile()
         THERMAL_HILOGD(COMP_SVC, "thermal service config init suc:SYSTEM_CONFIG");
         return true;
     }
-
+    THERMAL_HILOGE(COMP_SVC, "policy config file config init fail");
     return false;
 }
 
