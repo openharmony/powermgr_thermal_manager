@@ -143,36 +143,6 @@ bool ThermalSrvConfigParser::ParseRootNode(const xmlNodePtr& node)
     return ret;
 }
 
-bool ThermalSrvConfigParser::ParseSimTz(const std::map<std::string, std::string>& baseInfoMap, ThermalService* tms)
-{
-    constexpr int PARAMETER_TEN = 10;
-    auto iter = baseInfoMap.find("sim_tz");
-    if (iter == baseInfoMap.end()) {
-        tms->SetSimulationXml(false);
-        return true;
-    }
-    if (iter->second == "") {
-        tms->SetSimulationXml(false);
-        return true;
-    }
-    errno = 0;
-    char* endptr = nullptr;
-    int64_t result = strtoll(iter->second.c_str(), &endptr, PARAMETER_TEN);
-    if (endptr == iter->second.c_str() || endptr == nullptr || *endptr != '\0') {
-        THERMAL_HILOGE(COMP_SVC, "strtoll error, string:%{public}s", iter->second.c_str());
-        return false;
-    }
-    if (errno == ERANGE && (result == LLONG_MAX || result == LLONG_MIN)) {
-        THERMAL_HILOGE(COMP_SVC, "Transit result out of range");
-        return false;
-    }
-    if (iter->second == "0" || iter->second == "1") {
-        tms->SetSimulationXml(static_cast<bool>(result));
-        return true;
-    }
-    return false;
-}
-
 bool ThermalSrvConfigParser::ParseBaseNode(const xmlNodePtr& node)
 {
     BaseInfoMap baseInfoMap;
@@ -206,10 +176,23 @@ bool ThermalSrvConfigParser::ParseBaseNode(const xmlNodePtr& node)
     }
     auto tms = ThermalService::GetInstance();
     tms->GetBaseinfoObj()->SetBaseInfo(baseInfoMap);
-    bool ret = ParseSimTz(baseInfoMap, tms);
-    if (!ret) {
+    auto iter = baseInfoMap.find("sim_tz");
+    if (iter != baseInfoMap.end()) {
+        if (iter->second == "") {
+            tms->SetSimulationXml(false);
+            return true;
+        }
+        if (iter->second == "0" || iter->second == "1") {
+            int64_t result = 0;
+            if (!StringOperation::ParseStrtollResult(iter->second, result)) {
+                return false;
+            }
+            tms->SetSimulationXml(static_cast<bool>(result));
+            return true;
+        }
         return false;
     }
+    tms->SetSimulationXml(false);
     return true;
 }
 
