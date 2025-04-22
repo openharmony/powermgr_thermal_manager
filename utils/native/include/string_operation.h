@@ -29,6 +29,8 @@ public:
     static bool Find(const std::string& origin, const std::string& target);
     static bool StrToUint(const std::string& str, uint32_t& value);
     static bool StrToDouble(const std::string& str, double& value);
+    static bool ParseStrtollResult(const std::string& str, int64_t& result);
+    static bool ParseStrtoulResult(const std::string& str, unsigned long& result);
 };
 } // namespace PowerMgr
 } // namespace OHOS
