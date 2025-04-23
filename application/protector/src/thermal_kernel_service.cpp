@@ -16,9 +16,7 @@
 #include "thermal_kernel_service.h"
 #include "thermal_common.h"
 #include "thermal_kernel_config_file.h"
-#ifdef HAS_THERMAL_CONFIG_POLICY_PART
 #include "config_policy_utils.h"
-#endif
 
 namespace OHOS {
 namespace PowerMgr {
@@ -52,9 +50,8 @@ bool ThermalKernelService::Init()
         timer_ = std::make_shared<ThermalProtectorTimer>(provision_);
     }
 
-    bool parseConfigSuc = false;
-#ifdef HAS_THERMAL_CONFIG_POLICY_PART
     char buf[MAX_PATH_LEN];
+    bool parseConfigSuc = false;
     char* path = GetOneCfgFile(THERMAL_KERNEL_CONFIG_PATH, buf, MAX_PATH_LEN);
     if (path != nullptr && *path != '\0') {
         if (!ThermalKernelConfigFile::GetInstance().Init(path)) {
@@ -63,7 +60,7 @@ bool ThermalKernelService::Init()
         }
         parseConfigSuc = true;
     }
-#endif
+
     if (!parseConfigSuc) {
         if (!ThermalKernelConfigFile::GetInstance().Init(VENDOR_THERMAL_KERNEL_CONFIG_PATH)) {
             THERMAL_HILOGE(FEATURE_PROTECTOR, "failed to parse vendor config");
