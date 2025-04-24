@@ -14,7 +14,7 @@
  */
 
 #include "file_operation.h"
-
+#include "string_operation.h"
 #include <cstdio>
 #include <string>
 #include <fcntl.h>
@@ -107,7 +107,11 @@ int32_t FileOperation::ReadFile(const char *path, char *buf, size_t size)
 
 int32_t FileOperation::ConvertInt(const std::string &value)
 {
-    return std::stoi(value);
+    int64_t result = 0;
+    if (!StringOperation::ParseStrtollResult(value, result)) {
+        return ERR_INVALID_VALUE;
+    }
+    return static_cast<int32_t>(result);
 }
 } // namespace PowerMgr
 } // namespace OHOS
