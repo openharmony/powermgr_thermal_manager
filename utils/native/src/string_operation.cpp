@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <limits.h>
 #include <string>
+#include "thermal_log.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -110,6 +111,47 @@ bool StringOperation::StrToDouble(const std::string& str, double& value)
         return false;
     }
     value = result;
+    return true;
+}
+
+bool StringOperation::ParseStrtollResult(const std::string& str, int64_t& result)
+{
+    constexpr int PARAMETER_TEN = 10;
+    errno = 0;
+    char* endptr = nullptr;
+    result = strtoll(str.c_str(), &endptr, PARAMETER_TEN);
+    if (endptr == str.c_str()) {
+        THERMAL_HILOGE(COMP_SVC, "String have no numbers, string:%{public}s", str.c_str());
+        return false;
+    }
+    if (errno == ERANGE && (result == LLONG_MAX || result == LLONG_MIN)) {
+        THERMAL_HILOGE(COMP_SVC, "Transit result out of range, string:%{public}s", str.c_str());
+        return false;
+    }
+    if (*endptr != '\0') {
+        THERMAL_HILOGE(COMP_SVC, "String contain non-numeric characters, string:%{public}s", str.c_str());
+    }
+    return true;
+}
+
+bool StringOperation::ParseStrtoulResult(const std::string& str, unsigned long& result)
+{
+    constexpr unsigned long ULONG_MIN = 0;
+    constexpr int PARAMETER_TEN = 10;
+    errno = 0;
+    char* endptr = nullptr;
+    result = strtoul(str.c_str(), &endptr, PARAMETER_TEN);
+    if (endptr == str.c_str()) {
+        THERMAL_HILOGE(COMP_SVC, "String have no numbers, string:%{public}s", str.c_str());
+        return false;
+    }
+    if (errno == ERANGE && (result == ULONG_MAX || result == ULONG_MIN)) {
+        THERMAL_HILOGE(COMP_SVC, "Transit result out of range, string:%{public}s", str.c_str());
+        return false;
+    }
+    if (*endptr != '\0') {
+        THERMAL_HILOGE(COMP_SVC, "String contain non-numeric characters, string:%{public}s", str.c_str());
+    }
     return true;
 }
 } // namespace PowerMgr
