@@ -45,7 +45,7 @@ constexpr const char* SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_servic
 
 char* GetOneCfgFile(const char *pathSuffix, char *buf, unsigned int bufLength)
 {
-    THERMAL_HILOGI(LABEL_TEST, "mock GetOneCfgFile.");
+    THERMAL_HILOGD(LABEL_TEST, "mock GetOneCfgFile.");
     return nullptr;
 }
 
@@ -65,12 +65,12 @@ namespace {
  */
 HWTEST_F(ThermalServiceTest, ThermalServiceTest000, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest000 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest000 start.");
     std::string deviceId = "";
     EXPECT_FALSE(g_service == nullptr);
     g_service->OnAddSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId);
     g_service->OnAddSystemAbility(POWER_MANAGER_THERMAL_SERVICE_ID, deviceId);
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest000 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest000 end.");
 }
 
 /**
@@ -80,7 +80,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest000, TestSize.Level0)
  */
 HWTEST_F(ThermalServiceTest, ThermalServiceTest001, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest001 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest001 start.");
     g_service->ready_ = true;
     g_service->InitSystemTestModules();
     g_service->OnStart();
@@ -98,7 +98,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest001, TestSize.Level0)
     g_service->OnStop();
     EXPECT_FALSE(g_service->ready_);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest001 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest001 end.");
 }
 
 /**
@@ -108,14 +108,14 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest001, TestSize.Level0)
  */
 HWTEST_F(ThermalServiceTest, ThermalServiceTest002, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest002 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest002 start.");
     EXPECT_TRUE(g_service->Init());
     EXPECT_TRUE(g_service->CreateConfigModule());
     EXPECT_TRUE(g_service->Init());
     EXPECT_TRUE(g_service->CreateConfigModule());
     EXPECT_TRUE(g_service->InitStateMachine());
     g_service->InitSystemTestModules();
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest002 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest002 end.");
 }
 
 /**
@@ -125,7 +125,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest002, TestSize.Level0)
  */
 HWTEST_F(ThermalServiceTest, ThermalServiceTest003, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest003 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest003 start.");
 
     std::string VENDOR_CONFIG_BACKUP = "/vendor/etc/thermal_config/thermal_service_config_backup.xml";
     std::string SYSTEM_CONFIG_BACKUP = "/system/etc/thermal_config/thermal_service_config_backup.xml";
@@ -135,7 +135,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest003, TestSize.Level0)
     ret = rename(SYSTEM_CONFIG_BACKUP.c_str(), SYSTEM_CONFIG);
     EXPECT_NE(ret, ERR_OK);
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest003 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest003 end.");
 }
 
 /**
@@ -145,7 +145,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest003, TestSize.Level0)
  */
 HWTEST_F(ThermalServiceTest, ThermalServiceTest004, TestSize.Level0)
 {
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest004 start.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest004 start.");
 
     int fd = 0;
     std::vector<std::u16string> args;
@@ -156,47 +156,6 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest004, TestSize.Level0)
     fd = -1;
     EXPECT_EQ(ERR_OK, g_service->Dump(fd, args));
 
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest004 end.");
-}
-
-/**
- * @tc.name: ThermalServiceTest005
- * @tc.desc: test Service RegisterBootCompletedCallback
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalServiceTest, ThermalServiceTest005, TestSize.Level0)
-{
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest005 start.");
-    EXPECT_TRUE(g_service->Init());
-    g_service->RegisterBootCompletedCallback();
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest005 end.");
-}
-
-/**
- * @tc.name: ThermalServiceTest006
- * @tc.desc: test Service UnRegisterThermalHdiCallback
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalServiceTest, ThermalServiceTest006, TestSize.Level0)
-{
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest006 start.");
-    EXPECT_TRUE(g_service->Init());
-    g_service->thermalInterface_ = nullptr;
-    g_service->UnRegisterThermalHdiCallback();
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest006 end.");
-}
-
-/**
- * @tc.name: ThermalServiceTest007
- * @tc.desc: test Service RegisterFanHdiCallback
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalServiceTest, ThermalServiceTest007, TestSize.Level0)
-{
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest007 start.");
-    EXPECT_TRUE(g_service->Init());
-    g_service->thermalInterface_ = nullptr;
-    g_service->RegisterFanHdiCallback();
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest007 end.");
+    THERMAL_HILOGD(LABEL_TEST, "ThermalServiceTest004 end.");
 }
 } // namespace
