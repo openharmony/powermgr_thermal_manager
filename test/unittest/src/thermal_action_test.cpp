@@ -610,53 +610,6 @@ HWTEST_F(ThermalActionTest, ThermalActionTest013, TestSize.Level0)
 }
 
 /**
- * @tc.name: ThermalActionTest014
- * @tc.desc: Action Airplane Function Test
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalActionTest, ThermalActionTest014, TestSize.Level0)
-{
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest014 start");
-    g_actionAirplane->InitParams("airplane");
-    g_actionAirplane->AddActionValue(0, "0");
-    g_actionAirplane->AddActionValue(0, "0");
-    g_actionAirplane->AddActionValue(0, "air");
-    g_actionAirplane->Execute();
-    EXPECT_TRUE(g_actionAirplane->valueList_.empty());
-    std::string input = "1";
-    g_actionAirplane->AddActionValue(0, input);
-    g_actionCpuIsolate->SetStrict(true);
-    uint32_t value = g_actionAirplane->GetActionValue();
-    int32_t ret = g_actionAirplane->AirplaneRequest(value);
-    g_actionAirplane->AirplaneRequest(0);
-    g_actionAirplane->AirplaneRequest(1);
-    EXPECT_TRUE(ret == ERR_OK);
-    ret = g_actionAirplane->AirplaneExecution(value);
-    EXPECT_TRUE(ret == ERR_OK);
-    PolicyDelayAction delayAction;
-    delayAction.delayTime = 10000;
-    std::shared_ptr<IThermalAction> g_actionAirplane2 = g_actionAirplane;
-    g_actionAirplane2->AddActionDelayTime(1, delayAction);
-    g_actionAirplane2->AddActionValue(1, "1.0");
-    PolicyDelayAction delayAction2;
-    delayAction2.delayTime = 10000;
-    g_actionAirplane2->AddActionDelayTime(2, delayAction2);
-    g_actionAirplane2->AddActionValue(2, "1.0");
-    g_actionAirplane2->Execute();
-    PolicyDelayAction delayAction3;
-    delayAction3.delayTime = 10000;
-    g_actionAirplane2->AddActionDelayTime(2, delayAction3);
-    g_actionAirplane2->AddActionValue(2, "1.0");
-    g_actionAirplane2->Execute();
-    PolicyDelayAction delayAction4;
-    delayAction4.delayTime = 10000;
-    g_actionAirplane2->AddActionDelayTime(4, delayAction4);
-    g_actionAirplane2->AddActionValue(4, "1.0");
-    g_actionAirplane2->Execute();
-    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest014 end");
-}
-
-/**
  * @tc.name: ThermalActionTest015
  * @tc.desc: Action Timer Test
  * @tc.type: FUNC
@@ -722,5 +675,52 @@ HWTEST_F(ThermalActionTest, ThermalActionTest016, TestSize.Level0)
     g_actionPopup2->AddActionValue(4, "1.0");
     g_actionPopup2->Execute();
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest016 end");
+}
+
+/**
+ * @tc.name: ThermalActionTest014
+ * @tc.desc: Action Airplane Function Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionTest, ThermalActionTest014, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest014 start");
+    g_actionAirplane->InitParams("airplane");
+    g_actionAirplane->AddActionValue(0, "0");
+    g_actionAirplane->AddActionValue(0, "0");
+    g_actionAirplane->AddActionValue(0, "air");
+    g_actionAirplane->Execute();
+    EXPECT_TRUE(g_actionAirplane->valueList_.empty());
+    std::string input = "1";
+    g_actionAirplane->AddActionValue(0, input);
+    g_actionCpuIsolate->SetStrict(true);
+    uint32_t value = g_actionAirplane->GetActionValue();
+    int32_t ret = g_actionAirplane->AirplaneRequest(value);
+    g_actionAirplane->AirplaneRequest(0);
+    g_actionAirplane->AirplaneRequest(1);
+    EXPECT_TRUE(ret == ERR_OK);
+    ret = g_actionAirplane->AirplaneExecution(value);
+    EXPECT_TRUE(ret == ERR_OK);
+    PolicyDelayAction delayAction;
+    delayAction.delayTime = 10000;
+    std::shared_ptr<IThermalAction> g_actionAirplane2 = g_actionAirplane;
+    g_actionAirplane2->AddActionDelayTime(1, delayAction);
+    g_actionAirplane2->AddActionValue(1, "1.0");
+    PolicyDelayAction delayAction2;
+    delayAction2.delayTime = 10000;
+    g_actionAirplane2->AddActionDelayTime(2, delayAction2);
+    g_actionAirplane2->AddActionValue(2, "1.0");
+    g_actionAirplane2->Execute();
+    PolicyDelayAction delayAction3;
+    delayAction3.delayTime = 10000;
+    g_actionAirplane2->AddActionDelayTime(2, delayAction3);
+    g_actionAirplane2->AddActionValue(2, "1.0");
+    g_actionAirplane2->Execute();
+    PolicyDelayAction delayAction4;
+    delayAction4.delayTime = 10000;
+    g_actionAirplane2->AddActionDelayTime(4, delayAction4);
+    g_actionAirplane2->AddActionValue(4, "1.0");
+    g_actionAirplane2->Execute();
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest014 end");
 }
 } // namespace

@@ -85,6 +85,7 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
   ]
   external_deps = deps_ex
 
+  defines = []
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
@@ -127,6 +128,7 @@ ohos_systemtest("ThermalMgrSystemTest") {
   ]
   external_deps = deps_ex
 
+  defines = []
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
@@ -164,6 +166,7 @@ ohos_systemtest("ThermalMgrDialogTest") {
   ]
   external_deps = deps_ex
 
+  defines = []
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
@@ -199,6 +202,7 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
   ]
   external_deps = deps_ex
 
+  defines = []
   if (defined(global_parts_info) &&
       defined(global_parts_info.powermgr_battery_manager)) {
     defines += [ "BATTERY_MANAGER_ENABLE" ]
