@@ -88,10 +88,11 @@ void ActionThermalLevel::ExecuteInner()
 
     int32_t value = GetActionValue();
     if (value != lastValue_) {
+        THERMAL_HILOGI(COMP_SVC, "thermal level changed, new lev: %{public}d, old lev: %{public}d", value, lastValue_);
+        lastValue_ = value;
         LevelRequest(value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
-        lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
     valueList_.clear();
@@ -176,8 +177,6 @@ void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const 
 
 void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
 {
-    THERMAL_HILOGI(COMP_SVC, "thermal level changed, new lev: %{public}d, old lev: %{public}d", level, lastValue_);
-
     // Send Notification event
     PublishLevelChangedEvents(ThermalCommonEventCode::CODE_THERMAL_LEVEL_CHANGED, level);
 
