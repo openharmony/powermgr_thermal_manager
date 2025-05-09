@@ -189,6 +189,13 @@ bool ThermalMgrClient::UpdateThermalState(const std::string& tag, const std::str
     return thermalSrv_->UpdateThermalState(tag, val, isImmed);
 }
 
+bool ThermalMgrClient::UpdateThermalPolicy()
+{
+    THERMAL_HILOGD(COMP_FWK, "Enter");
+    THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, false);
+    return thermalSrv_->GetThermalInfo();
+}
+
 ThermalLevel ThermalMgrClient::GetThermalLevel()
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
