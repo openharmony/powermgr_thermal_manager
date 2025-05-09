@@ -40,6 +40,7 @@ public:
     int32_t GetThermalSensorTemp(const SensorType type);
     ThermalLevel GetThermalLevel();
     bool SetScene(const std::string& scene);
+    bool UpdateThermalPolicy();
     bool UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed = false);
     std::string Dump(const std::vector<std::string>& args);
 

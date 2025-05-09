@@ -85,7 +85,6 @@ public:
             timerInfo->SetType(ThermalTimer::TIMER_TYPE_WAKEUP | ThermalTimer::TIMER_TYPE_EXACT);
             auto callback = [this, &policyAction]() {
                 policyAction.second.isCompleted = true;
-                ExecuteInner();
                 auto thermalTimer = std::make_shared<ThermalTimer>();
                 thermalTimer->StopTimer(policyAction.second.delayTimerId);
                 thermalTimer->DestroyTimer(policyAction.second.delayTimerId);
