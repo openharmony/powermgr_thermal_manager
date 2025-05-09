@@ -81,4 +81,20 @@ HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_003, TestSize.Level0)
     EXPECT_EQ(true, level <= ThermalLevel::ESCAPE && level >= ThermalLevel::COOL);
     THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_003:: Test End!!");
 }
+
+/*
+ * @tc.number: ThermalClientApiTest_004
+ * @tc.name: ThermalClientApiTest_004
+ * @tc.desc: Test update thermal policy
+ */
+HWTEST_F(ThermalClientApiTest, ThermalClientApiTest_004, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_004:: Test Start!!");
+
+    auto& thermalMgrClient = ThermalMgrClient::GetInstance();
+    bool res = thermalMgrClient.UpdateThermalPolicy();
+
+    EXPECT_EQ(true, res);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalClientApiTest_004:: Test End!!");
+}
 }
