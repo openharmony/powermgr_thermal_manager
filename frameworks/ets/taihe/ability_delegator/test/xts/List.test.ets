@@ -13,26 +13,7 @@
  * limitations under the License.
  */
 
-@!namespace("@ohos.thermal", "thermal")
-
-@!sts_inject("""
-static { loadLibrary("thermal_manager_taihe_native.z") }""")
-
-union MyUndefined { @undefined Undefined; }
-
-enum ThermalLevel: i32 {
-    COOL = 0,
-    NORMAL = 1,
-    WARM = 2,
-    HOT = 3,
-    OVERHEATED = 4,
-    WARNING = 5,
-    EMERGENCY = 6,
-    ESCAPE = 7
+import ThermalTest from './Thermal.test'
+export default function testsuite() {
+    ThermalTest();
 }
-
-function RegisterThermalLevelCallback(thermalCb: (level: ThermalLevel) => void): void;
-
-function UnregisterThermalLevelCallback(thermalCb: Optional<(arg: MyUndefined) => void>): void;
-
-function GetLevel(): ThermalLevel;

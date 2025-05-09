@@ -81,6 +81,13 @@ generate_static_abc("thermal_abc") {
   dependencies = [ ":run_taihe" ]
 }
 
+generate_static_abc("thermal_test_abc") {
+  base_url = "$thermal_frameworks/ets/taihe/ability_delegator/test"
+  files = [ "$thermal_frameworks/ets/taihe/ability_delegator/test/test_main.ets" ]
+  is_boot_abc = "True"
+  device_dst_file = "/system/framework/thermal_test_abc.abc"
+}
+
 ohos_prebuilt_etc("thermal_etc") {
   source = "$target_out_dir/thermal_abc.abc"
   module_install_dir = "framework"
