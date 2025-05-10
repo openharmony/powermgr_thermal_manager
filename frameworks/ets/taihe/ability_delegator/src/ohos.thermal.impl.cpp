@@ -38,7 +38,7 @@ void RegisterThermalLevelCallback(callback_view<void(ohos::thermal::ThermalLevel
     g_thermalMgrClient.SubscribeThermalLevelCallback(g_thermalLevelCallback);
 }
 
-void UnregisterThermalLevelCallback(optional_view<callback<void()>> thermalCb)
+void UnregisterThermalLevelCallback(optional_view<callback<void(MyUndefined const&)>> thermalCb)
 {
     THERMAL_HILOGD(COMP_FWK, "ets UnregisterThermalLevelCallback interface");
     if (g_thermalLevelCallback == nullptr) {
@@ -48,7 +48,7 @@ void UnregisterThermalLevelCallback(optional_view<callback<void()>> thermalCb)
     g_thermalMgrClient.UnSubscribeThermalLevelCallback(g_thermalLevelCallback);
     if (thermalCb) {
         THERMAL_HILOGI(COMP_FWK, "UnregisterThermalLevelCallback thermalCb start");
-        (*thermalCb)();
+        (*thermalCb)(MyUndefined::make_Undefined());
     } else {
         THERMAL_HILOGI(COMP_FWK, "UnregisterThermalLevelCallback thermalCb is nullptr");
     }
