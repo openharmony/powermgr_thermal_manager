@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,26 +14,12 @@
  * limitations under the License.
  */
 
-@!namespace("@ohos.thermal", "thermal")
-
-@!sts_inject("""
-static { loadLibrary("thermal_manager_taihe_native.z") }""")
-
-union MyUndefined { @undefined Undefined; }
-
-enum ThermalLevel: i32 {
-    COOL = 0,
-    NORMAL = 1,
-    WARM = 2,
-    HOT = 3,
-    OVERHEATED = 4,
-    WARNING = 5,
-    EMERGENCY = 6,
-    ESCAPE = 7
+export default class Utils{
+  static async msSleep(count:int) : Promise<int> {
+    return new Promise<int>((resolve, reject) => {
+      setTimeout(() => {
+        resolve(0)
+      }, count)
+    })
+  }
 }
-
-function RegisterThermalLevelCallback(thermalCb: (level: ThermalLevel) => void): void;
-
-function UnregisterThermalLevelCallback(thermalCb: Optional<(arg: MyUndefined) => void>): void;
-
-function GetLevel(): ThermalLevel;
