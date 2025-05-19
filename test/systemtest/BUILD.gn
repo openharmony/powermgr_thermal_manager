@@ -37,6 +37,7 @@ deps_ex = [
   "hdf_core:libhdi",
   "bundle_framework:appexecfwk_base",
   "common_event_service:cesfwk_innerkits",
+  "cJSON:cjson_static",
   "c_utils:utils",
   "libxml2:libxml2",
   "drivers_interface_thermal:libthermal_proxy_1.1",
@@ -45,6 +46,7 @@ deps_ex = [
   "power_manager:powermgr_client",
   "safwk:system_ability_fwk",
   "samgr:samgr_proxy",
+  "selinux_adapter:librestorecon",
   "time_service:time_client",
 ]
 

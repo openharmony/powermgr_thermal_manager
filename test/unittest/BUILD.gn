@@ -51,7 +51,9 @@ deps_ex = [
   "bundle_framework:appexecfwk_base",
   "c_utils:utils",
   "config_policy:configpolicy_util",
+  "eventhandler:libeventhandler",
   "googletest:gmock_main",
+  "googletest:gtest_main",
   "ipc:ipc_core",
   "hdf_core:libhdi",
   "hdf_core:libpub_utils",
@@ -88,7 +90,6 @@ ohos_unittest("ThermalMockActionTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -131,7 +132,6 @@ ohos_unittest("ThermalMgrPolicyTest") {
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -168,7 +168,6 @@ ohos_unittest("ThermalLevelEventTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -207,7 +206,6 @@ ohos_unittest("ThermalClientApiTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -245,7 +243,6 @@ ohos_unittest("ThermalActionHubTest") {
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -282,7 +279,6 @@ ohos_unittest("ThermalActionReportTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
-    "//third_party/googletest:gtest_main",
   ]
 
   if (defined(global_parts_info) &&
@@ -333,7 +329,6 @@ ohos_unittest("ThermalMockProxyTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -371,7 +366,6 @@ ohos_unittest("ThermalMockProxyRemoteTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -411,7 +405,6 @@ ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -452,7 +445,6 @@ ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -493,7 +485,6 @@ ohos_unittest("ThermalMockProxyWritevectorTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -533,7 +524,6 @@ ohos_unittest("ThermalMockProxySendrequestTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -567,7 +557,6 @@ ohos_unittest("ThermalUtilsTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -639,7 +628,6 @@ ohos_unittest("ThermalServiceDeathTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -678,7 +666,6 @@ ohos_unittest("ThermalListenerTest") {
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -716,7 +703,6 @@ ohos_unittest("ThermalClientTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
@@ -770,7 +756,6 @@ ohos_unittest("ThermalMockStubTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -804,7 +789,6 @@ ohos_unittest("ThermalMockStubGetdescriptorTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -843,7 +827,6 @@ ohos_unittest("ThermalActionTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -882,7 +865,6 @@ ohos_unittest("ThermalObserverTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -922,8 +904,6 @@ ohos_unittest("ThermalServiceTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -957,8 +937,6 @@ ohos_unittest("ThermalConfigSensorClusterTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -992,8 +970,6 @@ ohos_unittest("ThermalMgrDumpTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -1027,8 +1003,6 @@ ohos_unittest("ThermalPolicyTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = deps_ex
@@ -1062,8 +1036,6 @@ ohos_unittest("FanFaultDetectTest") {
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = []
