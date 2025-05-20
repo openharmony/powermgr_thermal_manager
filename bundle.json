@@ -100,7 +100,16 @@
               ],
               "header_base": "//base/powermgr/thermal_manager/interfaces/inner_api/native/include"
             }
-        }
+        },
+        {
+          "name": "//base/powermgr/thermal_manager/frameworks/cj:cj_thermal_ffi",
+          "header": {
+            "header_files": [
+              "cj_thermal_manager.h"
+            ],
+            "header_base": "//base/powermgr/thermal_manager/frameworks/cj"
+          }
+      }
       ],
       "test": [
         "//base/powermgr/thermal_manager/test:unittest",
