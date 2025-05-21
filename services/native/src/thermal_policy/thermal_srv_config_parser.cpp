@@ -350,6 +350,7 @@ bool ThermalSrvConfigParser::ParseAuxSensorTriggerRange(const xmlNodePtr& subNod
             tempRangeStr = auxTempranges[sensorIdx];
         } else {
             THERMAL_HILOGE(COMP_SVC, "aux sensor trigger range is empty");
+            xmlFree(xmlTriggerRange);
             return false;
         }
         xmlFree(xmlTriggerRange);
