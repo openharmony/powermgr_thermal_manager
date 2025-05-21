@@ -34,7 +34,7 @@ public:
 
 private:
     OHOS::PowerMgr::ThermalLevel level_ {OHOS::PowerMgr::ThermalLevel::COOL};
-    callback_view<void(ohos::thermal::ThermalLevel)> callback_ {nullptr};
+    optional<callback<void(ohos::thermal::ThermalLevel)>> callback_;
     std::mutex mutex_;
 };
 } // namespace PowerMgr
