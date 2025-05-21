@@ -23,7 +23,7 @@ ThermalLevelCallback::~ThermalLevelCallback() {}
 void ThermalLevelCallback::UpdateCallback(callback_view<void(ohos::thermal::ThermalLevel)> thermalCb)
 {
     std::lock_guard lock(mutex_);
-    callback_ = thermalCb;
+    callback_ = optional<callback<void(ohos::thermal::ThermalLevel)>>{std::in_place, thermalCb};
 }
 
 bool ThermalLevelCallback::OnThermalLevelChanged(OHOS::PowerMgr::ThermalLevel level)
@@ -38,7 +38,9 @@ void ThermalLevelCallback::OnThermalLevel()
 {
     THERMAL_HILOGD(COMP_FWK, "level is: %{public}d", static_cast<int32_t>(level_));
     ohos::thermal::ThermalLevel levelValue = static_cast<ohos::thermal::ThermalLevel::key_t>(level_);
-    callback_(levelValue);
+    if (callback_.has_value()) {
+        callback_.value()(levelValue);
+    }
 }
 } // namespace PowerMgr
 } // namespace OHOS
