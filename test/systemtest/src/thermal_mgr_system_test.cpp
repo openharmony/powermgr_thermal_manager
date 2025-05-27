@@ -208,10 +208,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest001, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -247,10 +244,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest002, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -286,10 +280,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest003, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -325,10 +316,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest004, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -366,10 +354,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
     char levelValue[MAX_PATH] = {0};
     std::string level;
     int32_t value;
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -387,9 +372,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest005, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -425,9 +408,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
     char levelValue[MAX_PATH] = {0};
     std::string level;
     int32_t value;
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -445,9 +426,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest006, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -483,9 +462,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Lev
     char levelValue[MAX_PATH] = {0};
     std::string level;
     int32_t value;
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -504,9 +481,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest007, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -541,9 +516,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Lev
     char levelValue[MAX_PATH] = {0};
     std::string level;
     int32_t value;
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) -1, CONFIG_LEVEL_PATH.c_str());
@@ -561,9 +534,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest008, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -596,10 +567,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest009, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -636,10 +604,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest010, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -675,10 +640,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest011, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -715,10 +677,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest012, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -758,9 +717,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
     char levelValue[MAX_PATH] = {0};
     std::string level;
     int32_t value;
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -778,9 +735,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest013, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -817,9 +772,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
     char levelValue[MAX_PATH] = {0};
     std::string level;
     int32_t value;
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -837,9 +790,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest014, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -876,9 +827,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
     char levelValue[MAX_PATH] = {0};
     std::string level;
     int32_t value;
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -896,9 +845,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest015, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -935,9 +882,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
     char levelValue[MAX_PATH] = {0};
     std::string level;
     int32_t value;
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -955,9 +900,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest016, Function|MediumTest|Lev
     sTemp = to_string(batteryTemp) + "\n";
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     ret = snprintf_s(levelBuf, MAX_PATH, sizeof(levelBuf) - 1, CONFIG_LEVEL_PATH.c_str());
@@ -991,10 +934,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest017, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -1034,10 +974,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest018, Function|MediumTest|Lev
     std::string sTemp = to_string(batteryTemp);
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
 
@@ -1075,10 +1012,7 @@ HWTEST_F (ThermalMgrSystemTest, ThermalMgrSystemTest019, Function|MediumTest|Lev
     ret = ThermalMgrSystemTest::WriteFile(batteryTempBuf, sTemp, sTemp.length());
     EXPECT_EQ(true, ret == ERR_OK);
 
-    if (access(VENDOR_CONFIG.c_str(), 0) != 0) {
-        THERMAL_HILOGI(LABEL_TEST, "SIMUL PATH has been in ");
-        return;
-    }
+    ASSERT_EQ(access(VENDOR_CONFIG.c_str(), 0), 0);
 
     MockThermalMgrClient::GetInstance().GetThermalInfo();
     char procsessBuf[MAX_PATH] = {0};
