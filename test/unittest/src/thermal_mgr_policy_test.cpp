@@ -18,6 +18,7 @@
 #include "power_mgr_client.h"
 #include "thermal_mgr_client.h"
 #include "mock_thermal_mgr_client.h"
+#include "modulemgr.h"
 
 #define private   public
 #define protected public
@@ -1746,6 +1747,12 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest073, Function|MediumTest|Lev
     THERMAL_HILOGI(LABEL_TEST, "ThermalMgrPolicyTest073 function start!");
     string path = "test";
     string result = "";
+#if (defined(__aarch_64__) || defined(__x86_64__))
+    constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib64/thermalplugin/autorun";
+#else
+    constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib/thermalplugin/autorun";
+#endif
+    ModuleMgrScan(THERMAL_PLUGIN_AUTORUN_PATH);
     bool ret = g_service->GetConfigParser().DecryptConfig(path, result);
     if (result.empty()) {
         EXPECT_FALSE(ret);

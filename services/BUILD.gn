@@ -95,6 +95,7 @@ ohos_shared_library("thermalservice") {
     "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
+    "${utils_path}/hookmgr:thermal_hookmgr",
   ]
 
   external_deps = [ "power_manager:power_permission" ]
