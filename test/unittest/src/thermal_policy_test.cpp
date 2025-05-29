@@ -27,6 +27,7 @@
 
 #include "action_cpu_big.h"
 #include "config_policy_utils.h"
+#include "modulemgr.h"
 #include "power_mgr_client.h"
 #include "screen_state_collection.h"
 #include "thermal_log.h"
@@ -208,6 +209,12 @@ HWTEST_F (ThermalPolicyTest, ThermalPolicyTest006, TestSize.Level0)
     THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest006 function start!");
     string path = "test/path";
     string result = "";
+#if (defined(__aarch_64__) || defined(__x86_64__))
+    constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib64/thermalplugin/autorun";
+#else
+    constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib/thermalplugin/autorun";
+#endif
+    ModuleMgrScan(THERMAL_PLUGIN_AUTORUN_PATH);
     bool ret = g_service->GetConfigParser().DecryptConfig(path, result);
     if (result.empty()) {
         EXPECT_FALSE(ret);

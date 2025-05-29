@@ -135,6 +135,8 @@ ohos_unittest("ThermalMgrPolicyTest") {
 
   external_deps = deps_ex
 
+  external_deps += [ "init:libbegetutil" ]
+
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
@@ -1008,6 +1010,8 @@ ohos_unittest("ThermalPolicyTest") {
 
   external_deps = deps_ex
 
+  external_deps += [ "init:libbegetutil" ]
+
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
@@ -1061,6 +1065,17 @@ ohos_unittest("FanFaultDetectTest") {
   }
 }
 
+ohos_unittest("ThermalHookMgrTest") {
+  module_out_path = module_output_path
+  sources = [ "src/thermal_hookmgr_test.cpp" ]
+  configs = [
+    "${utils_path}:utils_config",
+    "${utils_path}:coverage_flags",
+  ]
+  deps = [ "${utils_path}/hookmgr:thermal_hookmgr" ]
+  external_deps = deps_ex
+}
+
 group("unittest") {
   testonly = true
   deps = [
@@ -1090,5 +1105,6 @@ group("unittest") {
     ":ThermalServiceDeathTest",
     ":ThermalServiceTest",
     ":ThermalUtilsTest",
+    ":ThermalHookMgrTest",
   ]
 }
