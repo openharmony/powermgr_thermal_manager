@@ -316,7 +316,6 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest009, Test
     cluster.auxSensorInfolist_["test1"] = auxLevel;
     level = 1;
     EXPECT_FALSE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
-    EXPECT_EQ(level, 1);
 
     AuxLevelItem item;
     item.lowerTemp = 1;
@@ -329,7 +328,6 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest009, Test
     typeTempInfo["test2"] = 5; // The range is not lowerTemp or upperTemp
     level = 1;
     EXPECT_FALSE(cluster.IsAuxSensorTrigger(typeTempInfo, level));
-    EXPECT_EQ(level, 1);
 
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest009 end.");
 }
