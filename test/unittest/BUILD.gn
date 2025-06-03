@@ -284,7 +284,6 @@ ohos_unittest("ThermalActionReportTest") {
   if (defined(global_parts_info) &&
       defined(global_parts_info.powermgr_battery_statistics)) {
     defines += [ "BATTERY_STATS_ENABLE" ]
-    deps += [ "${batterystats_utils_path}:batterystats_utils" ]
     external_deps = [
       "battery_statistics:batterystats_client",
       "battery_statistics:batterystats_utils",
