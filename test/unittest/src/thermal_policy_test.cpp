@@ -209,7 +209,7 @@ HWTEST_F (ThermalPolicyTest, ThermalPolicyTest006, TestSize.Level0)
     THERMAL_HILOGI(LABEL_TEST, "ThermalPolicyTest006 function start!");
     string path = "test/path";
     string result = "";
-#if (defined(__aarch_64__) || defined(__x86_64__))
+#if (defined(__aarch64__) || defined(__x86_64__))
     constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib64/thermalplugin/autorun";
 #else
     constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib/thermalplugin/autorun";

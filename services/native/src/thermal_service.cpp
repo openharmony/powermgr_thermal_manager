@@ -45,7 +45,7 @@ sptr<ThermalService> ThermalService::instance_ = nullptr;
 std::mutex ThermalService::singletonMutex_;
 namespace {
 MODULE_MGR* g_moduleMgr = nullptr;
-#if (defined(__aarch_64__) || defined (__x86_64__))
+#if (defined(__aarch64__) || defined(__x86_64__))
 constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib64/thermalplugin/autorun";
 #else
 constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib/thermalplugin/autorun";
@@ -96,6 +96,8 @@ void ThermalService::OnStart()
 #endif
         return;
     }
+// This library occupies up to 300kB, dlclose after using it.
+// Leave it be in fuzz tests
 #ifndef FUZZ_TEST
         ModuleMgrUninstall(g_moduleMgr, "thermal_decrypt");
 #endif
@@ -424,10 +426,12 @@ void ThermalService::OnStop()
         THERMAL_HILOGD(COMP_SVC, "Thermal Onstop unregister to commonevent manager success!");
     }
 #endif
+#ifndef FUZZ_TEST
     if (g_moduleMgr != nullptr) {
         ModuleMgrDestroy(g_moduleMgr);
         g_moduleMgr = nullptr;
     }
+#endif
 }
 
 bool ThermalService::SubscribeThermalTempCallback(

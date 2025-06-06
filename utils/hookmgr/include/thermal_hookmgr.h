@@ -12,15 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef BATTERYMGR_UTILS_BATTERY_HOOKMGR_H
-#define BATTERYMGR_UTILS_BATTERY_HOOKMGR_H
+#ifndef THERMALMGR_UTILS_THERMAL_HOOKMGR_H
+#define THERMALMGR_UTILS_THERMAL_HOOKMGR_H
 
 #include <cstdint>
 #include <string>
 #include "hookmgr.h"
-#include "list.h"
-#include "modulemgr.h"
-
+#include <list.h>
+#include <modulemgr.h>
 
 namespace OHOS::PowerMgr {
 enum class ThermalHookStage : int32_t {
@@ -35,5 +34,4 @@ struct DecryptConfigContext {
 
 HOOK_MGR* GetThermalHookMgr();
 } // namespace OHOS::PowerMgr
-
 #endif

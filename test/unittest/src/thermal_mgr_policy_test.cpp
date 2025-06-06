@@ -1747,7 +1747,7 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest073, Function|MediumTest|Lev
     THERMAL_HILOGI(LABEL_TEST, "ThermalMgrPolicyTest073 function start!");
     string path = "test";
     string result = "";
-#if (defined(__aarch_64__) || defined(__x86_64__))
+#if (defined(__aarch64__) || defined(__x86_64__))
     constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib64/thermalplugin/autorun";
 #else
     constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib/thermalplugin/autorun";

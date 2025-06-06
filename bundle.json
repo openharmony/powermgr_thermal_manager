@@ -102,7 +102,13 @@
             }
         },
         {
-          "name": "//base/powermgr/thermal_manager/utils/hookmgr:thermal_hookmgr"
+          "name": "//base/powermgr/thermal_manager/utils/hookmgr:thermal_hookmgr",
+          "header": {
+            "header_base": "//base/powermgr/thermal_manager/utils/hookmgr/include",
+            "header_files": [
+              "thermal_hookmgr.h"
+            ]
+          }
         }
       ],
       "test": [
