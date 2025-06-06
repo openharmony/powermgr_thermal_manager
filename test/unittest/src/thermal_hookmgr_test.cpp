@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-#include "list.h"
+#include <list.h>
 #include "thermal_hookmgr.h"
+#include <thermal_log.h>
 #include <gtest/gtest.h>
 
 using namespace OHOS;
@@ -35,15 +36,18 @@ int TestHook(const HOOK_INFO* info, void* context)
 
 HWTEST_F(ThermalHookMgrTest, ThermalHookMgrTest000, TestSize.Level0)
 {
+    THERMAL_HILOGI(LABEL_TEST, "ThermalHookMgrTest000 function start!");
     auto hookMgr = GetThermalHookMgr();
     ASSERT_NE(hookMgr, nullptr);
     auto hookMgr2 = GetThermalHookMgr();
     EXPECT_EQ(hookMgr, hookMgr2);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalHookMgrTest000 function end!");
 }
 
 // execution with TRAVERSE_STOP_WHEN_ERROR
 HWTEST_F(ThermalHookMgrTest, ThermalHookMgrTest001, TestSize.Level0)
 {
+    THERMAL_HILOGI(LABEL_TEST, "ThermalHookMgrTest001 function start!");
     auto hookMgr = GetThermalHookMgr();
     ASSERT_NE(hookMgr, nullptr);
     HOOK_EXEC_OPTIONS options {TRAVERSE_STOP_WHEN_ERROR, nullptr, nullptr};
@@ -55,11 +59,13 @@ HWTEST_F(ThermalHookMgrTest, ThermalHookMgrTest001, TestSize.Level0)
         EXPECT_EQ(info.hook, TestHook);
         EXPECT_EQ(ret, retval);
     }
+    THERMAL_HILOGI(LABEL_TEST, "ThermalHookMgrTest001 function end!");
 }
 
 // task with greater priority number is executed later.
 HWTEST_F(ThermalHookMgrTest, ThermalHookMgrTest002, TestSize.Level0)
 {
+    THERMAL_HILOGI(LABEL_TEST, "ThermalHookMgrTest001 function start!");
     auto hookMgr = GetThermalHookMgr();
     ASSERT_NE(hookMgr, nullptr);
     HookMgrAdd(hookMgr, 0, 0, TestHook);
@@ -67,5 +73,6 @@ HWTEST_F(ThermalHookMgrTest, ThermalHookMgrTest002, TestSize.Level0)
     int retval = 0;
     HookMgrExecute(hookMgr, 0, &retval, nullptr);
     EXPECT_EQ(info.prio, 1);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalHookMgrTest001 function end!");
 }
 } // namespace
