@@ -77,7 +77,9 @@ void ActionSocPerf::ExecuteInner()
         SocPerfRequestEx(cmdId_, value > 0);
 #endif
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        if (tms->GetObserver() != nullptr) {
+            tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        }
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
