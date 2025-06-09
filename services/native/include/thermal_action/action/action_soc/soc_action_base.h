@@ -30,9 +30,7 @@ public:
 
 protected:
     virtual void SocLimitRequest(int32_t tag, int64_t value);
-#ifdef SOC_PERF_ENABLE
     virtual void SocPerfRequestEx(int32_t cmdId, bool enable);
-#endif
     virtual void SetSocPerfThermalLevel(uint32_t level);
     virtual void SocIsolateRequest(bool enable);
     virtual void SetBoostEnable(bool status);

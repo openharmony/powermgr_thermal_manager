@@ -43,12 +43,12 @@ void SocActionBase::SocLimitRequest(int32_t tag, int64_t value)
 #endif
 }
 
-#ifdef SOC_PERF_ENABLE
 void SocActionBase::SocPerfRequestEx(int32_t cmdId, bool enable)
 {
+#ifdef SOC_PERF_ENABLE
     OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEx(cmdId, enable, "");
-}
 #endif
+}
 
 void SocActionBase::SetSocPerfThermalLevel(uint32_t level)
 {
@@ -59,9 +59,7 @@ void SocActionBase::SetSocPerfThermalLevel(uint32_t level)
 
 void SocActionBase::SocIsolateRequest(bool enable)
 {
-#ifdef SOC_PERF_ENABLE
     SocPerfRequestEx(ACTION_TYPE_CPU_ISOLATE_CMDID, enable);
-#endif
 }
 
 void SocActionBase::SetBoostEnable(bool status)
@@ -73,9 +71,7 @@ void SocActionBase::SetBoostEnable(bool status)
 
 void SocActionBase::SocNonVipRequest(bool enable)
 {
-#ifdef SOC_PERF_ENABLE
     SocPerfRequestEx(ACTION_TYPE_CPU_NONVIP_CMDID, enable);
-#endif
 }
 } // namespace PowerMgr
 } // namespace OHOS
