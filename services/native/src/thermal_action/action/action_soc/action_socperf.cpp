@@ -15,6 +15,7 @@
 
 #include "action_socperf.h"
 
+#include "string_operation.h"
 #include "thermal_hisysevent.h"
 #include "thermal_service.h"
 
@@ -44,16 +45,19 @@ void ActionSocPerf::SetEnableEvent(bool enable)
 void ActionSocPerf::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
+        THERMAL_HILOGD(COMP_SVC, "value empty");
         return;
     }
     if (actionId > 0) {
         auto iter = policyActionMap_.find(actionId);
         if (iter != policyActionMap_.end()) {
-            iter->second.uintDelayValue = static_cast<uint32_t>(strtol(value.c_str(),
-                nullptr, STRTOL_FORMART_DEC));
+            StringOperation::StrToUint(value, iter->second.uintDelayValue);
         }
     } else {
-        valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
+        uint32_t newValue = 0;
+        if (StringOperation::StrToUint(value, newValue)) {
+            valueList_.push_back(newValue);
+        }
     }
 }
 
@@ -69,7 +73,9 @@ void ActionSocPerf::ExecuteInner()
 
     uint32_t value = GetActionValue();
     if (value != lastValue_) {
+#ifdef SOC_PERF_ENABLE
         SocPerfRequestEx(cmdId_, value > 0);
+#endif
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
         tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
         lastValue_ = value;
