@@ -361,8 +361,8 @@ bool ThermalConfigSensorCluster::IsTempDiffTrigger(const TypeTempMap& typeTempIn
     auto& sensor1 = tempDiffInfo.sensor1;
     auto& sensor2 = tempDiffInfo.sensor2;
  
-    std::map<std::string, int>::const_iterator ite1 = typeTempInfo.end(),
-        ite2 = typeTempInfo.end();
+    std::map<std::string, int>::const_iterator ite1 = typeTempInfo.end();
+    std::map<std::string, int>::const_iterator ite2 = typeTempInfo.end();
     if ((ite1 = typeTempInfo.find(sensor1)) == typeTempInfo.end()
         || (ite2 = typeTempInfo.find(sensor2)) == typeTempInfo.end()) {
         THERMAL_HILOGE(COMP_SVC, "No temperature info about the target sensor: %{public}s and %{public}s.",
