@@ -18,6 +18,7 @@
 #include "file_ex.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
+#include "modulemgr.h"
 #include "securec.h"
 #include "system_ability_definition.h"
 #include <algorithm>
@@ -43,6 +44,12 @@ namespace PowerMgr {
 sptr<ThermalService> ThermalService::instance_ = nullptr;
 std::mutex ThermalService::singletonMutex_;
 namespace {
+MODULE_MGR* g_moduleMgr = nullptr;
+#if (defined(__aarch64__) || defined(__x86_64__))
+constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib64/thermalplugin/autorun";
+#else
+constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib/thermalplugin/autorun";
+#endif
 const std::string THERMAL_SERVICE_CONFIG_PATH = "etc/thermal_config/thermal_service_config.xml";
 const std::string VENDOR_THERMAL_SERVICE_CONFIG_PATH = "/vendor/etc/thermal_config/thermal_service_config.xml";
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
@@ -81,12 +88,19 @@ void ThermalService::OnStart()
         THERMAL_HILOGE(COMP_SVC, "OnStart is ready, nothing to do");
         return;
     }
-
+    g_moduleMgr = ModuleMgrScan(THERMAL_PLUGIN_AUTORUN_PATH);
     if (!(Init())) {
         THERMAL_HILOGE(COMP_SVC, "OnStart call init fail");
+#ifndef FUZZ_TEST
+        ModuleMgrUninstall(g_moduleMgr, "thermal_decrypt");
+#endif
         return;
     }
-
+// This library occupies up to 300kB, dlclose after using it.
+// Leave it be in fuzz tests
+#ifndef FUZZ_TEST
+        ModuleMgrUninstall(g_moduleMgr, "thermal_decrypt");
+#endif
     AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
     AddSystemAbilityListener(SOC_PERF_SERVICE_SA_ID);
     AddSystemAbilityListener(POWER_MANAGER_BATT_SERVICE_ID);
@@ -410,6 +424,12 @@ void ThermalService::OnStop()
         THERMAL_HILOGE(COMP_SVC, "Thermal Onstop unregister to commonevent manager failed!");
     } else {
         THERMAL_HILOGD(COMP_SVC, "Thermal Onstop unregister to commonevent manager success!");
+    }
+#endif
+#ifndef FUZZ_TEST
+    if (g_moduleMgr != nullptr) {
+        ModuleMgrDestroy(g_moduleMgr);
+        g_moduleMgr = nullptr;
     }
 #endif
 }
