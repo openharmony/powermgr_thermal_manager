@@ -48,16 +48,17 @@ void ActionSocPerf::AddActionValue(uint32_t actionId, std::string value)
         THERMAL_HILOGD(COMP_SVC, "value empty");
         return;
     }
+    uint32_t newValue = 0;
+    if (!StringOperation::StrToUint(value, newValue)) {
+        return;
+    }
     if (actionId > 0) {
         auto iter = policyActionMap_.find(actionId);
         if (iter != policyActionMap_.end()) {
-            StringOperation::StrToUint(value, iter->second.uintDelayValue);
+            iter->second.uintDelayValue = newValue;
         }
     } else {
-        uint32_t newValue = 0;
-        if (StringOperation::StrToUint(value, newValue)) {
-            valueList_.push_back(newValue);
-        }
+        valueList_.push_back(newValue);
     }
 }
 
