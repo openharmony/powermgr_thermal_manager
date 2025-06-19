@@ -17,10 +17,9 @@
 
 #include "string_operation.h"
 #include "thermal_common.h"
+#include "thermal_hookmgr.h"
 #include "thermal_service.h"
 #include "string_ex.h"
-
-#include <dlfcn.h>
 
 namespace OHOS {
 namespace PowerMgr {
@@ -52,34 +51,15 @@ bool ThermalSrvConfigParser::DecryptConfig(const std::string& path, std::string&
         return false;
     }
     THERMAL_HILOGI(COMP_SVC, "start DecryptConfig");
-    void *handler = dlopen(THERMAL_CONFIG_LIBRARY_PATH, RTLD_LAZY);
-    if (handler == nullptr) {
-        THERMAL_HILOGE(COMP_SVC, "dlopen failed, reason : %{public}s", dlerror());
-        return false;
-    }
-
-    Func getDecryptConfig = reinterpret_cast<Func>(dlsym(handler, GET_THERMAL_EXT_CONGIH_FUNC));
-    if (getDecryptConfig == nullptr) {
-        THERMAL_HILOGE(COMP_SVC, "find function %{public}s failed, reason : %{public}s",
-            GET_THERMAL_EXT_CONGIH_FUNC, dlerror());
-#ifndef FUZZ_TEST
-        dlclose(handler);
-#endif
-        return false;
-    }
-
-    int32_t ret = getDecryptConfig(THERMAL_SERVICE_CONFIG_INDEX, result);
+    DecryptConfigContext context{.configIndex = THERMAL_SERVICE_CONFIG_INDEX};
+    HOOK_EXEC_OPTIONS options {TRAVERSE_STOP_WHEN_ERROR, nullptr, nullptr};
+    int ret = HookMgrExecute(
+        GetThermalHookMgr(), static_cast<int32_t>(ThermalHookStage::THERMAL_DECRYPT_CONFIG), &context, &options);
     if (ret != 0) {
         THERMAL_HILOGE(COMP_SVC, "decrypt config failed, ret:%{public}d", ret);
-#ifndef FUZZ_TEST
-        dlclose(handler);
-#endif
         return false;
     }
-
-#ifndef FUZZ_TEST
-    dlclose(handler);
-#endif
+    result = context.result;
     THERMAL_HILOGI(COMP_SVC, "end DecryptConfig");
     return true;
 }
@@ -354,6 +334,7 @@ bool ThermalSrvConfigParser::ParseAuxSensorTriggerRange(const xmlNodePtr& subNod
             tempRangeStr = auxTempranges[sensorIdx];
         } else {
             THERMAL_HILOGE(COMP_SVC, "aux sensor trigger range is empty");
+            xmlFree(xmlTriggerRange);
             return false;
         }
         xmlFree(xmlTriggerRange);

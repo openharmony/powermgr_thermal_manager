@@ -35,6 +35,7 @@
 #include "action_shutdown.h"
 #include "action_thermal_level.h"
 #include "action_popup.h"
+#include "action_socperf.h"
 #include "action_volume.h"
 #include "action_voltage.h"
 #include "file_operation.h"
@@ -63,6 +64,7 @@ std::shared_ptr<ActionDisplay> g_actionDisplay = std::make_shared<ActionDisplay>
 std::shared_ptr<ActionGpu> g_actionGpu = std::make_shared<ActionGpu>("gpu");
 std::shared_ptr<ActionPopup> g_actionPopup = std::make_shared<ActionPopup>("popup");
 std::shared_ptr<ActionShutdown> g_actionShutdown = std::make_shared<ActionShutdown>("shut_down");
+std::shared_ptr<ActionSocPerf> g_actionSocPerf = std::make_shared<ActionSocPerf>("heca");
 std::shared_ptr<ActionThermalLevel> g_actionThermalLevel = std::make_shared<ActionThermalLevel>("thermallevel");
 std::shared_ptr<ActionVolume> g_actionVolume = std::make_shared<ActionVolume>("volume");
 std::shared_ptr<ActionVoltage> g_actionVoltage = std::make_shared<ActionVoltage>("voltage");
@@ -722,5 +724,29 @@ HWTEST_F(ThermalActionTest, ThermalActionTest016, TestSize.Level0)
     g_actionPopup2->AddActionValue(4, "1.0");
     g_actionPopup2->Execute();
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest016 function end!");
+}
+
+/**
+ * @tc.name: ThermalActionTest017
+ * @tc.desc: Action SocPerf Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionTest, ThermalActionTest017, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest017 function start!");
+    g_actionSocPerf->InitParams("12363");
+    EXPECT_EQ(12363, g_actionSocPerf->cmdId_);
+    g_actionSocPerf->SetStrict(false);
+    g_actionSocPerf->SetEnableEvent(false);
+    g_actionSocPerf->AddActionValue(0, "");
+    g_actionSocPerf->Execute();
+    EXPECT_TRUE(g_actionSocPerf->valueList_.empty());
+    g_actionSocPerf->AddActionValue(0, "1");
+    g_actionSocPerf->Execute();
+    g_actionSocPerf->AddActionValue(1, "1");
+    g_actionSocPerf->Execute();
+    g_actionSocPerf->ResetActionValue();
+    EXPECT_EQ(0, g_actionSocPerf->lastValue_);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest017 function end!");
 }
 } // namespace

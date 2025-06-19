@@ -102,6 +102,15 @@
             }
         },
         {
+          "name": "//base/powermgr/thermal_manager/utils/hookmgr:thermal_hookmgr",
+          "header": {
+            "header_base": "//base/powermgr/thermal_manager/utils/hookmgr/include",
+            "header_files": [
+              "thermal_hookmgr.h"
+            ]
+          }
+        },
+        {
           "name": "//base/powermgr/thermal_manager/frameworks/cj:cj_thermal_ffi",
           "header": {
             "header_files": [
@@ -109,7 +118,7 @@
             ],
             "header_base": "//base/powermgr/thermal_manager/frameworks/cj"
           }
-      }
+        }
       ],
       "test": [
         "//base/powermgr/thermal_manager/test:unittest",
