@@ -24,15 +24,15 @@ namespace PowerMgr {
 extern "C" {
 FFI_EXPORT int32_t FfiOHOSThermalGetLevel()
 {
-    return CjThermalManager::GetInstance().GetThermalLevel();
+    return CjThermalManager::GetThreadLocalInstance().GetThermalLevel();
 }
 FFI_EXPORT void FfiOHOSRegisterThermalLevelCallback(int64_t id)
 {
-    CjThermalManager::GetInstance().SubscribeThermalLevel(id);
+    CjThermalManager::GetThreadLocalInstance().SubscribeThermalLevel(id);
 }
 FFI_EXPORT void FfiOHOSUnregisterThermalLevelCallback(int64_t id)
 {
-    CjThermalManager::GetInstance().UnSubscribeThermalLevel(id);
+    CjThermalManager::GetThreadLocalInstance().UnSubscribeThermalLevel(id);
 }
 }
 } // PowerMgr

@@ -46,7 +46,7 @@ bool CjThermalLevelCallback::OnThermalLevelChanged(ThermalLevel level)
 }
 
 
-CjThermalManager& CjThermalManager::GetInstance()
+CjThermalManager& CjThermalManager::GetThreadLocalInstance()
 {
     thread_local CjThermalManager thermalMgr;
     return thermalMgr;
