@@ -38,7 +38,7 @@ private:
 
 class CjThermalManager {
 public:
-    static CjThermalManager& GetInstance();
+    static CjThermalManager& GetThreadLocalInstance();
     void SubscribeThermalLevel(int64_t id);
     void UnSubscribeThermalLevel(int64_t id);
     int32_t GetThermalLevel();
