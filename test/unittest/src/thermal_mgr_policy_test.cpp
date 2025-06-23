@@ -1711,7 +1711,9 @@ HWTEST_F (ThermalMgrPolicyTest, ThermalMgrPolicyTest071, Function|MediumTest|Lev
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
     ThermalSrvSensorInfo info;
-    EXPECT_TRUE(g_service->GetThermalSrvSensorInfo(SensorType::BATTERY, info));
+    bool thermalInfoRet = false;
+    g_service->GetThermalSrvSensorInfo(static_cast<int32_t>(SensorType::BATTERY), info, thermalInfoRet);
+    EXPECT_TRUE(thermalInfoRet);
     THERMAL_HILOGI(LABEL_TEST, "ThermalMgrPolicyTest071 function end!");
 }
 

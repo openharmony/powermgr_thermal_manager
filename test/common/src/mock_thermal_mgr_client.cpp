@@ -96,10 +96,9 @@ void MockThermalMgrClient::ThermalMgrDeathRecipient::OnRemoteDied(const wptr<IRe
 bool MockThermalMgrClient::GetThermalInfo()
 {
     THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, false);
-    bool ret = false;
-    ret = thermalSrv_->GetThermalInfo();
+    int32_t ret = thermalSrv_->GetThermalInfo();
     THERMAL_HILOGD(COMP_FWK, "Calling GetThermalInfo Success");
-    return ret;
+    return ret == ERR_OK;
 }
 } // namespace PowerMgr
 } // namespace OHOS

@@ -37,6 +37,7 @@
 #include "soc_action_base.h"
 #include "thermal_common.h"
 #include "thermal_mgr_dumper.h"
+#include "thermal_xcollie.h"
 #include "xcollie/watchdog.h"
 
 namespace OHOS {
@@ -56,6 +57,7 @@ const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_conf
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 FFRTQueue g_queue("thermal_service");
 constexpr uint32_t RETRY_TIME = 1000;
+constexpr int32_t ERR_FAIL = -1;
 auto g_service = ThermalService::GetInstance();
 const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_service.GetRefPtr());
 SysParam::BootCompletedCallback g_bootCompletedCallback;
@@ -434,92 +436,109 @@ void ThermalService::OnStop()
 #endif
 }
 
-bool ThermalService::SubscribeThermalTempCallback(
+int32_t ThermalService::SubscribeThermalTempCallback(
     const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback)
 {
+    ThermalXCollie thermalXCollie("ThermalService::SubscribeThermalTempCallback", false);
     if (!Permission::IsSystem()) {
-        return false;
+        THERMAL_HILOGE(COMP_SVC, "Permission::IsSystem() failed");
+        return ERR_FAIL;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "%{public}s is called by uid=%{public}d", __func__, uid);
     observer_->SubscribeThermalTempCallback(typeList, callback);
-    return true;
+    return ERR_OK;
 }
 
-bool ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
+int32_t ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback)
 {
+    ThermalXCollie thermalXCollie("ThermalService::UnSubscribeThermalTempCallback", false);
     if (!Permission::IsSystem()) {
-        return false;
+        THERMAL_HILOGE(COMP_SVC, "Permission::IsSystem() failed");
+        return ERR_FAIL;
     }
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "%{public}s is called by uid=%{public}d", __func__, uid);
     observer_->UnSubscribeThermalTempCallback(callback);
-    return true;
+    return ERR_OK;
 }
 
-bool ThermalService::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo)
+int32_t ThermalService::GetThermalSrvSensorInfo(int32_t type, ThermalSrvSensorInfo& sensorInfo, bool& sensorInfoRet)
 {
+    ThermalXCollie thermalXCollie("ThermalService::GetThermalSrvSensorInfo", false);
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    if (!(observer_->GetThermalSrvSensorInfo(type, sensorInfo))) {
+    sensorInfoRet = observer_->GetThermalSrvSensorInfo(static_cast<SensorType>(type), sensorInfo);
+    if (!(sensorInfoRet)) {
         THERMAL_HILOGW(COMP_SVC, "failed to get sensor temp, type enum: %{public}u", static_cast<uint32_t>(type));
-        return false;
+        return ERR_FAIL;
     }
-    return true;
+    return ERR_OK;
 }
 
-bool ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+int32_t ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
+    ThermalXCollie thermalXCollie("ThermalService::SubscribeThermalLevelCallback", false);
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "%{public}s is called by uid=%{public}d", __func__, uid);
     actionMgr_->SubscribeThermalLevelCallback(callback);
-    return true;
+    return ERR_OK;
 }
 
-bool ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+int32_t ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
 {
+    ThermalXCollie thermalXCollie("ThermalService::UnSubscribeThermalLevelCallback", false);
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "%{public}s is called by uid=%{public}d", __func__, uid);
     actionMgr_->UnSubscribeThermalLevelCallback(callback);
-    return true;
+    return ERR_OK;
 }
 
-bool ThermalService::SubscribeThermalActionCallback(
+int32_t ThermalService::SubscribeThermalActionCallback(
     const std::vector<std::string>& actionList, const std::string& desc, const sptr<IThermalActionCallback>& callback)
 {
+    ThermalXCollie thermalXCollie("ThermalService::SubscribeThermalActionCallback", false);
     if (!Permission::IsSystem()) {
-        return false;
+        THERMAL_HILOGE(COMP_SVC, "Permission::IsSystem() failed");
+        return ERR_FAIL;
     }
     auto pid = IPCSkeleton::GetCallingPid();
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "%{public}s is called by pid=%{public}d, uid=%{public}d", __func__, pid, uid);
     observer_->SubscribeThermalActionCallback(actionList, desc, callback);
-    return true;
+    return ERR_OK;
 }
 
-bool ThermalService::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
+int32_t ThermalService::UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback)
 {
+    ThermalXCollie thermalXCollie("ThermalService::UnSubscribeThermalActionCallback", false);
     if (!Permission::IsSystem()) {
-        return false;
+        THERMAL_HILOGE(COMP_SVC, "Permission::IsSystem() failed");
+        return ERR_FAIL;
     }
     auto pid = IPCSkeleton::GetCallingPid();
     auto uid = IPCSkeleton::GetCallingUid();
     THERMAL_HILOGI(COMP_SVC, "%{public}s is called by pid=%{public}d, uid=%{public}d", __func__, pid, uid);
     observer_->UnSubscribeThermalActionCallback(callback);
-    return true;
+    return ERR_OK;
 }
 
-bool ThermalService::GetThermalLevel(ThermalLevel& level)
+int32_t ThermalService::GetThermalLevel(int32_t& level)
 {
-    uint32_t levelValue = actionMgr_->GetThermalLevel();
-    level = static_cast<ThermalLevel>(levelValue);
-    return true;
+    ThermalXCollie thermalXCollie("ThermalService::GetThermalLevel", false);
+    if (actionMgr_ == nullptr) {
+        THERMAL_HILOGD(COMP_SVC, "actionMgr_ is nullptr");
+        return ERR_FAIL;
+    }
+    level = actionMgr_->GetThermalLevel();
+    return ERR_OK;
 }
 
-bool ThermalService::GetThermalInfo()
+int32_t ThermalService::GetThermalInfo()
 {
+    ThermalXCollie thermalXCollie("ThermalService::GetThermalInfo", false);
     THERMAL_HILOGD(COMP_SVC, "Enter");
     HdfThermalCallbackInfo thermalInfo;
-    bool ret = false;
+    int32_t ret = ERR_FAIL;
     if (thermalInterface_ == nullptr) {
         thermalInterface_ = IThermalInterface::Get();
         if (thermalInterface_ == nullptr) {
@@ -532,25 +551,30 @@ bool ThermalService::GetThermalInfo()
         int32_t res = thermalInterface_->GetThermalZoneInfo(thermalInfo);
         HandleThermalCallbackEvent(thermalInfo);
         if (!res) {
-            ret = true;
+            ret = ERR_OK;
         }
     }
     return ret;
 }
 
-bool ThermalService::SetScene(const std::string& scene)
+int32_t ThermalService::SetScene(const std::string& scene)
 {
+    ThermalXCollie thermalXCollie("ThermalService::SetScene", false);
+    THERMAL_HILOGD(COMP_SVC, "Enter");
     if (!Permission::IsSystem()) {
-        return false;
+        THERMAL_HILOGE(COMP_SVC, "Permission::IsSystem() failed");
+        return ERR_FAIL;
     }
     scene_ = scene;
-    return true;
+    return ERR_OK;
 }
 
-bool ThermalService::UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed)
+int32_t ThermalService::UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed)
 {
+    ThermalXCollie thermalXCollie("ThermalService::UpdateThermalState", false);
     if (!Permission::IsSystem()) {
-        return false;
+        THERMAL_HILOGE(COMP_SVC, "Permission::IsSystem() failed");
+        return ERR_FAIL;
     }
     THERMAL_HILOGI(COMP_SVC, "tag %{public}s, val %{public}s, isImmed %{public}d",
         tag.c_str(), val.c_str(), isImmed);
@@ -559,7 +583,7 @@ bool ThermalService::UpdateThermalState(const std::string& tag, const std::strin
     if (isImmed) {
         policy_->ExecutePolicy();
     }
-    return true;
+    return ERR_OK;
 }
 
 void ThermalService::RegisterHdiStatusListener()
@@ -696,18 +720,20 @@ int32_t ThermalService::HandleFanCallbackEvent(const HdfThermalCallbackInfo& eve
     return ERR_OK;
 }
 
-std::string ThermalService::ShellDump(const std::vector<std::string>& args, uint32_t argc)
+int32_t ThermalService::ShellDump(const std::vector<std::string>& args, uint32_t argc, std::string& result)
 {
+    ThermalXCollie thermalXCollie("ThermalService::ShellDump", false);
     if (!Permission::IsSystem() || !isBootCompleted_) {
-        return "";
+        THERMAL_HILOGE(COMP_SVC, "Permission::IsSystem() failed or isBootCompleted_ is false");
+        result = "";
+        return ERR_FAIL;
     }
     std::lock_guard<std::mutex> lock(mutex_);
     pid_t pid = IPCSkeleton::GetCallingPid();
     THERMAL_HILOGI(COMP_SVC, "PID: %{public}d", pid);
-    std::string result;
     bool ret = ThermalMgrDumper::Dump(args, result);
     THERMAL_HILOGI(COMP_SVC, "ThermalMgrDumper :%{public}d", ret);
-    return result;
+    return ERR_OK;
 }
 
 int32_t ThermalService::Dump(int fd, const std::vector<std::u16string>& args)

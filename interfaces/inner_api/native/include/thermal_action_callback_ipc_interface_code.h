@@ -22,7 +22,7 @@ namespace PowerMgr {
 enum class ThermalActionCallbackInterfaceCode {
     THERMAL_ACTION_CHANGED = 0,
 };
-} // space PowerMgr
+} // nemespace PowerMgr
 } // namespace OHOS
 
 #endif // THERMAL_ACTION_CALLBACK_IPC_INTERFACE_DODE_H

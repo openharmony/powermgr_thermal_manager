@@ -80,9 +80,8 @@ int32_t ThermalActionReportTest::SetCondition(int32_t value, const std::string& 
 
 int32_t ThermalActionReportTest::GetThermalLevel(int32_t expectValue)
 {
-    ThermalLevel level;
-    g_service->GetThermalLevel(level);
-    int32_t value = static_cast<int32_t>(level);
+    int32_t value;
+    g_service->GetThermalLevel(value);
     THERMAL_HILOGI(LABEL_TEST, "value: %{public}d", value);
     EXPECT_EQ(value, expectValue) << "Thermal action policy failed";
     return value;

@@ -360,7 +360,7 @@ bool ThermalConfigSensorCluster::IsTempDiffTrigger(const TypeTempMap& typeTempIn
     auto& tempDiffInfo = tempDiffInfoList_.at(level - 1);
     auto& sensor1 = tempDiffInfo.sensor1;
     auto& sensor2 = tempDiffInfo.sensor2;
- 
+
     std::map<std::string, int>::const_iterator ite1 = typeTempInfo.end();
     std::map<std::string, int>::const_iterator ite2 = typeTempInfo.end();
     if ((ite1 = typeTempInfo.find(sensor1)) == typeTempInfo.end()
@@ -369,14 +369,14 @@ bool ThermalConfigSensorCluster::IsTempDiffTrigger(const TypeTempMap& typeTempIn
             sensor1.c_str(), sensor2.c_str());
         return false;
     }
- 
+
     const auto& tempSensor1 = ite1->second;
     const auto& tempSensor2 = ite2->second;
     if ((tempSensor1 - tempSensor2) > tempDiffInfo.tempDiff) {
         THERMAL_HILOGE(COMP_SVC, "temp diff of target sensors do not meet the requirements.");
         return false;
     }
- 
+
     THERMAL_HILOGD(COMP_SVC, "Temperature difference triggered successfully.");
     return true;
 }
@@ -454,7 +454,7 @@ void ThermalConfigSensorCluster::SetTempDiffFlag(bool tempDiffFlag)
 {
     tempDiffFlag_ = tempDiffFlag;
 }
- 
+
 void ThermalConfigSensorCluster::SetTempDiffInfo(TempDiffInfoList& tempDiffInfoList)
 {
     tempDiffInfoList_ = tempDiffInfoList;

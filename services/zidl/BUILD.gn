@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/config/components/idl_tool/idl.gni")
 import("../../thermalmgr.gni")
 
 config("thermalmgr_ipc_private_config") {
@@ -18,7 +19,19 @@ config("thermalmgr_ipc_private_config") {
 }
 
 config("thermalmgr_ipc_public_config") {
-  include_dirs = [ "include" ]
+  include_dirs = [
+    "include",
+    "${target_gen_dir}",
+  ]
+}
+
+idl_gen_interface("thermalmgr_interface") {
+  sources = [ "IThermalSrv.idl" ]
+
+  log_domainid = "0xD002942"
+  log_tag = "ThermalSvc"
+  subsystem_name = "powermgr"
+  part_name = "thermal_manager"
 }
 
 deps_ex = [
@@ -27,39 +40,23 @@ deps_ex = [
   "hicollie:libhicollie",
   "ipc:ipc_core",
   "c_utils:utils",
+  "ipc:ipc_single",
+  "samgr:samgr_proxy",
 ]
 
-ohos_shared_library("thermalmgr_stub") {
-  sources = [
-    "${thermal_frameworks}/native/thermal_srv_sensor_info.cpp",
-    "src/thermal_action_callback_stub.cpp",
-    "src/thermal_srv_stub.cpp",
-    "src/thermal_temp_callback_stub.cpp",
-  ]
+ohos_source_set("thermalmgr_proxy") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":thermalmgr_interface")
+  sources = filter_include(output_values, [ "*_proxy.cpp" ])
 
-  configs = [
-    "${utils_path}:utils_config",
-    ":thermalmgr_ipc_private_config",
-    "${utils_path}:coverage_flags",
-  ]
-
-  public_configs = [ ":thermalmgr_ipc_public_config" ]
-
-  external_deps = deps_ex
-
-  subsystem_name = "powermgr"
-  part_name = "thermal_manager"
-}
-
-ohos_shared_library("thermalmgr_proxy") {
-  branch_protector_ret = "pac_ret"
-
-  sources = [
-    "${thermal_manager_path}/frameworks/native/thermal_srv_sensor_info.cpp",
+  sources += [
     "src/thermal_action_callback_proxy.cpp",
     "src/thermal_level_callback_proxy.cpp",
     "src/thermal_level_callback_stub.cpp",
-    "src/thermal_srv_proxy.cpp",
     "src/thermal_temp_callback_proxy.cpp",
   ]
 
@@ -71,9 +68,40 @@ ohos_shared_library("thermalmgr_proxy") {
 
   public_configs = [ ":thermalmgr_ipc_public_config" ]
 
+  deps = [ ":thermalmgr_interface" ]
+
   external_deps = deps_ex
 
   subsystem_name = "powermgr"
-  innerapi_tags = [ "platformsdk" ]
+  part_name = "thermal_manager"
+}
+
+ohos_source_set("thermalmgr_stub") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":thermalmgr_interface")
+  sources = filter_include(output_values, [ "*_stub.cpp" ])
+
+  sources += [
+    "${thermal_frameworks}/native/thermal_srv_sensor_info.cpp",
+    "src/thermal_action_callback_stub.cpp",
+    "src/thermal_temp_callback_stub.cpp",
+  ]
+
+  configs = [
+    "${utils_path}:utils_config",
+    ":thermalmgr_ipc_private_config",
+    "${utils_path}:coverage_flags",
+  ]
+
+  public_configs = [ ":thermalmgr_ipc_public_config" ]
+
+  deps = [ ":thermalmgr_interface" ]
+  external_deps = deps_ex
+
+  subsystem_name = "powermgr"
   part_name = "thermal_manager"
 }

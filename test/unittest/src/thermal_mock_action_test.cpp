@@ -186,8 +186,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|L
     info1.temp = 40100;
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    int32_t levelValue = static_cast<int32_t>(level);
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
     EXPECT_EQ(1, MockSocPerfAction::GetBoostRequestCounter());
     event.info.clear();
 
@@ -195,8 +196,8 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|L
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
     expectLevel = 3;
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
     EXPECT_EQ(2, MockSocPerfAction::GetBoostRequestCounter());
     event.info.clear();
 
@@ -204,8 +205,8 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest001, Function|MediumTest|L
     event.info.push_back(info1);
     g_service->HandleThermalCallbackEvent(event);
     expectLevel = 2;
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
     EXPECT_EQ(3, MockSocPerfAction::GetBoostRequestCounter());
     THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest001 function end!");
 }
@@ -230,8 +231,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest002, Function|MediumTest|L
     g_service->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 3;
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    int32_t levelValue = static_cast<int32_t>(level);
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
     THERMAL_HILOGI(LABEL_TEST, "ThermalMockActionTest002 function end!");
 }
 
@@ -255,9 +257,10 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest003, Function|MediumTest|L
     g_service->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 1;
-    g_service->GetThermalLevel(level);
+    int32_t levelValue = static_cast<int32_t>(level);
+    g_service->GetThermalLevel(levelValue);
     MockSocPerfAction::LimitRequest(LIM_CPU_BIG_ID, 1992000);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    EXPECT_EQ(expectLevel, levelValue);
     EXPECT_EQ(1992000, MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID));
     EXPECT_EQ(1991500, MockSocPerfAction::GetLimitValue(LIM_CPU_MED_ID));
     EXPECT_EQ(1991200, MockSocPerfAction::GetLimitValue(LIM_CPU_LIT_ID));
@@ -290,8 +293,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest004, Function|MediumTest|L
     g_service->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 2;
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    int32_t levelValue = static_cast<int32_t>(level);
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
     EXPECT_EQ(1991000, MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID));
     EXPECT_EQ(1990500, MockSocPerfAction::GetLimitValue(LIM_CPU_MED_ID));
     EXPECT_EQ(1990200, MockSocPerfAction::GetLimitValue(LIM_CPU_LIT_ID));
@@ -324,8 +328,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest005, Function|MediumTest|L
     g_service->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 3;
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    int32_t levelValue = static_cast<int32_t>(level);
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
     EXPECT_EQ(1990000, MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID));
     EXPECT_EQ(1989500, MockSocPerfAction::GetLimitValue(LIM_CPU_MED_ID));
     EXPECT_EQ(1989200, MockSocPerfAction::GetLimitValue(LIM_CPU_LIT_ID));
@@ -362,8 +367,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest006, Function|MediumTest|L
     g_service->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 1;
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    int32_t levelValue = static_cast<int32_t>(level);
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
     if (state) {
@@ -396,8 +402,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest007, Function|MediumTest|L
     g_service->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 2;
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    int32_t levelValue = static_cast<int32_t>(level);
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
     auto chargerState =  ChargerStateCollection::GetInstance();
@@ -433,8 +440,9 @@ HWTEST_F (ThermalMockActionTest, ThermalMockActionTest008, Function|MediumTest|L
     g_service->HandleThermalCallbackEvent(event);
     ThermalLevel level = ThermalLevel::COOL;
     int32_t expectLevel = 3;
-    g_service->GetThermalLevel(level);
-    EXPECT_EQ(expectLevel, static_cast<int32_t>(level));
+    int32_t levelValue = static_cast<int32_t>(level);
+    g_service->GetThermalLevel(levelValue);
+    EXPECT_EQ(expectLevel, levelValue);
 #ifdef BATTERY_MANAGER_ENABLE
     int64_t cpuLimitValue = MockSocPerfAction::GetLimitValue(LIM_CPU_BIG_ID);
     auto chargerState =  ChargerStateCollection::GetInstance();
