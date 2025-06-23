@@ -18,7 +18,7 @@
 #define FUZZ_PROJECT_NAME "getthermalsensortemp_fuzzer"
 
 #include "thermal_fuzzer_test.h"
-#include "thermal_srv_ipc_interface_code.h"
+#include "ithermal_srv.h"
 
 using namespace OHOS::PowerMgr;
 
@@ -30,6 +30,7 @@ ThermalFuzzerTest g_serviceTest;
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    g_serviceTest.TestThermalServiceStub(static_cast<uint32_t>(ThermalMgrInterfaceCode::GET_SENSOR_INFO), data, size);
+    g_serviceTest.TestThermalServiceStub(
+        static_cast<uint32_t>(IThermalSrvIpcCode::COMMAND_GET_THERMAL_SRV_SENSOR_INFO), data, size);
     return 0;
 }

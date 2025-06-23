@@ -23,6 +23,8 @@ namespace PowerMgr {
 class ThermalMockStubTest : public testing::Test {
 public:
     static void SetUpTestCase();
+protected:
+    const int VECTOR_MAX_SIZE = 102400;
 };
 } // namespace PowerMgr
 } // namespace OHOS

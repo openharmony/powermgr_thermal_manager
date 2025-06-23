@@ -35,6 +35,7 @@ ohos_source_set("thermal_utils") {
     "native/src/file_operation.cpp",
     "native/src/string_operation.cpp",
     "native/src/thermal_hisysevent.cpp",
+    "native/src/thermal_xcollie.cpp",
   ]
 
   configs = [ "${utils_path}:coverage_flags" ]
@@ -43,6 +44,7 @@ ohos_source_set("thermal_utils") {
 
   external_deps = [
     "c_utils:utils",
+    "hicollie:libhicollie",
     "hilog:libhilog",
     "init:libbegetutil",
   ]

@@ -14,6 +14,7 @@
  */
 
 #include "thermal_service_test.h"
+#include "thermal_xcollie.h"
 
 #ifdef THERMAL_GTEST
 #define private   public
@@ -146,7 +147,7 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest003, TestSize.Level0)
 HWTEST_F(ThermalServiceTest, ThermalServiceTest004, TestSize.Level0)
 {
     THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest004 function start!");
-
+    ThermalXCollieTestable thermalXCollie("test_log", true);
     int fd = 0;
     std::vector<std::u16string> args;
     args.push_back(u"-h");
@@ -156,6 +157,8 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest004, TestSize.Level0)
     fd = -1;
     EXPECT_EQ(ERR_OK, g_service->Dump(fd, args));
 
+    thermalXCollie.CallCancel();
+    thermalXCollie.CallCancel();
     THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest004 function end!");
 }
 

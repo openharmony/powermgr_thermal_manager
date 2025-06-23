@@ -64,21 +64,21 @@ public:
     virtual void OnStop() override;
     virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     virtual int32_t Dump(int fd, const std::vector<std::u16string>& args) override;
-    bool SubscribeThermalTempCallback(
+    int32_t SubscribeThermalTempCallback(
         const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback) override;
-    bool UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) override;
-    bool SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
-    bool UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
-    bool SubscribeThermalActionCallback(const std::vector<std::string>& actionList, const std::string& desc,
+    int32_t UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) override;
+    int32_t SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
+    int32_t UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
+    int32_t SubscribeThermalActionCallback(const std::vector<std::string>& actionList, const std::string& desc,
         const sptr<IThermalActionCallback>& callback) override;
-    bool UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) override;
-    bool GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo) override;
-    bool GetThermalLevel(ThermalLevel& level) override;
-    bool GetThermalInfo() override;
-    bool SetScene(const std::string& scene) override;
-    bool UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed = false) override;
+    int32_t UnSubscribeThermalActionCallback(const sptr<IThermalActionCallback>& callback) override;
+    int32_t GetThermalSrvSensorInfo(int32_t type, ThermalSrvSensorInfo& sensorInfo, bool& sensorInfoRet) override;
+    int32_t GetThermalLevel(int32_t& level) override;
+    int32_t GetThermalInfo() override;
+    int32_t SetScene(const std::string& scene) override;
+    int32_t UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed = false) override;
     bool CreateConfigModule();
-    virtual std::string ShellDump(const std::vector<std::string>& args, uint32_t argc) override;
+    int32_t ShellDump(const std::vector<std::string>& args, uint32_t argc, std::string& dumpShell) override;
 
     int32_t HandleThermalCallbackEvent(const HdfThermalCallbackInfo& event);
     int32_t HandleFanCallbackEvent(const HdfThermalCallbackInfo& event);

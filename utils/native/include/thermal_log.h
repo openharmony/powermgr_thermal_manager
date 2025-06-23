@@ -18,6 +18,9 @@
 
 #define CONFIG_HILOG
 #ifdef CONFIG_HILOG
+
+#include <cstdint>
+
 #include "hilog/log.h"
 namespace OHOS {
 namespace PowerMgr {

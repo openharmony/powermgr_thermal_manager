@@ -69,6 +69,12 @@ deps_ex = [
 
 # thermal mock action test
 ohos_unittest("ThermalMockActionTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -89,6 +95,7 @@ ohos_unittest("ThermalMockActionTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_stub",
   ]
 
   external_deps = deps_ex
@@ -113,6 +120,12 @@ ohos_unittest("ThermalMockActionTest") {
 
 # thermal policy test
 ohos_unittest("ThermalMgrPolicyTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -151,6 +164,12 @@ ohos_unittest("ThermalMgrPolicyTest") {
 
 # thermal level event test
 ohos_unittest("ThermalLevelEventTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -169,6 +188,7 @@ ohos_unittest("ThermalLevelEventTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_stub",
   ]
 
   external_deps = deps_ex
@@ -193,6 +213,12 @@ ohos_unittest("ThermalLevelEventTest") {
 
 # thermal client api test
 ohos_unittest("ThermalClientApiTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [ "src/thermal_client_api_test.cpp" ]
@@ -207,6 +233,7 @@ ohos_unittest("ThermalClientApiTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_stub",
   ]
 
   external_deps = deps_ex
@@ -225,6 +252,12 @@ ohos_unittest("ThermalClientApiTest") {
 
 # thermal action hub test
 ohos_unittest("ThermalActionHubTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -262,6 +295,12 @@ ohos_unittest("ThermalActionHubTest") {
 
 # thermal action report test
 ohos_unittest("ThermalActionReportTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -280,6 +319,7 @@ ohos_unittest("ThermalActionReportTest") {
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
     "${thermal_manager_path}/test/common:mock_thermalsrv_client",
+    "${thermal_service_zidl}:thermalmgr_stub",
   ]
 
   if (defined(global_parts_info) &&
@@ -314,6 +354,12 @@ ohos_unittest("ThermalActionReportTest") {
 
 # thermal mock proxy test
 ohos_unittest("ThermalMockProxyTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -350,6 +396,12 @@ ohos_unittest("ThermalMockProxyTest") {
 
 # thermal mock proxy remote test
 ohos_unittest("ThermalMockProxyRemoteTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -387,6 +439,12 @@ ohos_unittest("ThermalMockProxyRemoteTest") {
 
 # thermal mock proxy writeinterfacetoken test
 ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -426,6 +484,12 @@ ohos_unittest("ThermalMockProxyWriteinterfacetokenTest") {
 
 # thermal mock proxy writeremoteobject test
 ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -466,6 +530,12 @@ ohos_unittest("ThermalMockProxyWriteremoteobjectTest") {
 
 # thermal mock proxy writevector test
 ohos_unittest("ThermalMockProxyWritevectorTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -506,6 +576,12 @@ ohos_unittest("ThermalMockProxyWritevectorTest") {
 
 # thermal mock proxy sendrequest test
 ohos_unittest("ThermalMockProxySendrequestTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -545,6 +621,12 @@ ohos_unittest("ThermalMockProxySendrequestTest") {
 
 # thermal utils test
 ohos_unittest("ThermalUtilsTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [ "src/thermal_utils_test.cpp" ]
@@ -578,6 +660,12 @@ ohos_unittest("ThermalUtilsTest") {
 
 # thermal application test
 ohos_unittest("ThermalApplicationTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -611,6 +699,12 @@ ohos_unittest("ThermalApplicationTest") {
 
 # thermal service death test
 ohos_unittest("ThermalServiceDeathTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -649,6 +743,12 @@ ohos_unittest("ThermalServiceDeathTest") {
 
 # thermal listener test
 ohos_unittest("ThermalListenerTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -687,6 +787,12 @@ ohos_unittest("ThermalListenerTest") {
 
 # thermal client test
 ohos_unittest("ThermalClientTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -744,6 +850,12 @@ ohos_unittest("ThermalClientTest") {
 
 # thermal mock stub test
 ohos_unittest("ThermalMockStubTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
   defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_mock_stub_test.cpp" ]
@@ -777,6 +889,12 @@ ohos_unittest("ThermalMockStubTest") {
 
 # thermal mock stub getdescriptor test
 ohos_unittest("ThermalMockStubGetdescriptorTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [ "src/thermal_mock_stub_getdescriptor_test.cpp" ]
@@ -810,6 +928,12 @@ ohos_unittest("ThermalMockStubGetdescriptorTest") {
 
 # thermal action test
 ohos_unittest("ThermalActionTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -848,6 +972,12 @@ ohos_unittest("ThermalActionTest") {
 
 # thermal observer test
 ohos_unittest("ThermalObserverTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
 
   sources = [
@@ -892,6 +1022,12 @@ ohos_unittest("ThermalObserverTest") {
 
 # thermal service test
 ohos_unittest("ThermalServiceTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
   defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_service_test.cpp" ]
@@ -911,6 +1047,8 @@ ohos_unittest("ThermalServiceTest") {
 
   external_deps = deps_ex
 
+  external_deps += [ "hicollie:libhicollie" ]
+
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
@@ -925,6 +1063,12 @@ ohos_unittest("ThermalServiceTest") {
 
 # thermal config sensor cluster test
 ohos_unittest("ThermalConfigSensorClusterTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
   defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_config_sensor_cluster_test.cpp" ]
@@ -958,6 +1102,12 @@ ohos_unittest("ThermalConfigSensorClusterTest") {
 
 # thermal mgr dump test
 ohos_unittest("ThermalMgrDumpTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
   defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_mgr_dump_test.cpp" ]
@@ -991,6 +1141,12 @@ ohos_unittest("ThermalMgrDumpTest") {
 
 # thermal policy test
 ohos_unittest("ThermalPolicyTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
   defines += [ "THERMAL_GTEST" ]
   sources = [ "src/thermal_policy_test.cpp" ]
@@ -1026,6 +1182,12 @@ ohos_unittest("ThermalPolicyTest") {
 
 # fan fault detect test
 ohos_unittest("FanFaultDetectTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   module_out_path = module_output_path
   defines += [ "THERMAL_GTEST" ]
   sources = [ "src/fan_fault_detect_test.cpp" ]
