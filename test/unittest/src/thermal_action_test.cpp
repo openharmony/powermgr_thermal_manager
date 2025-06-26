@@ -36,6 +36,7 @@
 #include "action_thermal_level.h"
 #include "action_popup.h"
 #include "action_socperf.h"
+#include "action_socperf_resource.h"
 #include "action_volume.h"
 #include "action_voltage.h"
 #include "file_operation.h"
