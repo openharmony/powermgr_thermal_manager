@@ -67,7 +67,8 @@ std::shared_ptr<ActionPopup> g_actionPopup = std::make_shared<ActionPopup>("popu
 std::shared_ptr<ActionShutdown> g_actionShutdown = std::make_shared<ActionShutdown>("shut_down");
 std::shared_ptr<ActionSocPerf> g_actionSocPerf = std::make_shared<ActionSocPerf>("heca");
 std::shared_ptr<ActionThermalLevel> g_actionThermalLevel = std::make_shared<ActionThermalLevel>("thermallevel");
-std::shared_ptr<ActionSocPerfResource> g_actionSocPerfResource = std::make_shared<ActionSocPerfResource>("sustainable_power");
+std::shared_ptr<ActionSocPerfResource> g_actionSocPerfResource =
+    std::make_shared<ActionSocPerfResource>("sustainable_power");
 std::shared_ptr<ActionVolume> g_actionVolume = std::make_shared<ActionVolume>("volume");
 std::shared_ptr<ActionVoltage> g_actionVoltage = std::make_shared<ActionVoltage>("voltage");
 std::shared_ptr<ActionNode> g_actionNode = std::make_shared<ActionNode>("action_node");
