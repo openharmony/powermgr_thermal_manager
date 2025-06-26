@@ -30,6 +30,7 @@ namespace PowerMgr {
     const std::string CPU_NONVIP_ACTION_NAME = "nonvip";
     const std::string GPU_ACTION_NAME = "gpu";
     const std::string SOCPERF_ACTION_NAME = "socperf";
+    const std::string SOCPERF_RESOURCE_ACTION_NAME = "socperf_resource";
     const std::string LCD_ACTION_NAME = "lcd";
     const std::string VOLUME_ACTION_NAME = "volume";
     const std::string SHUTDOWN_ACTION_NAME = "shut_down";
