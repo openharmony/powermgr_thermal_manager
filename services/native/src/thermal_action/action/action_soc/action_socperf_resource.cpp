@@ -57,16 +57,20 @@ void ActionSocPerfResource::SetEnableEvent(bool enable)
 void ActionSocPerfResource::AddActionValue(uint32_t actionId, std::string value)
 {
     if (value.empty()) {
+        THERMAL_HILOGD(COMP_SVC, "value empty");
+        return;
+    }
+    uint32_t newValue = 0;
+    if (!StringOperation::StrToUint(value, newValue)) {
         return;
     }
     if (actionId > 0) {
         auto iter = policyActionMap_.find(actionId);
         if (iter != policyActionMap_.end()) {
-            iter->second.uintDelayValue = static_cast<uint32_t>(strtol(value.c_str(),
-                nullptr, STRTOL_FORMART_DEC));
+            iter->second.uintDelayValue = newValue;
         }
     } else {
-        valueList_.push_back(static_cast<uint32_t>(strtol(value.c_str(), nullptr, STRTOL_FORMART_DEC)));
+        valueList_.push_back(newValue);
     }
 }
  
@@ -84,7 +88,9 @@ void ActionSocPerfResource::ExecuteInner()
     if (value != lastValue_) {
         SocLimitRequest(resId_, value);
         WriteActionTriggeredHiSysEvent(enableEvent_, actionName_, value);
-        tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        if (tms->GetObserver() != nullptr) {
+            tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
+        }
         lastValue_ = value;
         THERMAL_HILOGD(COMP_SVC, "action execute: {%{public}s = %{public}u}", actionName_.c_str(), lastValue_);
     }
