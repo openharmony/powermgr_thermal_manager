@@ -38,7 +38,7 @@ void ActionSocPerfResource::InitParams(const std::string& params)
     int32_t paramNum = static_cast<int32_t>(paramList.size());
     if (paramNum > FALLBACK_IDX) {
         StrToInt(paramList[RESID_IDX], resId_);
-        fallbackValue_ = atoi(paramList[FALLBACK_IDX].c_str());
+        StringOperation::StrToUint(paramList[FALLBACK_IDX].c_str(), fallbackValue_);
     } else if (paramNum > RESID_IDX) {
         StrToInt(paramList[RESID_IDX], resId_);
     }
