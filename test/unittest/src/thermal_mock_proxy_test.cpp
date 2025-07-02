@@ -75,27 +75,27 @@ HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest002, TestSize.Level0)
     std::vector<std::string> typeList;
     std::string desc;
     sptr<IThermalTempCallback> tempCallback;
-    EXPECT_FALSE(srvProxy->SubscribeThermalTempCallback(typeList, tempCallback));
-    EXPECT_FALSE(srvProxy->UnSubscribeThermalTempCallback(tempCallback));
+    EXPECT_NE(srvProxy->SubscribeThermalTempCallback(typeList, tempCallback), ERR_OK);
+    EXPECT_NE(srvProxy->UnSubscribeThermalTempCallback(tempCallback), ERR_OK);
     sptr<IThermalLevelCallback> levelCallback;
-    EXPECT_FALSE(srvProxy->SubscribeThermalLevelCallback(levelCallback));
-    EXPECT_FALSE(srvProxy->UnSubscribeThermalLevelCallback(levelCallback));
+    EXPECT_NE(srvProxy->SubscribeThermalLevelCallback(levelCallback), ERR_OK);
+    EXPECT_NE(srvProxy->UnSubscribeThermalLevelCallback(levelCallback), ERR_OK);
     sptr<IThermalActionCallback> actionCallback;
-    EXPECT_FALSE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback));
-    EXPECT_FALSE(srvProxy->UnSubscribeThermalActionCallback(actionCallback));
+    EXPECT_NE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback), ERR_OK);
+    EXPECT_NE(srvProxy->UnSubscribeThermalActionCallback(actionCallback), ERR_OK);
 
     tempCallback = new ThermalTempCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(tempCallback == nullptr);
-    EXPECT_TRUE(srvProxy->SubscribeThermalTempCallback(typeList, tempCallback));
-    EXPECT_TRUE(srvProxy->UnSubscribeThermalTempCallback(tempCallback));
+    EXPECT_EQ(srvProxy->SubscribeThermalTempCallback(typeList, tempCallback), ERR_OK);
+    EXPECT_EQ(srvProxy->UnSubscribeThermalTempCallback(tempCallback), ERR_OK);
     levelCallback = new ThermalLevelCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(levelCallback == nullptr);
-    EXPECT_TRUE(srvProxy->SubscribeThermalLevelCallback(levelCallback));
-    EXPECT_TRUE(srvProxy->UnSubscribeThermalLevelCallback(levelCallback));
+    EXPECT_EQ(srvProxy->SubscribeThermalLevelCallback(levelCallback), ERR_OK);
+    EXPECT_EQ(srvProxy->UnSubscribeThermalLevelCallback(levelCallback), ERR_OK);
     actionCallback = new ThermalActionCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(actionCallback == nullptr);
-    EXPECT_TRUE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback));
-    EXPECT_TRUE(srvProxy->UnSubscribeThermalActionCallback(actionCallback));
+    EXPECT_EQ(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback), ERR_OK);
+    EXPECT_EQ(srvProxy->UnSubscribeThermalActionCallback(actionCallback), ERR_OK);
     THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest002 function end!");
 }
 } // namespace

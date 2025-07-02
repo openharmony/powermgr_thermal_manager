@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+interface OHOS.PowerMgr.IThermalActionCallback;
+interface OHOS.PowerMgr.IThermalLevelCallback;
+interface OHOS.PowerMgr.IThermalTempCallback;
+sequenceable OHOS.PowerMgr.ThermalSrvSensorInfo;
+
+interface OHOS.PowerMgr.IThermalSrv {
+    [ipccode 0] void SubscribeThermalTempCallback([in] String[] typeList, [in] IThermalTempCallback callbackParam);
+    void UnSubscribeThermalTempCallback([in] IThermalTempCallback callbackParam);
+    void SubscribeThermalLevelCallback([in] IThermalLevelCallback callbackParam);
+    void UnSubscribeThermalLevelCallback([in] IThermalLevelCallback callbackParam);
+    void SubscribeThermalActionCallback(
+        [in] String[] actionList, [in] String desc, [in] IThermalActionCallback callbackParam);
+    void UnSubscribeThermalActionCallback([in] IThermalActionCallback callbackParam);
+    void GetThermalSrvSensorInfo([in] int type, [out] ThermalSrvSensorInfo sensorInfo, [out] boolean sensorInfoRet);
+    void GetThermalLevel([out] int level);
+    void GetThermalInfo();
+    void SetScene([in] String scene);
+    void UpdateThermalState([in] String tag, [in] String val, [in] boolean isImmed);
+    void ShellDump([in] String[] args, [in] unsigned int argc, [out] String dumpShell);
+}

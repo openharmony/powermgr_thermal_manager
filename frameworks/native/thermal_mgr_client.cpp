@@ -154,7 +154,8 @@ bool ThermalMgrClient::GetThermalSrvSensorInfo(const SensorType& type, ThermalSr
         THERMAL_HILOGI(COMP_FWK, "the thermal pointer is null");
         return false;
     }
-    bool ret = thermalSrv_->GetThermalSrvSensorInfo(type, sensorInfo);
+    bool ret = false;
+    thermalSrv_->GetThermalSrvSensorInfo(static_cast<int32_t>(type), sensorInfo, ret);
     return ret;
 }
 
@@ -172,28 +173,33 @@ void ThermalMgrClient::GetLevel(ThermalLevel& level)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
     THERMAL_RETURN_IF(Connect() != ERR_OK);
-    thermalSrv_->GetThermalLevel(level);
+    int32_t intLevel = static_cast<int32_t>(level);
+    thermalSrv_->GetThermalLevel(intLevel);
+    level = static_cast<ThermalLevel>(intLevel);
 }
 
 bool ThermalMgrClient::SetScene(const std::string& scene)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
     THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, false);
-    return thermalSrv_->SetScene(scene);
+    int ret = thermalSrv_->SetScene(scene);
+    return ret == ERR_OK;
 }
 
 bool ThermalMgrClient::UpdateThermalState(const std::string& tag, const std::string& val, bool isImmed)
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
     THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, false);
-    return thermalSrv_->UpdateThermalState(tag, val, isImmed);
+    int ret = thermalSrv_->UpdateThermalState(tag, val, isImmed);
+    return ret == ERR_OK;
 }
 
 bool ThermalMgrClient::UpdateThermalPolicy()
 {
     THERMAL_HILOGD(COMP_FWK, "Enter");
     THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, false);
-    return thermalSrv_->GetThermalInfo();
+    int ret = thermalSrv_->GetThermalInfo();
+    return ret == ERR_OK;
 }
 
 ThermalLevel ThermalMgrClient::GetThermalLevel()
@@ -209,7 +215,9 @@ std::string ThermalMgrClient::Dump(const std::vector<std::string>& args)
     std::string error = "can't connect service";
     THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, error);
     THERMAL_HILOGD(COMP_FWK, "Enter");
-    return thermalSrv_->ShellDump(args, args.size());
+    std::string dumpShell = "remote error";
+    thermalSrv_->ShellDump(args, args.size(), dumpShell);
+    return dumpShell;
 }
 } // namespace PowerMgr
 } // namespace OHOS

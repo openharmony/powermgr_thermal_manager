@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,27 +13,28 @@
  * limitations under the License.
  */
 
-#ifndef THERMAL_MGR_IPC_INTERFACE_DODE_H
-#define THERMAL_MGR_IPC_INTERFACE_DODE_H
+#ifndef THERMAL_XCOLLIE_H
+#define THERMAL_XCOLLIE_H
 
-/* SAID: 3303 */
+#include <functional>
+#include <string>
+
 namespace OHOS {
 namespace PowerMgr {
-enum class ThermalMgrInterfaceCode {
-    REG_THERMAL_TEMP_CALLBACK = 0,
-    UNREG_THERMAL_TEMP_CALLBACK,
-    REG_THERMAL_LEVEL_CALLBACK,
-    UNREG_THERMAL_LEVEL_CALLBACK,
-    REG_THERMAL_ACTION_CALLBACK,
-    UNREG_THERMAL_ACTION_CALLBACK,
-    GET_SENSOR_INFO,
-    GET_TEMP_LEVEL,
-    GET_THERMAL_INFO,
-    SET_SCENE,
-    UPDATE_THERMAL_STATE,
-    SHELL_DUMP
+class ThermalXCollie {
+public:
+    ThermalXCollie(const std::string &logTag, bool isRecovery = false);
+    ~ThermalXCollie();
+
+protected:
+    void CancelThermalXCollie();
+
+    int32_t id_;
+    std::string logTag_;
+    bool isCanceled_;
 };
-} // space PowerMgr
+
+} // namespace PowerMgr
 } // namespace OHOS
 
-#endif // THERMAL_MGR_IPC_INTERFACE_DODE_H
+#endif // THERMAL_XCOLLIE_H
