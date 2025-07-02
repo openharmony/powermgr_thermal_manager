@@ -18,7 +18,7 @@
 #define FUZZ_PROJECT_NAME "thermallevelcallback_fuzzer"
 
 #include "thermal_fuzzer_test.h"
-#include "thermal_srv_ipc_interface_code.h"
+#include "ithermal_srv.h"
 
 using namespace OHOS::PowerMgr;
 
@@ -31,8 +31,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     g_serviceTest.TestThermalServiceStub(
-        static_cast<uint32_t>(ThermalMgrInterfaceCode::REG_THERMAL_LEVEL_CALLBACK), data, size);
+        static_cast<uint32_t>(IThermalSrvIpcCode::COMMAND_SUBSCRIBE_THERMAL_LEVEL_CALLBACK), data, size);
     g_serviceTest.TestThermalServiceStub(
-        static_cast<uint32_t>(ThermalMgrInterfaceCode::UNREG_THERMAL_LEVEL_CALLBACK), data, size);
+        static_cast<uint32_t>(IThermalSrvIpcCode::COMMAND_UN_SUBSCRIBE_THERMAL_LEVEL_CALLBACK), data, size);
     return 0;
 }

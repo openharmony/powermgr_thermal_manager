@@ -22,7 +22,7 @@ namespace PowerMgr {
 enum class ThermalLevelCallbackInterfaceCode {
     THERMAL_LEVEL_CHANGED = 0,
 };
-} // space PowerMgr
+} // namespace PowerMgr
 } // namespace OHOS
 
 #endif // THERMAL_LEVEL_CALLBACK_IPC_INTERFACE_DODE_H

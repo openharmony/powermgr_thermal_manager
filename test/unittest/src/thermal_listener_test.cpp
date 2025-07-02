@@ -98,8 +98,9 @@ HWTEST_F(ThermalListenerTest, ThermalListenerTest001, TestSize.Level0)
     g_service->UnSubscribeThermalLevelCallback(callback);
 
     thermalListener->GetThermalLevel();
-    ThermalLevel level;
-    g_service->GetThermalLevel(level);
+    int32_t levelValue = 0;
+    g_service->GetThermalLevel(levelValue);
+    ThermalLevel level = static_cast<ThermalLevel>(levelValue);
     EXPECT_EQ(g_thermalLevel, level);
     THERMAL_HILOGI(LABEL_TEST, "ThermalListenerTest001 function end!");
 }

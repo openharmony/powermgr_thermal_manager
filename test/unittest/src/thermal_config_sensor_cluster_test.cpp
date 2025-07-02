@@ -387,7 +387,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest010, Test
     EXPECT_TRUE(cluster.IsTempRateTrigger(level, sensorType, vecLevel, isCritical));
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest010 function end!");
 }
- 
+
 /**
  * @tc.name: ThermalConfigSensorClusterTest011
  * @tc.desc: test IsTempDiffTrigger
@@ -398,7 +398,7 @@ HWTEST_F(ThermalConfigSensorClusterTest, ThermalConfigSensorClusterTest011, Test
     THERMAL_HILOGI(LABEL_TEST, "ThermalConfigSensorClusterTest011 function start!");
 
     TypeTempMap typeTempInfo;
-    
+
     uint32_t level = 0;
     ThermalConfigSensorCluster cluster;
     EXPECT_TRUE(cluster.IsTempDiffTrigger(typeTempInfo, level));

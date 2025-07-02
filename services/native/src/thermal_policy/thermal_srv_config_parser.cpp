@@ -760,7 +760,7 @@ bool ThermalSrvConfigParser::ParseFanFaultInfo(const xmlNodePtr& node,
 
     return true;
 }
- 
+
 bool ThermalSrvConfigParser::ParseTempDiffInfo(const xmlNodePtr& cur, SensorClusterPtr& sc)
 {
     xmlChar* xmlTempDiff = xmlGetProp(cur, BAD_CAST"temp_diff");
@@ -768,7 +768,7 @@ bool ThermalSrvConfigParser::ParseTempDiffInfo(const xmlNodePtr& cur, SensorClus
         THERMAL_HILOGD(COMP_SVC, "temp_diff does not exist!");
         return true;
     }
- 
+
     std::vector<std::string> sensors;
     StringOperation::SplitString(reinterpret_cast<char*>(xmlTempDiff), sensors, ",");
     if (sensors.size() != TEMPDIFF_SENSOR_SIZE) {
@@ -776,7 +776,7 @@ bool ThermalSrvConfigParser::ParseTempDiffInfo(const xmlNodePtr& cur, SensorClus
         xmlFree(xmlTempDiff);
         return false;
     }
- 
+
     auto& sensor1 = sensors[0];
     auto& sensor2 = sensors[1];
     TempDiffInfoList infoList;
@@ -785,13 +785,13 @@ bool ThermalSrvConfigParser::ParseTempDiffInfo(const xmlNodePtr& cur, SensorClus
         xmlFree(xmlTempDiff);
         return false;
     }
- 
+
     sc->SetTempDiffInfo(infoList);
     sc->SetTempDiffFlag(true);
     xmlFree(xmlTempDiff);
     return true;
 }
- 
+
 bool ThermalSrvConfigParser::ParseTempDiffLevInfo(const xmlNodePtr& cur,
     const std::string& sensor1, const std::string& sensor2, TempDiffInfoList& infoList)
 {
@@ -821,7 +821,7 @@ bool ThermalSrvConfigParser::ParseTempDiffLevInfo(const xmlNodePtr& cur,
     }
     return true;
 }
- 
+
 bool ThermalSrvConfigParser::ParseTempDiffValue(const xmlNodePtr& cur,
     const std::string& sensor1, const std::string& sensor2, TempDiffItem& item)
 {
@@ -830,7 +830,7 @@ bool ThermalSrvConfigParser::ParseTempDiffValue(const xmlNodePtr& cur,
         THERMAL_HILOGE(COMP_SVC, "temp diff trigger value is null");
         return false;
     }
-    
+
     if (!StrToInt(reinterpret_cast<char*>(xmlTempDiffTrigger), item.tempDiff)) {
         THERMAL_HILOGE(COMP_SVC, "temp diff value is a illegal number");
         xmlFree(xmlTempDiffTrigger);

@@ -18,12 +18,24 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include "thermal_xcollie.h"
 
 namespace OHOS {
 namespace PowerMgr {
 class ThermalServiceTest : public testing::Test {
 public:
     static void SetUpTestCase();
+};
+
+class ThermalXCollieTestable : public ThermalXCollie {
+public:
+    ThermalXCollieTestable(const std::string &logTag, bool isRecovery)
+        : ThermalXCollie(logTag, isRecovery) {}
+
+    void CallCancel()
+    {
+        CancelThermalXCollie();
+    }
 };
 } // namespace PowerMgr
 } // namespace OHOS

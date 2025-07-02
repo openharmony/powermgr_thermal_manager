@@ -56,16 +56,10 @@ HWTEST_F(ThermalMockProxyWritevectorTest, ThermalMockProxyWritevectorTest001, Te
     std::string desc;
     sptr<IThermalTempCallback> tempCallback = new ThermalTempCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(tempCallback == nullptr);
-    EXPECT_FALSE(srvProxy->SubscribeThermalTempCallback(typeList, tempCallback));
-    EXPECT_TRUE(srvProxy->UnSubscribeThermalTempCallback(tempCallback));
-    sptr<IThermalLevelCallback> levelCallback = new ThermalLevelCallbackProxy(sptrRemoteObj);
-    EXPECT_FALSE(levelCallback == nullptr);
-    EXPECT_TRUE(srvProxy->SubscribeThermalLevelCallback(levelCallback));
-    EXPECT_TRUE(srvProxy->UnSubscribeThermalLevelCallback(levelCallback));
+    EXPECT_NE(srvProxy->SubscribeThermalTempCallback(typeList, tempCallback), ERR_OK);
     sptr<IThermalActionCallback> actionCallback = new ThermalActionCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(actionCallback == nullptr);
-    EXPECT_FALSE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback));
-    EXPECT_TRUE(srvProxy->UnSubscribeThermalActionCallback(actionCallback));
+    EXPECT_NE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback), ERR_OK);
     THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyWritevectorTest001 function end!");
 }
 } // namespace

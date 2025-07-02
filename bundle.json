@@ -82,7 +82,6 @@
           "name": "//base/powermgr/thermal_manager/interfaces/inner_api:thermalsrv_client",
           "header": {
             "header_files": [
-              "ithermal_srv.h",
               "thermal_mgr_client.h",
               "ithermal_temp_callback.h",
               "ithermal_level_callback.h",
