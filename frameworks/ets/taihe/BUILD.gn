@@ -13,7 +13,14 @@
 
 group("thermal_manager_taihe") {
   deps = [
-    "ability_delegator:thermal_etc",
-    "ability_delegator:thermal_manager_taihe_native",
+    "thermal:thermal_etc",
+    "thermal:thermal_manager_taihe_native",
+  ]
+}
+
+group("thermal_manager_taihe_test") {
+  testonly = true
+  deps = [
+    "thermal/test/unittest:thermal_taihe_native_test",
   ]
 }
