@@ -27,6 +27,7 @@ public:
     ThermalFuzzerTest();
     ~ThermalFuzzerTest();
     void TestThermalServiceStub(const uint32_t code, const uint8_t* data, size_t size);
+    void TestThermalPolicy();
 };
 
 #endif // THERMAL_FUZZER_TEST_H
