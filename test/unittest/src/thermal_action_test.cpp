@@ -36,6 +36,7 @@
 #include "action_thermal_level.h"
 #include "action_popup.h"
 #include "action_socperf.h"
+#include "action_socperf_resource.h"
 #include "action_volume.h"
 #include "action_voltage.h"
 #include "file_operation.h"
@@ -66,6 +67,8 @@ std::shared_ptr<ActionPopup> g_actionPopup = std::make_shared<ActionPopup>("popu
 std::shared_ptr<ActionShutdown> g_actionShutdown = std::make_shared<ActionShutdown>("shut_down");
 std::shared_ptr<ActionSocPerf> g_actionSocPerf = std::make_shared<ActionSocPerf>("heca");
 std::shared_ptr<ActionThermalLevel> g_actionThermalLevel = std::make_shared<ActionThermalLevel>("thermallevel");
+std::shared_ptr<ActionSocPerfResource> g_actionSocPerfResource =
+    std::make_shared<ActionSocPerfResource>("sustainable_power");
 std::shared_ptr<ActionVolume> g_actionVolume = std::make_shared<ActionVolume>("volume");
 std::shared_ptr<ActionVoltage> g_actionVoltage = std::make_shared<ActionVoltage>("voltage");
 std::shared_ptr<ActionNode> g_actionNode = std::make_shared<ActionNode>("action_node");
@@ -748,5 +751,42 @@ HWTEST_F(ThermalActionTest, ThermalActionTest017, TestSize.Level0)
     g_actionSocPerf->ResetActionValue();
     EXPECT_EQ(0, g_actionSocPerf->lastValue_);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest017 function end!");
+}
+ 
+/*
+ * @tc.name: ThermalActionTest018
+ * @tc.desc: Action SocPerf Resource Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionTest, ThermalActionTest018, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest018 function start!");
+    g_actionSocPerfResource->InitParams("1031");
+    EXPECT_EQ(1031, g_actionSocPerfResource->resId_);
+    g_actionSocPerfResource->InitParams("1031|40000");
+    EXPECT_EQ(1031, g_actionSocPerfResource->resId_);
+    EXPECT_EQ(40000, g_actionSocPerfResource->fallbackValue_);
+    g_actionSocPerfResource->SetStrict(false);
+    g_actionSocPerfResource->SetEnableEvent(false);
+    g_actionSocPerfResource->AddActionValue(0, "");
+    g_actionSocPerfResource->AddActionValue(0, "abc");
+    g_actionSocPerfResource->Execute();
+    EXPECT_TRUE(g_actionSocPerfResource->valueList_.empty());
+    g_actionSocPerfResource->AddActionValue(0, "20000");
+    g_actionSocPerfResource->Execute();
+    g_actionSocPerfResource->SetStrict(true);
+    g_actionSocPerfResource->AddActionValue(0, "20000");
+    g_actionSocPerfResource->Execute();
+    g_actionSocPerfResource->AddActionValue(1, "20000");
+    g_actionSocPerfResource->Execute();
+    PolicyDelayAction policyDelayAction;
+    policyDelayAction.isCompleted = true;
+    policyDelayAction.uintDelayValue =10000;
+    g_actionSocPerfResource->AddActionDelayTime(1, policyDelayAction);
+    g_actionSocPerfResource->AddActionValue(1, "20000");
+    g_actionSocPerfResource->Execute();
+    g_actionSocPerfResource->ResetActionValue();
+    EXPECT_EQ(0, g_actionSocPerfResource->lastValue_);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest018 function end!");
 }
 } // namespace

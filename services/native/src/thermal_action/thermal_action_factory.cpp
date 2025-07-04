@@ -30,6 +30,7 @@
 #include "action_popup.h"
 #include "action_shutdown.h"
 #include "action_socperf.h"
+#include "action_socperf_resource.h"
 #include "action_thermal_level.h"
 #include "action_voltage.h"
 #include "action_volume.h"
@@ -79,6 +80,8 @@ void ThermalActionFactory::InitFactory()
             [&](std::string actionName) { return std::make_shared<ActionApplicationProcess>(actionName); }),
         std::make_pair(SOCPERF_ACTION_NAME,
             [&](std::string actionName) { return std::make_shared<ActionSocPerf>(actionName); }),
+        std::make_pair(SOCPERF_RESOURCE_ACTION_NAME,
+            [&](std::string actionName) { return std::make_shared<ActionSocPerfResource>(actionName); }),
         std::make_pair(NODE_ACTION_NAME,
             [&](std::string actionName) { return std::make_shared<ActionNode>(actionName); }),
     };
