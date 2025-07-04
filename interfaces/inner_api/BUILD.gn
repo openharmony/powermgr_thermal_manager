@@ -62,6 +62,11 @@ ohos_shared_library("thermalsrv_client") {
 }
 
 ohos_shared_library("thermalmgr_listener") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "${thermal_frameworks}/native/thermal_mgr_listener.cpp" ]
 
   configs = [
