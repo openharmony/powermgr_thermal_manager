@@ -30,6 +30,8 @@ ThermalFuzzerTest g_serviceTest;
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
+    constexpr uint32_t code = -1;
     g_serviceTest.TestThermalServiceStub(static_cast<uint32_t>(IThermalSrvIpcCode::COMMAND_SHELL_DUMP), data, size);
+    g_serviceTest.TestThermalServiceStub(code, data, size);
     return 0;
 }

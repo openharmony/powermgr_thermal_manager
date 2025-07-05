@@ -34,5 +34,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         static_cast<uint32_t>(IThermalSrvIpcCode::COMMAND_SUBSCRIBE_THERMAL_ACTION_CALLBACK), data, size);
     g_serviceTest.TestThermalServiceStub(
         static_cast<uint32_t>(IThermalSrvIpcCode::COMMAND_UN_SUBSCRIBE_THERMAL_ACTION_CALLBACK), data, size);
+    g_serviceTest.TestThermalPolicy();
     return 0;
 }
