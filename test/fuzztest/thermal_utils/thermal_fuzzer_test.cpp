@@ -23,6 +23,9 @@
 #include "message_parcel.h"
 #include "securec.h"
 
+#include "thermal_policy.h"
+#include "thermal_config_sensor_cluster.h"
+
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 
@@ -43,6 +46,16 @@ ThermalFuzzerTest::~ThermalFuzzerTest()
         g_service->OnStop();
     }
     g_service = nullptr;
+}
+
+void ThermalFuzzerTest::TestThermalPolicy()
+{
+    ThermalPolicy policy;
+    std::string result = "fuzz_test";
+    const TypeTempMap& info = {{"cpu", 30}, {"gpu", 45}};
+    policy.OnSensorInfoReported(info);
+    policy.DumpLevel(result);
+    policy.DumpPolicy(result);
 }
 
 void ThermalFuzzerTest::TestThermalServiceStub(const uint32_t code, const uint8_t* data, size_t size)
