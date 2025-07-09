@@ -212,10 +212,15 @@ ThermalLevel ThermalMgrClient::GetThermalLevel()
 
 std::string ThermalMgrClient::Dump(const std::vector<std::string>& args)
 {
+    const int PARAM_MAX_NUM = 10;
     std::string error = "can't connect service";
     THERMAL_RETURN_IF_WITH_RET(Connect() != ERR_OK, error);
     THERMAL_HILOGD(COMP_FWK, "Enter");
     std::string dumpShell = "remote error";
+    if (args.size() >= PARAM_MAX_NUM) {
+        THERMAL_HILOGE(COMP_FWK, "params exceed limit");
+        return dumpShell;
+    }
     thermalSrv_->ShellDump(args, args.size(), dumpShell);
     return dumpShell;
 }

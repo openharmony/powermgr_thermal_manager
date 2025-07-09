@@ -22,6 +22,11 @@ config("module_private_config") {
 }
 
 ohos_shared_library("mock_thermalsrv_client") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "${thermal_frameworks}/native/thermal_srv_sensor_info.cpp",
     "src/mock_thermal_mgr_client.cpp",
