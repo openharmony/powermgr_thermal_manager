@@ -18,6 +18,11 @@ config("thermal_private_config") {
 }
 
 ohos_shared_library("thermal") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   configs = [
     "${utils_path}:utils_config",
     ":thermal_private_config",
