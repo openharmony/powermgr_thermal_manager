@@ -64,6 +64,9 @@ ohos::thermal::ThermalLevel GetLevel()
 }
 }  // namespace
 
+// Since these macros are auto-generate, lint will cause false positive
+// NOLINTBEGIN
 TH_EXPORT_CPP_API_RegisterThermalLevelCallback(RegisterThermalLevelCallback);
 TH_EXPORT_CPP_API_UnregisterThermalLevelCallback(UnregisterThermalLevelCallback);
 TH_EXPORT_CPP_API_GetLevel(GetLevel);
+// NOLINTEND

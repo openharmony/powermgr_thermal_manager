@@ -99,13 +99,14 @@
             }
         },
         {
-            "name": "//base/powermgr/thermal_manager/frameworks/ets/taihe/ability_delegator:copy_thermal_manager"
+            "name": "//base/powermgr/thermal_manager/frameworks/ets/taihe/thermal:copy_thermal_manager"
         }
       ],
       "test": [
         "//base/powermgr/thermal_manager/test:unittest",
         "//base/powermgr/thermal_manager/test:fuzztest",
-        "//base/powermgr/thermal_manager/test:systemtest"
+        "//base/powermgr/thermal_manager/test:systemtest",
+        "//base/powermgr/thermal_manager/frameworks/ets/taihe:thermal_manager_taihe_test"
       ]
     }
   }
