@@ -56,6 +56,7 @@
         "napi",
         "netmanager_base",
         "power_manager",
+        "runtime_core",
         "safwk",
         "samgr",
         "selinux_adapter",
@@ -69,7 +70,8 @@
         "fwk_group": [
           "//base/powermgr/thermal_manager/application:thermal_application",
           "//base/powermgr/thermal_manager/frameworks:client",
-          "//base/powermgr/thermal_manager/frameworks:thermal_napi"
+          "//base/powermgr/thermal_manager/frameworks:thermal_napi",
+          "//base/powermgr/thermal_manager/frameworks/ets/taihe:thermal_manager_taihe"
         ],
         "service_group": [
           "//base/powermgr/thermal_manager/test/common:mock_thermalsrv_client",
@@ -118,12 +120,16 @@
             ],
             "header_base": "//base/powermgr/thermal_manager/frameworks/cj"
           }
+        },
+        {
+            "name": "//base/powermgr/thermal_manager/frameworks/ets/taihe/thermal:copy_thermal_manager"
         }
       ],
       "test": [
         "//base/powermgr/thermal_manager/test:unittest",
         "//base/powermgr/thermal_manager/test:fuzztest",
-        "//base/powermgr/thermal_manager/test:systemtest"
+        "//base/powermgr/thermal_manager/test:systemtest",
+        "//base/powermgr/thermal_manager/frameworks/ets/taihe:thermal_manager_taihe_test"
       ]
     }
   }
