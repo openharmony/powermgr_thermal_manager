@@ -972,12 +972,6 @@ ohos_unittest("ThermalActionTest") {
 
 # thermal observer test
 ohos_unittest("ThermalObserverTest") {
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-  }
-
   module_out_path = module_output_path
 
   sources = [
@@ -996,8 +990,6 @@ ohos_unittest("ThermalObserverTest") {
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
     "${thermal_manager_path}/services:thermalservice",
-    "${thermal_service_zidl}:thermalmgr_proxy",
-    "${thermal_service_zidl}:thermalmgr_stub",
   ]
 
   external_deps = deps_ex
