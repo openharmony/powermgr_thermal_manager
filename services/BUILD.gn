@@ -94,7 +94,6 @@ ohos_shared_library("thermalservice") {
   public_configs = [ ":thermalsrv_public_config" ]
 
   deps = [
-    "${thermal_service_zidl}:thermalmgr_proxy",
     "${thermal_service_zidl}:thermalmgr_stub",
     "${utils_path}:thermal_utils",
     "${utils_path}/hookmgr:thermal_hookmgr",
