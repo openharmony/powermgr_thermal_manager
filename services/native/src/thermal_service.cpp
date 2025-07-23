@@ -529,7 +529,7 @@ int32_t ThermalService::GetThermalLevel(int32_t& level)
         THERMAL_HILOGD(COMP_SVC, "actionMgr_ is nullptr");
         return ERR_FAIL;
     }
-    level = actionMgr_->GetThermalLevel();
+    level = static_cast<int32_t>(actionMgr_->GetThermalLevel());
     return ERR_OK;
 }
 
