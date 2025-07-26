@@ -33,7 +33,6 @@ ohos_shared_library("cj_thermal_ffi") {
 
   deps = [
     "${thermal_inner_api}:thermalsrv_client",
-    "${thermal_service_zidl}:thermalmgr_proxy",
   ]
 
   external_deps = [
