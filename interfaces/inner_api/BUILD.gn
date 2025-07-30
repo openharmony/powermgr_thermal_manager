@@ -33,6 +33,9 @@ ohos_shared_library("thermalsrv_client") {
   sources = [
     "${thermal_frameworks}/native/thermal_mgr_client.cpp",
     "${thermal_frameworks}/native/thermal_srv_sensor_info.cpp",
+    "${thermal_service_zidl}/src/thermal_action_callback_stub.cpp",
+    "${thermal_service_zidl}/src/thermal_level_callback_stub.cpp",
+    "${thermal_service_zidl}/src/thermal_temp_callback_stub.cpp",
   ]
 
   configs = [
@@ -52,6 +55,7 @@ ohos_shared_library("thermalsrv_client") {
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "c_utils:utils",
+    "hicollie:libhicollie",
     "hilog:libhilog",
     "ipc:ipc_core",
     "samgr:samgr_proxy",

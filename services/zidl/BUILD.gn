@@ -53,13 +53,6 @@ ohos_source_set("thermalmgr_proxy") {
   output_values = get_target_outputs(":thermalmgr_interface")
   sources = filter_include(output_values, [ "*_proxy.cpp" ])
 
-  sources += [
-    "src/thermal_action_callback_proxy.cpp",
-    "src/thermal_level_callback_proxy.cpp",
-    "src/thermal_level_callback_stub.cpp",
-    "src/thermal_temp_callback_proxy.cpp",
-  ]
-
   configs = [
     "${utils_path}:utils_config",
     ":thermalmgr_ipc_private_config",
