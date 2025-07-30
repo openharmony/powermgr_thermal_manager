@@ -35,6 +35,9 @@ ohos_shared_library("thermalservice") {
   branch_protector_ret = "pac_ret"
 
   sources = [
+    "${thermal_service_zidl}/src/thermal_action_callback_proxy.cpp",
+    "${thermal_service_zidl}/src/thermal_level_callback_proxy.cpp",
+    "${thermal_service_zidl}/src/thermal_temp_callback_proxy.cpp",
     "native/src/fan_callback.cpp",
     "native/src/thermal_action/action/action_airplane.cpp",
     "native/src/thermal_action/action/action_application_process.cpp",
