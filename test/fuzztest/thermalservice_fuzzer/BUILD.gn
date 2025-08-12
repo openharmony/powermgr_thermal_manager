@@ -39,6 +39,7 @@ ohos_fuzztest("ThermalServiceFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [
+    "../thermal_utils/thermal_fuzzer_test.cpp",
     "./thermalservice_fuzzer_test.cpp",
   ]
   deps = [
