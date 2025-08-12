@@ -27,8 +27,9 @@ using namespace OHOS::PowerMgr;
 using namespace OHOS;
 
 namespace {
+ThermalFuzzerTest g_serviceTest;
 sptr<ThermalService> g_service = nullptr;
-void ThermalServiceFuzzTest001(const uint8_t* data, size_t size)
+void ThermalServiceFuzzTest001()
 {
     g_service = ThermalService::GetInstance();
     g_service->InitSystemTestModules();
@@ -84,6 +85,7 @@ void ThermalServiceFuzzTest001(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    ThermalServiceFuzzTest001(data, size);
+    ThermalServiceFuzzTest001();
+    g_serviceTest.TestThermalServiceStub(static_cast<uint32_t>(IThermalSrvIpcCode::COMMAND_SHELL_DUMP), data, size);
     return 0;
 }
