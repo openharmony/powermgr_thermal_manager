@@ -90,6 +90,7 @@ ohos_shared_library("thermalservice") {
     "${utils_path}:coverage_flags",
   ]
 
+  defines = []
   if (use_libfuzzer) {
     defines += [ "FUZZ_TEST" ]
   }
@@ -109,12 +110,14 @@ ohos_shared_library("thermalservice") {
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
+    "config_policy:configpolicy_util",
     "drivers_interface_thermal:libthermal_proxy_1.1",
     "ffrt:libffrt",
     "hdf_core:libhdi",
     "hdf_core:libpub_utils",
     "hicollie:libhicollie",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "image_framework:image_native",
     "init:libbegetutil",
     "ipc:ipc_core",
@@ -133,14 +136,9 @@ ohos_shared_library("thermalservice") {
   }
 
   if (has_thermal_audio_framework_part &&
-      thermal_manager_audio_framework_enable) {
+    thermal_manager_audio_framework_enable) {
     defines += [ "HAS_THERMAL_AUDIO_FRAMEWORK_PART" ]
     external_deps += [ "audio_framework:audio_client" ]
-  }
-
-  if (has_thermal_config_policy_part) {
-    defines += [ "HAS_THERMAL_CONFIG_POLICY_PART" ]
-    external_deps += [ "config_policy:configpolicy_util" ]
   }
 
   if (has_thermal_display_manager_part) {
@@ -167,10 +165,6 @@ ohos_shared_library("thermalservice") {
 
   if (build_variant == "user") {
     defines += [ "THERMAL_USER_VERSION" ]
-  }
-
-  if (has_hiviewdfx_hisysevent_part) {
-    external_deps += [ "hisysevent:libhisysevent" ]
   }
 
   subsystem_name = "powermgr"

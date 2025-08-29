@@ -360,7 +360,7 @@ bool ThermalConfigSensorCluster::IsTempDiffTrigger(const TypeTempMap& typeTempIn
     auto& tempDiffInfo = tempDiffInfoList_.at(level - 1);
     auto& sensor1 = tempDiffInfo.sensor1;
     auto& sensor2 = tempDiffInfo.sensor2;
-
+ 
     std::map<std::string, int>::const_iterator ite1 = typeTempInfo.end();
     std::map<std::string, int>::const_iterator ite2 = typeTempInfo.end();
     if ((ite1 = typeTempInfo.find(sensor1)) == typeTempInfo.end()

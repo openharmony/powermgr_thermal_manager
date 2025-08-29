@@ -39,14 +39,12 @@ bool ThermalConfigFileParser::Init()
 
 bool ThermalConfigFileParser::GetActionEnableEvent(const std::string& actionName)
 {
-#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
     for (auto iter : actionItem_) {
         if (iter.name.compare(actionName) == 0 ||
             actionName.find(iter.name) != std::string::npos) {
             return iter.enableEvent;
         }
     }
-#endif
     return false;
 }
 

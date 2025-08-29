@@ -27,9 +27,7 @@
 #include <thread>
 #include <unistd.h>
 
-#ifdef HAS_THERMAL_CONFIG_POLICY_PART
 #include "config_policy_utils.h"
-#endif
 #include "constants.h"
 #include "ffrt_utils.h"
 #include "permission.h"
@@ -54,6 +52,7 @@ constexpr const char* THERMAL_PLUGIN_AUTORUN_PATH = "/system/lib/thermalplugin/a
 const std::string THERMAL_SERVICE_CONFIG_PATH = "etc/thermal_config/thermal_service_config.xml";
 const std::string VENDOR_THERMAL_SERVICE_CONFIG_PATH = "/vendor/etc/thermal_config/thermal_service_config.xml";
 const std::string SYSTEM_THERMAL_SERVICE_CONFIG_PATH = "/system/etc/thermal_config/thermal_service_config.xml";
+constexpr const char* THMERMAL_SERVICE_NAME = "ThermalService";
 constexpr const char* HDI_SERVICE_NAME = "thermal_interface_service";
 FFRTQueue g_queue("thermal_service");
 constexpr uint32_t RETRY_TIME = 1000;
@@ -254,7 +253,6 @@ bool ThermalService::InitConfigFile()
         THERMAL_HILOGI(COMP_SVC, "system config file has parsed.");
         return true;
     }
-#ifdef HAS_THERMAL_CONFIG_POLICY_PART
     char buf[MAX_PATH_LEN];
     char* path = GetOneCfgFile(THERMAL_SERVICE_CONFIG_PATH.c_str(), buf, MAX_PATH_LEN);
     if (path != nullptr && *path != '\0') {
@@ -265,7 +263,6 @@ bool ThermalService::InitConfigFile()
         THERMAL_HILOGE(COMP_SVC, "policy config file config init err");
         return false;
     }
-#endif
 
     if (configParser_.ThermalSrvConfigInit(VENDOR_THERMAL_SERVICE_CONFIG_PATH)) {
         THERMAL_HILOGD(COMP_SVC, "thermal service config init suc:VENDOR_CONFIG");

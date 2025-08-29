@@ -64,7 +64,7 @@ void ThermalServiceFuzzTest001()
     event.info.push_back(info);
     g_service->HandleThermalCallbackEvent(event);
     TypeTempMap tempMap;
-    g_service->isTempReport_ = false;
+    g_service->isTempReport_ = true;
     g_service->HandleTempEmulation(tempMap);
     g_service->RegisterFanHdiCallback();
     g_service->HandleFanCallbackEvent(event);
@@ -74,7 +74,7 @@ void ThermalServiceFuzzTest001()
     g_service->Dump(fd, args);
     g_service->isBootCompleted_ = true;
     g_service->Dump(fd, args);
-    g_service->ready_ = false;
+    g_service->ready_ = true;
     g_service->OnStop();
     g_service->EnableMock("", nullptr);
     g_service->DestroyInstance();
