@@ -19,17 +19,14 @@
 #include <condition_variable>
 #include <mutex>
 
-#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 #include "hisysevent.h"
 #include "hisysevent_listener.h"
 #include "hisysevent_manager.h"
 #include "hisysevent_record.h"
-#endif
 #include "thermal_log.h"
+
 using namespace testing::ext;
-#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 using namespace OHOS::HiviewDFX;
-#endif
 using namespace OHOS::PowerMgr;
 
 namespace {
@@ -47,15 +44,11 @@ const int32_t FAN_SLOW_SPEED = 400;
 const int32_t FAN_FAST_SPEED = 1600;
 const int32_t TEMP_HIGH = 60000;
 const int32_t TEMP_LOW = 20000;
-
-#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
 const int64_t TIME_OUT = 2;
-std::atomic_bool g_eventTriggered = false;
-#endif
-
 std::mutex g_mutex;
 std::condition_variable g_callbackCV;
-#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
+std::atomic_bool g_eventTriggered = false;
+
 class Watcher : public HiSysEventListener {
 public:
     explicit Watcher(std::function<void(std::shared_ptr<HiSysEventRecord>)> func) : func_(func) {}
@@ -74,7 +67,6 @@ public:
 private:
     std::function<void(std::shared_ptr<HiSysEventRecord>)> func_;
 };
-#endif
 } // namespace
 
 void FanFaultDetectTest::SetUpTestCase() {}
@@ -109,7 +101,7 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
     std::shared_ptr<FanFaultDetect> fanFaultDetect = std::make_shared<FanFaultDetect>();
     EXPECT_NE(fanFaultDetect, nullptr);
     InitFanFaultInfoMap(fanFaultDetect);
-#ifdef HAS_HIVIEWDFX_HISYSEVENT_PART
+
     auto watcher = std::make_shared<Watcher>([&faultId] (std::shared_ptr<HiSysEventRecord> sysEvent) {
         if (sysEvent == nullptr) {
             return;
@@ -134,7 +126,6 @@ void FanFaultDetectTest::GetFaultId(int64_t& faultId, const FanSensorInfo& repor
 
     ret = OHOS::HiviewDFX::HiSysEventManager::RemoveListener(watcher);
     EXPECT_TRUE(ret == SUCCESS);
-#endif
 }
 
 namespace {
