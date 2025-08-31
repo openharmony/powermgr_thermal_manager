@@ -36,7 +36,6 @@
         "battery_statistics",
         "battery_manager",
         "bundle_framework",
-        "cJSON",
         "common_event_service",
         "config_policy",
         "c_utils",

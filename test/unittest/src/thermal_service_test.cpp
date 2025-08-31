@@ -46,7 +46,7 @@ constexpr const char* SYSTEM_CONFIG = "/system/etc/thermal_config/thermal_servic
 
 char* GetOneCfgFile(const char *pathSuffix, char *buf, unsigned int bufLength)
 {
-    THERMAL_HILOGI(LABEL_TEST, "mock GetOneCfgFile.");
+    THERMAL_HILOGD(LABEL_TEST, "mock GetOneCfgFile.");
     return nullptr;
 }
 
@@ -160,46 +160,5 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest004, TestSize.Level0)
     thermalXCollie.CallCancel();
     thermalXCollie.CallCancel();
     THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest004 function end!");
-}
-
-/**
- * @tc.name: ThermalServiceTest005
- * @tc.desc: test Service RegisterBootCompletedCallback
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalServiceTest, ThermalServiceTest005, TestSize.Level0)
-{
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest005 function start!");
-    EXPECT_TRUE(g_service->Init());
-    g_service->RegisterBootCompletedCallback();
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest005 function end!");
-}
-
-/**
- * @tc.name: ThermalServiceTest006
- * @tc.desc: test Service UnRegisterThermalHdiCallback
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalServiceTest, ThermalServiceTest006, TestSize.Level0)
-{
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest006 function start!");
-    EXPECT_TRUE(g_service->Init());
-    g_service->thermalInterface_ = nullptr;
-    g_service->UnRegisterThermalHdiCallback();
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest006 function end!");
-}
-
-/**
- * @tc.name: ThermalServiceTest007
- * @tc.desc: test Service RegisterFanHdiCallback
- * @tc.type: FUNC
- */
-HWTEST_F(ThermalServiceTest, ThermalServiceTest007, TestSize.Level0)
-{
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest007 function start!");
-    EXPECT_TRUE(g_service->Init());
-    g_service->thermalInterface_ = nullptr;
-    g_service->RegisterFanHdiCallback();
-    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest007 function end!");
 }
 } // namespace

@@ -36,7 +36,6 @@ deps_ex = [
   "hdf_core:libhdi",
   "bundle_framework:appexecfwk_base",
   "common_event_service:cesfwk_innerkits",
-  "cJSON:cjson_static",
   "c_utils:utils",
   "libxml2:libxml2",
   "drivers_interface_thermal:libthermal_proxy_1.1",
@@ -95,6 +94,7 @@ ohos_systemtest("ThermalMgrInterfaceTest") {
     "googletest:gtest_main",
   ]
 
+  defines = []
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
@@ -141,6 +141,7 @@ ohos_systemtest("ThermalMgrDialogTest") {
     "googletest:gtest_main",
   ]
 
+  defines = []
   if (has_thermal_airplane_manager_part) {
     defines += [ "HAS_THERMAL_AIRPLANE_MANAGER_PART" ]
     external_deps += [ "netmanager_base:net_conn_manager_if" ]
@@ -178,6 +179,7 @@ ohos_systemtest("ThermalLevelEventSystemTest") {
 
   external_deps += [ "googletest:gtest_main" ]
 
+  defines = []
   if (defined(global_parts_info) &&
       defined(global_parts_info.powermgr_battery_manager)) {
     defines += [ "BATTERY_MANAGER_ENABLE" ]
