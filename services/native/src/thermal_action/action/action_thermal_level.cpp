@@ -88,7 +88,7 @@ void ActionThermalLevel::ExecuteInner()
 
     int32_t value = GetActionValue();
     if (value != lastValue_) {
-        THERMAL_HILOGI(COMP_SVC, "thermal level changed, new lev: %{public}d, old lev: %{public}d", value, lastValue_);
+        THERMAL_HILOGI(COMP_SVC, "new lvl:%{public}d,old lvl:%{public}d", value, lastValue_);
         lastValue_ = value;
         LevelRequest(value);
         tms->GetObserver()->SetDecisionValue(actionName_, std::to_string(value));
@@ -142,7 +142,7 @@ void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelC
         object->AddDeathRecipient(thermalLevelCBDeathRecipient_);
         callback->OnThermalLevelChanged(static_cast<ThermalLevel>(lastValue_));
     }
-    THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}zu, insertOk=%{public}d",
+    THERMAL_HILOGI(COMP_SVC, "size=%{public}zu,insertOk=%{public}d",
         thermalLevelListeners_.size(), retIt.second);
 }
 
@@ -156,7 +156,7 @@ void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLeve
     if (eraseNum != 0) {
         object->RemoveDeathRecipient(thermalLevelCBDeathRecipient_);
     }
-    THERMAL_HILOGI(COMP_SVC, "listeners.size=%{public}zu, eraseNum=%{public}zu",
+    THERMAL_HILOGI(COMP_SVC, "size=%{public}zu,eraseNum=%{public}zu",
         thermalLevelListeners_.size(), eraseNum);
 }
 
