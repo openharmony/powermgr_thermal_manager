@@ -16,7 +16,7 @@
 @!namespace("@ohos.thermal", "thermal")
 
 @!sts_inject("""
-static { loadLibrary("thermal_manager_taihe_native.z") }""")
+static { loadLibraryWithPermissionCheck("thermal_manager_taihe_native.z", "@ohos.thermal") }""")
 
 union MyUndefined { @undefined Undefined; }
 
