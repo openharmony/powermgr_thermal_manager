@@ -442,7 +442,7 @@ int32_t ThermalService::SubscribeThermalTempCallback(
         return ERR_FAIL;
     }
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "%{public}s is called by uid=%{public}d", __func__, uid);
+    THERMAL_HILOGI(COMP_SVC, "ScbTempCb uid=%{public}d", uid);
     observer_->SubscribeThermalTempCallback(typeList, callback);
     return ERR_OK;
 }
@@ -455,7 +455,7 @@ int32_t ThermalService::UnSubscribeThermalTempCallback(const sptr<IThermalTempCa
         return ERR_FAIL;
     }
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "%{public}s is called by uid=%{public}d", __func__, uid);
+    THERMAL_HILOGI(COMP_SVC, "UnScbTempCb uid=%{public}d", uid);
     observer_->UnSubscribeThermalTempCallback(callback);
     return ERR_OK;
 }
@@ -476,7 +476,7 @@ int32_t ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCa
 {
     ThermalXCollie thermalXCollie("ThermalService::SubscribeThermalLevelCallback", false);
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "%{public}s is called by uid=%{public}d", __func__, uid);
+    THERMAL_HILOGI(COMP_SVC, "ScbLevelCb uid=%{public}d", uid);
     actionMgr_->SubscribeThermalLevelCallback(callback);
     return ERR_OK;
 }
@@ -485,7 +485,7 @@ int32_t ThermalService::UnSubscribeThermalLevelCallback(const sptr<IThermalLevel
 {
     ThermalXCollie thermalXCollie("ThermalService::UnSubscribeThermalLevelCallback", false);
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "%{public}s is called by uid=%{public}d", __func__, uid);
+    THERMAL_HILOGI(COMP_SVC, "UnScbLevelCb uid=%{public}d", uid);
     actionMgr_->UnSubscribeThermalLevelCallback(callback);
     return ERR_OK;
 }
@@ -500,7 +500,7 @@ int32_t ThermalService::SubscribeThermalActionCallback(
     }
     auto pid = IPCSkeleton::GetCallingPid();
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "%{public}s is called by pid=%{public}d, uid=%{public}d", __func__, pid, uid);
+    THERMAL_HILOGI(COMP_SVC, "ScbActionCb pid=%{public}d,uid=%{public}d", pid, uid);
     observer_->SubscribeThermalActionCallback(actionList, desc, callback);
     return ERR_OK;
 }
@@ -514,7 +514,7 @@ int32_t ThermalService::UnSubscribeThermalActionCallback(const sptr<IThermalActi
     }
     auto pid = IPCSkeleton::GetCallingPid();
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "%{public}s is called by pid=%{public}d, uid=%{public}d", __func__, pid, uid);
+    THERMAL_HILOGI(COMP_SVC, "UnScbActionCb pid=%{public}d, uid=%{public}d", pid, uid);
     observer_->UnSubscribeThermalActionCallback(callback);
     return ERR_OK;
 }
