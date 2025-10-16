@@ -280,7 +280,7 @@ bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrv
         return false;
     }
     auto sensorTypeName = typeMap_[type];
-    THERMAL_HILOGD(COMP_SVC, "typeMap_=%{public}s", sensorTypeName);
+    THERMAL_HILOGD(COMP_SVC, "typeMap_=%{public}s", sensorTypeName.c_str());
 
     std::lock_guard lock(mutexCallbackInfo_);
     auto iter = callbackinfo_.find(sensorTypeName);
