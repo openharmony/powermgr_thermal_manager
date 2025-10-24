@@ -185,12 +185,13 @@ void ThermalObserver::FindSubscribeActionValue()
     }
 
     std::lock_guard lock(mutexActionCallback_);
+    actionCache1_ = actionCache_;
     IThermalActionCallback::ActionCallbackMap newActionCbMap;
     for (auto& listener : actionListeners_) {
         auto actionIter = callbackActionMap_.find(listener);
         if (actionIter != callbackActionMap_.end()) {
             THERMAL_HILOGD(COMP_SVC, "find callback.");
-            DecisionActionValue(actionIter->second, newActionCbMap, actionCache_);
+            DecisionActionValue(actionIter->second, newActionCbMap, actionCache1_);
         }
 
         listener->OnThermalActionChanged(newActionCbMap);
