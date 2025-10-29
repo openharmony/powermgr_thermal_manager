@@ -16,6 +16,7 @@
 #include "thermal_observer_test.h"
 
 #include <memory>
+#include <future>
 #include <singleton.h>
 #include <common_event_support.h>
 #include "iremote_object.h"
@@ -334,6 +335,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest011, TestSize.Level0)
     EXPECT_EQ(chargerState->GetCharge(), false);
     EXPECT_EQ(chargerDelayState->GetState(), "1");
     chargerDelayState->SetState("");
+    chargerDelayState->StopDelayTimer();
     chargerDelayState->ResetState();
 
 #endif
@@ -377,5 +379,33 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest013, TestSize.Level0)
     EXPECT_TRUE(custState->DecideState("1"));
     EXPECT_FALSE(custState->DecideState("4"));
     THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest013 function end!");
+}
+
+/**
+ * @tc.name: ThermalObserverTest014
+ * @tc.desc: ThermalObserver GetThermalSrvSensorInfo Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalObserverTest, ThermalObserverTest014, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest014 function start!");
+    auto observer = std::make_shared<ThermalObserver>();
+    observer->Init();
+    int32_t sizeBefore = static_cast<int32_t>(observer->GetSensorType().size());
+    constexpr int SENSOR_TYPE_NUM = 1000;
+    std::vector<std::future<void>> results;
+    ThermalSrvSensorInfo info;
+    for (int i = 0; i < SENSOR_TYPE_NUM; i++) {
+        SensorType type = static_cast<SensorType>(i);
+        results.push_back(std::async(std::launch::async, [observer, type, &info](){
+            observer->GetThermalSrvSensorInfo(type, info);
+        }));
+    }
+    for (auto& fut : results) {
+        fut.get();
+    }
+    int32_t sizeAfter = static_cast<int32_t>(observer->GetSensorType().size());
+    EXPECT_FALSE(sizeAfter > sizeBefore);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest014 function end!");
 }
 } // namespace
