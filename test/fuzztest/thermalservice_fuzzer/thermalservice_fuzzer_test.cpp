@@ -66,7 +66,6 @@ void ThermalServiceFuzzTest001()
     TypeTempMap tempMap;
     g_service->isTempReport_ = false;
     g_service->HandleTempEmulation(tempMap);
-    g_service->RegisterFanHdiCallback();
     g_service->HandleFanCallbackEvent(event);
     int fd = 0;
     std::vector<std::u16string> args;
