@@ -276,13 +276,21 @@ void ThermalObserver::OnReceivedSensorInfo(const TypeTempMap& info)
 
 bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrvSensorInfo& sensorInfo)
 {
-    THERMAL_HILOGD(COMP_SVC, "typeMap_=%{public}s", typeMap_[type].c_str());
-
     std::lock_guard lock(mutexCallbackInfo_);
-    auto iter = callbackinfo_.find(typeMap_[type]);
+    std::string sensorTypeName;
+    auto it = typeMap_.find(type);
+    if (it == typeMap_.end()) {
+        THERMAL_HILOGE(COMP_SVC, "invalid sensor type:%{public}u", static_cast<uint32_t>(type));
+        return false;
+    } else {
+        sensorTypeName = it->second;
+    }
+    THERMAL_HILOGD(COMP_SVC, "typeMap_=%{public}s", sensorTypeName.c_str());
+
+    auto iter = callbackinfo_.find(sensorTypeName);
     if (iter != callbackinfo_.end()) {
         THERMAL_HILOGD(COMP_SVC, "set temp for sensor");
-        sensorInfo.SetType(typeMap_[type]);
+        sensorInfo.SetType(sensorTypeName);
         if (iter->second == INVALID_TEMP) {
             return false;
         } else {
@@ -291,7 +299,7 @@ bool ThermalObserver::GetThermalSrvSensorInfo(const SensorType& type, ThermalSrv
         return true;
     } else {
         THERMAL_HILOGD(COMP_SVC, "set invalid temp for sensor");
-        sensorInfo.SetType(typeMap_[type]);
+        sensorInfo.SetType(sensorTypeName);
         sensorInfo.SetTemp(INVALID_TEMP);
         return false;
     }
