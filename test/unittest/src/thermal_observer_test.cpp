@@ -397,7 +397,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest014, TestSize.Level0)
     ThermalSrvSensorInfo info;
     for (int i = 0; i < SENSOR_TYPE_NUM; i++) {
         SensorType type = static_cast<SensorType>(i);
-        results.push_back(std::async(std::launch::async, [observer, type, &info](){
+        results.push_back(std::async(std::launch::async, [observer, type, &info]() {
             observer->GetThermalSrvSensorInfo(type, info);
         }));
     }
