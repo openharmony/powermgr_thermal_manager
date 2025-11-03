@@ -134,7 +134,7 @@ void ThermalObserver::SubscribeThermalActionCallback(const std::vector<std::stri
         callbackActionMap_.insert(std::make_pair(callback, actionList));
         THERMAL_HILOGI(COMP_SVC, "add new action listener, listeners.size=%{public}zu", actionListeners_.size());
         IThermalActionCallback::ActionCallbackMap actionCbMap;
-        DecisionActionValue(actionList, actionCbMap, actionCache_);
+        DecisionActionValue(actionList, actionCbMap, allActionMap_);
         callback->OnThermalActionChanged(actionCbMap);
         THERMAL_HILOGI(COMP_SVC, "current action callback completed");
     } else {
@@ -173,6 +173,7 @@ void ThermalObserver::PrintAction()
 
 void ThermalObserver::FindSubscribeActionValue()
 {
+    std::map<std::string, std::string> actionCache;
     {
         std::lock_guard lock(mutexActionMap_);
         if (actionMap_.empty()) {
@@ -180,18 +181,17 @@ void ThermalObserver::FindSubscribeActionValue()
             return;
         }
         PrintAction();
-        actionCache_ = actionMap_;
+        actionCache = actionMap_;
         actionMap_.clear();
     }
 
     std::lock_guard lock(mutexActionCallback_);
-    actionCache1_ = actionCache_;
     IThermalActionCallback::ActionCallbackMap newActionCbMap;
     for (auto& listener : actionListeners_) {
         auto actionIter = callbackActionMap_.find(listener);
         if (actionIter != callbackActionMap_.end()) {
             THERMAL_HILOGD(COMP_SVC, "find callback.");
-            DecisionActionValue(actionIter->second, newActionCbMap, actionCache1_);
+            DecisionActionValue(actionIter->second, newActionCbMap, actionCache);
         }
 
         listener->OnThermalActionChanged(newActionCbMap);
@@ -229,6 +229,12 @@ void ThermalObserver::SetDecisionValue(const std::string& actionName, const std:
         iter->second = actionValue;
     } else {
         actionMap_.insert(std::make_pair(actionName, actionValue));
+    }
+    auto actionIter = allActionMap_.find(actionName);
+    if (actionIter != allActionMap_.end()) {
+        actionIter->second = actionValue;
+    } else {
+        allActionMap_.insert(std::make_pair(actionName, actionValue));
     }
 }
 
