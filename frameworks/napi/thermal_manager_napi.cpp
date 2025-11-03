@@ -74,7 +74,7 @@ bool ThermalLevelCallback::OnThermalLevelChanged(ThermalLevel level)
         delete work;
         work = nullptr;
     };
-    if (napi_send_event(env_, uvcallback, napi_eprio_low) != napi_status::napi_ok) {
+    if (napi_send_event(env_, uvcallback, napi_eprio_low, __func__) != napi_status::napi_ok) {
         delete work;
         work = nullptr;
         THERMAL_HILOGW(COMP_FWK, "uv_queue_work is failed");
