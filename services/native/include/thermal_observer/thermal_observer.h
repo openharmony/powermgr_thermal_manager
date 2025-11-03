@@ -113,8 +113,7 @@ private:
     Callback callback_;
     std::map<SensorType, std::string> typeMap_;
     std::map<std::string, std::string> actionMap_;
-    std::map<std::string, std::string> actionCache_;
-    std::map<std::string, std::string> actionCache1_;
+    std::map<std::string, std::string> allActionMap_;
 };
 } // namespace PowerMgr
 } // namespace OHOS
