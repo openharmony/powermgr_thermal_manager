@@ -116,6 +116,7 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest002, TestSize.Level0)
     observer->SubscribeThermalActionCallback(typeList, "desc", actionCb);
     EXPECT_CALL(*static_cast<ThermalActionTestCallback*>(actionCb.GetRefPtr()), OnThermalActionChanged(::testing::_));
     observer->SetDecisionValue("", "");
+    observer->SetDecisionValue("", "");
     observer->FindSubscribeActionValue();
     observer->UnSubscribeThermalActionCallback(actionCb);
     IThermalActionCallback::ActionCallbackMap actionCbMap;
