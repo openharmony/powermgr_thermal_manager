@@ -192,11 +192,13 @@ private:
 #ifdef HAS_THERMAL_AIRPLANE_MANAGER_PART
     bool SubscribeCommonEvent();
 #endif
+    sptr<IThermalInterface> GetThermalInterfaceInner();
     bool ready_ {false};
     static std::atomic_bool isBootCompleted_;
     bool isSimulation_ {false};
     bool isTempReport_ {true};
     std::mutex mutex_;
+    std::mutex interfaceMutex_;
     std::shared_ptr<ThermalServiceSubscriber> serviceSubscriber_ {nullptr};
     std::shared_ptr<ThermalObserver> observer_ {nullptr};
     std::shared_ptr<ThermalSensorInfo> info_ {nullptr};
