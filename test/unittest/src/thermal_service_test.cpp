@@ -202,4 +202,23 @@ HWTEST_F(ThermalServiceTest, ThermalServiceTest007, TestSize.Level0)
     g_service->RegisterFanHdiCallback();
     THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest007 function end!");
 }
+
+/**
+ * @tc.name: ThermalServiceTest008
+ * @tc.desc: test OnStart and OnStop
+ * @tc.type: FUNC
+ * @tc.require: issueI6KRS8
+ */
+HWTEST_F(ThermalServiceTest, ThermalServiceTest008, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest008 function start!");
+    constexpr int32_t param = -1;
+    g_service->InitSystemTestModules();
+    g_service->OnStart();
+    g_service->thermalInterface_ = IThermalInterface::Get();
+    g_service->RegisterHdiStatusListener();
+    int32_t ret = g_service->GetThermalInfo();
+    EXPECT_NE(ret, param);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalServiceTest008 function end!");
+}
 } // namespace
