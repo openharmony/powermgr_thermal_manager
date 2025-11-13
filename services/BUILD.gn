@@ -104,6 +104,7 @@ ohos_shared_library("thermalservice") {
 
   external_deps = [ "power_manager:power_permission" ]
   external_deps += [
+    "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:wantagent_innerkits",
     "bundle_framework:appexecfwk_core",

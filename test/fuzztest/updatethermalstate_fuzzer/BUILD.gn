@@ -50,6 +50,7 @@ ohos_fuzztest("UpdateThermalStateFuzzTest") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_runtime:wantagent_innerkits",
     "c_utils:utils",
     "drivers_interface_thermal:libthermal_proxy_1.1",

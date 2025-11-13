@@ -28,6 +28,7 @@ config("module_private_config") {
 
 deps_ex = [
   "ability_base:base",
+  "ability_base:configuration",
   "ability_base:want",
   "ability_runtime:wantagent_innerkits",
   "access_token:libaccesstoken_sdk",
