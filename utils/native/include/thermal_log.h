@@ -57,8 +57,6 @@ enum ThermalManagerLogLabel {
     COMP_APP = 0,
     COMP_FWK = 1,
     COMP_SVC = 2,
-    COMP_HDI = 3,
-    COMP_DRV = 4,
     // Feature labels, use to mark major features
     FEATURE_PROTECTOR,
     // Test label
@@ -68,43 +66,56 @@ enum ThermalManagerLogLabel {
 };
 
 enum ThermalManagerLogDomain {
-    DOMAIN_APP = THERMAL_DOMAIN_ID_START + COMP_APP, // 0xD002940
-    DOMAIN_FRAMEWORK, // 0xD002941
-    DOMAIN_SERVICE, // 0xD002942
-    DOMAIN_HDI, // 0xD002943
-    DOMAIN_DRIVER, // 0xD002944
-    DOMAIN_FEATURE_PROTECTOR,
+    DOMAIN_SERVICE = THERMAL_DOMAIN_ID_START + COMP_FWK, // 0xD002941
+    DOMAIN_FEATURE_PROTECTOR, // Provided for fdsan to use as parameters
     DOMAIN_TEST = TEST_DOMAIN_ID, // 0xD000F00
-    DOMAIN_END = THERMAL_DOMAIN_ID_END, // Max to 0xD002960, keep the sequence and length same as ThermalManagerLogLabel
+    DOMAIN_END = THERMAL_DOMAIN_ID_END, // Max to 0xD002960
 };
 
-struct ThermalManagerLogLabelDomain {
-    uint32_t domainId;
+struct ThermalManagerLogLabelTag {
+    uint32_t logLabel;
     const char* tag;
 };
 
-// Keep the sequence and length same as ThermalManagerLogDomain
-static const ThermalManagerLogLabelDomain THERMAL_LABEL[LABEL_END] = {
-    {DOMAIN_APP,                "ThermalApp"},
-    {DOMAIN_FRAMEWORK,          "ThermalFwk"},
-    {DOMAIN_SERVICE,            "ThermalSvc"},
-    {DOMAIN_HDI,                "ThermalHdi"},
-    {DOMAIN_DRIVER,             "ThermalDrv"},
-    {DOMAIN_FEATURE_PROTECTOR,  "ThermalProtector"},
-    {DOMAIN_TEST,               "ThermalTest"},
+// Keep the sequence same as ThermalManagerLogDomain
+static constexpr ThermalManagerLogLabelTag THERMAL_LABEL_TAG[LABEL_END] = {
+    {COMP_APP,            "ThermalApp"},
+    {COMP_FWK,            "ThermalFwk"},
+    {COMP_SVC,            "ThermalSvc"},
+    {FEATURE_PROTECTOR,   "ThermalProtector"},
+    {LABEL_TEST,          "ThermalTest"},
+};
+
+struct ThermalManagerLogLabelDomain {
+    uint32_t logLabel;
+    uint32_t domainId;
+};
+
+// Keep the sequence same as ThermalManagerLogDomain
+static constexpr ThermalManagerLogLabelDomain THERMAL_LABEL_DOMAIN[LABEL_END] = {
+    {COMP_APP,            DOMAIN_SERVICE},
+    {COMP_FWK,            DOMAIN_SERVICE},
+    {COMP_SVC,            DOMAIN_SERVICE},
+    {FEATURE_PROTECTOR,   DOMAIN_SERVICE},
+    {LABEL_TEST,          DOMAIN_TEST},
 };
 
 // In order to improve performance, do not check the module range, module should less than THERMALMGR_MODULE_BUTT.
 #define THERMAL_HILOGF(module, ...) \
-    ((void)HILOG_IMPL(LOG_CORE, LOG_FATAL, THERMAL_LABEL[module].domainId, THERMAL_LABEL[module].tag, ##__VA_ARGS__))
+    ((void)HILOG_IMPL(LOG_CORE, LOG_FATAL, THERMAL_LABEL_DOMAIN[module].domainId, THERMAL_LABEL_TAG[module].tag,   \
+    ##__VA_ARGS__))
 #define THERMAL_HILOGE(module, ...) \
-    ((void)HILOG_IMPL(LOG_CORE, LOG_ERROR, THERMAL_LABEL[module].domainId, THERMAL_LABEL[module].tag, ##__VA_ARGS__))
+    ((void)HILOG_IMPL(LOG_CORE, LOG_ERROR, THERMAL_LABEL_DOMAIN[module].domainId, THERMAL_LABEL_TAG[module].tag,   \
+    ##__VA_ARGS__))
 #define THERMAL_HILOGW(module, ...) \
-    ((void)HILOG_IMPL(LOG_CORE, LOG_WARN, THERMAL_LABEL[module].domainId, THERMAL_LABEL[module].tag, ##__VA_ARGS__))
+    ((void)HILOG_IMPL(LOG_CORE, LOG_WARN, THERMAL_LABEL_DOMAIN[module].domainId, THERMAL_LABEL_TAG[module].tag,    \
+    ##__VA_ARGS__))
 #define THERMAL_HILOGI(module, ...) \
-    ((void)HILOG_IMPL(LOG_CORE, LOG_INFO, THERMAL_LABEL[module].domainId, THERMAL_LABEL[module].tag, ##__VA_ARGS__))
+    ((void)HILOG_IMPL(LOG_CORE, LOG_INFO, THERMAL_LABEL_DOMAIN[module].domainId, THERMAL_LABEL_TAG[module].tag,    \
+    ##__VA_ARGS__))
 #define THERMAL_HILOGD(module, ...) \
-    ((void)HILOG_IMPL(LOG_CORE, LOG_DEBUG, THERMAL_LABEL[module].domainId, THERMAL_LABEL[module].tag, ##__VA_ARGS__))
+    ((void)HILOG_IMPL(LOG_CORE, LOG_DEBUG, THERMAL_LABEL_DOMAIN[module].domainId, THERMAL_LABEL_TAG[module].tag,   \
+    ##__VA_ARGS__))
 } // namespace PowerMgr
 } // namespace OHOS
 
