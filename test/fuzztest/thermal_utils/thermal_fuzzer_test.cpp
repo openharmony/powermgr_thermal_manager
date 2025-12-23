@@ -38,6 +38,7 @@ auto g_service = ThermalService::GetInstance();
 ThermalFuzzerTest::ThermalFuzzerTest()
 {
     g_service->OnStart();
+    g_service->SetTempReportSwitch(false);
 }
 
 ThermalFuzzerTest::~ThermalFuzzerTest()
