@@ -19,10 +19,22 @@
 #define FUZZ_PROJECT_NAME "thermal_fuzzer"
 
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <climits>
+#include <unistd.h>
+#include <fcntl.h>
 #include <string>
 #include <vector>
+
 #include <fuzzer/FuzzedDataProvider.h>
-#include "refbase.h"
+
+#include "thermal_service.h"
+#include "thermal_action_callback_stub.h"
+#include "thermal_level_callback_stub.h"
+#include "thermal_temp_callback_stub.h"
+#include "ithermal_srv.h"
+#include "thermal_srv_sensor_info.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -44,8 +56,33 @@ enum class ThermalFuzzIpcCode : int32_t {
     MAX_CODE
 };
 
-// Forward declaration
-class ThermalService;
+// Test callback implementations
+class ThermalFuzzerTempCallback : public ThermalTempCallbackStub {
+public:
+    bool OnThermalTempChanged(TempCallbackMap& tempCbMap) override
+    {
+        (void)tempCbMap;
+        return true;
+    }
+};
+
+class ThermalFuzzerLevelCallback : public ThermalLevelCallbackStub {
+public:
+    bool OnThermalLevelChanged(ThermalLevel level) override
+    {
+        (void)level;
+        return true;
+    }
+};
+
+class ThermalFuzzerActionCallback : public ThermalActionCallbackStub {
+public:
+    bool OnThermalActionChanged(ActionCallbackMap& actionCbMap) override
+    {
+        (void)actionCbMap;
+        return true;
+    }
+};
 
 class ThermalFuzzer {
 public:

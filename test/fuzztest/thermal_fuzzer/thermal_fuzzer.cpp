@@ -22,7 +22,9 @@
 #include <string>
 #include <vector>
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-naming): private/protected are C++ keywords
 #define private   public
+// NOLINTNEXTLINE(cppcoreguidelines-macro-naming): private/protected are C++ keywords
 #define protected public
 #include "thermal_service.h"
 #include "thermal_action_callback_stub.h"
@@ -95,7 +97,7 @@ ThermalFuzzer::~ThermalFuzzer()
 
 std::string ThermalFuzzer::GenerateString(FuzzedDataProvider& provider)
 {
-    size_t length = provider.ConsumeIntegralInRange<size_t>(0, 
+    size_t length = provider.ConsumeIntegralInRange<size_t>(0,
         std::min(MAX_STRING_LENGTH, provider.remaining_bytes()));
     return provider.ConsumeRandomLengthString(length);
 }
@@ -103,7 +105,7 @@ std::string ThermalFuzzer::GenerateString(FuzzedDataProvider& provider)
 std::vector<std::string> ThermalFuzzer::GenerateStringVector(FuzzedDataProvider& provider)
 {
     std::vector<std::string> result;
-    size_t size = provider.ConsumeIntegralInRange<size_t>(0, 
+    size_t size = provider.ConsumeIntegralInRange<size_t>(0,
         std::min(MAX_VECTOR_SIZE, provider.remaining_bytes() / sizeof(char)));
     for (size_t i = 0; i < size && provider.remaining_bytes() > 0; ++i) {
         result.push_back(GenerateString(provider));
@@ -232,12 +234,9 @@ void ThermalFuzzer::FuzzShellDump(FuzzedDataProvider& provider)
     service_->ShellDump(args, argc, result);
 }
 
-void ThermalFuzzer::FuzzThermalService(FuzzedDataProvider& provider)
+namespace {
+int32_t GetRandomIpcCode(FuzzedDataProvider& provider)
 {
-    if (service_ == nullptr) {
-        return;
-    }
-
     static const int32_t ipcCodes[] = {
         static_cast<int32_t>(ThermalFuzzIpcCode::SUBSCRIBE_THERMAL_TEMP),
         static_cast<int32_t>(ThermalFuzzIpcCode::UN_SUBSCRIBE_THERMAL_TEMP),
@@ -252,9 +251,17 @@ void ThermalFuzzer::FuzzThermalService(FuzzedDataProvider& provider)
         static_cast<int32_t>(ThermalFuzzIpcCode::UPDATE_THERMAL_STATE),
         static_cast<int32_t>(ThermalFuzzIpcCode::SHELL_DUMP),
     };
+    return provider.PickValueInArray(ipcCodes);
+}
+} // namespace
 
-    int32_t code = provider.PickValueInArray(ipcCodes);
+void ThermalFuzzer::FuzzThermalService(FuzzedDataProvider& provider)
+{
+    if (service_ == nullptr) {
+        return;
+    }
 
+    int32_t code = GetRandomIpcCode(provider);
     switch (static_cast<ThermalFuzzIpcCode>(code)) {
         case ThermalFuzzIpcCode::SUBSCRIBE_THERMAL_TEMP:
             FuzzSubscribeThermalTempCallback(provider);
