@@ -21,12 +21,6 @@
 #include <fuzzer/FuzzedDataProvider.h>
 #include <string>
 #include <vector>
-
-// NOLINTBEGIN(G.NAM.03-CPP)
-// private and protected are C++ keywords, cannot be uppercase
-#define private   public
-#define protected public
-// NOLINTEND(G.NAM.03-CPP)
 #include "thermal_service.h"
 #include "thermal_action_callback_stub.h"
 #include "thermal_level_callback_stub.h"
