@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 #include <fuzzer/FuzzedDataProvider.h>
+#include "refbase.h"
 
 namespace OHOS {
 namespace PowerMgr {
@@ -43,9 +44,8 @@ enum class ThermalFuzzIpcCode : int32_t {
     MAX_CODE
 };
 
-// Forward declarations
+// Forward declaration
 class ThermalService;
-class FuzzedDataProvider;
 
 class ThermalFuzzer {
 public:
