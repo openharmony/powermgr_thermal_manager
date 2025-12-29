@@ -20,6 +20,9 @@
 
 #include "securec.h"
 
+#define private public
+#define protected public
+
 #include "thermal_service.h"
 
 class ThermalFuzzerTest {
@@ -28,6 +31,7 @@ public:
     ~ThermalFuzzerTest();
     void TestThermalServiceStub(const uint32_t code, const uint8_t* data, size_t size);
     void TestThermalPolicy();
+    OHOS::sptr<OHOS::PowerMgr::ThermalService> service_;
 };
 
 #endif // THERMAL_FUZZER_TEST_H
