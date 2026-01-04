@@ -532,33 +532,42 @@ void SetupClientService(FuzzedDataProvider &fdp, ThermalMgrClient &client)
     }
 }
 
-void FuzzClientSubscriptions(FuzzedDataProvider &fdp, ThermalMgrClient &client,
-    const std::vector<std::string> &typeList, const std::vector<std::string> &actionList,
-    const std::string &desc, const sptr<IThermalTempCallback> &tempCb,
-    const sptr<IThermalLevelCallback> &levelCb, const sptr<IThermalActionCallback> &actionCb)
+struct ClientFuzzContext {
+    const std::vector<std::string> &typeList;
+    const std::vector<std::string> &actionList;
+    const std::string &desc;
+    const std::string &scene;
+    const std::string &tag;
+    const std::string &val;
+    bool isImmed;
+    const sptr<IThermalTempCallback> &tempCb;
+    const sptr<IThermalLevelCallback> &levelCb;
+    const sptr<IThermalActionCallback> &actionCb;
+};
+
+void FuzzClientSubscriptions(FuzzedDataProvider &fdp, ThermalMgrClient &client, const ClientFuzzContext &ctx)
 {
     if (fdp.ConsumeBool()) {
-        (void)client.SubscribeThermalTempCallback(typeList, tempCb);
+        (void)client.SubscribeThermalTempCallback(ctx.typeList, ctx.tempCb);
     }
     if (fdp.ConsumeBool()) {
-        (void)client.UnSubscribeThermalTempCallback(tempCb);
+        (void)client.UnSubscribeThermalTempCallback(ctx.tempCb);
     }
     if (fdp.ConsumeBool()) {
-        (void)client.SubscribeThermalLevelCallback(levelCb);
+        (void)client.SubscribeThermalLevelCallback(ctx.levelCb);
     }
     if (fdp.ConsumeBool()) {
-        (void)client.UnSubscribeThermalLevelCallback(levelCb);
+        (void)client.UnSubscribeThermalLevelCallback(ctx.levelCb);
     }
     if (fdp.ConsumeBool()) {
-        (void)client.SubscribeThermalActionCallback(actionList, desc, actionCb);
+        (void)client.SubscribeThermalActionCallback(ctx.actionList, ctx.desc, ctx.actionCb);
     }
     if (fdp.ConsumeBool()) {
-        (void)client.UnSubscribeThermalActionCallback(actionCb);
+        (void)client.UnSubscribeThermalActionCallback(ctx.actionCb);
     }
 }
 
-void FuzzClientOperations(FuzzedDataProvider &fdp, ThermalMgrClient &client,
-    const std::string &scene, const std::string &tag, const std::string &val, bool isImmed)
+void FuzzClientOperations(FuzzedDataProvider &fdp, ThermalMgrClient &client, const ClientFuzzContext &ctx)
 {
     if (fdp.ConsumeBool()) {
         (void)client.GetThermalSensorTemp(ConsumeSensorType(fdp));
@@ -567,10 +576,10 @@ void FuzzClientOperations(FuzzedDataProvider &fdp, ThermalMgrClient &client,
         (void)client.GetThermalLevel();
     }
     if (fdp.ConsumeBool()) {
-        (void)client.SetScene(scene);
+        (void)client.SetScene(ctx.scene);
     }
     if (fdp.ConsumeBool()) {
-        (void)client.UpdateThermalState(tag, val, isImmed);
+        (void)client.UpdateThermalState(ctx.tag, ctx.val, ctx.isImmed);
     }
     if (fdp.ConsumeBool()) {
         (void)client.UpdateThermalPolicy();
@@ -614,8 +623,9 @@ void FuzzClientOnce(FuzzedDataProvider &fdp)
     sptr<IThermalActionCallback> actionCb = fdp.ConsumeBool()
         ? sptr<IThermalActionCallback>(new ThermalActionTestCallback()) : nullptr;
 
-    FuzzClientSubscriptions(fdp, client, typeList, actionList, desc, tempCb, levelCb, actionCb);
-    FuzzClientOperations(fdp, client, scene, tag, val, isImmed);
+    ClientFuzzContext ctx {typeList, actionList, desc, scene, tag, val, isImmed, tempCb, levelCb, actionCb};
+    FuzzClientSubscriptions(fdp, client, ctx);
+    FuzzClientOperations(fdp, client, ctx);
     FuzzClientDump(fdp, client);
 }
 } // namespace
