@@ -22,8 +22,7 @@
 #include <string>
 #include <vector>
 
-#define private   public
-#define protected public
+#define THERMAL_SERVICE_DEATH_UT
 #include "thermal_mgr_client.h"
 #include "thermal_service.h"
 #include "thermal_action_callback_stub.h"
@@ -38,8 +37,7 @@
 #include "thermal_service_subscriber.h"
 #include "fan_fault_detect.h"
 #include "v1_1/thermal_types.h"
-#undef private
-#undef protected
+#undef THERMAL_SERVICE_DEATH_UT
 
 #include "thermal_common.h"
 #include "system_ability_definition.h"
@@ -51,6 +49,16 @@ using namespace OHOS::HDI::Thermal::V1_1;
 namespace {
 constexpr size_t MAX_STR_LEN = 64;
 constexpr size_t MAX_VEC_LEN = 16;
+constexpr size_t SHORT_STR_LEN = 16;
+constexpr size_t DUMP_STR_LEN = 32;
+constexpr size_t MAX_THERMAL_ZONE_COUNT = 8;
+constexpr size_t MAX_DUMP_OPTION_COUNT = 5;
+constexpr size_t MAX_POLICY_MAP_SIZE = 6;
+constexpr size_t MAX_SENSOR_MAP_SIZE = 6;
+constexpr size_t MAX_STATE_MAP_SIZE = 4;
+constexpr size_t MIN_CLIENT_DUMP_ARGS = 10;
+constexpr size_t MAX_CLIENT_DUMP_ARGS = 20;
+constexpr int32_t SENSOR_TYPE_MAX = 16;
 constexpr int32_t MAX_TEMP = 100000;
 constexpr int32_t MIN_TEMP = -50000;
 
@@ -80,7 +88,7 @@ std::vector<std::string> ConsumeStringVector(FuzzedDataProvider &fdp)
 
 SensorType ConsumeSensorType(FuzzedDataProvider &fdp)
 {
-    int32_t v = fdp.ConsumeIntegralInRange<int32_t>(0, 16);
+    int32_t v = fdp.ConsumeIntegralInRange<int32_t>(0, SENSOR_TYPE_MAX);
     return static_cast<SensorType>(v);
 }
 
@@ -92,7 +100,7 @@ std::string ConsumeThermalZoneType(FuzzedDataProvider &fdp)
     if (fdp.ConsumeBool()) {
         return types[fdp.ConsumeIntegralInRange<size_t>(0, types.size() - 1)];
     }
-    return ConsumeSafeString(fdp, 16);
+    return ConsumeSafeString(fdp, SHORT_STR_LEN);
 }
 
 class ThermalTempTestCallback : public ThermalTempCallbackStub {
@@ -137,7 +145,7 @@ void FuzzThermalCallbackEvent(FuzzedDataProvider &fdp)
     }
 
     HdfThermalCallbackInfo event;
-    size_t infoCount = fdp.ConsumeIntegralInRange<size_t>(0, 8);
+    size_t infoCount = fdp.ConsumeIntegralInRange<size_t>(0, MAX_THERMAL_ZONE_COUNT);
     for (size_t i = 0; i < infoCount; ++i) {
         ThermalZoneInfo info;
         info.type = ConsumeThermalZoneType(fdp);
@@ -159,17 +167,15 @@ void FuzzTempEmulation(FuzzedDataProvider &fdp)
     }
 
     TypeTempMap tempMap;
-    size_t mapSize = fdp.ConsumeIntegralInRange<size_t>(0, 8);
+    size_t mapSize = fdp.ConsumeIntegralInRange<size_t>(0, MAX_THERMAL_ZONE_COUNT);
     for (size_t i = 0; i < mapSize; ++i) {
         std::string type = ConsumeThermalZoneType(fdp);
         int32_t temp = fdp.ConsumeIntegralInRange<int32_t>(MIN_TEMP, MAX_TEMP);
         tempMap[type] = temp;
     }
 
-    bool origReport = g_service->isTempReport_;
-    g_service->isTempReport_ = fdp.ConsumeBool();
+    g_service->SetTempReportSwitch(fdp.ConsumeBool());
     g_service->HandleTempEmulation(tempMap);
-    g_service->isTempReport_ = origReport;
 }
 
 void FuzzServiceDump(FuzzedDataProvider &fdp)
@@ -184,23 +190,20 @@ void FuzzServiceDump(FuzzedDataProvider &fdp)
     };
 
     std::vector<std::u16string> args;
-    size_t argCount = fdp.ConsumeIntegralInRange<size_t>(0, 5);
+    size_t argCount = fdp.ConsumeIntegralInRange<size_t>(0, MAX_DUMP_OPTION_COUNT);
     for (size_t i = 0; i < argCount; ++i) {
         std::string arg;
         if (fdp.ConsumeBool() && !dumpOptions.empty()) {
             arg = dumpOptions[fdp.ConsumeIntegralInRange<size_t>(0, dumpOptions.size() - 1)];
         } else {
-            arg = ConsumeSafeString(fdp, 32);
+            arg = ConsumeSafeString(fdp, DUMP_STR_LEN);
         }
         std::u16string u16Arg(arg.begin(), arg.end());
         args.push_back(u16Arg);
     }
 
     int fd = fdp.ConsumeIntegralInRange<int>(-1, 10);
-    bool origBoot = g_service->isBootCompleted_;
-    g_service->isBootCompleted_ = fdp.ConsumeBool();
     g_service->Dump(fd, args);
-    g_service->isBootCompleted_ = origBoot;
 }
 
 void FuzzShellDump(FuzzedDataProvider &fdp)
@@ -212,11 +215,7 @@ void FuzzShellDump(FuzzedDataProvider &fdp)
     std::vector<std::string> args = ConsumeStringVector(fdp);
     uint32_t argc = fdp.ConsumeIntegral<uint32_t>();
     std::string result;
-
-    bool origBoot = g_service->isBootCompleted_;
-    g_service->isBootCompleted_ = fdp.ConsumeBool();
     g_service->ShellDump(args, argc, result);
-    g_service->isBootCompleted_ = origBoot;
 }
 
 void FuzzOnAddSystemAbility(FuzzedDataProvider &fdp)
@@ -234,12 +233,13 @@ void FuzzOnAddSystemAbility(FuzzedDataProvider &fdp)
 
     int32_t saId;
     if (fdp.ConsumeBool()) {
-        saId = saIds[fdp.ConsumeIntegralInRange<size_t>(0, 3)];
+        constexpr size_t lastIndex = (sizeof(saIds) / sizeof(saIds[0])) - 1;
+        saId = saIds[fdp.ConsumeIntegralInRange<size_t>(0, lastIndex)];
     } else {
         saId = fdp.ConsumeIntegral<int32_t>();
     }
 
-    std::string deviceId = ConsumeSafeString(fdp, 32);
+    std::string deviceId = ConsumeSafeString(fdp, DUMP_STR_LEN);
     g_service->OnAddSystemAbility(saId, deviceId);
 }
 
@@ -255,7 +255,7 @@ void FuzzThermalPolicy(FuzzedDataProvider &fdp)
     }
 
     TypeTempMap tempInfo;
-    size_t mapSize = fdp.ConsumeIntegralInRange<size_t>(0, 6);
+    size_t mapSize = fdp.ConsumeIntegralInRange<size_t>(0, MAX_POLICY_MAP_SIZE);
     for (size_t i = 0; i < mapSize; ++i) {
         std::string type = ConsumeThermalZoneType(fdp);
         int32_t temp = fdp.ConsumeIntegralInRange<int32_t>(MIN_TEMP, MAX_TEMP);
@@ -282,9 +282,9 @@ void FuzzThermalPolicy(FuzzedDataProvider &fdp)
 
     if (fdp.ConsumeBool()) {
         std::map<std::string, std::string> stateMap;
-        size_t stateCount = fdp.ConsumeIntegralInRange<size_t>(0, 4);
+        size_t stateCount = fdp.ConsumeIntegralInRange<size_t>(0, MAX_STATE_MAP_SIZE);
         for (size_t i = 0; i < stateCount; ++i) {
-            stateMap[ConsumeSafeString(fdp, 16)] = ConsumeSafeString(fdp, 16);
+            stateMap[ConsumeSafeString(fdp, SHORT_STR_LEN)] = ConsumeSafeString(fdp, SHORT_STR_LEN);
         }
         policy->StateMachineDecision(stateMap);
     }
@@ -327,7 +327,7 @@ void FuzzThermalObserver(FuzzedDataProvider &fdp)
             ? sptr<IThermalActionCallback>(new ThermalActionTestCallback())
             : nullptr;
         std::vector<std::string> actionList = ConsumeStringVector(fdp);
-        std::string desc = ConsumeSafeString(fdp, 32);
+        std::string desc = ConsumeSafeString(fdp, DUMP_STR_LEN);
         observer->SubscribeThermalActionCallback(actionList, desc, cb);
     }
 
@@ -382,8 +382,8 @@ void FuzzStateMachine(FuzzedDataProvider &fdp)
     }
 
     if (fdp.ConsumeBool()) {
-        std::string tag = ConsumeSafeString(fdp, 32);
-        std::string val = ConsumeSafeString(fdp, 32);
+        std::string tag = ConsumeSafeString(fdp, DUMP_STR_LEN);
+        std::string val = ConsumeSafeString(fdp, DUMP_STR_LEN);
         state->UpdateState(tag, val);
     }
 
@@ -405,7 +405,7 @@ void FuzzServiceSubscriber(FuzzedDataProvider &fdp)
     }
 
     TypeTempMap tempMap;
-    size_t mapSize = fdp.ConsumeIntegralInRange<size_t>(0, 6);
+    size_t mapSize = fdp.ConsumeIntegralInRange<size_t>(0, MAX_SENSOR_MAP_SIZE);
     for (size_t i = 0; i < mapSize; ++i) {
         std::string type = ConsumeThermalZoneType(fdp);
         int32_t temp = fdp.ConsumeIntegralInRange<int32_t>(MIN_TEMP, MAX_TEMP);
@@ -424,13 +424,13 @@ void FuzzServiceMisc(FuzzedDataProvider &fdp)
     }
 
     if (fdp.ConsumeBool()) {
-        std::string scene = ConsumeSafeString(fdp, 32);
+        std::string scene = ConsumeSafeString(fdp, DUMP_STR_LEN);
         g_service->SetScene(scene);
     }
 
     if (fdp.ConsumeBool()) {
-        std::string tag = ConsumeSafeString(fdp, 32);
-        std::string val = ConsumeSafeString(fdp, 32);
+        std::string tag = ConsumeSafeString(fdp, DUMP_STR_LEN);
+        std::string val = ConsumeSafeString(fdp, DUMP_STR_LEN);
         bool isImmed = fdp.ConsumeBool();
         g_service->UpdateThermalState(tag, val, isImmed);
     }
@@ -441,7 +441,7 @@ void FuzzServiceMisc(FuzzedDataProvider &fdp)
     }
 
     if (fdp.ConsumeBool()) {
-        int32_t type = fdp.ConsumeIntegralInRange<int32_t>(0, 16);
+        int32_t type = fdp.ConsumeIntegralInRange<int32_t>(0, SENSOR_TYPE_MAX);
         ThermalSrvSensorInfo info;
         bool ret;
         g_service->GetThermalSrvSensorInfo(type, info, ret);
@@ -464,11 +464,6 @@ void FuzzServiceMisc(FuzzedDataProvider &fdp)
     if (fdp.ConsumeBool()) {
         g_service->SetTempReportSwitch(fdp.ConsumeBool());
     }
-
-    if (fdp.ConsumeBool()) {
-        std::string actionName = ConsumeSafeString(fdp, 32);
-        g_service->EnableMock(actionName, nullptr);
-    }
 }
 
 void FuzzSensorInfo(FuzzedDataProvider &fdp)
@@ -490,7 +485,7 @@ void FuzzSensorInfo(FuzzedDataProvider &fdp)
 
     if (fdp.ConsumeBool()) {
         TypeTempMap tempMap;
-        size_t mapSize = fdp.ConsumeIntegralInRange<size_t>(0, 6);
+        size_t mapSize = fdp.ConsumeIntegralInRange<size_t>(0, MAX_SENSOR_MAP_SIZE);
         for (size_t i = 0; i < mapSize; ++i) {
             std::string type = ConsumeThermalZoneType(fdp);
             int32_t temp = fdp.ConsumeIntegralInRange<int32_t>(MIN_TEMP, MAX_TEMP);
@@ -516,10 +511,8 @@ void FuzzBaseInfo(FuzzedDataProvider &fdp)
     }
 }
 
-void FuzzClientOnce(FuzzedDataProvider &fdp)
+void SetupClientService(FuzzedDataProvider &fdp, ThermalMgrClient &client)
 {
-    auto &client = ThermalMgrClient::GetInstance();
-
     if (fdp.ConsumeBool()) {
         client.thermalSrv_ = nullptr;
     } else {
@@ -536,22 +529,13 @@ void FuzzClientOnce(FuzzedDataProvider &fdp)
         client.ResetProxy(wro);
         InjectService(client);
     }
+}
 
-    auto typeList = ConsumeStringVector(fdp);
-    auto actionList = ConsumeStringVector(fdp);
-    std::string desc = ConsumeSafeString(fdp, MAX_STR_LEN);
-    std::string scene = ConsumeSafeString(fdp, MAX_STR_LEN);
-    std::string tag = ConsumeSafeString(fdp, MAX_STR_LEN);
-    std::string val = ConsumeSafeString(fdp, MAX_STR_LEN);
-    bool isImmed = fdp.ConsumeBool();
-
-    sptr<IThermalTempCallback> tempCb = fdp.ConsumeBool()
-        ? sptr<IThermalTempCallback>(new ThermalTempTestCallback()) : nullptr;
-    sptr<IThermalLevelCallback> levelCb = fdp.ConsumeBool()
-        ? sptr<IThermalLevelCallback>(new ThermalLevelTestCallback()) : nullptr;
-    sptr<IThermalActionCallback> actionCb = fdp.ConsumeBool()
-        ? sptr<IThermalActionCallback>(new ThermalActionTestCallback()) : nullptr;
-
+void FuzzClientSubscriptions(FuzzedDataProvider &fdp, ThermalMgrClient &client,
+    const std::vector<std::string> &typeList, const std::vector<std::string> &actionList,
+    const std::string &desc, const sptr<IThermalTempCallback> &tempCb,
+    const sptr<IThermalLevelCallback> &levelCb, const sptr<IThermalActionCallback> &actionCb)
+{
     if (fdp.ConsumeBool()) {
         (void)client.SubscribeThermalTempCallback(typeList, tempCb);
     }
@@ -570,7 +554,11 @@ void FuzzClientOnce(FuzzedDataProvider &fdp)
     if (fdp.ConsumeBool()) {
         (void)client.UnSubscribeThermalActionCallback(actionCb);
     }
+}
 
+void FuzzClientOperations(FuzzedDataProvider &fdp, ThermalMgrClient &client,
+    const std::string &scene, const std::string &tag, const std::string &val, bool isImmed)
+{
     if (fdp.ConsumeBool()) {
         (void)client.GetThermalSensorTemp(ConsumeSensorType(fdp));
     }
@@ -586,19 +574,48 @@ void FuzzClientOnce(FuzzedDataProvider &fdp)
     if (fdp.ConsumeBool()) {
         (void)client.UpdateThermalPolicy();
     }
+}
 
+void FuzzClientDump(FuzzedDataProvider &fdp, ThermalMgrClient &client)
+{
     if (fdp.ConsumeBool()) {
         std::vector<std::string> args = ConsumeStringVector(fdp);
         (void)client.Dump(args);
     }
     if (fdp.ConsumeBool()) {
         std::vector<std::string> args;
-        size_t cnt = fdp.ConsumeIntegralInRange<size_t>(10, 20);
+        size_t cnt = fdp.ConsumeIntegralInRange<size_t>(MIN_CLIENT_DUMP_ARGS, MAX_CLIENT_DUMP_ARGS);
         for (size_t i = 0; i < cnt; ++i) {
             args.emplace_back(ConsumeSafeString(fdp, MAX_STR_LEN));
         }
         (void)client.Dump(args);
     }
+}
+
+void FuzzClientOnce(FuzzedDataProvider &fdp)
+{
+    auto &client = ThermalMgrClient::GetInstance();
+
+    SetupClientService(fdp, client);
+
+    auto typeList = ConsumeStringVector(fdp);
+    auto actionList = ConsumeStringVector(fdp);
+    std::string desc = ConsumeSafeString(fdp, MAX_STR_LEN);
+    std::string scene = ConsumeSafeString(fdp, MAX_STR_LEN);
+    std::string tag = ConsumeSafeString(fdp, MAX_STR_LEN);
+    std::string val = ConsumeSafeString(fdp, MAX_STR_LEN);
+    bool isImmed = fdp.ConsumeBool();
+
+    sptr<IThermalTempCallback> tempCb = fdp.ConsumeBool()
+        ? sptr<IThermalTempCallback>(new ThermalTempTestCallback()) : nullptr;
+    sptr<IThermalLevelCallback> levelCb = fdp.ConsumeBool()
+        ? sptr<IThermalLevelCallback>(new ThermalLevelTestCallback()) : nullptr;
+    sptr<IThermalActionCallback> actionCb = fdp.ConsumeBool()
+        ? sptr<IThermalActionCallback>(new ThermalActionTestCallback()) : nullptr;
+
+    FuzzClientSubscriptions(fdp, client, typeList, actionList, desc, tempCb, levelCb, actionCb);
+    FuzzClientOperations(fdp, client, scene, tag, val, isImmed);
+    FuzzClientDump(fdp, client);
 }
 } // namespace
 
@@ -618,7 +635,6 @@ extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv)
         if (observer != nullptr) {
             observer->InitSensorTypeMap();
         }
-        g_service->isBootCompleted_ = true;
     }
     return 0;
 }
