@@ -22,7 +22,9 @@
 #include <string>
 #include <vector>
 
-#define THERMAL_SERVICE_DEATH_UT
+#ifndef THERMAL_SERVICE_DEATH_UT
+#define THERMAL_SERVICE_DEATH_UT 1
+#endif
 #include "thermal_mgr_client.h"
 #include "thermal_service.h"
 #include "thermal_action_callback_stub.h"
@@ -37,7 +39,6 @@
 #include "thermal_service_subscriber.h"
 #include "fan_fault_detect.h"
 #include "v1_1/thermal_types.h"
-#undef THERMAL_SERVICE_DEATH_UT
 
 #include "thermal_common.h"
 #include "system_ability_definition.h"
