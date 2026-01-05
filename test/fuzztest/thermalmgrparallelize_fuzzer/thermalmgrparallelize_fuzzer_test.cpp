@@ -21,15 +21,41 @@
 #include "ithermal_srv.h"
 #include "thermal_action_callback_stub.h"
 #include "thermal_level_callback_stub.h"
-#include "thermal_service.h"
 #include "thermal_temp_callback_stub.h"
+
+#define private public
+#define protected public
+#include "thermal_service.h"
 
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
 
 namespace OHOS {
 constexpr int32_t MAX_STRING_LENGTH = 64;
-sptr<ThermalService> g_service = nullptr;
+class ThermalMgrParallelizeFuzzerTest {
+public:
+    ThermalMgrParallelizeFuzzerTest();
+    ~ThermalMgrParallelizeFuzzerTest();
+    int FuzzThermalMgrService(FuzzedDataProvider &provider);
+    OHOS::sptr<OHOS::PowerMgr::ThermalService> service_;
+};
+
+ThermalMgrParallelizeFuzzerTest::ThermalMgrParallelizeFuzzerTest()
+{
+    service_ = ThermalService::GetInstance();
+    service_->OnStart();
+    service_->SetTempReportSwitch(false);
+}
+
+ThermalMgrParallelizeFuzzerTest::~ThermalMgrParallelizeFuzzerTest()
+{
+    if (service_ != nullptr) {
+        service_->UnRegisterThermalHdiCallback();
+        service_->OnStop();
+    }
+    service_ = nullptr;
+}
+
 class ThermalTempTestCallback : public ThermalTempCallbackStub {
 public:
     bool OnThermalTempChanged(TempCallbackMap& tempCbMap) { return true; }
@@ -57,11 +83,12 @@ enum IpcCode : std::int16_t {
     UPDATE_THERMAL_STATE = 10,
     SHELL_DUMP = 11,
 };
-}
 
-extern "C" int FuzzThermalMgrService(FuzzedDataProvider &provider)
+ThermalMgrParallelizeFuzzerTest g_serviceTest;
+
+int ThermalMgrParallelizeFuzzerTest::FuzzThermalMgrService(FuzzedDataProvider &provider)
 {
-    if (g_service == nullptr) {
+    if (service_ == nullptr) {
         return 0;
     }
 
@@ -82,22 +109,22 @@ extern "C" int FuzzThermalMgrService(FuzzedDataProvider &provider)
             typeList.emplace_back(type1);
             typeList.emplace_back(type2);
             sptr<IThermalTempCallback> callback = new ThermalTempTestCallback();
-            g_service->SubscribeThermalTempCallback(typeList, callback);
+            service_->SubscribeThermalTempCallback(typeList, callback);
             break;
         }
         case IpcCode::UN_SUBSCRIBE_THERMAL_TEMP: {
             sptr<IThermalTempCallback> callback = new ThermalTempTestCallback();
-            g_service->UnSubscribeThermalTempCallback(callback);
+            service_->UnSubscribeThermalTempCallback(callback);
             break;
         }
         case IpcCode::SUBSCRIBE_THERMAL_LEVEL: {
             sptr<IThermalLevelCallback> callback = new ThermalLevelTestCallback();
-            g_service->SubscribeThermalLevelCallback(callback);
+            service_->SubscribeThermalLevelCallback(callback);
             break;
         }
         case IpcCode::UN_SUBSCRIBE_THERMAL_LEVEL: {
             sptr<IThermalLevelCallback> callback = new ThermalLevelTestCallback();
-            g_service->UnSubscribeThermalLevelCallback(callback);
+            service_->UnSubscribeThermalLevelCallback(callback);
             break;
         }
         case IpcCode::SUBSCRIBE_THERMAL_ACTION: {
@@ -108,40 +135,40 @@ extern "C" int FuzzThermalMgrService(FuzzedDataProvider &provider)
             actionList.emplace_back(action2);
             std::string desc = provider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
             sptr<IThermalActionCallback> callback = new ThermalActionTestCallback();
-            g_service->SubscribeThermalActionCallback(actionList, desc, callback);
+            service_->SubscribeThermalActionCallback(actionList, desc, callback);
             break;
         }
         case IpcCode::UN_SUBSCRIBE_THERMAL_ACTION: {
             sptr<IThermalActionCallback> callback = new ThermalActionTestCallback();
-            g_service->UnSubscribeThermalActionCallback(callback);
+            service_->UnSubscribeThermalActionCallback(callback);
             break;
         }
         case IpcCode::GET_THERMAL_SRV_SENSOR_INFO: {
             int32_t type = provider.ConsumeIntegral<int32_t>();
             ThermalSrvSensorInfo sensorInfo;
             bool sensorInfoRet;
-            g_service->GetThermalSrvSensorInfo(type, sensorInfo, sensorInfoRet);
+            service_->GetThermalSrvSensorInfo(type, sensorInfo, sensorInfoRet);
             break;
         }
         case IpcCode::GET_THERMAL_LEVEL: {
             int32_t level = provider.ConsumeIntegral<int32_t>();
-            g_service->GetThermalLevel(level);
+            service_->GetThermalLevel(level);
             break;
         }
         case IpcCode::GET_THERMAL_INFO: {
-            g_service->GetThermalInfo();
+            service_->GetThermalInfo();
             break;
         }
         case IpcCode::SET_SCENE: {
             std::string scene = provider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
-            g_service->SetScene(scene);
+            service_->SetScene(scene);
             break;
         }
         case IpcCode::UPDATE_THERMAL_STATE: {
             std::string tag = provider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
             std::string val = provider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
             bool isImmed = provider.ConsumeBool();
-            g_service->UpdateThermalState(tag, val, isImmed);
+            service_->UpdateThermalState(tag, val, isImmed);
             break;
         }
         case IpcCode::SHELL_DUMP: {
@@ -152,7 +179,7 @@ extern "C" int FuzzThermalMgrService(FuzzedDataProvider &provider)
             args.emplace_back(arg2);
             uint32_t argc = provider.ConsumeIntegral<uint32_t>();
             std::string result;
-            g_service->ShellDump(args, argc, result);
+            service_->ShellDump(args, argc, result);
             break;
         }
         default:
@@ -160,18 +187,12 @@ extern "C" int FuzzThermalMgrService(FuzzedDataProvider &provider)
     }
     return 0;
 }
-
-extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv)
-{
-    g_service = ThermalService::GetInstance();
-    g_service->OnStart();
-    return 0;
 }
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     FuzzedDataProvider fdp(data, size);
-    FuzzThermalMgrService(fdp);
+    g_serviceTest.FuzzThermalMgrService(fdp);
     return 0;
 }
