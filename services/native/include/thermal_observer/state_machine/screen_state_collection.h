@@ -33,11 +33,17 @@ public:
     void HandleScreenOnCompleted(const EventFwk::CommonEventData& data);
     void HandleScreenOffCompleted(const EventFwk::CommonEventData& data);
     bool RegisterEvent();
+    void ResetState();
     virtual void SetState(const std::string& stateValue) override;
 private:
-    std::string params_;
-    std::string state_;
+    bool StartDelayTimer();
+    void StopDelayTimer();
+
+    int32_t state_ {0};
+    uint32_t delayTime_ {0};
+    uint64_t delayTimerId_ {0};
     std::string mockState_;
+    std::mutex mutex_;
 };
 }
 }
