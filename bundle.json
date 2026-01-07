@@ -79,7 +79,7 @@
           "//base/powermgr/thermal_manager/utils/appmgr:thermal_utils_ability"
         ]
       },
-      "inner_api": [
+      "inner_kits": [
         {
           "name": "//base/powermgr/thermal_manager/interfaces/inner_api:thermalsrv_client",
           "header": {
