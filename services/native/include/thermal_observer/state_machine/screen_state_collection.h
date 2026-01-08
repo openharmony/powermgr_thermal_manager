@@ -16,6 +16,8 @@
 #ifndef SCREEN_STATE_COLLECTION_H
 #define SCREEN_STATE_COLLECTION_H
 
+#include "ffrt.h"
+
 #include <common_event_subscriber.h>
 #include "istate_collection.h"
 
@@ -43,7 +45,7 @@ private:
     uint32_t delayTime_ {0};
     uint64_t delayTimerId_ {0};
     std::string mockState_;
-    std::mutex mutex_;
+    ffrt::mutex mutex_;
 };
 }
 }

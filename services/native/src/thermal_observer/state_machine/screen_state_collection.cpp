@@ -77,7 +77,7 @@ bool ScreenStateCollection::RegisterEvent()
 
 void ScreenStateCollection::HandleScreenOnCompleted(const CommonEventData& data __attribute__((__unused__)))
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     THERMAL_HILOGD(COMP_SVC, "received screen on event");
     if (delayTime_ > 0) {
         state_ = SCREEN_OFF;
@@ -90,7 +90,7 @@ void ScreenStateCollection::HandleScreenOnCompleted(const CommonEventData& data 
 
 void ScreenStateCollection::HandleScreenOffCompleted(const CommonEventData& data __attribute__((__unused__)))
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     THERMAL_HILOGD(COMP_SVC, "received screen off event");
     state_ = SCREEN_OFF;
     StopDelayTimer();
@@ -103,7 +103,7 @@ void ScreenStateCollection::SetState(const std::string& stateValue)
 bool ScreenStateCollection::DecideState(const std::string& value)
 {
     auto& powerMgrClient = PowerMgrClient::GetInstance();
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     state_ = delayTime_ > 0 ? state_ : powerMgrClient.IsScreenOn(false);
     if ((value == ToString(SCREEN_ON) && state_ == SCREEN_ON) ||
         (value == ToString(SCREEN_OFF) && !powerMgrClient.IsScreenOn(false))) {
@@ -114,7 +114,7 @@ bool ScreenStateCollection::DecideState(const std::string& value)
 
 void ScreenStateCollection::ResetState()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     THERMAL_HILOGI(COMP_SVC, "ScreenStateCollection ResetState");
     state_ = SCREEN_ON;
     StopDelayTimer();
