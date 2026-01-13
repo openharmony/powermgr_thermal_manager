@@ -106,7 +106,7 @@ bool ScreenStateCollection::DecideState(const std::string& value)
     std::lock_guard<ffrt::mutex> lock(mutex_);
     state_ = delayTime_ > 0 ? state_ : powerMgrClient.IsScreenOn(false);
     if ((value == ToString(SCREEN_ON) && state_ == SCREEN_ON) ||
-        (value == ToString(SCREEN_OFF) && !powerMgrClient.IsScreenOn(false))) {
+        (value == ToString(SCREEN_OFF) && state_ == SCREEN_OFF)) {
         return true;
     }
     return false;
