@@ -249,6 +249,12 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
     screenState->HandleScreenOffCompleted(data);
     screenState->SetState("");
     screenState->DecideState("0");
+    param = "1";
+    screenState->InitParam(param);
+    screenState->HandleScreenOnCompleted(data);
+    screenState->ResetState();
+    screenState->HandleScreenOffCompleted(data);
+    EXPECT_EQ("0", screenState->GetState());
     THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest008 function end!");
 }
 

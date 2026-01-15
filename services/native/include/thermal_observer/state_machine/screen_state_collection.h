@@ -16,6 +16,8 @@
 #ifndef SCREEN_STATE_COLLECTION_H
 #define SCREEN_STATE_COLLECTION_H
 
+#include "ffrt.h"
+
 #include <common_event_subscriber.h>
 #include "istate_collection.h"
 
@@ -33,11 +35,17 @@ public:
     void HandleScreenOnCompleted(const EventFwk::CommonEventData& data);
     void HandleScreenOffCompleted(const EventFwk::CommonEventData& data);
     bool RegisterEvent();
+    void ResetState();
     virtual void SetState(const std::string& stateValue) override;
 private:
-    std::string params_;
-    std::string state_;
+    bool StartDelayTimer();
+    void StopDelayTimer();
+
+    int32_t state_ {0};
+    uint32_t delayTime_ {0};
+    uint64_t delayTimerId_ {0};
     std::string mockState_;
+    ffrt::mutex mutex_;
 };
 }
 }

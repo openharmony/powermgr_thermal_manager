@@ -23,6 +23,7 @@
 #include "string_operation.h"
 #include "thermal_service.h"
 #include "thermal_common.h"
+#include "thermal_timer.h"
 
 using namespace OHOS::EventFwk;
 namespace OHOS {
@@ -41,7 +42,7 @@ bool ScreenStateCollection::Init()
 bool ScreenStateCollection::InitParam(std::string& params)
 {
     THERMAL_HILOGD(COMP_SVC, "Enter");
-    params_ = params;
+    StringOperation::StrToUint(params, delayTime_);
     return true;
 }
 
@@ -52,7 +53,7 @@ std::string ScreenStateCollection::GetState()
     if (!tms->GetSimulationXml()) {
         return mockState_;
     } else {
-        return state_;
+        return ToString(state_);
     }
 }
 
@@ -76,14 +77,23 @@ bool ScreenStateCollection::RegisterEvent()
 
 void ScreenStateCollection::HandleScreenOnCompleted(const CommonEventData& data __attribute__((__unused__)))
 {
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     THERMAL_HILOGD(COMP_SVC, "received screen on event");
-    state_ = ToString(SCREEN_ON);
+    if (delayTime_ > 0) {
+        state_ = SCREEN_OFF;
+        StopDelayTimer();
+        StartDelayTimer();
+    } else {
+        state_ = SCREEN_ON;
+    }
 }
 
 void ScreenStateCollection::HandleScreenOffCompleted(const CommonEventData& data __attribute__((__unused__)))
 {
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     THERMAL_HILOGD(COMP_SVC, "received screen off event");
-    state_ = ToString(SCREEN_OFF);
+    state_ = SCREEN_OFF;
+    StopDelayTimer();
 }
 
 void ScreenStateCollection::SetState(const std::string& stateValue)
@@ -93,11 +103,48 @@ void ScreenStateCollection::SetState(const std::string& stateValue)
 bool ScreenStateCollection::DecideState(const std::string& value)
 {
     auto& powerMgrClient = PowerMgrClient::GetInstance();
-    if ((value == ToString(SCREEN_ON) && powerMgrClient.IsScreenOn(false)) ||
-        (value == ToString(SCREEN_OFF) && !powerMgrClient.IsScreenOn(false))) {
+    std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (delayTime_ == 0) {
+        state_ = powerMgrClient.IsScreenOn(false) ? SCREEN_ON : SCREEN_OFF;
+    }
+    if ((value == ToString(SCREEN_ON) && state_ == SCREEN_ON) ||
+        (value == ToString(SCREEN_OFF) && state_ == SCREEN_OFF)) {
         return true;
     }
     return false;
+}
+
+void ScreenStateCollection::ResetState()
+{
+    std::lock_guard<ffrt::mutex> lock(mutex_);
+    THERMAL_HILOGI(COMP_SVC, "ScreenStateCollection ResetState");
+    state_ = SCREEN_ON;
+    StopDelayTimer();
+}
+
+bool ScreenStateCollection::StartDelayTimer()
+{
+    auto thermalTimer = std::make_shared<ThermalTimer>();
+    auto timerInfo = std::make_shared<ThermalTimerInfo>();
+    timerInfo->SetType(ThermalTimer::TIMER_TYPE_WAKEUP | ThermalTimer::TIMER_TYPE_EXACT);
+    timerInfo->SetCallbackInfo([this] { ResetState(); });
+
+    delayTimerId_ = thermalTimer->CreateTimer(timerInfo);
+    int64_t curMsecTimestam = MiscServices::TimeServiceClient::GetInstance()->GetWallTimeMs();
+
+    return thermalTimer->StartTimer(delayTimerId_, static_cast<uint64_t>(delayTime_ + curMsecTimestam));
+}
+
+void ScreenStateCollection::StopDelayTimer()
+{
+    if (delayTimerId_ > 0) {
+        auto thermalTimer = std::make_shared<ThermalTimer>();
+        if (!thermalTimer->StopTimer(delayTimerId_)) {
+            THERMAL_HILOGE(COMP_SVC, "ScreenStateCollection failed to stop delay timer");
+        }
+        thermalTimer->DestroyTimer(delayTimerId_);
+        delayTimerId_ = 0;
+    }
 }
 } // namespace PowerMgr
 } // namespace OHOS
