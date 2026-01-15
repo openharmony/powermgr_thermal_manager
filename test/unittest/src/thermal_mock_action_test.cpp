@@ -147,6 +147,7 @@ void ThermalMockActionTest::SetUpTestCase()
     g_service->OnStart();
     g_service->InitStateMachine();
     g_service->InitActionManager();
+    g_service->UnRegisterThermalHdiCallback();
     EnableMock();
 }
 
