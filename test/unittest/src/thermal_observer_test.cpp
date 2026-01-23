@@ -31,6 +31,7 @@
 #include "scene_state_collection.h"
 #include "screen_state_collection.h"
 #include "state_machine.h"
+#include "thermal_timer.h"
 
 #ifdef BATTERY_MANAGER_ENABLE
 #include "battery_info.h"
@@ -44,8 +45,17 @@ using namespace std;
 using namespace OHOS::EventFwk;
 
 namespace {
+bool g_pass = false;
 static sptr<ThermalService> g_service = nullptr;
 }
+
+namespace OHOS::PowerMgr {
+bool ThermalTimer::StopTimer(uint64_t timerId)
+{
+    MiscServices::TimeServiceClient::GetInstance()->StopTimer(timerId);
+    return g_pass;
+}
+} // namespace OHOS::PowerMgr
 
 void ThermalObserverTest::SetUpTestCase()
 {
@@ -251,10 +261,19 @@ HWTEST_F(ThermalObserverTest, ThermalObserverTest008, TestSize.Level0)
     screenState->DecideState("0");
     param = "1";
     screenState->InitParam(param);
+    g_pass = false;
     screenState->HandleScreenOnCompleted(data);
     screenState->ResetState();
     screenState->HandleScreenOffCompleted(data);
-    EXPECT_EQ("0", screenState->GetState());
+    g_pass = true;
+    screenState->HandleScreenOnCompleted(data);
+    screenState->ResetState();
+    EXPECT_FALSE(screenState->DecideState("0"));
+    EXPECT_TRUE(screenState->DecideState("1"));
+    screenState->HandleScreenOffCompleted(data);
+    EXPECT_FALSE(screenState->DecideState("1"));
+    EXPECT_TRUE(screenState->DecideState("0"));
+    EXPECT_FALSE(screenState->DecideState("-1"));
     THERMAL_HILOGI(LABEL_TEST, "ThermalObserverTest008 function end!");
 }
 
