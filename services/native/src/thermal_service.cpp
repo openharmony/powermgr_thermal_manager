@@ -762,6 +762,7 @@ int32_t ThermalService::Dump(int fd, const std::vector<std::u16string>& args)
         THERMAL_HILOGI(COMP_SVC, "arg: %{public}s", ret.c_str());
         return ret;
     });
+    std::lock_guard<std::mutex> lock(mutex_);
     std::string result;
     ThermalMgrDumper::Dump(argsInStr, result);
     if (!SaveStringToFd(fd, result)) {
