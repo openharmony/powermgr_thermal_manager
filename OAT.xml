@@ -21,6 +21,15 @@
 			    <filteritem type="filename" name="*.png" desc="The framework image"/>
             </filefilter>
             <filefilter name="defaultPolicyFilter" desc="Filters for all policies">
+                <filteritem type="filename" name="project.xml" desc="Avoid OAT consistency check due to WordsTool conflict"/>
+                <filteritem type="filepath" name="test/fuzztest/thermalmgrclient_fuzzer/project.xml" desc="Avoid OAT consistency check due to WordsTool conflict"/>
+            </filefilter>
+            <filefilter name="copyrightPolicyFilter" desc="Filters for copyright policies">
+                <filteritem type="filename" name="project.xml" desc="Avoid OAT consistency check due to WordsTool conflict"/>
+                <filteritem type="filepath" name="test/fuzztest/thermalmgrclient_fuzzer/project.xml" desc="Avoid OAT consistency check due to WordsTool conflict"/>
+            </filefilter>
+            <filefilter name="copyrightHeaderPolicyFilter" desc="Filters for copyright header policies">
+                <filteritem type="filename" name="project.xml" desc="Avoid OAT consistency check due to WordsTool conflict"/>
                 <filteritem type="filepath" name="test/fuzztest/thermalmgrclient_fuzzer/project.xml" desc="Avoid OAT consistency check due to WordsTool conflict"/>
             </filefilter>
         </filefilterlist>
