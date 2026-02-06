@@ -20,6 +20,9 @@
             <filefilter name="binaryFileTypePolicyFilter" desc="Filters for binary file policies">
 			    <filteritem type="filename" name="*.png" desc="The framework image"/>
             </filefilter>
+            <filefilter name="copyrightHeaderPolicyFilter" desc="Filters for copyright header policies">
+                <filteritem type="filepath" name="test/fuzztest/thermalmgrclient_fuzzer/project.xml" desc="Avoid OAT consistency check due to WordsTool conflict"/>
+            </filefilter>
         </filefilterlist>
     </oatconfig>
 </configuration>
