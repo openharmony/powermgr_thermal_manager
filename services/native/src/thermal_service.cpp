@@ -574,6 +574,7 @@ int32_t ThermalService::SetScene(const std::string& scene)
         THERMAL_HILOGE(COMP_SVC, "Permission::IsSystem() failed");
         return ERR_FAIL;
     }
+    std::lock_guard<std::mutex> lock(sceneMutex_);
     scene_ = scene;
     return ERR_OK;
 }
@@ -762,6 +763,7 @@ int32_t ThermalService::Dump(int fd, const std::vector<std::u16string>& args)
         THERMAL_HILOGI(COMP_SVC, "arg: %{public}s", ret.c_str());
         return ret;
     });
+    std::lock_guard<std::mutex> lock(mutex_);
     std::string result;
     ThermalMgrDumper::Dump(argsInStr, result);
     if (!SaveStringToFd(fd, result)) {
