@@ -24,6 +24,7 @@ group("fuzztest") {
     "getthermallevel_fuzzer:GetThermalLevelFuzzTest",
     "getthermalsensortemp_fuzzer:GetThermalSensorTempFuzzTest",
     "setscene_fuzzer:SetSceneFuzzTest",
+    "thermal_fuzzer:ThermalFuzzTest",
     "thermalactioncallback_fuzzer:ThermalActionCallbackFuzzTest",
     "thermaldump_fuzzer:ThermalDumpFuzzTest",
     "thermallevelcallback_fuzzer:ThermalLevelCallbackFuzzTest",
