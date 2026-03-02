@@ -60,7 +60,7 @@ HWTEST_F(ThermalMockProxySendrequestTest, ThermalMockProxySendrequestTest001, Te
     EXPECT_NE(srvProxy->UnSubscribeThermalTempCallback(tempCallback), ERR_OK);
     sptr<IThermalLevelCallback> levelCallback = new ThermalLevelCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(levelCallback == nullptr);
-    EXPECT_NE(srvProxy->SubscribeThermalLevelCallback(levelCallback), ERR_OK);
+    EXPECT_NE(srvProxy->SubscribeThermalLevelCallback(levelCallback, true), ERR_OK);
     EXPECT_NE(srvProxy->UnSubscribeThermalLevelCallback(levelCallback), ERR_OK);
     sptr<IThermalActionCallback> actionCallback = new ThermalActionCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(actionCallback == nullptr);

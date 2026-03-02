@@ -789,4 +789,23 @@ HWTEST_F(ThermalActionTest, ThermalActionTest018, TestSize.Level0)
     EXPECT_EQ(0, g_actionSocPerfResource->lastValue_);
     THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest018 function end!");
 }
+
+/**
+ * @tc.name: ThermalActionTest019
+ * @tc.desc: Action Thermal Level Function Test
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalActionTest, ThermalActionTest019, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest019 function start!");
+    sptr<IThermalLevelCallback> levelCallback = new ThermalLevelCallbackStub();
+    EXPECT_FALSE(levelCallback == nullptr);
+    g_actionThermalLevel->SubscribeThermalLevelCallback(levelCallback, false);
+    g_actionThermalLevel->NotifyThermalLevelChanged(1);
+    EXPECT_FALSE(g_actionThermalLevel->asyncThermalLevelListeners_.empty());
+    g_actionThermalLevel->SubscribeThermalLevelCallback(levelCallback, false);
+    EXPECT_FALSE(g_actionThermalLevel->asyncThermalLevelListeners_.empty());
+    g_actionThermalLevel->UnSubscribeThermalLevelCallback(levelCallback);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalActionTest019 function end!");
+}
 } // namespace
