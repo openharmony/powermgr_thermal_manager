@@ -121,4 +121,31 @@ HWTEST_F(ThermalListenerTest, ThermalListenerTest002, TestSize.Level0)
     EXPECT_EQ(true, ret == ERR_INVALID_VALUE);
     THERMAL_HILOGI(LABEL_TEST, "ThermalListenerTest002 function end!");
 }
+
+/**
+ * @tc.name: ThermalListenerTest003
+ * @tc.desc: test class ThermalMgrListener function(on async thermal level changed)
+ * @tc.type: FUNC
+ * @tc.require: issueI63SZ4
+ */
+HWTEST_F(ThermalListenerTest, ThermalListenerTest003, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalListenerTest003 function start!");
+    std::shared_ptr<ThermalMgrListener> thermalListener = std::make_shared<ThermalMgrListener>();
+    ASSERT_NE(thermalListener, nullptr);
+    const std::shared_ptr<ThermalMgrListener::ThermalLevelEvent> thermalEvent =
+        std::make_shared<ThermalListenerTest::ThermalLevelTestEvent>();
+    ASSERT_NE(thermalEvent, nullptr);
+    int32_t ret = thermalListener->SubscribeLevelEvent(thermalEvent);
+
+    ThermalLevel level = ThermalLevel::COOL;
+    sptr<IThermalLevelCallback> callback = new ThermalMgrListener::ThermalLevelCallback(nullptr);
+    bool result = callback->OnAsyncThermalLevelChanged(level);
+    EXPECT_EQ(result, false);
+    sptr<IThermalLevelCallback> callback2 = new ThermalMgrListener::ThermalLevelCallback(thermalListener);
+    result = callback2->OnAsyncThermalLevelChanged(level);
+    thermalListener->UnSubscribeLevelEvent();
+    EXPECT_EQ(result, true);
+    THERMAL_HILOGI(LABEL_TEST, "ThermalListenerTest003 function end!");
+}
 } // namespace

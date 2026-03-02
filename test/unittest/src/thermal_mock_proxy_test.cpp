@@ -78,7 +78,7 @@ HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest002, TestSize.Level0)
     EXPECT_NE(srvProxy->SubscribeThermalTempCallback(typeList, tempCallback), ERR_OK);
     EXPECT_NE(srvProxy->UnSubscribeThermalTempCallback(tempCallback), ERR_OK);
     sptr<IThermalLevelCallback> levelCallback;
-    EXPECT_NE(srvProxy->SubscribeThermalLevelCallback(levelCallback), ERR_OK);
+    EXPECT_NE(srvProxy->SubscribeThermalLevelCallback(levelCallback, true), ERR_OK);
     EXPECT_NE(srvProxy->UnSubscribeThermalLevelCallback(levelCallback), ERR_OK);
     sptr<IThermalActionCallback> actionCallback;
     EXPECT_NE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback), ERR_OK);
@@ -90,12 +90,31 @@ HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest002, TestSize.Level0)
     EXPECT_EQ(srvProxy->UnSubscribeThermalTempCallback(tempCallback), ERR_OK);
     levelCallback = new ThermalLevelCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(levelCallback == nullptr);
-    EXPECT_EQ(srvProxy->SubscribeThermalLevelCallback(levelCallback), ERR_OK);
+    EXPECT_EQ(srvProxy->SubscribeThermalLevelCallback(levelCallback, true), ERR_OK);
     EXPECT_EQ(srvProxy->UnSubscribeThermalLevelCallback(levelCallback), ERR_OK);
     actionCallback = new ThermalActionCallbackProxy(sptrRemoteObj);
     EXPECT_FALSE(actionCallback == nullptr);
     EXPECT_EQ(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback), ERR_OK);
     EXPECT_EQ(srvProxy->UnSubscribeThermalActionCallback(actionCallback), ERR_OK);
     THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest002 function end!");
+}
+
+/**
+ * @tc.name: ThermalMockProxyTest003
+ * @tc.desc: test thermal level proxy on async thermal level changed
+ * @tc.type: FUNC
+ * @tc.require: issueI5YZQ2
+ */
+HWTEST_F(ThermalMockProxyTest, ThermalMockProxyTest003, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest003 function start!");
+    std::string result = "a";
+    sptr<MockThermalRemoteObject> sptrRemoteObj = new MockThermalRemoteObject();
+    EXPECT_FALSE(sptrRemoteObj == nullptr);
+    std::shared_ptr<ThermalLevelCallbackProxy> levalProxy = std::make_shared<ThermalLevelCallbackProxy>(sptrRemoteObj);
+    EXPECT_FALSE(levalProxy == nullptr);
+    ThermalLevel leval = ThermalLevel::COOL;
+    EXPECT_TRUE(levalProxy->OnAsyncThermalLevelChanged(leval));
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockProxyTest003 function end!");
 }
 } // namespace
