@@ -67,7 +67,7 @@ public:
     int32_t SubscribeThermalTempCallback(
         const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback) override;
     int32_t UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback) override;
-    int32_t SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
+    int32_t SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync = true) override;
     int32_t UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback) override;
     int32_t SubscribeThermalActionCallback(const std::vector<std::string>& actionList, const std::string& desc,
         const sptr<IThermalActionCallback>& callback) override;

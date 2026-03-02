@@ -46,6 +46,9 @@ int ThermalLevelCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel &data
     int ret = ERR_OK;
     if (code == static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::THERMAL_LEVEL_CHANGED)) {
         ret = OnThermalLevelChangedStub(data);
+    } else if (code ==
+        static_cast<uint32_t>(PowerMgr::ThermalLevelCallbackInterfaceCode::ASYNC_THERMAL_LEVEL_CHANGED)) {
+        ret = OnAsyncThermalLevelChangedStub(data);
     } else {
         ret = IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -58,6 +61,14 @@ int32_t ThermalLevelCallbackStub::OnThermalLevelChangedStub(MessageParcel& data)
     int32_t level;
     THERMAL_READ_PARCEL_WITH_RET(data, Int32, level, E_READ_PARCEL_ERROR_THERMAL);
     OnThermalLevelChanged(static_cast<ThermalLevel>(level));
+    return ERR_OK;
+}
+
+int32_t ThermalLevelCallbackStub::OnAsyncThermalLevelChangedStub(MessageParcel& data)
+{
+    int32_t level;
+    THERMAL_READ_PARCEL_WITH_RET(data, Int32, level, E_READ_PARCEL_ERROR_THERMAL);
+    OnAsyncThermalLevelChanged(static_cast<ThermalLevel>(level));
     return ERR_OK;
 }
 } // namespace PowerMgr
