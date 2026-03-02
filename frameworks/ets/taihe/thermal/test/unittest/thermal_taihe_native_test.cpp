@@ -44,7 +44,7 @@ void set_business_error(int32_t err_code, taihe::string_view msg)
 }
 
 namespace OHOS::PowerMgr {
-bool ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+bool ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync)
 {
     g_pass = true;
     return true;

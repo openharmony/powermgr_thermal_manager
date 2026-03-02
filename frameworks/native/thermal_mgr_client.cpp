@@ -111,11 +111,11 @@ bool ThermalMgrClient::UnSubscribeThermalTempCallback(const sptr<IThermalTempCal
     return true;
 }
 
-bool ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+bool ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync)
 {
     THERMAL_RETURN_IF_WITH_RET((callback == nullptr) || (Connect() != ERR_OK), false);
     THERMAL_HILOGD(COMP_FWK, "Enter");
-    thermalSrv_->SubscribeThermalLevelCallback(callback);
+    thermalSrv_->SubscribeThermalLevelCallback(callback, isSync);
     return true;
 }
 

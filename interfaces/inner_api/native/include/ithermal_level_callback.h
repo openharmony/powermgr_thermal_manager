@@ -25,6 +25,10 @@ namespace PowerMgr {
 class IThermalLevelCallback : public IRemoteBroker {
 public:
     virtual bool OnThermalLevelChanged(ThermalLevel level) = 0;
+    virtual bool OnAsyncThermalLevelChanged(ThermalLevel level)
+    {
+        return true;
+    }
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.powermgr.IThermalLevelCallback");
 };
 } // namespace PowerMgr

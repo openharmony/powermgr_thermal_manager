@@ -39,18 +39,19 @@ public:
         explicit ThermalLevelCallback(std::shared_ptr<ThermalMgrListener> listener) : listener_(listener) {};
         virtual ~ThermalLevelCallback() {};
         virtual bool OnThermalLevelChanged(ThermalLevel level) override;
+        virtual bool OnAsyncThermalLevelChanged(ThermalLevel level) override;
 
     private:
         std::weak_ptr<ThermalMgrListener> listener_;
     };
 
-    int32_t SubscribeLevelEvent(const std::shared_ptr<ThermalLevelEvent>& levelEvent);
+    int32_t SubscribeLevelEvent(const std::shared_ptr<ThermalLevelEvent>& levelEvent, bool isSync = true);
     int32_t UnSubscribeLevelEvent();
     ThermalLevel GetThermalLevel();
     friend class ThermalLevelCallback;
 
 private:
-    void RegisterServiceEvent();
+    void RegisterServiceEvent(bool isSync = true);
     void UnRegisterServiceEvent();
     sptr<IThermalLevelCallback> callback_;
     std::shared_ptr<ThermalLevelEvent> levelEvent_;
