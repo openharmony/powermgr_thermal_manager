@@ -29,7 +29,7 @@ public:
     ThermalLevelCallback() = default;
     virtual ~ThermalLevelCallback();
     void UpdateCallback(callback_view<void(ohos::thermal::ThermalLevel)> thermalCb);
-    bool OnThermalLevelChanged(OHOS::PowerMgr::ThermalLevel level) override;
+    bool OnAsyncThermalLevelChanged(OHOS::PowerMgr::ThermalLevel level) override;
     void OnThermalLevel();
 
 private:

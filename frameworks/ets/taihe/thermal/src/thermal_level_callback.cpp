@@ -26,7 +26,7 @@ void ThermalLevelCallback::UpdateCallback(callback_view<void(ohos::thermal::Ther
     callback_ = optional<callback<void(ohos::thermal::ThermalLevel)>>{std::in_place, thermalCb};
 }
 
-bool ThermalLevelCallback::OnThermalLevelChanged(OHOS::PowerMgr::ThermalLevel level)
+bool ThermalLevelCallback::OnAsyncThermalLevelChanged(OHOS::PowerMgr::ThermalLevel level)
 {
     std::lock_guard lock(mutex_);
     level_ = level;
