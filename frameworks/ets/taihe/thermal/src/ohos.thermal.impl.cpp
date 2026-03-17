@@ -35,7 +35,7 @@ void RegisterThermalLevelCallback(callback_view<void(ohos::thermal::ThermalLevel
         return;
     }
     g_thermalLevelCallback->UpdateCallback(thermalCb);
-    g_thermalMgrClient.SubscribeThermalLevelCallback(g_thermalLevelCallback);
+    g_thermalMgrClient.SubscribeThermalLevelCallback(g_thermalLevelCallback, false);
 }
 
 void UnregisterThermalLevelCallback(optional_view<callback<void(MyUndefined const&)>> thermalCb)
