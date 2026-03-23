@@ -58,7 +58,7 @@ void ThermalLevelCallback::ReleaseCallback()
     env_ = nullptr;
 }
 
-bool ThermalLevelCallback::OnThermalLevelChanged(ThermalLevel level)
+bool ThermalLevelCallback::OnAsyncThermalLevelChanged(ThermalLevel level)
 {
     std::lock_guard lock(mutex_);
     level_ = level;
@@ -218,7 +218,7 @@ napi_value ThermalManagerNapi::SubscribeThermalLevel(napi_env env, napi_callback
     THERMAL_RETURN_IF_WITH_RET(g_thermalLevelCallback == nullptr, result);
     g_thermalLevelCallback->ReleaseCallback();
     g_thermalLevelCallback->UpdateCallback(env, argv[ARG_0]);
-    g_thermalMgrClient.SubscribeThermalLevelCallback(g_thermalLevelCallback);
+    g_thermalMgrClient.SubscribeThermalLevelCallback(g_thermalLevelCallback, false);
 
     return result;
 }

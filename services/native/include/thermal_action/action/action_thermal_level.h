@@ -42,7 +42,7 @@ public:
     void AddActionValue(uint32_t actionId, std::string value) override;
     void ExecuteInner() override;
     void ResetActionValue() override;
-    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
+    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync = true);
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     static int32_t GetThermalLevel();
 
@@ -71,7 +71,8 @@ private:
     sptr<IRemoteObject::DeathRecipient> thermalLevelCBDeathRecipient_;
     std::vector<uint32_t> valueList_;
     std::string params_;
-    std::set<const sptr<IThermalLevelCallback>, classcomp> thermalLevelListeners_;
+    std::set<const sptr<IThermalLevelCallback>, classcomp> syncThermalLevelListeners_;
+    std::set<const sptr<IThermalLevelCallback>, classcomp> asyncThermalLevelListeners_;
 };
 } // namespace PowerMgr
 } // namespace OHOS

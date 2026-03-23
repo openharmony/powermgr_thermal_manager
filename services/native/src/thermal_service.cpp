@@ -478,12 +478,12 @@ int32_t ThermalService::GetThermalSrvSensorInfo(int32_t type, ThermalSrvSensorIn
     return ERR_OK;
 }
 
-int32_t ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+int32_t ThermalService::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync)
 {
     ThermalXCollie thermalXCollie("ThermalService::SubscribeThermalLevelCallback", false);
     auto uid = IPCSkeleton::GetCallingUid();
-    THERMAL_HILOGI(COMP_SVC, "ScbLevelCb uid=%{public}d", uid);
-    actionMgr_->SubscribeThermalLevelCallback(callback);
+    THERMAL_HILOGI(COMP_SVC, "ScbLevelCb uid=%{public}d, isSync:%{public}d", uid, isSync);
+    actionMgr_->SubscribeThermalLevelCallback(callback, isSync);
     return ERR_OK;
 }
 

@@ -30,11 +30,22 @@ bool ThermalMgrListener::ThermalLevelCallback::OnThermalLevelChanged(ThermalLeve
     return true;
 }
 
-void ThermalMgrListener::RegisterServiceEvent()
+bool ThermalMgrListener::ThermalLevelCallback::OnAsyncThermalLevelChanged(ThermalLevel level)
+{
+    std::shared_ptr<ThermalMgrListener> listener = listener_.lock();
+    if (listener == nullptr) {
+        THERMAL_HILOGE(COMP_FWK, "listener is null!");
+        return false;
+    }
+    listener->levelEvent_->OnThermalLevelResult(level);
+    return true;
+}
+
+void ThermalMgrListener::RegisterServiceEvent(bool isSync)
 {
     callback_ = new ThermalLevelCallback(shared_from_this());
     THERMAL_HILOGI(COMP_FWK, "register listener for thermal level");
-    ThermalMgrClient::GetInstance().SubscribeThermalLevelCallback(callback_);
+    ThermalMgrClient::GetInstance().SubscribeThermalLevelCallback(callback_, isSync);
 }
 
 void ThermalMgrListener::UnRegisterServiceEvent()
@@ -43,14 +54,14 @@ void ThermalMgrListener::UnRegisterServiceEvent()
     ThermalMgrClient::GetInstance().UnSubscribeThermalLevelCallback(callback_);
 }
 
-int32_t ThermalMgrListener::SubscribeLevelEvent(const std::shared_ptr<ThermalLevelEvent>& levelEvent)
+int32_t ThermalMgrListener::SubscribeLevelEvent(const std::shared_ptr<ThermalLevelEvent>& levelEvent, bool isSync)
 {
     if (levelEvent == nullptr) {
         THERMAL_HILOGE(COMP_FWK, "level event is null!");
         return ERR_INVALID_VALUE;
     }
     levelEvent_ = levelEvent;
-    RegisterServiceEvent();
+    RegisterServiceEvent(isSync);
     return ERR_OK;
 }
 

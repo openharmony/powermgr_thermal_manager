@@ -131,19 +131,30 @@ void ActionThermalLevel::LevelRequest(int32_t level)
     NotifyThermalLevelChanged(level);
 }
 
-void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+void ActionThermalLevel::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync)
 {
     std::lock_guard lock(mutex_);
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
     THERMAL_RETURN_IF(object == nullptr);
-    auto retIt = thermalLevelListeners_.insert(callback);
-    if (retIt.second) {
-        object->AddDeathRecipient(thermalLevelCBDeathRecipient_);
-        callback->OnThermalLevelChanged(static_cast<ThermalLevel>(lastValue_));
+
+    if (isSync) {
+        auto retIt = syncThermalLevelListeners_.insert(callback);
+        if (retIt.second) {
+            object->AddDeathRecipient(thermalLevelCBDeathRecipient_);
+            callback->OnThermalLevelChanged(static_cast<ThermalLevel>(lastValue_));
+        }
+        THERMAL_HILOGI(COMP_SVC, "sync size=%{public}zu,insertOk=%{public}d",
+            syncThermalLevelListeners_.size(), retIt.second);
+    } else {
+        auto retIt = asyncThermalLevelListeners_.insert(callback);
+        if (retIt.second) {
+            object->AddDeathRecipient(thermalLevelCBDeathRecipient_);
+            callback->OnAsyncThermalLevelChanged(static_cast<ThermalLevel>(lastValue_));
+        }
+        THERMAL_HILOGI(COMP_SVC, "async size=%{public}zu,insertOk=%{public}d",
+            asyncThermalLevelListeners_.size(), retIt.second);
     }
-    THERMAL_HILOGI(COMP_SVC, "size=%{public}zu,insertOk=%{public}d",
-        thermalLevelListeners_.size(), retIt.second);
 }
 
 void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
@@ -152,12 +163,21 @@ void ActionThermalLevel::UnSubscribeThermalLevelCallback(const sptr<IThermalLeve
     THERMAL_RETURN_IF(callback == nullptr);
     auto object = callback->AsObject();
     THERMAL_RETURN_IF(object == nullptr);
-    size_t eraseNum = thermalLevelListeners_.erase(callback);
+
+    size_t eraseNum = 0;
+    if (syncThermalLevelListeners_.find(callback) != syncThermalLevelListeners_.end()) {
+        eraseNum = syncThermalLevelListeners_.erase(callback);
+        THERMAL_HILOGI(COMP_SVC, "sync size=%{public}zu,eraseNum=%{public}zu",
+            syncThermalLevelListeners_.size(), eraseNum);
+    }
+    if (asyncThermalLevelListeners_.find(callback) != asyncThermalLevelListeners_.end()) {
+        eraseNum = asyncThermalLevelListeners_.erase(callback);
+        THERMAL_HILOGI(COMP_SVC, "async size=%{public}zu,eraseNum=%{public}zu",
+            asyncThermalLevelListeners_.size(), eraseNum);
+    }
     if (eraseNum != 0) {
         object->RemoveDeathRecipient(thermalLevelCBDeathRecipient_);
     }
-    THERMAL_HILOGI(COMP_SVC, "size=%{public}zu,eraseNum=%{public}zu",
-        thermalLevelListeners_.size(), eraseNum);
 }
 
 void ActionThermalLevel::ThermalLevelCallbackDeathRecipient::OnRemoteDied(const wptr<IRemoteObject>& remote)
@@ -181,7 +201,10 @@ void ActionThermalLevel::NotifyThermalLevelChanged(int32_t level)
 
     // Call back all level listeners
     std::lock_guard lock(mutex_);
-    for (auto& listener : thermalLevelListeners_) {
+    for (auto& listener : asyncThermalLevelListeners_) {
+        listener->OnAsyncThermalLevelChanged(static_cast<ThermalLevel>(level));
+    }
+    for (auto& listener : syncThermalLevelListeners_) {
         listener->OnThermalLevelChanged(static_cast<ThermalLevel>(level));
     }
 }

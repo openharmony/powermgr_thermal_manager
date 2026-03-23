@@ -45,5 +45,31 @@ bool ThermalLevelCallbackProxy::OnThermalLevelChanged(ThermalLevel level)
     }
     return true;
 }
+
+bool ThermalLevelCallbackProxy::OnAsyncThermalLevelChanged(ThermalLevel level)
+{
+    sptr<IRemoteObject> remote = Remote();
+    THERMAL_RETURN_IF_WITH_RET((remote == nullptr), false);
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option = { MessageOption::TF_ASYNC };
+
+    if (!data.WriteInterfaceToken(ThermalLevelCallbackProxy::GetDescriptor())) {
+        THERMAL_HILOGE(COMP_FWK, "ThermalLevelCallbackProxy::OnAsyncThermalLevelChanged write descriptor failed!");
+        return false;
+    }
+
+    THERMAL_WRITE_PARCEL_WITH_RET(data, Int32, static_cast<int32_t>(level), false);
+
+    int ret = remote->SendRequest(
+        static_cast<int>(PowerMgr::ThermalLevelCallbackInterfaceCode::ASYNC_THERMAL_LEVEL_CHANGED),
+        data, reply, option);
+    if (ret != ERR_OK) {
+        THERMAL_HILOGE(COMP_FWK, "SendAsyncRequest is failed, error code: %{public}d", ret);
+        return false;
+    }
+    return true;
+}
 } // namespace PowerMgr
 } // namespace OHOS

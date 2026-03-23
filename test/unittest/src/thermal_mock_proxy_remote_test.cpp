@@ -120,7 +120,7 @@ HWTEST_F(ThermalMockProxyRemoteTest, ThermalMockProxyRemoteTest001, TestSize.Lev
     EXPECT_NE(srvProxy->SubscribeThermalTempCallback(typeList, tempCallback), ERR_OK);
     EXPECT_NE(srvProxy->UnSubscribeThermalTempCallback(tempCallback), ERR_OK);
     sptr<IThermalLevelCallback> levelCallback;
-    EXPECT_NE(srvProxy->SubscribeThermalLevelCallback(levelCallback), ERR_OK);
+    EXPECT_NE(srvProxy->SubscribeThermalLevelCallback(levelCallback, true), ERR_OK);
     EXPECT_NE(srvProxy->UnSubscribeThermalLevelCallback(levelCallback), ERR_OK);
     sptr<IThermalActionCallback> actionCallback;
     EXPECT_NE(srvProxy->SubscribeThermalActionCallback(typeList, desc, actionCallback), ERR_OK);

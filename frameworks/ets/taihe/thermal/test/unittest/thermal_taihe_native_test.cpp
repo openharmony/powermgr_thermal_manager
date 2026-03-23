@@ -44,7 +44,7 @@ void set_business_error(int32_t err_code, taihe::string_view msg)
 }
 
 namespace OHOS::PowerMgr {
-bool ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback)
+bool ThermalMgrClient::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync)
 {
     g_pass = true;
     return true;
@@ -100,7 +100,7 @@ HWTEST_F(ThermalTaiheNativeTest, ThermalTaiheNativeTest_001, TestSize.Level1)
     std::shared_ptr<ThermalLevelCallback> cb = std::make_shared<ThermalLevelCallback>();
     cb->UpdateCallback(thermalCb);
     OHOS::PowerMgr::ThermalLevel level = OHOS::PowerMgr::ThermalLevel::COOL;
-    bool ret = cb->OnThermalLevelChanged(level);
+    bool ret = cb->OnAsyncThermalLevelChanged(level);
     EXPECT_TRUE(g_flag);
     EXPECT_TRUE(ret);
     EXPECT_TRUE(g_pass);
