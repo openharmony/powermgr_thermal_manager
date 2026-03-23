@@ -36,9 +36,14 @@ public:
     {
         return true;
     }
+    bool OnAsyncThermalLevelChanged(ThermalLevel __attribute__((unused)) level) override
+    {
+        return true;
+    }
 
 private:
     int32_t OnThermalLevelChangedStub(MessageParcel& data);
+    int32_t OnAsyncThermalLevelChangedStub(MessageParcel& data);
 };
 } // namespace PowerMgr
 } // namespace OHOS

@@ -39,7 +39,7 @@ class ThermalActionManager {
 public:
     using ThermalActionMap = std::map<std::string, std::shared_ptr<IThermalAction>>;
     bool Init();
-    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
+    void SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync = true);
     void UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     uint32_t GetThermalLevel();
     void SetActionItem(std::vector<ActionItem> vActionItem)

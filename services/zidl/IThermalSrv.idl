@@ -21,7 +21,7 @@ sequenceable OHOS.PowerMgr.ThermalSrvSensorInfo;
 interface OHOS.PowerMgr.IThermalSrv {
     [ipccode 0] void SubscribeThermalTempCallback([in] String[] typeList, [in] IThermalTempCallback callbackParam);
     void UnSubscribeThermalTempCallback([in] IThermalTempCallback callbackParam);
-    void SubscribeThermalLevelCallback([in] IThermalLevelCallback callbackParam);
+    void SubscribeThermalLevelCallback([in] IThermalLevelCallback callbackParam, [in] boolean isSync);
     void UnSubscribeThermalLevelCallback([in] IThermalLevelCallback callbackParam);
     void SubscribeThermalActionCallback(
         [in] String[] actionList, [in] String desc, [in] IThermalActionCallback callbackParam);

@@ -32,7 +32,7 @@ public:
     bool SubscribeThermalTempCallback(
         const std::vector<std::string>& typeList, const sptr<IThermalTempCallback>& callback);
     bool UnSubscribeThermalTempCallback(const sptr<IThermalTempCallback>& callback);
-    bool SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
+    bool SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback, bool isSync = true);
     bool UnSubscribeThermalLevelCallback(const sptr<IThermalLevelCallback>& callback);
     bool SubscribeThermalActionCallback(const std::vector<std::string>& actionList, const std::string& desc,
         const sptr<IThermalActionCallback>& callback);

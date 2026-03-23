@@ -28,6 +28,7 @@ public:
     ~ThermalLevelCallbackProxy() = default;
     DISALLOW_COPY_AND_MOVE(ThermalLevelCallbackProxy);
     virtual bool OnThermalLevelChanged(ThermalLevel level) override;
+    virtual bool OnAsyncThermalLevelChanged(ThermalLevel level) override;
 
 private:
     static inline BrokerDelegator<ThermalLevelCallbackProxy> delegator_;

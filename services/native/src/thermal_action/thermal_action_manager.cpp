@@ -54,10 +54,10 @@ bool ThermalActionManager::Init()
     return true;
 }
 
-void ThermalActionManager::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback)
+void ThermalActionManager::SubscribeThermalLevelCallback(const sptr<IThermalLevelCallback> &callback, bool isSync)
 {
     if (actionThermalLevel_ != nullptr) {
-        actionThermalLevel_->SubscribeThermalLevelCallback(callback);
+        actionThermalLevel_->SubscribeThermalLevelCallback(callback, isSync);
     } else {
         THERMAL_HILOGE(COMP_SVC, "thermal level action is uninitialized");
     }
