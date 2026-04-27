@@ -244,4 +244,23 @@ HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest007, 
 
     THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubGetdescriptorTest007 function end!");
 }
+
+/**
+ * @tc.name: ThermalMockStubGetdescriptorTest008
+ * @tc.desc: test IThermalLevelCallback::OnAsyncThermalLevelChanged default implementation
+ * @tc.type: FUNC
+ */
+HWTEST_F(ThermalMockStubGetdescriptorTest, ThermalMockStubGetdescriptorTest008, TestSize.Level0)
+{
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubGetdescriptorTest008 function start!");
+    class TestThermalLevelCallbackNoAsync : public IRemoteStub<IThermalLevelCallback> {
+    public:
+        bool OnThermalLevelChanged(ThermalLevel level) override { return true; }
+    };
+    sptr<TestThermalLevelCallbackNoAsync> callback = new TestThermalLevelCallbackNoAsync();
+    ASSERT_NE(callback, nullptr);
+    ThermalLevel level = ThermalLevel::COOL;
+    EXPECT_TRUE(callback->OnAsyncThermalLevelChanged(level));
+    THERMAL_HILOGI(LABEL_TEST, "ThermalMockStubGetdescriptorTest008 function end!");
+}
 } // namespace
