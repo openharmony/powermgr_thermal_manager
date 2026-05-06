@@ -694,7 +694,7 @@ bool ThermalService::HandleTempEmulation(const TypeTempMap& typeTempMap)
     if (isTempReport_) {
         return false;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
+
     serviceSubscriber_->OnTemperatureChanged(typeTempMap);
     return true;
 }
