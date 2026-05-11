@@ -64,6 +64,7 @@
         "safwk",
         "samgr",
         "selinux_adapter",
+        "api_metrics",
         "soc_perf",
         "time_service",
         "window_manager"

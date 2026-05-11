@@ -48,6 +48,12 @@ ohos_shared_library("thermal") {
     "napi:ace_napi",
   ]
 
+  defines = []
+  if (enable_support_api_metrics) {
+    external_deps += [ "api_metrics:histogrammanager" ]
+    defines += [ "THERMAL_API_METRICS_ENABLE" ]
+  }
+
   relative_install_dir = "module"
   part_name = "thermal_manager"
   subsystem_name = "powermgr"
