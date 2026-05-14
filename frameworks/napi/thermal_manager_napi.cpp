@@ -21,6 +21,9 @@
 #include "napi_errors.h"
 #include "thermal_common.h"
 #include "thermal_level_info.h"
+#ifdef THERMAL_API_METRICS_ENABLE
+#include "histogram_plugin_macros.h"
+#endif
 
 using namespace OHOS::PowerMgr;
 using namespace OHOS;
@@ -31,6 +34,9 @@ const uint8_t ARG_1 = 1;
 constexpr uint32_t MAX_ARGC = 1;
 thread_local auto& g_thermalMgrClient = ThermalMgrClient::GetInstance();
 thread_local sptr<ThermalLevelCallback> g_thermalLevelCallback = new (std::nothrow) ThermalLevelCallback();
+#ifdef THERMAL_API_METRICS_ENABLE
+constexpr int32_t HISTOGRAM_API_CALL_COUNT = 1;
+#endif
 } // namespace
 
 ThermalLevelCallback::~ThermalLevelCallback()
@@ -192,6 +198,9 @@ napi_value ThermalManagerNapi::EnumThermalLevelConstructor(napi_env env, napi_ca
 
 napi_value ThermalManagerNapi::GetThermalLevel(napi_env env, napi_callback_info info)
 {
+#ifdef THERMAL_API_METRICS_ENABLE
+    HISTOGRAM_BOOLEAN("BasicServicesKit.ThermalManager.getThermalLevel.Boolean", HISTOGRAM_API_CALL_COUNT);
+#endif
     ThermalLevel level = g_thermalMgrClient.GetThermalLevel();
     int32_t levelValue = static_cast<int32_t>(level);
     napi_value napiValue;
@@ -203,6 +212,9 @@ napi_value ThermalManagerNapi::GetThermalLevel(napi_env env, napi_callback_info 
 
 napi_value ThermalManagerNapi::SubscribeThermalLevel(napi_env env, napi_callback_info info)
 {
+#ifdef THERMAL_API_METRICS_ENABLE
+    HISTOGRAM_BOOLEAN("BasicServicesKit.ThermalManager.subscribeThermalLevel.Boolean", HISTOGRAM_API_CALL_COUNT);
+#endif
     size_t argc = MAX_ARGC;
     napi_value argv[argc];
     NapiUtils::GetCallbackInfo(env, info, argc, argv);
@@ -225,6 +237,9 @@ napi_value ThermalManagerNapi::SubscribeThermalLevel(napi_env env, napi_callback
 
 napi_value ThermalManagerNapi::UnSubscribeThermalLevel(napi_env env, napi_callback_info info)
 {
+#ifdef THERMAL_API_METRICS_ENABLE
+    HISTOGRAM_BOOLEAN("BasicServicesKit.ThermalManager.unsubscribeThermalLevel.Boolean", HISTOGRAM_API_CALL_COUNT);
+#endif
     size_t argc = MAX_ARGC;
     napi_value argv[argc];
     NapiUtils::GetCallbackInfo(env, info, argc, argv);

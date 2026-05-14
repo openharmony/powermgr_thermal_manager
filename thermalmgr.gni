@@ -54,6 +54,13 @@ if (!defined(global_parts_info) ||
   has_thermal_config_policy_part = false
 }
 
+if (defined(global_parts_info) &&
+    defined(global_parts_info.hiviewdfx_api_metrics)) {
+  enable_support_api_metrics = true
+} else {
+  enable_support_api_metrics = false
+}
+
 ability_runtime_path = "//foundation/ability/ability_runtime"
 ability_runtime_inner_api_path = "${ability_runtime_path}/interfaces/inner_api"
 ability_runtime_services_path = "${ability_runtime_path}/services"
