@@ -16,6 +16,7 @@
 #include "thermal_sensor_provision.h"
 
 #include <climits>
+#include "parse_temp_int.h"
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
@@ -240,8 +241,10 @@ void ThermalSensorProvision::ReportThermalZoneData(int32_t reportTime, std::vect
             if (ret != NUM_ZERO) {
                 continue;
             }
-            int32_t temp = std::stoi(tempBuf);
-            typeTempMap_.insert(std::make_pair(sensorIter.first, temp));
+            int32_t temp = 0;
+            if (ParseTempInt32(tempBuf, temp)) {
+                typeTempMap_.insert(std::make_pair(sensorIter.first, temp));
+            }
         }
     }
 }
